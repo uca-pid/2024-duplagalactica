@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { getClasses } from '../firestoreService'; 
 
 const localizer = momentLocalizer(moment);
 
@@ -41,27 +42,28 @@ export default function Main_Page() {
 
   const fetchClasses = async () => {
     try {
-      const response = await fetch('http://localhost:5000/classes');
-      if (response.ok) {
-        const data = await response.json();
-        setClasses(data);
+      const data = await getClasses(); 
+      setClasses(data);
 
-        const calendarEvents = data.map(clase => ({
-          title: clase.Name,
-          start: new Date(clase.Date + 'T' + clase.Hour),
-          end: new Date(clase.Date + 'T' + (parseInt(clase.Hour.split(':')[0]) + 1) + ':' + clase.Hour.split(':')[1]), // Supone una hora de duración
-        }));
-        setEvents(calendarEvents);
-      } else {
-        console.error("Error en la respuesta de la API:", response.statusText);
-      }
+      const calendarEvents = data.map(clase => {
+        const startDate = new Date(clase.date); 
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // Asumiendo que la clase dura 1 hora
+
+        return {
+          title: clase.name,
+          start: startDate,
+          end: endDate,
+          allDay: false, // Ajusta según sea necesario
+        };
+      });
+      setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
 
   useEffect(() => {
-    fetchClasses(); 
+    fetchClasses();
   }, []);
 
   return (
@@ -82,7 +84,7 @@ export default function Main_Page() {
           </svg>
         </div>
         <div className='user'>
-
+          hols
         </div>
       </div>
 
@@ -118,9 +120,9 @@ export default function Main_Page() {
               <tbody className="Table-Classes-Rows">
                 {classes.map((clase, index) => (
                   <tr key={index}>
-                    <td>{clase.Name}</td>
-                    <td>{clase.Hour}</td>
-                    <td>{clase.Date}</td>
+                    <td>{clase.name}</td>
+                    <td>{clase.hour}</td>
+                    <td>{new Date(clase.date).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

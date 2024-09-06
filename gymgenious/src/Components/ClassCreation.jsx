@@ -1,6 +1,7 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createClass } from '../firestoreService'; 
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
@@ -8,47 +9,34 @@ export default function CreateClass() {
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
   const navigate = useNavigate();
+
   const day = (dateString) => {
     const date = new Date(dateString);
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     return daysOfWeek[date.getDay()];
   };
 
-  const createClass = async () => {
-    
+  const handleCreateClass = async () => {
     try {
-      const response = await fetch('http://localhost:5000/create_class', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Name: name,
-          Date: date,
-          Hour: hour,
-          Day: day(date),
-          Permanent: permanent,
-        }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        navigate('/');
-        alert("¡Clase creada exitosamente!");
-      } else {
-        console.error("Error en la respuesta de la API:", response.statusText);
-        alert("Error al crear la clase");
-      }
+      const newClass = {
+        Name: name,
+        Date: date,
+        Hour: hour,
+        Day: day(date),
+        Permanent: permanent,
+      };
+      await createClass(newClass); 
+      navigate('/'); 
+      alert("¡Clase creada exitosamente!");
     } catch (error) {
-      console.log(name,date,hour,day(date),permanent)
-      console.error("Error en el servidor:", error);
-      alert("Error en el servidor");
+      console.error("Error al crear la clase:", error);
+      alert("Error al crear la clase");
     }
   };
-  
 
-  const postClass = (e) => {
-    e.preventDefault(); 
-    createClass();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleCreateClass();
   };
 
   return (
@@ -71,7 +59,7 @@ export default function CreateClass() {
       </div>
       <div className='login-container'>
         <h2>Crear clase</h2>
-        <form onSubmit={postClass}>
+        <form onSubmit={handleSubmit}>
           <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
             <div className="input-small-container">
               <label htmlFor="hour">Hora:</label>

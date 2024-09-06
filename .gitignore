@@ -22,3 +22,5 @@ SqueakDebug.log
 github-*.zip
 
 /gymgenious/node_modules
+
+serviceAccountKey.json
