@@ -133,13 +133,19 @@ def create_user():
     return UsersSchema().jsonify(new_user), 201 
 
 def send_email(to_email):
+
+    characters='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    result=''
+    i = 0
+    while i<6:
+        position = random.randint(1, len(characters)-1)
+        result+=characters[position]
+        i+=1
     try:
         sender_email = "isoldi772@gmail.com"
-        sender_password = "cyos scck tgtm ortn"
+        sender_password = result
         subject = "Welcome!"
         body = "Thank you for signing up!"
-
-        # Set up the email headers
         msg = MIMEMultipart()
         msg['From'] = sender_email
         msg['To'] = to_email
