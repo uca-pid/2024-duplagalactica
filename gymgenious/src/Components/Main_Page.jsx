@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import Button from '@mui/material/Button';
 
 const localizer = momentLocalizer(moment);
 
@@ -81,9 +82,9 @@ export default function Main_Page() {
             </text>
           </svg>
         </div>
-        <div className='user'>
-
-        </div>
+        <Button variant="contained" color="primary">
+          Click Me
+        </Button>
       </div>
 
       <div className="Calendar-Button">
