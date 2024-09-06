@@ -44,6 +44,8 @@
 .Container-Logo {
   width: 15vh;
   height: 15vh;
+  align-items: center;
+  justify-content: center;
 }
 
 .user-button {

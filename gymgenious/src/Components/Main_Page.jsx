@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Button from '@mui/material/Button';
+import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
+import { colors } from '@mui/material';
 
 const localizer = momentLocalizer(moment);
 
@@ -87,9 +89,10 @@ export default function Main_Page() {
           </svg>
         </div>
         <div className='user-button'>
-          <Button variant="contained" color="primary" onClick={goToLogin}>
-            Click Me
-          </Button>
+          <HomeIcon onClick={goToMainPage} style={{height: '80%',width: '80%',color:'white'}}/>
+        </div>
+        <div className='user-button'>
+          <PersonIcon onClick={goToLogin} style={{height: '80%',width: '80%',color:'white'}}/>
         </div>
       </div>
 
