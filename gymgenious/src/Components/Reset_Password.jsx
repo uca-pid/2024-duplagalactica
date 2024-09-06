@@ -1,8 +1,24 @@
 import '../App.css';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
 
 export default function CreateClass() {
     const [email, setEmail] = useState('');
+    const navigate = useNavigate();
+
+    const goToMainPage = () => {
+      navigate('/');
+    };
+  
+    const goToLogin = () => {
+      navigate('/login');
+    };
+  
+    const goToCreateClass = () => {
+      navigate('/class-creation');
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -41,6 +57,12 @@ export default function CreateClass() {
                 </text>
                 </svg>
             </div>
+            <div className='user-button'>
+          <HomeIcon onClick={goToMainPage} style={{height: '80%',width: '80%',color:'white'}}/>
+        </div>
+        <div className='user-button'>
+          <PersonIcon onClick={goToLogin} style={{height: '80%',width: '80%',color:'white'}}/>
+        </div>
         </div>
         <div className='reset-password-container'>
             <h2>Recuperar cuenta</h2>

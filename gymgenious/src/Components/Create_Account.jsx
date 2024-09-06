@@ -1,6 +1,8 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
 
 export default function CreateClass() {
     const [name, setName] = useState('');
@@ -11,7 +13,18 @@ export default function CreateClass() {
     const [gym, setGym] = useState('');
     const navigate = useNavigate();
 
-    
+    const goToMainPage = () => {
+        navigate('/');
+      };
+      const goToLogin = () => {
+        navigate('/login');
+      };
+      const goToCreateAccount = () => {
+        navigate('/create-account');
+      };
+      const goToResetPassword = () => {
+        navigate('/reset-password');
+      };
 
     const createAccount = async () => {
     
@@ -67,6 +80,12 @@ export default function CreateClass() {
                 </text>
                 </svg>
             </div>
+            <div className='user-button'>
+          <HomeIcon onClick={goToMainPage} style={{height: '80%',width: '80%',color:'white'}}/>
+        </div>
+        <div className='user-button'>
+          <PersonIcon onClick={goToLogin} style={{height: '80%',width: '80%',color:'white'}}/>
+        </div>
         </div>
         <div className='create-account-container'>
             <h2>Crear cuenta</h2>

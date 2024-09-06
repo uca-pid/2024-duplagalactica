@@ -1,9 +1,25 @@
 import '../App.css';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
 
 export default function CreateClass() {
     const [password, setPassword] = useState('');
     const [passwordAgain, setPasswordAgain] = useState('');
+    const navigate = useNavigate();
+    
+      const goToMainPage = () => {
+        navigate('/');
+      };
+    
+      const goToLogin = () => {
+        navigate('/login');
+      };
+    
+      const goToCreateClass = () => {
+        navigate('/class-creation');
+      };
 
     return (
     <div className='App'>
@@ -22,6 +38,12 @@ export default function CreateClass() {
                 </text>
                 </svg>
             </div>
+            <div className='user-button'>
+          <HomeIcon onClick={goToMainPage} style={{height: '80%',width: '80%',color:'white'}}/>
+        </div>
+        <div className='user-button'>
+          <PersonIcon onClick={goToLogin} style={{height: '80%',width: '80%',color:'white'}}/>
+        </div>
         </div>
         <div className='login-container'>
             <h2>Nueva contraseña</h2>
