@@ -35,9 +35,25 @@
   width: 100%;
 }
 
+@media screen and (max-width: 768px) {
+  .Logo-Container {
+    height: 100%;
+  }
+}
+
 .Container-Logo {
   width: 15vh;
   height: 15vh;
+}
+
+.user-button {
+  display: block;
+}
+
+@media screen and (max-width: 768px) {
+  .user-button {
+    display: none;
+  }
 }
 
 @media screen and (max-width: 768px) {

@@ -32,6 +32,10 @@ export default function Main_Page() {
     setShowCalendar(prevState => !prevState);
   };
 
+  const goToMainPage = () => {
+    navigate('/');
+  };
+
   const goToLogin = () => {
     navigate('/login');
   };
@@ -68,7 +72,7 @@ export default function Main_Page() {
   return (
     <div className="App">
       <div className='Left-Bar'>
-        <div className='Logo-Container'>
+        <div className='Logo-Container' onClick={goToMainPage}>
           <svg className='Container-Logo' viewBox="0 0 220 210">
             <defs>
               <path id="circlePath" d="M 110,100 m -90,0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0" />
@@ -82,9 +86,11 @@ export default function Main_Page() {
             </text>
           </svg>
         </div>
-        <Button variant="contained" color="primary">
-          Click Me
-        </Button>
+        <div className='user-button'>
+          <Button variant="contained" color="primary" onClick={goToLogin}>
+            Click Me
+          </Button>
+        </div>
       </div>
 
       <div className="Calendar-Button">

@@ -6,6 +6,12 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const goToMainPage = () => {
+    navigate('/');
+  };
+  const goToLogin = () => {
+    navigate('/login');
+  };
   const goToCreateAccount = () => {
     navigate('/create-account');
   };
@@ -36,7 +42,7 @@ export default function Login() {
   return (
     <div className='App'>
       <div className='Left-Bar'>
-        <div className='Logo-Container'>
+        <div className='Logo-Container' onClick={goToMainPage}>
           <svg className='Container-Logo' viewBox="0 0 220 210">
             <defs>
               <path id="circlePath" d="M 110,100 m -90,0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0" />
