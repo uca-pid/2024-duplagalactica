@@ -1,36 +1,34 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUser } from '../firestoreService'; 
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+
   const goToCreateAccount = () => {
     navigate('/create-account');
   };
+
   const goToResetPassword = () => {
     navigate('/reset-password');
   };
 
-  const fetchUser = async () => {
+  const loginUser = async (e) => {
+    e.preventDefault(); 
     try {
-      const response = await fetch(`http://localhost:5000/login?Password=${password}&Mail=${username}`);
-      if (response.ok) {
-        const data = await response.json();
+      const user = await getUser(password, username);
+      if (user) {
         alert("¡Login exitoso!");
       } else {
-        console.error("Error en la respuesta de la API:", response.statusText);
         alert("Error en las credenciales");
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching user:", error);
       alert("Error en el servidor");
     }
-  };
-
-  const loginUser = (e) => {
-    fetchUser();
   };
 
   return (
