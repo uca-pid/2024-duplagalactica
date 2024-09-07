@@ -3,9 +3,11 @@ import '../App.css';
 import React, { useState } from 'react';
 import { sendEmail } from '../firestoreService'; 
 import LeftBar from '../real_components/LeftBar.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function ResetPassword() {
     const [email, setEmail] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -15,6 +17,7 @@ export default function ResetPassword() {
 
             if (result) {
                 alert('¡Correo electrónico enviado con éxito!');
+                navigate('/new-password')
             } else {
                 alert('No se pudo enviar el correo electrónico.');
             }
