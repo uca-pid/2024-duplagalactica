@@ -17,7 +17,7 @@ export default function ResetPassword() {
             const data = await getUniqueUserByEmail(email); 
             await sendPasswordResetEmail(auth, email); 
             alert('¡Correo electrónico enviado con éxito!');
-            navigate('/'); // Redirige a la página principal o a una página de confirmación
+            navigate('/'); 
         } catch (error) {
             setShowNoMatchEmail(true)
             console.error("Error al enviar el correo electrónico:", error);
