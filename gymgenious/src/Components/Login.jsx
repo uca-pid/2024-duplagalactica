@@ -2,7 +2,7 @@ import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUser } from '../firestoreService'; 
-import LeftBar from '../real_components/LeftBar.jsx';
+import LeftBar from '../real_components/LaftBarMaterial.js';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function Login() {

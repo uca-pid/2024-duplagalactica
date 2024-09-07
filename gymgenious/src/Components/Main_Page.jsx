@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import LeftBar from '../real_components/LeftBar.jsx';
+import LeftBar from '../real_components/LaftBarMaterial.js';
 import { getClasses } from '../firestoreService';
+import EnhancedTable from '../real_components/TableClasses.js';
 
 const localizer = momentLocalizer(moment);
 
@@ -117,30 +118,7 @@ export default function Main_Page() {
         </div>
       ) : (
         <div className="Table-Container">
-          {classes.length > 0 ? (
-            <table className="Table-Classes">
-              <thead className="Table-Classes-Header">
-                <tr>
-                  <th>Nombre</th>
-                  <th>Hora</th>
-                  <th>Fecha</th>
-                  <th>Todas las semanas</th>
-                </tr>
-              </thead>
-              <tbody className="Table-Classes-Rows">
-                {classes.map((clase, index) => (
-                  <tr key={index}>
-                    <td>{clase.name}</td>
-                    <td>{clase.hour}</td>
-                    <td>{new Date(clase.date).toLocaleDateString()}</td>
-                    <td>{clase.permanent ? 'Sí' : 'No'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>No hay clases disponibles aún.</p>
-          )}
+          <EnhancedTable rows={classes} />
         </div>
       )}
 
