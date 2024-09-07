@@ -481,7 +481,7 @@ iframe {
 }
 
 .Modal-Content {
-  background-color: white;
+  background-color: #E5E5E5;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
@@ -496,7 +496,7 @@ iframe {
   visibility: hidden;
 }
 
-button {
+.Modal-Content button {
   background-color: #14213d;
   color: white;
   border: none;
@@ -505,7 +505,7 @@ button {
   border-radius: 4px;
 }
 
-button:hover {
+.Modal-Content button:hover {
   background-color: #fca311;
 }
 
