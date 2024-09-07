@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LeftBar.jsx';
 import { createClass } from '../firestoreService'; 
 
 export default function CreateClass() {
@@ -16,6 +15,7 @@ export default function CreateClass() {
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     return daysOfWeek[date.getDay()];
   };
+
   const handleCreateClass = async () => {
     try {
       const newClass = {
