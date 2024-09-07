@@ -8,23 +8,21 @@ export default function CreateClass() {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        // Call the Python backend to send the email
-        try{const response = await fetch('http://localhost:5000/send-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
-        });
-        if (response.ok) {
-          alert('Email sent!');
-        } else {
-          alert('Failed to send email.');
-        }
-    }catch(error) {
-        console.error("Error fetching classes:", error);
-      }};
+      e.preventDefault();
+
+      try {
+          const result = await sendEmail(email); 
+
+          if (result) {
+              alert('¡Correo electrónico enviado con éxito!');
+          } else {
+              alert('No se pudo enviar el correo electrónico.');
+          }
+      } catch (error) {
+          console.error("Error al enviar el correo electrónico:", error);
+          alert('Error en el servidor.');
+      }
+    };
 
     return (
     <div className='App'>

@@ -1,7 +1,8 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LeftBar.jsx'
+import LeftBar from '../real_components/LeftBar.jsx';
+import { createUser } from '../firestoreService';
 
 export default function CreateClass() {
     const [name, setName] = useState('');
@@ -12,47 +13,36 @@ export default function CreateClass() {
     const [gym, setGym] = useState('');
     const navigate = useNavigate();
 
-    const createAccount = async () => {
-        try {
-          const response = await fetch('http://localhost:5000/sign_in', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+    const handleCreateAccount = async () => {
+      try {
+          const newUser = {
               Name: name,
               Lastname: lastName,
               Mail: email,
               Birthday: date,
               Password: password,
               Gym: gym,
-            }),
-          });
-          if (response.ok) {
-            const data = await response.json();
-            navigate('/');
-            alert("¡Cuenta creada exitosamente!");
-          } else {
-            console.error("Error en la respuesta de la API:", response.statusText);
-            alert("Error al crear la Cuenta ");
-          }
-        } catch (error) {
-          //console.log(name,date,hour,day(date),permanent)
-          console.error("Error en el servidor:", error);
-          alert("Error en el servidor");
-        }
-      };
-    const postAccount = (e) => {
-    e.preventDefault(); 
-    createAccount();
-    };
+          };
+          await createUser(newUser);
+          navigate('/'); 
+          alert("¡Cuenta creada exitosamente!");
+      } catch (error) {
+          console.error("Error al crear la cuenta:", error);
+          alert("Error al crear la cuenta");
+      }
+  };
+
+  const handleSubmit = (e) => {
+      e.preventDefault(); 
+      handleCreateAccount();
+  };
 
     return (
     <div className='App'>
         <LeftBar/>
         <div className='create-account-container'>
             <h2>Crear cuenta</h2>
-            <form onSubmit={postAccount}>
+            <form onSubmit={handleSubmit}>
                 <div className="input-container">
                     <label htmlFor="name">Nombre:</label>
                     <input 

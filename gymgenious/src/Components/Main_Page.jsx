@@ -4,6 +4,7 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import LeftBar from '../real_components/LeftBar.jsx';
+import { getClasses } from '../firestoreService'; 
 
 const localizer = momentLocalizer(moment);
 
@@ -34,26 +35,27 @@ export default function Main_Page() {
 
   const fetchClasses = async () => {
     try {
-      const response = await fetch('http://localhost:5000/classes');
-      if (response.ok) {
-        const data = await response.json();
-        setClasses(data);
+      const data = await getClasses(); 
+      setClasses(data);
+      const calendarEvents = data.map(clase => {
+        const startDate = new Date(clase.date); 
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
 
-        const calendarEvents = data.map(clase => ({
-          title: clase.Name,
-          start: new Date(clase.Date + 'T' + clase.Hour),
-          end: new Date(clase.Date + 'T' + (parseInt(clase.Hour.split(':')[0]) + 1) + ':' + clase.Hour.split(':')[1]), // Supone una hora de duración
-        }));
-        setEvents(calendarEvents);
-      } else {
-        console.error("Error en la respuesta de la API:", response.statusText);
-      }
+        return {
+          title: clase.name,
+          start: startDate,
+          end: endDate,
+          allDay: false, 
+        };
+      });
+      setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
+
   useEffect(() => {
-    fetchClasses(); 
+    fetchClasses();
   }, []);
 
   return (
