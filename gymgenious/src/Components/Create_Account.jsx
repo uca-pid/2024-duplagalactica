@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUser } from '../firestoreService';
 import LeftBar from '../real_components/LeftBar.jsx';
+import {getAuth,createUserWithEmailAndPassword } from 'firebase/auth';
+
 
 export default function CreateAccount() {
     const [name, setName] = useState('');
@@ -12,10 +14,13 @@ export default function CreateAccount() {
     const [password, setPassword] = useState('');
     const [gym, setGym] = useState('');
     const navigate = useNavigate();
-
+    const auth = getAuth();
     const handleCreateAccount = async () => {
         try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const firebaseUser = userCredential.user;
             const newUser = {
+                uid: firebaseUser.uid,
                 Name: name,
                 Lastname: lastName,
                 Mail: email,

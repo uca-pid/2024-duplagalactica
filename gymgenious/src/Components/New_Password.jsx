@@ -1,19 +1,49 @@
 import '../App.css';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LeftBar.jsx'
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import LeftBar from '../real_components/LeftBar.jsx';
+import { getAuth, confirmPasswordReset } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
 
-export default function CreateClass() {
+export default function ChangePassword() {
     const [password, setPassword] = useState('');
     const [passwordAgain, setPasswordAgain] = useState('');
     const navigate = useNavigate();
-
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const oobCode = query.get('oobCode');
+    const auth = getAuth()
+    useEffect(() => {
+      if (!oobCode) {
+        navigate('/');
+      }
+    }, [oobCode, navigate]);
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      
+      if (password !== passwordAgain) {
+        setError('Las contraseñas no coinciden.');
+        return;
+      }
+  
+      try {
+        await confirmPasswordReset(auth, oobCode, password);
+        setSuccess('Contraseña restablecida exitosamente.');
+        navigate('/login');
+      } catch (error) {
+        console.error('Error al restablecer la contraseña:', error);
+        setError('Error al restablecer la contraseña.');
+      }
+    };
     return (
     <div className='App'>
         <LeftBar/>
         <div className='login-container'>
             <h2>Nueva contraseña</h2>
-            <form >
+            <form onSubmit={handleSubmit}>
                 <div className="input-container">
                     <label htmlFor="password">Contraseña:</label>
                     <input 

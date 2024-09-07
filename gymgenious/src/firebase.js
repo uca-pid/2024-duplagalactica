@@ -1,21 +1,12 @@
-// src/firebase.js
-const firebase = require('firebase/app');
-require('firebase/firestore');
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+const admin = require('firebase-admin');
 
-// Initialize Firebase
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+const serviceAccount = require('./serviceAccountKey.json');
 
-const db = firebase.firestore();
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
-module.exports = db;
+const db = admin.firestore();
+
+module.exports = { db };

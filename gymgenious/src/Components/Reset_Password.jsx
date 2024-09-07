@@ -1,35 +1,32 @@
-// src/ResetPassword.js
 import '../App.css';
 import React, { useState } from 'react';
-import { sendEmail } from '../firestoreService'; 
 import LeftBar from '../real_components/LeftBar.jsx';
 import { useNavigate } from 'react-router-dom';
+import { getAuth,sendPasswordResetEmail } from 'firebase/auth';
 
 export default function ResetPassword() {
     const [email, setEmail] = useState('');
     const navigate = useNavigate();
 
+    const auth = getAuth();
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const result = await sendEmail(email); 
-
-            if (result) {
-                alert('¡Correo electrónico enviado con éxito!');
-                navigate('/new-password')
-            } else {
-                alert('No se pudo enviar el correo electrónico.');
-            }
+            await sendPasswordResetEmail(auth, email); 
+            alert('¡Correo electrónico enviado con éxito!');
+            navigate('/'); // Redirige a la página principal o a una página de confirmación
         } catch (error) {
             console.error("Error al enviar el correo electrónico:", error);
-            alert('Error en el servidor.');
+            alert('Error al enviar el correo electrónico. Verifica tu conexión y el correo electrónico ingresado.');
         }
     };
 
+
+
     return (
         <div className='App'>
-            <LeftBar/>
+            <LeftBar />
             <div className='reset-password-container'>
                 <h2>Recuperar cuenta</h2>
                 <form onSubmit={handleSubmit}>
