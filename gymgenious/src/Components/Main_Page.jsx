@@ -93,9 +93,9 @@ export default function Main_Page() {
               <tbody className="Table-Classes-Rows">
                 {classes.map((clase, index) => (
                   <tr key={index}>
-                    <td>{clase.Name}</td>
-                    <td>{clase.Hour}</td>
-                    <td>{clase.Date}</td>
+                    <td>{clase.name}</td>
+                    <td>{clase.hour}</td>
+                    <td>{new Date(clase.date).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
