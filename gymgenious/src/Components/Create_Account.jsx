@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LeftBar.jsx';
 import { createUser } from '../firestoreService';
 
 export default function CreateClass() {
@@ -37,7 +36,7 @@ export default function CreateClass() {
       handleCreateAccount();
   };
 
-    return (
+  return (
     <div className='App'>
       <div className='Left-Bar'>
         <div className='Logo-Container'>
