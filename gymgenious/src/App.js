@@ -6,6 +6,7 @@ import Login from './Components/Login.jsx';
 import ClassCreation from './Components/ClassCreation.jsx';
 import Create_Account from './Components/Create_Account.jsx';
 import Reset_Password from './Components/Reset_Password.jsx';
+import New_Password from './Components/New_Password.jsx'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/create-account" element={<Create_Account/>}/>
         <Route path="/reset-password" element={<Reset_Password/>}/>
         <Route path="/class-creation" element={<ClassCreation/>}/>
+        <Route path="/new-password" element={<New_Password/>}/>
       </Routes>
     </Router>
   );
