@@ -17,7 +17,7 @@ const Calendar = ({ events }) => {
         startAccessor="start"
         endAccessor="end"
         style={{ height: '100%', background: '#14213D' }}
-        views={['month']}
+        views={['month','day']}
       />
     </div>
   );
@@ -35,24 +35,48 @@ export default function Main_Page() {
 
   const fetchClasses = async () => {
     try {
-      const data = await getClasses(); 
+      const data = await getClasses();
       setClasses(data);
-      const calendarEvents = data.map(clase => {
-        const startDate = new Date(clase.date); 
+  
+      const calendarEvents = [];
+  
+      data.forEach(clase => {
+        const startDate = new Date(clase.date);
         const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
-
-        return {
-          title: clase.name,
-          start: startDate,
-          end: endDate,
-          allDay: false, 
-        };
+  
+        const adjustedStartDate = new Date(startDate.toLocaleString("en-US", { timeZone: "UTC" }));
+        const adjustedEndDate = new Date(endDate.toLocaleString("en-US", { timeZone: "UTC" }));
+  
+        if (clase.permanent) {
+          for (let i = 0; i < 4; i++) {
+            const weeklyStartDate = new Date(adjustedStartDate);
+            weeklyStartDate.setDate(adjustedStartDate.getDate() + i * 7);
+            const weeklyEndDate = new Date(adjustedEndDate);
+            weeklyEndDate.setDate(adjustedEndDate.getDate() + i * 7);
+  
+            calendarEvents.push({
+              title: clase.name,
+              start: weeklyStartDate,
+              end: weeklyEndDate,
+              allDay: false,
+            });
+          }
+        } else {
+          calendarEvents.push({
+            title: clase.name,
+            start: adjustedStartDate,
+            end: adjustedEndDate,
+            allDay: false,
+          });
+        }
       });
+  
       setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchClasses();
@@ -88,6 +112,7 @@ export default function Main_Page() {
                   <th>Nombre</th>
                   <th>Hora</th>
                   <th>Fecha</th>
+                  <th>Todas las semanas</th>
                 </tr>
               </thead>
               <tbody className="Table-Classes-Rows">
@@ -96,6 +121,7 @@ export default function Main_Page() {
                     <td>{clase.name}</td>
                     <td>{clase.hour}</td>
                     <td>{new Date(clase.date).toLocaleDateString()}</td>
+                    <td>{clase.permanent ? 'Sí' : 'No'}</td> 
                   </tr>
                 ))}
               </tbody>

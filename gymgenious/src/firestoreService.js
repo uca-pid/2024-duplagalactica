@@ -1,7 +1,6 @@
 import { firestore } from './firebase-config'; 
 import { collection, getDocs, addDoc, query, where } from 'firebase/firestore';
 
-
 export const getClasses = async () => {
   try {
     const classesCollection = collection(firestore, 'classes');
@@ -16,7 +15,6 @@ export const getClasses = async () => {
     throw new Error("No se pudo obtener las clases");
   }
 };
-
 
 export const createClass = async (newClass) => {
   try {
@@ -82,7 +80,6 @@ export const createUser = async (user) => {
     throw new Error("No se pudo crear el usuario");
   }
 };
-
 
 export const sendEmail = async (toEmail) => {
   try {
