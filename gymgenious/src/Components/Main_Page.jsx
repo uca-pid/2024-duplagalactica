@@ -35,19 +35,39 @@ export default function Main_Page() {
 
   const fetchClasses = async () => {
     try {
-      const data = await getClasses(); 
+      const data = await getClasses();
       setClasses(data);
-      const calendarEvents = data.map(clase => {
-        const startDate = new Date(clase.date); 
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
 
-        return {
-          title: clase.name,
-          start: startDate,
-          end: endDate,
-          allDay: false, 
-        };
+      const calendarEvents = [];
+      
+      data.forEach(clase => {
+        const startDate = new Date(clase.date); 
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); 
+        
+        if (clase.permanent) {
+          for (let i = 0; i < 4; i++) {
+            const weeklyStartDate = new Date(startDate);
+            weeklyStartDate.setDate(startDate.getDate() + i * 7);
+            const weeklyEndDate = new Date(endDate);
+            weeklyEndDate.setDate(endDate.getDate() + i * 7);
+
+            calendarEvents.push({
+              title: clase.name,
+              start: weeklyStartDate,
+              end: weeklyEndDate,
+              allDay: false, 
+            });
+          }
+        } else {
+          calendarEvents.push({
+            title: clase.name,
+            start: startDate,
+            end: endDate,
+            allDay: false,
+          });
+        }
       });
+
       setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
