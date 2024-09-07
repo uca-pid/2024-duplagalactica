@@ -4,11 +4,11 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import LeftBar from '../real_components/LeftBar.jsx';
-import { getClasses } from '../firestoreService'; 
+import { getClasses } from '../firestoreService';
 
 const localizer = momentLocalizer(moment);
 
-const Calendar = ({ events }) => {
+const Calendar = ({ events, onSelectEvent }) => {
   return (
     <div className="Calendar-Container">
       <BigCalendar
@@ -17,7 +17,8 @@ const Calendar = ({ events }) => {
         startAccessor="start"
         endAccessor="end"
         style={{ height: '100%', background: '#14213D' }}
-        views={['month','day']}
+        views={['month', 'day']}
+        onSelectEvent={onSelectEvent}
       />
     </div>
   );
@@ -26,39 +27,42 @@ const Calendar = ({ events }) => {
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
   const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null); // Para manejar el evento seleccionado
   const [showCalendar, setShowCalendar] = useState(true);
   const navigate = useNavigate();
 
   const changeShowCalendar = () => {
     setShowCalendar(prevState => !prevState);
+    handleCloseModal()
   };
 
   const fetchClasses = async () => {
     try {
       const data = await getClasses();
       setClasses(data);
-  
+
       const calendarEvents = [];
-  
+
       data.forEach(clase => {
         const startDate = new Date(clase.date);
         const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
-  
+
         const adjustedStartDate = new Date(startDate.toLocaleString("en-US", { timeZone: "UTC" }));
         const adjustedEndDate = new Date(endDate.toLocaleString("en-US", { timeZone: "UTC" }));
-  
+
         if (clase.permanent) {
           for (let i = 0; i < 4; i++) {
             const weeklyStartDate = new Date(adjustedStartDate);
             weeklyStartDate.setDate(adjustedStartDate.getDate() + i * 7);
             const weeklyEndDate = new Date(adjustedEndDate);
             weeklyEndDate.setDate(adjustedEndDate.getDate() + i * 7);
-  
+
             calendarEvents.push({
               title: clase.name,
               start: weeklyStartDate,
               end: weeklyEndDate,
               allDay: false,
+              ...clase,
             });
           }
         } else {
@@ -67,24 +71,32 @@ export default function Main_Page() {
             start: adjustedStartDate,
             end: adjustedEndDate,
             allDay: false,
+            ...clase,
           });
         }
       });
-  
+
       setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
-  
 
   useEffect(() => {
     fetchClasses();
   }, []);
 
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
+
   return (
     <div className="App">
-      <LeftBar/>
+      <LeftBar />
       <div className="Calendar-Button">
         <button onClick={changeShowCalendar} className="Toggle-Button">
           {showCalendar ? (
@@ -101,7 +113,7 @@ export default function Main_Page() {
 
       {showCalendar ? (
         <div className="WebApp-Body">
-          <Calendar events={events} />
+          <Calendar events={events} onSelectEvent={handleSelectEvent} />
         </div>
       ) : (
         <div className="Table-Container">
@@ -121,7 +133,7 @@ export default function Main_Page() {
                     <td>{clase.name}</td>
                     <td>{clase.hour}</td>
                     <td>{new Date(clase.date).toLocaleDateString()}</td>
-                    <td>{clase.permanent ? 'Sí' : 'No'}</td> 
+                    <td>{clase.permanent ? 'Sí' : 'No'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -129,6 +141,19 @@ export default function Main_Page() {
           ) : (
             <p>No hay clases disponibles aún.</p>
           )}
+        </div>
+      )}
+
+      {selectedEvent && (
+        <div className="Modal" onClick={handleCloseModal}>
+          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+            <h2>Detalles de la Clase</h2>
+            <p><strong>Nombre:</strong> {selectedEvent.name}</p>
+            <p><strong>Fecha:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
+            <p><strong>Hora:</strong> {new Date(selectedEvent.start).toLocaleTimeString()}</p>
+            <p><strong>Todas las semanas:</strong> {selectedEvent.permanent ? 'Sí' : 'No'}</p>
+            <button onClick={handleCloseModal}>Cerrar</button>
+          </div>
         </div>
       )}
     </div>
