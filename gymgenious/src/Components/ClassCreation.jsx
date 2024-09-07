@@ -2,7 +2,7 @@ import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createClass } from '../firestoreService'; 
-import LeftBar from '../real_components/LeftBar.jsx';
+import LeftBar from '../real_components/LaftBarMaterial.js';
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
