@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUser } from '../firestoreService'; 
 import LeftBar from '../real_components/LeftBar.jsx';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-
+  const auth = getAuth()
   const goToCreateAccount = () => {
     navigate('/create-account');
   };
@@ -20,15 +21,12 @@ export default function Login() {
   const loginUser = async (e) => {
     e.preventDefault(); 
     try {
-      const user = await getUser(password, username);
-      if (user) {
-        alert("¡Login exitoso!");
-      } else {
-        alert("Error en las credenciales");
-      }
+      await signInWithEmailAndPassword(auth, username, password);
+      alert("¡Login exitoso!");
+      navigate('/'); 
     } catch (error) {
-      console.error("Error fetching user:", error);
-      alert("Error en el servidor");
+      console.error("Error al iniciar sesión:", error);
+      alert("Error en las credenciales o en el servidor");
     }
   };
 
