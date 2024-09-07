@@ -1,16 +1,17 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LeftBar';
 import { getUser } from '../firestoreService'; 
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+
   const goToCreateAccount = () => {
     navigate('/create-account');
   };
+
   const goToResetPassword = () => {
     navigate('/reset-password');
   };
