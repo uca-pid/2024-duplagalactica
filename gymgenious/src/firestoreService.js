@@ -29,26 +29,6 @@ export const createClass = async (newClass) => {
   }
 };
 
-export const getUniqueUserByEmail = async (mail) => {
-  try {
-    const usersCollection = collection(firestore, 'users');
-    const q = query(usersCollection, where('mail', '==', mail));
-    const querySnapshot = await getDocs(q);
-    const users = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    
-    if (users.length > 0) {
-      return users[0];
-    } else {
-      throw new Error('No existen usuarios con ese mail');
-    }
-  } catch (error) {
-    throw new Error('No existen usuarios con ese mail');
-  }
-};
-
 export const getUser = async (password, mail) => {
   try {
     const usersCollection = collection(firestore, 'users');
