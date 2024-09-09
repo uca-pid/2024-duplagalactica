@@ -30,13 +30,15 @@ export default function Main_Page() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null); // Para manejar el evento seleccionado
   const [showCalendar, setShowCalendar] = useState(true);
-  const [leftBarOption, setLeftBarOption] = React.useState('profile');
+  const [leftBarOption, setLeftBarOption] = React.useState('');
   const navigate = useNavigate();
 
   const location = useLocation();
   useEffect(() => {
     if (location.state?.message === 'block') {
       setLeftBarOption('add');
+    } else {
+      setLeftBarOption('profile');
     }
   }, [location.state]);
 

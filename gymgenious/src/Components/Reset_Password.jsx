@@ -28,7 +28,7 @@ export default function ResetPassword() {
 
     return (
         <div className='App'>
-            <LeftBar />
+            <LeftBar value={'profile'}/>
             <div className='reset-password-container'>
                 <h2>Recuperar cuenta</h2>
                 <form onSubmit={handleSubmit}>

@@ -48,7 +48,7 @@ export default function LeftBar({value}) {
                     alignItems: 'center'
                 }}
             >
-                <svg viewBox="0 -5 220 210" style={{ width: '10vh' }}>
+                <svg viewBox="0 -5 220 210" style={{ width: '100%' }}>
                     <defs>
                         <path id="circlePath" d="M 110,100 m -90,0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0" />
                     </defs>

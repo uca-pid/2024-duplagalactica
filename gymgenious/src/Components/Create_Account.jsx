@@ -115,7 +115,7 @@ export default function CreateAccount() {
 
     return (
         <div className='App'>
-            <LeftBar/>
+            <LeftBar value={'profile'}/>
             <div className='create-account-container'>
                 <h2>Crear cuenta</h2>
                 <form onSubmit={handleSubmit}>
