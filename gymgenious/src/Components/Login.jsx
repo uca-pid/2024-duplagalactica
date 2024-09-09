@@ -23,7 +23,7 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, username, password);
       alert("¡Login exitoso!");
-      navigate('/'); 
+      navigate('/', { state: { message: 'block' } });
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       alert("Error en las credenciales o en el servidor");

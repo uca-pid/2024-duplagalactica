@@ -519,3 +519,16 @@ iframe {
     padding: 10px;
   }
 }
+
+.create-class-button {
+  position: absolute;
+  background-color: red;
+  width: 10%;
+  left:26%;
+  color: white;
+  border-radius: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  top: 5%;
+}

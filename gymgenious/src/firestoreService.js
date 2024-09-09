@@ -90,5 +90,3 @@ export const sendEmail = async (toEmail) => {
     return false;
   }
 };
-
-
