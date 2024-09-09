@@ -532,3 +532,10 @@ iframe {
   text-align: center;
   top: 5%;
 }
+
+.error-messages {
+  color:red;
+  font-size: 1.5vh;
+  align-content: center;
+  justify-content: center;
+}

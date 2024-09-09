@@ -32,7 +32,7 @@ export const createClass = async (newClass) => {
 export const getUniqueUserByEmail = async (mail) => {
   try {
     const usersCollection = collection(firestore, 'users');
-    const q = query(usersCollection, where('mail', '==', mail));
+    const q = query(usersCollection, where('Mail', '==', mail));
     const querySnapshot = await getDocs(q);
     const users = querySnapshot.docs.map(doc => ({
       id: doc.id,
