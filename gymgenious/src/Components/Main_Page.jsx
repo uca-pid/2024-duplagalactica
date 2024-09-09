@@ -4,7 +4,6 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import LeftBar from '../real_components/LaftBarMaterial.js';
-import CreateClassButton from '../real_components/CreateClassButton.jsx';
 import { getClasses } from '../firestoreService';
 import EnhancedTable from '../real_components/TableClasses.js';
 
@@ -31,13 +30,13 @@ export default function Main_Page() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null); // Para manejar el evento seleccionado
   const [showCalendar, setShowCalendar] = useState(true);
-  const [createClassContainer, setCreateClassContainer] = useState('block')
+  const [leftBarOption, setLeftBarOption] = React.useState('profile');
   const navigate = useNavigate();
 
   const location = useLocation();
   useEffect(() => {
     if (location.state?.message === 'block') {
-      setCreateClassContainer('block');
+      setLeftBarOption('add');
     }
   }, [location.state]);
 
@@ -106,8 +105,7 @@ export default function Main_Page() {
 
   return (
     <div className="App">
-      <LeftBar />
-      <CreateClassButton/>
+      <LeftBar value={leftBarOption}/>
       <div className="Calendar-Button">
         <button onClick={changeShowCalendar} className="Toggle-Button">
           {showCalendar ? (
