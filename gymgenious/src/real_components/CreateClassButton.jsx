@@ -8,7 +8,7 @@ export default function CreateClassButton() {
     const navigate = useNavigate();
     return (
       <Box sx={{ '& > :not(style)': { m: 1 } }} className='create-class-button'>
-        <Fab size="small" color="secondary" aria-label="add">
+        <Fab size="small" color="primary" aria-label="add">
           <AddIcon onClick={()=>navigate('/class-creation')}/>
         </Fab>
       </Box>
