@@ -52,8 +52,8 @@ function EnhancedTable({ rows }) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+      <Paper sx={{ width: '100%', mb: 2, backgroundColor: '#E5E5E5'  }}>
+        <TableContainer sx={{ maxHeight: 440}}>
           <Table sx={{ minWidth: 750, width: '100%' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
             <TableHead>
               <TableRow>
