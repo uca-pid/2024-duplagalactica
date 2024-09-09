@@ -29,7 +29,7 @@ export default function CreateClass() {
       };
       console.log(isoDateString)
       await createClass(newClass); 
-      navigate('/'); 
+      navigate('/', { state: { message: 'block' } }); 
       alert("¡Clase creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la clase:", error);
@@ -44,7 +44,7 @@ export default function CreateClass() {
 
   return (
     <div className='App'>
-      <LeftBar/>
+      <LeftBar value={'add'}/>
       <div className='login-container'>
         <h2 style={{color:'#14213D'}}>Crear clase</h2>
         <form onSubmit={handleSubmit}>

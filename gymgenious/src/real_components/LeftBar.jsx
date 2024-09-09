@@ -3,14 +3,18 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
 
-export default function LeftBar() {
+export default function LeftBar({value}) {
     const navigate = useNavigate();
     const goToMainPage = () => {
         navigate('/');
     };
     const goToLogin = () => {
         navigate('/login');
+    };
+    const goToClassCreation = () => {
+        navigate('/class-creation');
     };
     return (
         <div className='Left-Bar'>
@@ -31,9 +35,17 @@ export default function LeftBar() {
             <div className='user-button'>
                 <HomeIcon onClick={goToMainPage} style={{height: '80%',width: '80%',color:'#14213D'}}/>
             </div>
-            <div className='user-button'>
-                <PersonIcon onClick={goToLogin} style={{height: '80%',width: '80%',color:'#14213D'}}/>
-            </div>
+            {
+                value=='profi'
+                ? (
+                    <div className='user-button'>
+                    <PersonIcon onClick={goToLogin} style={{height: '80%',width: '80%',color:'#14213D'}}/>
+                </div> )
+                : (
+                <div className='user-button'>
+                    <AddIcon onClick={goToClassCreation} style={{height: '80%',width: '80%',color:'#14213D'}}/>
+                </div> )
+            }
         </div>
     )
 }

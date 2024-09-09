@@ -32,7 +32,7 @@ export default function Login() {
 
   return (
     <div className='App'>
-      <LeftBar/>
+      <LeftBar value={'profile'}/>
       <div className='login-container'>
         <h2 style={{color:'#14213D'}}>Login</h2>
         <form onSubmit={loginUser}>
