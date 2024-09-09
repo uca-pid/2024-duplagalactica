@@ -18,9 +18,7 @@ export const getClasses = async () => {
 
 export const createClass = async (newClass) => {
   try {
-    const { date, hour } = newClass; 
-    const isoDateString = new Date(`${date}T${hour}:00Z`).toISOString();
-    const classData = { ...newClass, Date: isoDateString };
+    const classData = { ...newClass};
     await addDoc(collection(firestore, 'classes'), classData);
     return classData;
   } catch (error) {

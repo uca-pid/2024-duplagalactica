@@ -19,13 +19,15 @@ export default function CreateClass() {
 
   const handleCreateClass = async () => {
     try {
+      const isoDateString = `${date}T${hour}:00Z`;
       const newClass = {
-        Name: name,
-        Date: date,
-        Hour: hour,
-        Day: day(date),
-        Permanent: permanent,
+        name: name,
+        date: isoDateString,
+        hour: hour,
+        day: day(date),
+        permanent: permanent,
       };
+      console.log(isoDateString)
       await createClass(newClass); 
       navigate('/'); 
       alert("¡Clase creada exitosamente!");
