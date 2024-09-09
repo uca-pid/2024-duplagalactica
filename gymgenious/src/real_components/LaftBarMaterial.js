@@ -2,18 +2,27 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
 
-export default function LeftBar() {
+export default function LeftBar({value}) {
     const navigate = useNavigate();
 
     const goToMainPage = () => {
-        navigate('/');
+        if(value=='add'){
+            navigate('/', { state: { message: 'block' } });
+        } else {
+            navigate('/');
+        }
     };
 
     const goToLogin = () => {
         navigate('/login');
     };
+
+    const goToClassCreation = () => {
+        navigate('/class-creation')
+    }
 
     return (
         <Box 
@@ -54,7 +63,13 @@ export default function LeftBar() {
             </Box>
             <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center',flex:2 }}>
                 <HomeIcon onClick={goToMainPage} style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer',flex:1 }} />
-                <PersonIcon onClick={goToLogin} style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2,flex:1 }} />
+                {
+                    value=='profile'
+                    ? 
+                    (<PersonIcon onClick={goToLogin} style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2,flex:1 }} />)
+                    : 
+                    (<AddIcon onClick={goToClassCreation} style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2,flex:1 }} />)
+                }
             </Box>
         </Box>
     );
