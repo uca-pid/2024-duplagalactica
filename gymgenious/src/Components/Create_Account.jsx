@@ -101,10 +101,10 @@ export default function CreateAccount() {
         <div className='App'>
             <LeftBar/>
             <div className='create-account-container'>
-                <h2>Crear cuenta</h2>
+                <h2 style={{color:'#14213D'}}>Crear cuenta</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="input-container">
-                        <label htmlFor="name">Nombre:</label>
+                        <label htmlFor="name" style={{color:'#14213D'}}>Nombre:</label>
                         <input 
                             type="text" 
                             id="name" 
@@ -114,7 +114,7 @@ export default function CreateAccount() {
                         />
                     </div>
                     <div className="input-container">
-                        <label htmlFor="lastName">Apellido:</label>
+                        <label htmlFor="lastName" style={{color:'#14213D'}}>Apellido:</label>
                         <input 
                             type="text" 
                             id="lastname" 
@@ -124,7 +124,7 @@ export default function CreateAccount() {
                         />
                     </div>
                     <div className="input-container">
-                        <label htmlFor="date">Fecha de nacimiento:</label>
+                        <label htmlFor="date" style={{color:'#14213D'}}>Fecha de nacimiento:</label>
                         <input 
                             type="date" 
                             id="date" 
@@ -134,7 +134,7 @@ export default function CreateAccount() {
                         />
                     </div>
                     <div className="input-container">
-                        <label htmlFor="email">Email:</label>
+                        <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
                         <input 
                             type="email" 
                             id="email" 
@@ -144,7 +144,7 @@ export default function CreateAccount() {
                         />
                     </div>
                     <div className="input-container">
-                        <label htmlFor="password">Contraseña:</label>
+                        <label htmlFor="password" style={{color:'#14213D'}}>Contraseña:</label>
                         <input 
                             type="password" 
                             id="password" 
@@ -154,7 +154,7 @@ export default function CreateAccount() {
                         />
                     </div>
                     <div className="input-container">
-                        <label htmlFor="gym">Gimnasio:</label>
+                        <label htmlFor="gym" style={{color:'#14213D'}}>Gimnasio:</label>
                         <input 
                             type="text" 
                             id="gym" 
