@@ -5,11 +5,11 @@ import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
 
-export default function LeftBar({value}) {
+export default function LeftBar({ value }) {
     const navigate = useNavigate();
 
     const goToMainPage = () => {
-        if(value === 'add'){
+        if (value === 'add') {
             navigate('/', { state: { message: 'block' } });
         } else {
             navigate('/');
@@ -25,26 +25,27 @@ export default function LeftBar({value}) {
     };
 
     return (
-        <Box 
-            sx={{ 
-                width: '5%', 
-                height: '100vh', 
-                backgroundColor: '#E5E5E5', 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
+        <Box
+            sx={{
+                width: '5%',
+                height: '100%',
+                backgroundColor: '#E5E5E5',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 top: 0,
                 left: 0,
-                zIndex: 1200
+                zIndex: 1200,
+                justifyContent: 'space-between' // Asegura la distribución uniforme
             }}
         >
-            <Box 
-                sx={{ 
-                    width: '100%', 
-                    display: 'flex', 
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'flex',
                     flex: 1,
-                    flexDirection: 'column', 
-                    justifyContent: 'center', 
+                    flexDirection: 'column',
+                    justifyContent: 'center',
                     alignItems: 'center'
                 }}
             >
@@ -61,26 +62,44 @@ export default function LeftBar({value}) {
                     </text>
                 </svg>
             </Box>
-            
-            <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 2 }}>
-                <HomeIcon 
-                    onClick={goToMainPage} 
-                    style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer' }} 
+
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+            >
+                <HomeIcon
+                    onClick={goToMainPage}
+                    style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer' }}
                 />
-                {
-                    value === 'profile'
-                    ? (
-                        <PersonIcon 
-                            onClick={goToLogin} 
-                            style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2 }} 
-                        />
-                    ) : (
-                        <AddIcon 
-                            onClick={goToClassCreation} 
-                            style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2 }} 
-                        />
-                    )
-                }
+            </Box>
+
+            <Box
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+            >
+                {value === 'profile' ? (
+                    <PersonIcon
+                        onClick={goToLogin}
+                        style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer' }}
+                    />
+                ) : (
+                    <AddIcon
+                        onClick={goToClassCreation}
+                        style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer' }}
+                    />
+                )}
             </Box>
         </Box>
     );

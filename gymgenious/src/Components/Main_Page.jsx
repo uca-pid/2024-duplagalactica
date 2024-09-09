@@ -77,7 +77,7 @@ export default function Main_Page() {
         const adjustedStartDate = new Date(startDate.toLocaleString("en-US", { timeZone: "UTC" }));
         const adjustedEndDate = new Date(endDate.toLocaleString("en-US", { timeZone: "UTC" }));
 
-        if (clase.permanent) {
+        if (clase.permanent=='Si') {
           for (let i = 0; i < 4; i++) {
             const weeklyStartDate = new Date(adjustedStartDate);
             weeklyStartDate.setDate(adjustedStartDate.getDate() + i * 7);
