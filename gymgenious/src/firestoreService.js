@@ -18,9 +18,7 @@ export const getClasses = async () => {
 
 export const createClass = async (newClass) => {
   try {
-    const { date, hour } = newClass; 
-    const isoDateString = new Date(`${date}T${hour}:00Z`).toISOString();
-    const classData = { ...newClass, Date: isoDateString };
+    const classData = { ...newClass};
     await addDoc(collection(firestore, 'classes'), classData);
     return classData;
   } catch (error) {
@@ -32,7 +30,7 @@ export const createClass = async (newClass) => {
 export const getUniqueUserByEmail = async (mail) => {
   try {
     const usersCollection = collection(firestore, 'users');
-    const q = query(usersCollection, where('mail', '==', mail));
+    const q = query(usersCollection, where('Mail', '==', mail));
     const querySnapshot = await getDocs(q);
     const users = querySnapshot.docs.map(doc => ({
       id: doc.id,
