@@ -3,9 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import LeftBar from '../real_components/LaftBarMaterial.js';
+import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getClasses } from '../firestoreService';
-import EnhancedTable from '../real_components/TableClasses.js';
+import EnhancedTable from '../real_components/TableClasses.jsx';
 
 const localizer = momentLocalizer(moment);
 

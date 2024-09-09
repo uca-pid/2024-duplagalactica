@@ -9,7 +9,7 @@ export default function LeftBar({value}) {
     const navigate = useNavigate();
 
     const goToMainPage = () => {
-        if(value=='add'){
+        if(value === 'add'){
             navigate('/', { state: { message: 'block' } });
         } else {
             navigate('/');
@@ -21,8 +21,8 @@ export default function LeftBar({value}) {
     };
 
     const goToClassCreation = () => {
-        navigate('/class-creation')
-    }
+        navigate('/class-creation');
+    };
 
     return (
         <Box 
@@ -42,7 +42,7 @@ export default function LeftBar({value}) {
                 sx={{ 
                     width: '100%', 
                     display: 'flex', 
-                    flex:1,
+                    flex: 1,
                     flexDirection: 'column', 
                     justifyContent: 'center', 
                     alignItems: 'center'
@@ -61,14 +61,25 @@ export default function LeftBar({value}) {
                     </text>
                 </svg>
             </Box>
-            <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center',flex:2 }}>
-                <HomeIcon onClick={goToMainPage} style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer',flex:1 }} />
+            
+            <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 2 }}>
+                <HomeIcon 
+                    onClick={goToMainPage} 
+                    style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer' }} 
+                />
                 {
-                    value=='profile'
-                    ? 
-                    (<PersonIcon onClick={goToLogin} style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2,flex:1 }} />)
-                    : 
-                    (<AddIcon onClick={goToClassCreation} style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2,flex:1 }} />)
+                    value === 'profile'
+                    ? (
+                        <PersonIcon 
+                            onClick={goToLogin} 
+                            style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2 }} 
+                        />
+                    ) : (
+                        <AddIcon 
+                            onClick={goToClassCreation} 
+                            style={{ fontSize: '6vh', color: '#14213D', cursor: 'pointer', marginTop: 2 }} 
+                        />
+                    )
                 }
             </Box>
         </Box>
