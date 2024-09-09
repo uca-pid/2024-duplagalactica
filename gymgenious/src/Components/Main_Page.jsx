@@ -10,6 +10,21 @@ import EnhancedTable from '../real_components/TableClasses.js';
 const localizer = momentLocalizer(moment);
 
 const Calendar = ({ events, onSelectEvent }) => {
+  const eventStyleGetter = (event) => {
+    const backgroundColor = '#fca311'; 
+    const style = {
+      backgroundColor: backgroundColor,
+      borderRadius: '0px',
+      opacity: 0.8,
+      color: 'white',
+      display: 'block',
+      padding: '5px',
+      border: 'none'
+    };
+    return {
+      style: style
+    };
+  };
   return (
     <div className="Calendar-Container">
       <BigCalendar
@@ -17,9 +32,10 @@ const Calendar = ({ events, onSelectEvent }) => {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: '100%', background: '#14213D' }}
+        style={{ height: '100%',color:'white'}}
         views={['month', 'day']}
         onSelectEvent={onSelectEvent}
+        eventPropGetter={eventStyleGetter}
       />
     </div>
   );

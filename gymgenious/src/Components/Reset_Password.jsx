@@ -14,7 +14,7 @@ export default function ResetPassword() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const data = await getUniqueUserByEmail(email); 
+            await getUniqueUserByEmail(email); 
             await sendPasswordResetEmail(auth, email); 
             alert('¡Correo electrónico enviado con éxito!');
             navigate('/'); 
