@@ -13,10 +13,8 @@ describe('getUser', () => {
     const mockPassword = 'securepassword';
     const mockEmail = 'test@example.com';
     const mockUser = [{ id: '123', password: mockPassword, mail: mockEmail, name: 'Test User' }];
-
     getUser.mockResolvedValue(mockUser);
     const result = await getUser(mockPassword, mockEmail);
-
     expect(result).toEqual(mockUser);
     expect(result).toHaveLength(1);
     expect(result[0]).toHaveProperty('id', '123');
@@ -24,4 +22,13 @@ describe('getUser', () => {
     expect(result[0]).toHaveProperty('mail', 'test@example.com');
     expect(result[0]).toHaveProperty('name', 'Test User');
   });
+
+  it('should throw an error when no user matches', async () => {
+    const mockPassword = 'securepassword';
+    const mockEmail = 'nonexistent@example.com';
+    getUser.mockResolvedValue([]);
+    getUser.mockRejectedValue(new Error('Usuario no encontrado'));
+    await expect(getUser(mockPassword, mockEmail)).rejects.toThrow('Usuario no encontrado');
+  });
+  
 });
