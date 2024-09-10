@@ -13,6 +13,7 @@ export default function CreateAccount() {
     const [password, setPassword] = useState('');
     const [gym, setGym] = useState('');
     const [errors, setErrors] = useState([]);
+    const [errorsModal, setErrorsModal] = useState(false);
     const navigate = useNavigate();
     const auth = getAuth();
 
@@ -97,84 +98,91 @@ export default function CreateAccount() {
         handleCreateAccount();
     };
 
+    const handleCloseModal = () => {
+        setErrors([])
+    }
     return (
         <div className='App'>
             <LeftBar value={'profile'}/>
             <div className='create-account-container'>
-                <h2 style={{color:'#14213D'}}>Crear cuenta</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-container">
-                        <label htmlFor="name" style={{color:'#14213D'}}>Nombre:</label>
-                        <input 
-                            type="text" 
-                            id="name" 
-                            name="name" 
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label htmlFor="lastName" style={{color:'#14213D'}}>Apellido:</label>
-                        <input 
-                            type="text" 
-                            id="lastname" 
-                            name="lastname" 
-                            value={lastName} 
-                            onChange={(e) => setLastName(e.target.value)} 
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label htmlFor="date" style={{color:'#14213D'}}>Fecha de nacimiento:</label>
-                        <input 
-                            type="date" 
-                            id="date" 
-                            name="date" 
-                            value={date} 
-                            onChange={(e) => setDate(e.target.value)} 
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            value={email} 
-                            onChange={(e) => setEmail(e.target.value)} 
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label htmlFor="password" style={{color:'#14213D'}}>Contraseña:</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            value={password} 
-                            onChange={(e) => setPassword(e.target.value)} 
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label htmlFor="gym" style={{color:'#14213D'}}>Gimnasio:</label>
-                        <input 
-                            type="text" 
-                            id="gym" 
-                            name="gym" 
-                            value={gym} 
-                            onChange={(e) => setGym(e.target.value)} 
-                        />
-                    </div>
-                    <button type="submit" className='button_create_account'>
-                        Crear cuenta
-                    </button>
-                </form>
+                <div className='create-account-content'>
+                    <h2 style={{color:'#14213D'}}>Crear cuenta</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="input-container">
+                            <label htmlFor="name" style={{color:'#14213D'}}>Nombre:</label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                name="name" 
+                                value={name} 
+                                onChange={(e) => setName(e.target.value)} 
+                            />
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="lastName" style={{color:'#14213D'}}>Apellido:</label>
+                            <input 
+                                type="text" 
+                                id="lastname" 
+                                name="lastname" 
+                                value={lastName} 
+                                onChange={(e) => setLastName(e.target.value)} 
+                            />
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="date" style={{color:'#14213D'}}>Fecha de nacimiento:</label>
+                            <input 
+                                type="date" 
+                                id="date" 
+                                name="date" 
+                                value={date} 
+                                onChange={(e) => setDate(e.target.value)} 
+                            />
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                value={email} 
+                                onChange={(e) => setEmail(e.target.value)} 
+                            />
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="password" style={{color:'#14213D'}}>Contraseña:</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                value={password} 
+                                onChange={(e) => setPassword(e.target.value)} 
+                            />
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="gym" style={{color:'#14213D'}}>Gimnasio:</label>
+                            <input 
+                                type="text" 
+                                id="gym" 
+                                name="gym" 
+                                value={gym} 
+                                onChange={(e) => setGym(e.target.value)} 
+                            />
+                        </div>
+                        <button type="submit" className='button_create_account'>
+                            Crear cuenta
+                        </button>
+                    </form>
+                </div>
             </div>
             {errors.length > 0 && (
-                <div className="error-messages">
-                    <ul>
-                        {errors.map((error, index) => (
-                            <li key={index}>{error}</li>
-                        ))}
-                    </ul>
+                <div className="errorsCreateAccountModal" onClick={handleCloseModal}>
+                    <div className="errorsCreateAccountContentModal" onClick={handleCloseModal}>
+                        <ul>
+                            {errors.map((error, index) => (
+                                <li key={index}>{error}</li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             )}
         </div>

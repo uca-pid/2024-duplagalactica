@@ -372,24 +372,29 @@ iframe {
 }
 .create-account-container {
   background-color: #E5E5E5;
-  color:white;
-  padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  width: 30%;
-  left: 35%;
+  width: 40%;
+  left: 32.5%;
   top: 7%;
   height: 82%;
   text-align: center;
-  position:absolute
+  position: fixed;
+  overflow-y: auto;
 }
+
 @media screen and (max-width: 768px) {
   .create-account-container {
     left: 10%;
     width: 80%;
-    top: 20%;
+    top:10%;
   }
 }
+.create-account-content {
+  padding-left:20px;
+  padding-right: 20px;
+}
+
 .button_create_account {
   background-color: #fca311;
   color: #14213D;
@@ -564,3 +569,42 @@ iframe {
     left: 7%;
     }
   }
+
+.errorsCreateAccountModal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  z-index: 1000;
+}
+  
+.errorsCreateAccountContentModal {
+  background-color: #a18fbe;
+  border-radius: 8px;
+  width: 60%;
+  height: auto;
+  z-index: 1001;
+  color:rgb(216, 52, 52);
+  position: absolute;
+  top: 25%;
+  left: 22.5%;
+  font-weight: bold;
+}
+  
+@media (max-width: 765px) {
+  .errorsCreateAccountContentModal {
+    left: 5%;
+    width: 90%;
+    }
+  }
+
+.errorsCreateAccountModal.closing {
+  opacity: 0;
+  visibility: hidden;
+}
