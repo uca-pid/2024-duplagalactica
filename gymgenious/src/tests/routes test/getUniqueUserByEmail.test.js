@@ -24,5 +24,4 @@ describe('getUniqueUserByEmail', () => {
         getUniqueUserByEmail.mockRejectedValue(new Error('No existen usuarios con ese mail'));
         await expect(getUniqueUserByEmail(mockEmail)).rejects.toThrow('No existen usuarios con ese mail');
     });
-
 });
