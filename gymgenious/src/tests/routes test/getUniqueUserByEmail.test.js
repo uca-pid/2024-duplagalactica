@@ -18,4 +18,11 @@ describe('getUniqueUserByEmail', () => {
         expect(getUniqueUserByEmail).toHaveBeenCalledWith(mockEmail);
         expect(getUniqueUserByEmail).toHaveBeenCalledTimes(1);
     });
+
+    it('should throw an error when no user matches', async () => {
+        const mockEmail = 'nonexistent@example.com';
+        getUniqueUserByEmail.mockRejectedValue(new Error('No existen usuarios con ese mail'));
+        await expect(getUniqueUserByEmail(mockEmail)).rejects.toThrow('No existen usuarios con ese mail');
+    });
+
 });
