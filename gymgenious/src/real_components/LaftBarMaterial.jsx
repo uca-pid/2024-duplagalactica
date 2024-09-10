@@ -28,7 +28,7 @@ export default function LeftBar({ value }) {
         <Box
             sx={{
                 width: '5%',
-                height: '100%',
+                height: '100%', // Ocupa todo el alto de la pantalla en pantallas grandes
                 backgroundColor: '#E5E5E5',
                 display: 'flex',
                 flexDirection: 'column',
@@ -36,7 +36,17 @@ export default function LeftBar({ value }) {
                 top: 0,
                 left: 0,
                 zIndex: 1200,
-                justifyContent: 'space-between' // Asegura la distribución uniforme
+                justifyContent: 'space-between',
+                // Media query para pantallas más pequeñas
+                '@media (max-width: 765px)': {
+                    width: '100%',
+                    height: '7%', // Reducimos el alto a un valor fijo más razonable
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    position: 'fixed',
+                    top: 0, // Se asegura que esté en la parte superior de la pantalla
+                    bottom: 'auto',
+                }
             }}
         >
             <Box
@@ -46,10 +56,15 @@ export default function LeftBar({ value }) {
                     flex: 1,
                     flexDirection: 'column',
                     justifyContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    '@media (max-width: 765px)': {
+                        flexDirection: 'row',
+                        width: 'auto',
+                        height: '100%',
+                    }
                 }}
             >
-                <svg viewBox="0 -5 220 210" style={{ width: '100%' }}>
+                <svg viewBox="0 -5 220 210" style={{ width: '100%', height: '100%' }}>
                     <defs>
                         <path id="circlePath" d="M 110,100 m -90,0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0" />
                     </defs>
@@ -70,7 +85,13 @@ export default function LeftBar({ value }) {
                     flex: 1,
                     flexDirection: 'column',
                     justifyContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    border: 1,
+                    '@media (max-width: 765px)': {
+                        flexDirection: 'row',
+                        width: 'auto',
+                        height: '100%'
+                    }
                 }}
             >
                 <HomeIcon
@@ -86,7 +107,11 @@ export default function LeftBar({ value }) {
                     flex: 1,
                     flexDirection: 'column',
                     justifyContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    '@media (max-width: 765px)': {
+                        flexDirection: 'row',
+                        width: 'auto',
+                    }
                 }}
             >
                 {value === 'profile' ? (

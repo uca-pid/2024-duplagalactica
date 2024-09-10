@@ -54,9 +54,9 @@ function EnhancedTable({ rows }) {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, backgroundColor: '#E5E5E5'  }}>
         <TableContainer sx={{ maxHeight: 440}}>
-          <Table sx={{ minWidth: 750, width: '100%' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
+          <Table sx={{ width: '100%' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
             <TableHead>
-              <TableRow>
+              <TableRow >
                 <TableCell>
                   <TableSortLabel
                     active={orderBy === 'name'}
