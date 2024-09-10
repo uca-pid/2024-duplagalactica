@@ -31,5 +31,16 @@ describe('getClasses', () => {
     getClasses.mockRejectedValue(new Error(errorMessage));
     await expect(getClasses()).rejects.toThrow(errorMessage);
   });
-  
+
+  it('should handle classes with unexpected format', async () => {
+    const mockClasses = [
+      { name: 'Math 101', date: 'invalid-date', permanent: 'Si' },
+      { name: 'History 202', date: '2024-09-16T11:00:00Z', permanent: 'No' }
+    ];
+    getClasses.mockResolvedValue(mockClasses);
+    const result = await getClasses();
+    expect(result).toEqual(mockClasses);
+    expect(result).toHaveLength(2);
+  });
+
 });
