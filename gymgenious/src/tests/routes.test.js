@@ -32,9 +32,20 @@ describe('getClasses', () => {
     await expect(getClasses()).rejects.toThrow(errorMessage);
   });
 
-  it('should handle classes with unexpected format', async () => {
+  it('should handle classes with unexpected date format', async () => {
     const mockClasses = [
       { name: 'Math 101', date: 'invalid-date', permanent: 'Si' },
+      { name: 'History 202', date: '2024-09-16T11:00:00Z', permanent: 'No' }
+    ];
+    getClasses.mockResolvedValue(mockClasses);
+    const result = await getClasses();
+    expect(result).toEqual(mockClasses);
+    expect(result).toHaveLength(2);
+  });
+
+  it('should handle classes with unexpected name format', async () => {
+    const mockClasses = [
+      { name: '', date: '2024-09-16T11:00:00Z', permanent: 'Si' },
       { name: 'History 202', date: '2024-09-16T11:00:00Z', permanent: 'No' }
     ];
     getClasses.mockResolvedValue(mockClasses);
