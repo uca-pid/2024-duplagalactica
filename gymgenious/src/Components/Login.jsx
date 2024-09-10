@@ -61,8 +61,10 @@ export default function Login() {
               Ingresar
             </button>
           </form>
-          <div className='login-options-reset' onClick={goToResetPassword}>Reset Password</div>
-          <div className='login-options-create' onClick={goToCreateAccount}>Create Account</div>
+          <div className='login-options'>
+            <button className='login-options-text' onClick={goToResetPassword}>Recuperar contraseña</button>
+            <button className='login-options-text' onClick={goToCreateAccount}> Crear cuenta</button>     
+          </div>
         </div>
       </div>
     </div>

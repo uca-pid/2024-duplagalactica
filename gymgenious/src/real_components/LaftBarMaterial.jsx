@@ -28,7 +28,7 @@ export default function LeftBar({ value }) {
         <Box
             sx={{
                 width: '5%',
-                height: '100%', // Ocupa todo el alto de la pantalla en pantallas grandes
+                height: '100%',
                 backgroundColor: '#E5E5E5',
                 display: 'flex',
                 flexDirection: 'column',
@@ -37,14 +37,13 @@ export default function LeftBar({ value }) {
                 left: 0,
                 zIndex: 1200,
                 justifyContent: 'space-between',
-                // Media query para pantallas más pequeñas
                 '@media (max-width: 765px)': {
                     width: '100%',
-                    height: '7%', // Reducimos el alto a un valor fijo más razonable
+                    height: '7%',
                     flexDirection: 'row',
                     justifyContent: 'center',
                     position: 'fixed',
-                    top: 0, // Se asegura que esté en la parte superior de la pantalla
+                    top: 0,
                     bottom: 'auto',
                 }
             }}
