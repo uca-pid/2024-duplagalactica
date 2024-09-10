@@ -30,10 +30,10 @@ export default function ResetPassword() {
         <div className='App'>
             <LeftBar value={'profile'}/>
             <div className='reset-password-container'>
-                <h2>Recuperar cuenta</h2>
+                <h2 style={{color:'#14213D'}}>Recuperar cuenta</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="input-container">
-                        <label htmlFor="email">Email:</label>
+                        <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
                         <input 
                             type="email" 
                             id="email" 

@@ -67,47 +67,52 @@ export default function Main_Page() {
     try {
       const data = await getClasses();
       setClasses(data);
-
+    
       const calendarEvents = [];
-
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
       data.forEach(clase => {
         const startDate = new Date(clase.date);
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
-
-        const adjustedStartDate = new Date(startDate.toLocaleString("en-US", { timeZone: "UTC" }));
-        const adjustedEndDate = new Date(endDate.toLocaleString("en-US", { timeZone: "UTC" }));
-
-        if (clase.permanent==='Si') {
+        const dayOfWeek = startDate.getDay(); 
+        let nextStartDate = new Date(today);
+        let daysUntilNextClass = (dayOfWeek - today.getDay() + 7) % 7;
+        if (daysUntilNextClass === 0 && today > startDate) {
+          daysUntilNextClass = 7; 
+        }
+        nextStartDate.setDate(today.getDate() + daysUntilNextClass);
+        nextStartDate.setHours(startDate.getHours(), startDate.getMinutes(), startDate.getSeconds());
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); 
+        let nextEndDate = new Date(nextStartDate.getTime() + (endDate.getTime() - startDate.getTime()));
+        if (clase.permanent === "Si") {
           for (let i = 0; i < 4; i++) {
-            const weeklyStartDate = new Date(adjustedStartDate);
-            weeklyStartDate.setDate(adjustedStartDate.getDate() + i * 7);
-            const weeklyEndDate = new Date(adjustedEndDate);
-            weeklyEndDate.setDate(adjustedEndDate.getDate() + i * 7);
-
             calendarEvents.push({
               title: clase.name,
-              start: weeklyStartDate,
-              end: weeklyEndDate,
+              start: new Date(nextStartDate),
+              end: new Date(nextEndDate),
               allDay: false,
               ...clase,
             });
+            nextStartDate.setDate(nextStartDate.getDate() + 7);
+            nextEndDate.setDate(nextEndDate.getDate() + 7);
           }
         } else {
           calendarEvents.push({
             title: clase.name,
-            start: adjustedStartDate,
-            end: adjustedEndDate,
+            start: new Date(nextStartDate),
+            end: new Date(nextEndDate),
             allDay: false,
             ...clase,
           });
         }
       });
-
+  
       setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
+  
+  
 
   useEffect(() => {
     fetchClasses();
