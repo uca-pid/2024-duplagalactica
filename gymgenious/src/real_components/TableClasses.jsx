@@ -52,12 +52,12 @@ function EnhancedTable({ rows }) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2, backgroundColor: '#E5E5E5'  }}>
-        <TableContainer sx={{ maxHeight: 440}}>
-          <Table sx={{ width: '100%' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
+      <Paper sx={{ width: '100%', mb: 2, backgroundColor: '#E5E5E5' }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
             <TableHead>
-              <TableRow >
-                <TableCell>
+              <TableRow sx={{ borderBottom: '1px solid #ccc' }}>
+                <TableCell sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                   <TableSortLabel
                     active={orderBy === 'name'}
                     direction={orderBy === 'name' ? order : 'asc'}
@@ -71,7 +71,7 @@ function EnhancedTable({ rows }) {
                     ) : null}
                   </TableSortLabel>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                   <TableSortLabel
                     active={orderBy === 'hour'}
                     direction={orderBy === 'hour' ? order : 'asc'}
@@ -85,7 +85,7 @@ function EnhancedTable({ rows }) {
                     ) : null}
                   </TableSortLabel>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                   <TableSortLabel
                     active={orderBy === 'date'}
                     direction={orderBy === 'date' ? order : 'asc'}
@@ -99,7 +99,7 @@ function EnhancedTable({ rows }) {
                     ) : null}
                   </TableSortLabel>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                   <TableSortLabel
                     active={orderBy === 'permanent'}
                     direction={orderBy === 'permanent' ? order : 'asc'}
@@ -116,14 +116,14 @@ function EnhancedTable({ rows }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {visibleRows.map((row, index) => (
-                <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer' }}>
-                  <TableCell component="th" scope="row">
+              {visibleRows.map((row) => (
+                <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                  <TableCell component="th" scope="row" sx={{ border: '1px solid #ccc' }}>
                     {row.name}
                   </TableCell>
-                  <TableCell align="right">{row.hour}</TableCell>
-                  <TableCell align="right">{new Date(row.date).toLocaleDateString()}</TableCell>
-                  <TableCell align="right">{row.permanent ? 'Sí' : 'No'}</TableCell>
+                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
+                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.date).toLocaleDateString()}</TableCell>
+                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent==='Si' ? 'Sí' : 'No'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -141,6 +141,7 @@ function EnhancedTable({ rows }) {
       </Paper>
     </Box>
   );
+  
 }
 
 EnhancedTable.propTypes = {

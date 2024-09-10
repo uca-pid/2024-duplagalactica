@@ -32,7 +32,7 @@ const Calendar = ({ events, onSelectEvent }) => {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: '100%', color:'white', width: '100%' }}
+        style={{ height: '100%', color:'white' }}
         views={['month', 'day']}
         onSelectEvent={onSelectEvent}
         eventPropGetter={eventStyleGetter}
@@ -77,7 +77,7 @@ export default function Main_Page() {
         const adjustedStartDate = new Date(startDate.toLocaleString("en-US", { timeZone: "UTC" }));
         const adjustedEndDate = new Date(endDate.toLocaleString("en-US", { timeZone: "UTC" }));
 
-        if (clase.permanent=='Si') {
+        if (clase.permanent==='Si') {
           for (let i = 0; i < 4; i++) {
             const weeklyStartDate = new Date(adjustedStartDate);
             weeklyStartDate.setDate(adjustedStartDate.getDate() + i * 7);
