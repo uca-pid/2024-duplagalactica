@@ -1,11 +1,14 @@
-import { getClasses } from '../firestoreService'; 
+import {getClasses } from '../../firestoreService'; 
 
 
-jest.mock('../firestoreService', () => ({
-  getClasses: jest.fn()
+jest.mock('../../firestoreService', () => ({
+  getClasses: jest.fn(),
 }));
 
 describe('getClasses', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   it('should return a list of classes when called', async () => {
     const mockClasses = [
       { name: 'Math 101', date: '2024-09-15T10:00:00Z', permanent: 'Si' },
