@@ -43,5 +43,4 @@ describe('getUser', () => {
     expect(result).toHaveProperty('mail', mockEmail);
     expect(result).toHaveProperty('name', null);
   });
-
 });
