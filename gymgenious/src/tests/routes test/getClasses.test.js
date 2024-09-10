@@ -57,6 +57,7 @@ describe('getClasses', () => {
     expect(result).toHaveLength(2);
   });
 
+  
   it('should handle classes with unexpected permanent format', async () => {
     const mockClasses = [
       { name: '', date: '2024-09-16T11:00:00Z', permanent: '' },

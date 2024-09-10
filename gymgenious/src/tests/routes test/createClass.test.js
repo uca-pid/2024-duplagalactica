@@ -21,4 +21,11 @@ describe('createClass', () => {
       expect(createClass).toHaveBeenCalledWith(mockClassData);
       expect(createClass).toHaveBeenCalledTimes(1);
     });
+
+    it('should handle errors', async () => {
+        const mockClassData = { name: 'Math 101', date: '2024-09-10', permanent: 'No' };
+        const errorMessage = 'No se pudo crear la clase';
+        createClass.mockRejectedValue(new Error(errorMessage));
+        await expect(createClass(mockClassData)).rejects.toThrow(errorMessage);
+    });
 });
