@@ -25,4 +25,11 @@ describe('getClasses', () => {
     expect(result).toEqual([]);
     expect(result).toHaveLength(0);
   });
+
+  it('should handle errors thrown by the API', async () => {
+    const errorMessage = 'No se pudo crear la clase';
+    getClasses.mockRejectedValue(new Error(errorMessage));
+    await expect(getClasses()).rejects.toThrow(errorMessage);
+  });
+  
 });
