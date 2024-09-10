@@ -2,11 +2,11 @@ import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createClass } from '../firestoreService'; 
-import LeftBar from '../real_components/LaftBarMaterial.js';
+import LeftBar from '../real_components/LaftBarMaterial.jsx';
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
-  const [permanent, setPermanent] = useState('');
+  const [permanent, setPermanent] = useState();
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
   const navigate = useNavigate();
@@ -80,7 +80,7 @@ export default function CreateClass() {
                 onChange={(e) => setPermanent(e.target.value)} 
               >
                 <option value="" >Seleccionar</option>
-                <option value="Sí">Sí</option>
+                <option value="Si">Sí</option>
                 <option value="No">No</option>
               </select>
             </div>

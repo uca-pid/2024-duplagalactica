@@ -3,9 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import LeftBar from '../real_components/LaftBarMaterial.js';
+import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getClasses } from '../firestoreService';
-import EnhancedTable from '../real_components/TableClasses.js';
+import EnhancedTable from '../real_components/TableClasses.jsx';
 
 const localizer = momentLocalizer(moment);
 
@@ -32,7 +32,7 @@ const Calendar = ({ events, onSelectEvent }) => {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: '100%',color:'white'}}
+        style={{ height: '100%', color:'white' }}
         views={['month', 'day']}
         onSelectEvent={onSelectEvent}
         eventPropGetter={eventStyleGetter}
@@ -44,7 +44,7 @@ const Calendar = ({ events, onSelectEvent }) => {
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
   const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null); // Para manejar el evento seleccionado
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [showCalendar, setShowCalendar] = useState(true);
   const [leftBarOption, setLeftBarOption] = React.useState('');
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ export default function Main_Page() {
         const adjustedStartDate = new Date(startDate.toLocaleString("en-US", { timeZone: "UTC" }));
         const adjustedEndDate = new Date(endDate.toLocaleString("en-US", { timeZone: "UTC" }));
 
-        if (clase.permanent) {
+        if (clase.permanent==='Si') {
           for (let i = 0; i < 4; i++) {
             const weeklyStartDate = new Date(adjustedStartDate);
             weeklyStartDate.setDate(adjustedStartDate.getDate() + i * 7);
@@ -155,7 +155,7 @@ export default function Main_Page() {
             <p><strong>Nombre:</strong> {selectedEvent.name}</p>
             <p><strong>Fecha:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
             <p><strong>Hora:</strong> {new Date(selectedEvent.start).toLocaleTimeString()}</p>
-            <p><strong>Todas las semanas:</strong> {selectedEvent.permanent ? 'Sí' : 'No'}</p>
+            <p><strong>Todas las semanas:</strong> {selectedEvent.permanent==='Si' ? 'Sí' : 'No'}</p>
             <button onClick={handleCloseModal}>Cerrar</button>
           </div>
         </div>
