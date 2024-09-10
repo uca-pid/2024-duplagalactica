@@ -17,5 +17,10 @@ describe('createUser', () => {
   });
 
 
-  
+  it('should throw an error when createUser fails', async () => {
+    const mockUser = { name: 'Test User', email: 'test@example.com' };
+    const errorMessage = 'No se pudo crear el usuario';
+    createUser.mockRejectedValue(new Error(errorMessage));
+    await expect(createUser(mockUser)).rejects.toThrow('No se pudo crear el usuario');
+  });
 });
