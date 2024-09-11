@@ -1,4 +1,4 @@
-import { createUser } from '../../firestoreService';
+import { createUser } from '../../routes/users';
 
 jest.mock('../../firestoreService', () => ({
     createUser: jest.fn()

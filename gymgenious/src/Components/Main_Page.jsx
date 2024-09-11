@@ -4,7 +4,7 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
-import { getClasses } from '../firestoreService';
+import { getClasses } from '../routes/classes.js';
 import EnhancedTable from '../real_components/TableClasses.jsx';
 
 const localizer = momentLocalizer(moment);
@@ -72,7 +72,7 @@ export default function Main_Page() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       data.forEach(clase => {
-        const startDate = new Date(clase.date);
+        const startDate = new Date(clase.dateInicio);
         const CorrectStarDate = new Date(startDate.getTime() + 60 *3* 60 * 1000);
         const dayOfWeek = CorrectStarDate.getDay(); 
         let nextStartDate = new Date(today);
@@ -82,8 +82,9 @@ export default function Main_Page() {
         }
         nextStartDate.setDate(today.getDate() + daysUntilNextClass);
         nextStartDate.setHours(CorrectStarDate.getHours(), CorrectStarDate.getMinutes(), CorrectStarDate.getSeconds());
-        const endDate = new Date(CorrectStarDate.getTime() + 60 * 60 * 1000); 
-        let nextEndDate = new Date(nextStartDate.getTime() + (endDate.getTime() - CorrectStarDate.getTime()));
+        const endDate = new Date(clase.dateFin); 
+        const CorrectEndDate = new Date(endDate.getTime()+60*3*60*1000);
+        let nextEndDate = new Date(nextStartDate.getTime() + (CorrectEndDate.getTime() - CorrectStarDate.getTime()));
         if (clase.permanent === "Si") {
           for (let i = 0; i < 4; i++) {
             calendarEvents.push({
@@ -100,7 +101,7 @@ export default function Main_Page() {
           calendarEvents.push({
             title: clase.name,
             start: new Date(CorrectStarDate),
-            end: new Date(endDate),
+            end: new Date(CorrectEndDate),
             allDay: false,
             ...clase,
           });

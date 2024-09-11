@@ -1,4 +1,4 @@
-import {getClasses } from '../../firestoreService'; 
+import {getClasses } from '../../routes/classes'; 
 
 
 jest.mock('../../firestoreService', () => ({

@@ -1,4 +1,4 @@
-import { getUniqueUserByEmail } from '../../firestoreService';
+import { getUniqueUserByEmail } from '../../routes/users';
 
 jest.mock('../../firestoreService', () => ({
     getUniqueUserByEmail: jest.fn(),
