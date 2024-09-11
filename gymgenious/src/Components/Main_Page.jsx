@@ -73,16 +73,17 @@ export default function Main_Page() {
       today.setHours(0, 0, 0, 0);
       data.forEach(clase => {
         const startDate = new Date(clase.date);
-        const dayOfWeek = startDate.getDay(); 
+        const CorrectStarDate = new Date(startDate.getTime() + 60 *3* 60 * 1000);
+        const dayOfWeek = CorrectStarDate.getDay(); 
         let nextStartDate = new Date(today);
         let daysUntilNextClass = (dayOfWeek - today.getDay() + 7) % 7;
-        if (daysUntilNextClass === 0 && today > startDate) {
+        if (daysUntilNextClass === 0 && today > CorrectStarDate) {
           daysUntilNextClass = 7; 
         }
         nextStartDate.setDate(today.getDate() + daysUntilNextClass);
-        nextStartDate.setHours(startDate.getHours(), startDate.getMinutes(), startDate.getSeconds());
-        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); 
-        let nextEndDate = new Date(nextStartDate.getTime() + (endDate.getTime() - startDate.getTime()));
+        nextStartDate.setHours(CorrectStarDate.getHours(), CorrectStarDate.getMinutes(), CorrectStarDate.getSeconds());
+        const endDate = new Date(CorrectStarDate.getTime() + 60 * 60 * 1000); 
+        let nextEndDate = new Date(nextStartDate.getTime() + (endDate.getTime() - CorrectStarDate.getTime()));
         if (clase.permanent === "Si") {
           for (let i = 0; i < 4; i++) {
             calendarEvents.push({
@@ -98,7 +99,7 @@ export default function Main_Page() {
         } else {
           calendarEvents.push({
             title: clase.name,
-            start: new Date(startDate),
+            start: new Date(CorrectStarDate),
             end: new Date(endDate),
             allDay: false,
             ...clase,
