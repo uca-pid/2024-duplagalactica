@@ -40,34 +40,36 @@ export default function ChangePassword() {
     };
     return (
     <div className='App'>
-        <LeftBar/>
-        <div className='login-container'>
+        <LeftBar value={'profile'}/>
+        <div className='new-password-container'>
+          <div className='new-password-content'>
             <h2>Nueva contraseña</h2>
             <form onSubmit={handleSubmit}>
-                <div className="input-container">
-                    <label htmlFor="password">Contraseña:</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                    />
-                </div>
-                <div className="input-container">
-                    <label htmlFor="password">Confirmar contraseña:</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        value={passwordAgain} 
-                        onChange={(e) => setPasswordAgain(e.target.value)} 
-                    />
-                </div>
-                <button type="submit" className='button_create_account'>
-                    Confirmar nueva contraseña
-                </button>
+              <div className="input-container">
+                  <label htmlFor="password">Contraseña:</label>
+                  <input 
+                      type="password" 
+                      id="password" 
+                      name="password" 
+                      value={password} 
+                      onChange={(e) => setPassword(e.target.value)} 
+                  />
+              </div>
+              <div className="input-container">
+                  <label htmlFor="password">Confirmar contraseña:</label>
+                  <input 
+                      type="password" 
+                      id="password" 
+                      name="password" 
+                      value={passwordAgain} 
+                      onChange={(e) => setPasswordAgain(e.target.value)} 
+                  />
+              </div>
+              <button type="submit" className='button_create_account'>
+                  Confirmar nueva contraseña
+              </button>
             </form>
+          </div>
         </div>
     </div>
     );
