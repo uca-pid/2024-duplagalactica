@@ -1,11 +1,12 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createClass } from '../firestoreService'; 
+import { createClass } from '../routes/classes.js'; 
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
+  const [hourFin, setHourFin] = useState('');
   const [permanent, setPermanent] = useState();
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
@@ -19,15 +20,16 @@ export default function CreateClass() {
 
   const handleCreateClass = async () => {
     try {
-      const isoDateString = `${date}T${hour}:00Z`;
+      const isoDateStringInicio = `${date}T${hour}:00Z`;
+      const isoDateStringFin= `${date}T${hourFin}:00Z`;
       const newClass = {
         name: name,
-        date: isoDateString,
+        dateInicio: isoDateStringInicio,
+        dateFin: isoDateStringFin, 
         hour: hour,
         day: day(date),
         permanent: permanent,
       };
-      console.log(isoDateString)
       await createClass(newClass); 
       navigate('/', { state: { message: 'block' } }); 
       alert("¡Clase creada exitosamente!");
@@ -51,13 +53,23 @@ export default function CreateClass() {
           <form onSubmit={handleSubmit}>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#14213D'}}>Hora:</label>
+                <label htmlFor="hour" style={{color:'#14213D'}}>Hora inicio:</label>
                 <input 
                   type="time" 
                   id="hour" 
                   name="hour" 
                   value={hour} 
                   onChange={(e) => setHour(e.target.value)} 
+                />
+              </div>
+              <div className="input-small-container">
+                <label htmlFor="hour" style={{color:'#14213D'}}>Hora fin:</label>
+                <input 
+                  type="time" 
+                  id="hourFin" 
+                  name="hourFin" 
+                  value={hourFin} 
+                  onChange={(e) => setHourFin(e.target.value)} 
                 />
               </div>
               <div className="input-small-container">

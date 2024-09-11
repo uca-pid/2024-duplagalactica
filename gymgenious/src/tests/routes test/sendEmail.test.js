@@ -1,4 +1,4 @@
-import { sendEmail } from '../../firestoreService';
+import { sendEmail } from '../../routes/users';
 
 jest.mock('../../firestoreService', () => ({
     sendEmail: jest.fn()

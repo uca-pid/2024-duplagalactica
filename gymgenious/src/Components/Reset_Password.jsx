@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { useNavigate } from 'react-router-dom';
 import { getAuth,sendPasswordResetEmail } from 'firebase/auth';
-import { getUniqueUserByEmail } from '../firestoreService'; 
+import { getUniqueUserByEmail } from '../routes/users.js'; 
 
 export default function ResetPassword() {
     const [email, setEmail] = useState('');

@@ -87,12 +87,12 @@ function EnhancedTable({ rows }) {
                 </TableCell>
                 <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                   <TableSortLabel
-                    active={orderBy === 'date'}
-                    direction={orderBy === 'date' ? order : 'asc'}
-                    onClick={(event) => handleRequestSort(event, 'date')}
+                    active={orderBy === 'dateInicio'}
+                    direction={orderBy === 'dateInicio' ? order : 'asc'}
+                    onClick={(event) => handleRequestSort(event, 'dateInicio')}
                   >
                     Fecha
-                    {orderBy === 'date' ? (
+                    {orderBy === 'dateInicio' ? (
                       <Box component="span" sx={visuallyHidden}>
                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                       </Box>
@@ -122,7 +122,7 @@ function EnhancedTable({ rows }) {
                     {row.name}
                   </TableCell>
                   <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
-                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.date).toLocaleDateString()}</TableCell>
+                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
                   <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent==='Si' ? 'Sí' : 'No'}</TableCell>
                 </TableRow>
               ))}
