@@ -81,6 +81,7 @@
     left: 1%;
     top: 6.5%;
     position: absolute;
+    padding: 1%;
   }
 }
 
@@ -139,12 +140,33 @@
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
-.campo{
-  background-color: red;
+
+.calendar-content {
+  color: white;
 }
+
+@media (max-width: 768px) {
+  .Calendar-Container {
+    margin-top: 3%;
+    padding: 0;
+    height: 100%;
+  }
+  .rbc-calendar{
+    font-size: 75%;
+  }
+}
+
+@media (max-height: 400) {
+}
+
+
 .Calendar-Grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+}
+
+.rbc-day-slot.rbc-time-column.rbc-now.rbc-today {
+  background-color: #114174;
 }
 
 .Calendar-Grid-Header {
@@ -161,14 +183,6 @@
 
 .Calendar-Day.filled {
   background-color: #FCA311;
-}
-
-@media screen and (max-width: 768px) {
-  .Calendar-Container {
-    margin-top: 3%;
-    padding: 0;
-    height: 100%;
-  }
 }
 
 table {

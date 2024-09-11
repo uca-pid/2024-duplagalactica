@@ -32,7 +32,7 @@ const Calendar = ({ events, onSelectEvent }) => {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: '100%', color:'white' }}
+        className='calendar-content'
         views={['month', 'day']}
         onSelectEvent={onSelectEvent}
         eventPropGetter={eventStyleGetter}
@@ -159,7 +159,7 @@ export default function Main_Page() {
             <h2>Detalles de la Clase</h2>
             <p><strong>Nombre:</strong> {selectedEvent.name}</p>
             <p><strong>Fecha:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
-            <p><strong>Hora:</strong> {new Date(selectedEvent.start).toLocaleTimeString()}</p>
+            <p><strong>Hora:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
             <p><strong>Todas las semanas:</strong> {selectedEvent.permanent==='Si' ? 'Sí' : 'No'}</p>
             <button onClick={handleCloseModal}>Cerrar</button>
           </div>
