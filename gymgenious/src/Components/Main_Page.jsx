@@ -19,7 +19,7 @@ const Calendar = ({ events, onSelectEvent }) => {
       color: 'white',
       display: 'block',
       padding: '5px',
-      border: 'none'
+      border: 'none',
     };
     return {
       style: style

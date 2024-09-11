@@ -70,7 +70,6 @@
   justify-content: center;
   width: calc(100% - 8vw); 
   height: 100vh;
-  padding: 1rem;
   background-color: #14213D;
   box-sizing: border-box;
 }
@@ -78,9 +77,9 @@
 @media screen and (max-width: 765px) {
   .WebApp-Body {
     width: 98%;
-    height: 90%;
+    height: 93%;
     left: 1%;
-    top: 5%;
+    top: 6.5%;
     position: absolute;
   }
 }
@@ -140,7 +139,9 @@
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
-
+.campo{
+  background-color: red;
+}
 .Calendar-Grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -160,6 +161,14 @@
 
 .Calendar-Day.filled {
   background-color: #FCA311;
+}
+
+@media screen and (max-width: 768px) {
+  .Calendar-Container {
+    margin-top: 3%;
+    padding: 0;
+    height: 100%;
+  }
 }
 
 table {
