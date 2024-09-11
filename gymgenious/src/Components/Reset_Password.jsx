@@ -30,28 +30,30 @@ export default function ResetPassword() {
         <div className='App'>
             <LeftBar value={'profile'}/>
             <div className='reset-password-container'>
-                <h2 style={{color:'#14213D'}}>Recuperar cuenta</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-container">
-                        <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            value={email} 
-                            onChange={(e) => setEmail(e.target.value)} 
-                            required
-                        />
-                    </div>
-                    <button type="submit" className='button_create_account'>
-                        Enviar mail de recuperación
-                    </button>
-                    {showNotMatchEmail ? (
-                        <div>No existe el correo electronico</div>
-                    ):(
-                        <div></div>
-                    )}
-                </form>
+                <div className='reset-password-content'>
+                    <h2 style={{color:'#14213D'}}>Recuperar cuenta</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="input-container">
+                            <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                value={email} 
+                                onChange={(e) => setEmail(e.target.value)} 
+                                required
+                            />
+                        </div>
+                        <button type="submit" className='button_create_account'>
+                            Enviar mail de recuperación
+                        </button>
+                        {showNotMatchEmail ? (
+                            <div>No existe el correo electronico</div>
+                        ):(
+                            <div></div>
+                        )}
+                    </form>
+                </div>
             </div>
         </div>
     );

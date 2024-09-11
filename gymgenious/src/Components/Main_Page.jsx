@@ -19,7 +19,7 @@ const Calendar = ({ events, onSelectEvent }) => {
       color: 'white',
       display: 'block',
       padding: '5px',
-      border: 'none'
+      border: 'none',
     };
     return {
       style: style
@@ -98,8 +98,8 @@ export default function Main_Page() {
         } else {
           calendarEvents.push({
             title: clase.name,
-            start: new Date(nextStartDate),
-            end: new Date(nextEndDate),
+            start: new Date(startDate),
+            end: new Date(endDate),
             allDay: false,
             ...clase,
           });

@@ -34,34 +34,38 @@ export default function Login() {
     <div className='App'>
       <LeftBar value={'profile'}/>
       <div className='login-container'>
-        <h2 style={{color:'#14213D'}}>Login</h2>
-        <form onSubmit={loginUser}>
-          <div className="input-container">
-            <label htmlFor="username" style={{color:'#14213D'}}>Email:</label>
-            <input 
-              type="text" 
-              id="username" 
-              name="username" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-            />
+        <div className='login-content'>
+          <h2 style={{color:'#14213D'}}>Login</h2>
+          <form onSubmit={loginUser}>
+            <div className="input-container">
+              <label htmlFor="username" style={{color:'#14213D'}}>Email:</label>
+              <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                value={username} 
+                onChange={(e) => setUsername(e.target.value)} 
+              />
+            </div>
+            <div className="input-container">
+              <label htmlFor="password" style={{color:'#14213D'}}>Password:</label>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+              />
+            </div>
+            <button type="submit" className='button_login'>
+              Ingresar
+            </button>
+          </form>
+          <div className='login-options'>
+            <button className='login-options-text' onClick={goToResetPassword}>Recuperar contraseña</button>
+            <button className='login-options-text' onClick={goToCreateAccount}> Crear cuenta</button>     
           </div>
-          <div className="input-container">
-            <label htmlFor="password" style={{color:'#14213D'}}>Password:</label>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-            />
-          </div>
-          <button type="submit" className='button_login'>
-            Ingresar
-          </button>
-        </form>
-        <div className='login-options-reset' onClick={goToResetPassword}>Reset Password</div>
-        <div className='login-options-create' onClick={goToCreateAccount}>Create Account</div>
+        </div>
       </div>
     </div>
   );

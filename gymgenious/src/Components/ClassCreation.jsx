@@ -45,60 +45,62 @@ export default function CreateClass() {
   return (
     <div className='App'>
       <LeftBar value={'add'}/>
-      <div className='login-container'>
-        <h2 style={{color:'#14213D'}}>Crear clase</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-            <div className="input-small-container">
-              <label htmlFor="hour" style={{color:'#14213D'}}>Hora:</label>
-              <input 
-                type="time" 
-                id="hour" 
-                name="hour" 
-                value={hour} 
-                onChange={(e) => setHour(e.target.value)} 
-              />
+      <div className='class-creation-container'>
+        <div className='class-creation-content'>
+          <h2 style={{color:'#14213D'}}>Crear clase</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                <label htmlFor="hour" style={{color:'#14213D'}}>Hora:</label>
+                <input 
+                  type="time" 
+                  id="hour" 
+                  name="hour" 
+                  value={hour} 
+                  onChange={(e) => setHour(e.target.value)} 
+                />
+              </div>
+              <div className="input-small-container">
+                <label htmlFor="name" style={{color:'#14213D'}}>Nombre:</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  name="name" 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} 
+                />
+              </div>
             </div>
-            <div className="input-small-container">
-              <label htmlFor="name" style={{color:'#14213D'}}>Nombre:</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
-              />
+            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container" style={{width:"100%"}}>
+                <label htmlFor="permanent" style={{color:'#14213D'}}>Permanente:</label>
+                <select 
+                  id="permanent" 
+                  name="permanent" 
+                  value={permanent} 
+                  onChange={(e) => setPermanent(e.target.value)} 
+                >
+                  <option value="" >Seleccionar</option>
+                  <option value="Si">Sí</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+              <div className="input-small-container" style={{ flex: 3, textAlign: 'right' }}>
+                <label htmlFor="date" style={{color:'#14213D'}}>Fecha:</label>
+                <input 
+                  type="date" 
+                  id="date" 
+                  name="date" 
+                  value={date} 
+                  onChange={(e) => setDate(e.target.value)} 
+                />
+              </div>
             </div>
-          </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-            <div className="input-small-container" style={{width:"100%"}}>
-              <label htmlFor="permanent" style={{color:'#14213D'}}>Permanente:</label>
-              <select 
-                id="permanent" 
-                name="permanent" 
-                value={permanent} 
-                onChange={(e) => setPermanent(e.target.value)} 
-              >
-                <option value="" >Seleccionar</option>
-                <option value="Si">Sí</option>
-                <option value="No">No</option>
-              </select>
-            </div>
-            <div className="input-small-container" style={{ flex: 3, textAlign: 'right' }}>
-              <label htmlFor="date" style={{color:'#14213D'}}>Fecha:</label>
-              <input 
-                type="date" 
-                id="date" 
-                name="date" 
-                value={date} 
-                onChange={(e) => setDate(e.target.value)} 
-              />
-            </div>
-          </div>
-          <button type="submit" className='button_login'>
-            Crear clase
-          </button>
-        </form>
+            <button type="submit" className='button_login'>
+              Crear clase
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
