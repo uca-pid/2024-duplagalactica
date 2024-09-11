@@ -87,8 +87,12 @@ export default function CreateAccount() {
                 navigate('/'); 
                 alert("¡Cuenta creada exitosamente!");
             } catch (error) {
-                console.error("Error al crear la cuenta:", error);
-                alert("Error al crear la cuenta");
+                if (error.code === 'auth/email-already-in-use') {
+                    alert("Ya existe una cuenta con este email.");
+                } else {
+                    console.error("Error al crear la cuenta:", error);
+                    alert("Error al crear la cuenta");
+                }
             }
         }
     };
