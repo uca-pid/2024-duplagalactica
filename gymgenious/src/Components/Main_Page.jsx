@@ -32,7 +32,7 @@ const Calendar = ({ events, onSelectEvent }) => {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: '100%', color:'white' }}
+        className='calendar-content'
         views={['month', 'day']}
         onSelectEvent={onSelectEvent}
         eventPropGetter={eventStyleGetter}
