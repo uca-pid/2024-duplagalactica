@@ -101,8 +101,8 @@
 
 .Table-Container {
   display: flex;
+  flex-direction: column;
   flex:1;
-  overflow-y: auto; 
   box-sizing: border-box;
   margin-bottom: 5vh;
   margin-left: 5vh;
@@ -155,10 +155,6 @@
     font-size: 75%;
   }
 }
-
-@media (max-height: 400) {
-}
-
 
 .Calendar-Grid {
   display: grid;
@@ -385,6 +381,12 @@ iframe {
   font-size: 14px;
 }
 
+.input-small-container input,
+.input-small-container select {
+  height: 2.5rem;
+  font-size: 14px;
+}
+
 .input-small-container label {
   display: block;
   margin-bottom: 5px;
@@ -487,6 +489,10 @@ iframe {
 
 .reset-password-content {
   padding: 20px;
+}
+
+.rbc-events-container{
+  width: 100%;
 }
 
 .rbc-day-bg {
@@ -643,7 +649,7 @@ iframe {
 }
   
 .errorsCreateAccountContentModal {
-  background-color: #a18fbe;
+  background-color: #E5E5E5;
   border-radius: 8px;
   width: 60%;
   height: auto;

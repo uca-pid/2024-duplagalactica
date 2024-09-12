@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,11 +13,20 @@ import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 
 function EnhancedTable({ rows }) {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('name');
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('name');
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(false);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const isSmallScreen = useMediaQuery('(max-width:500px)');
+
+  useEffect(() => {
+    if(!isSmallScreen){
+      setSelectedEvent(null);
+    }
+  }, [isSmallScreen]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -32,6 +41,15 @@ function EnhancedTable({ rows }) {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleSelectEvent = (event) => {
+    if(isSmallScreen){
+      setSelectedEvent(event);
+    }
+  };
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
   };
 
   const visibleRows = React.useMemo(
@@ -51,12 +69,25 @@ function EnhancedTable({ rows }) {
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2, backgroundColor: '#E5E5E5' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
+    <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
+      <Paper 
+        sx={{ 
+          width: '100%', 
+          mb: 2, 
+          backgroundColor: '#E5E5E5',
+        }}
+      >
+        <TableContainer>
+          <Table 
+            sx={{
+              width: '100%',
+              borderCollapse: 'collapse',
+            }} 
+            aria-labelledby="tableTitle" 
+            size={dense ? 'small' : 'medium'}
+          >
             <TableHead>
-              <TableRow sx={{ borderBottom: '1px solid #ccc' }}>
+              <TableRow sx={{ borderBottom: '1px solid #ccc', height: '5vh',width:'5vh' }}>
                 <TableCell sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                   <TableSortLabel
                     active={orderBy === 'name'}
@@ -71,20 +102,22 @@ function EnhancedTable({ rows }) {
                     ) : null}
                   </TableSortLabel>
                 </TableCell>
-                <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
-                  <TableSortLabel
-                    active={orderBy === 'hour'}
-                    direction={orderBy === 'hour' ? order : 'asc'}
-                    onClick={(event) => handleRequestSort(event, 'hour')}
-                  >
-                    Hora
-                    {orderBy === 'hour' ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                      </Box>
-                    ) : null}
-                  </TableSortLabel>
-                </TableCell>
+                {!isSmallScreen && (
+                  <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'hour'}
+                      direction={orderBy === 'hour' ? order : 'asc'}
+                      onClick={(event) => handleRequestSort(event, 'hour')}
+                    >
+                      Hora
+                      {orderBy === 'hour' ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                )}
                 <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                   <TableSortLabel
                     active={orderBy === 'dateInicio'}
@@ -99,36 +132,53 @@ function EnhancedTable({ rows }) {
                     ) : null}
                   </TableSortLabel>
                 </TableCell>
-                <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
-                  <TableSortLabel
-                    active={orderBy === 'permanent'}
-                    direction={orderBy === 'permanent' ? order : 'asc'}
-                    onClick={(event) => handleRequestSort(event, 'permanent')}
-                  >
-                    Todas las semanas
-                    {orderBy === 'permanent' ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                      </Box>
-                    ) : null}
-                  </TableSortLabel>
-                </TableCell>
+                {!isSmallScreen && (
+                  <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'permanent'}
+                      direction={orderBy === 'permanent' ? order : 'asc'}
+                      onClick={(event) => handleRequestSort(event, 'permanent')}
+                    >
+                      Todas las semanas
+                      {orderBy === 'permanent' ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
               {visibleRows.map((row) => (
-                <TableRow hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
                   <TableCell component="th" scope="row" sx={{ border: '1px solid #ccc' }}>
                     {row.name}
                   </TableCell>
-                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
+                  {!isSmallScreen && (
+                    <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
+                  )}
                   <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
-                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent==='Si' ? 'Sí' : 'No'}</TableCell>
+                  {!isSmallScreen && (
+                    <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+        {isSmallScreen ? (
+          <TablePagination
+          rowsPerPageOptions={[10]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      ) : (
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -138,10 +188,24 @@ function EnhancedTable({ rows }) {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+      )}
+        
       </Paper>
+      {isSmallScreen && 
+        selectedEvent && (
+          <div className="Modal" onClick={handleCloseModal}>
+            <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+              <h2>Detalles de la Clase</h2>
+              <p><strong>Nombre:</strong> {selectedEvent.name}</p>
+              <p><strong>Fecha:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
+              <p><strong>Hora:</strong> {selectedEvent.hour}</p>
+              <p><strong>Todas las semanas:</strong> {selectedEvent.permanent==='Si' ? 'Sí' : 'No'}</p>
+              <button onClick={handleCloseModal}>Cerrar</button>
+            </div>
+          </div>
+        )}
     </Box>
   );
-  
 }
 
 EnhancedTable.propTypes = {
