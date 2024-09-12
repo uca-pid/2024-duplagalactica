@@ -140,6 +140,7 @@ export default function Main_Page() {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+    console.log(event)
   };
 
   const handleCloseModal = () => {
