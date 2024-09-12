@@ -21,12 +21,19 @@ function EnhancedTable({ rows }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const isSmallScreen = useMediaQuery('(max-width:500px)');
+  const isSmallScreen250 = useMediaQuery('(max-width:250px)');
 
   useEffect(() => {
     if(!isSmallScreen){
       setSelectedEvent(null);
     }
   }, [isSmallScreen]);
+
+  useEffect(() => {
+    if(!isSmallScreen250){
+      setSelectedEvent(null);
+    }
+  }, [isSmallScreen250]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -118,20 +125,22 @@ function EnhancedTable({ rows }) {
                     </TableSortLabel>
                   </TableCell>
                 )}
-                <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
-                  <TableSortLabel
-                    active={orderBy === 'dateInicio'}
-                    direction={orderBy === 'dateInicio' ? order : 'asc'}
-                    onClick={(event) => handleRequestSort(event, 'dateInicio')}
-                  >
-                    Fecha
-                    {orderBy === 'dateInicio' ? (
-                      <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                      </Box>
-                    ) : null}
-                  </TableSortLabel>
-                </TableCell>
+                {!isSmallScreen250 && (
+                  <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'dateInicio'}
+                      direction={orderBy === 'dateInicio' ? order : 'asc'}
+                      onClick={(event) => handleRequestSort(event, 'dateInicio')}
+                    >
+                      Fecha
+                      {orderBy === 'dateInicio' ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                )}
                 {!isSmallScreen && (
                   <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                     <TableSortLabel
@@ -159,7 +168,9 @@ function EnhancedTable({ rows }) {
                   {!isSmallScreen && (
                     <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
                   )}
-                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                  {!isSmallScreen250 && (
+                    <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                  )}
                   {!isSmallScreen && (
                     <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
                   )}
@@ -206,6 +217,8 @@ function EnhancedTable({ rows }) {
         )}
     </Box>
   );
+  
+  
 }
 
 EnhancedTable.propTypes = {

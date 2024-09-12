@@ -6,6 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getClasses } from '../routes/classes.js';
 import EnhancedTable from '../real_components/TableClasses.jsx';
+import { useMediaQuery } from '@mui/material';
 
 const localizer = momentLocalizer(moment);
 
@@ -66,7 +67,7 @@ export default function Main_Page() {
   const [showCalendar, setShowCalendar] = useState(true);
   const [leftBarOption, setLeftBarOption] = React.useState('');
   const navigate = useNavigate();
-
+  const isSmallScreen = useMediaQuery('(max-width:250px)');
   const location = useLocation();
   useEffect(() => {
     if (location.state?.message === 'block') {
@@ -147,7 +148,6 @@ export default function Main_Page() {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
-    console.log(event)
   };
 
   const handleCloseModal = () => {
@@ -157,29 +157,39 @@ export default function Main_Page() {
   return (
     <div className="App">
       <LeftBar value={leftBarOption}/>
-      <div className="Calendar-Button">
-        <button onClick={changeShowCalendar} className="Toggle-Button">
-          {showCalendar ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 9L12 15L18 9H6Z" fill="#E5E5E5"/>
-            </svg>
-          ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 6L15 12L9 18V6Z" fill="#E5E5E5"/>
-            </svg>
-          )}
-        </button>
-      </div>
+      {!isSmallScreen ? (
+  <>
+    <div className="Calendar-Button">
+      <button onClick={changeShowCalendar} className="Toggle-Button">
+        {showCalendar ? (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 9L12 15L18 9H6Z" fill="#E5E5E5" />
+          </svg>
+        ) : (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 6L15 12L9 18V6Z" fill="#E5E5E5" />
+          </svg>
+        )}
+      </button>
+    </div>
 
-      {showCalendar ? (
-        <div className="WebApp-Body">
-          <Calendar events={events} onSelectEvent={handleSelectEvent} />
-        </div>
-      ) : (
-        <div className="Table-Container">
-          <EnhancedTable rows={classes} />
-        </div>
-      )}
+    {showCalendar ? (
+      <div className="WebApp-Body">
+        <Calendar events={events} onSelectEvent={handleSelectEvent} />
+      </div>
+    ) : (
+      <div className="Table-Container">
+        <EnhancedTable rows={classes} />
+      </div>
+    )}
+  </>
+) : (
+  <div className="Table-Container">
+        <EnhancedTable rows={classes} />
+      </div>
+)}
+
+
 
       {selectedEvent && (
         <div className="Modal" onClick={handleCloseModal}>
