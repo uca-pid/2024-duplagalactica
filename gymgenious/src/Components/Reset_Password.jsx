@@ -48,7 +48,7 @@ export default function ResetPassword() {
                             Enviar mail de recuperación
                         </button>
                         {showNotMatchEmail ? (
-                            <div>No existe el correo electronico</div>
+                            <div style={{color:'red'}}>No existe el correo electronico</div>
                         ):(
                             <div></div>
                         )}

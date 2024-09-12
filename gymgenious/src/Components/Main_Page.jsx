@@ -36,6 +36,24 @@ const Calendar = ({ events, onSelectEvent }) => {
         views={['month', 'day']}
         onSelectEvent={onSelectEvent}
         eventPropGetter={eventStyleGetter}
+        formats={{
+          timeGutterFormat: (date, culture, localizer) =>
+            localizer.format(date, 'HH:mm', culture),
+          eventTimeRangeFormat: (date, culture, localizer) => {
+            const startTime = new Date(date.start).toLocaleTimeString('es-ES', {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          
+            const endTime = new Date(date.end).toLocaleTimeString('es-ES', {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          
+            return `${startTime} - ${endTime}`;
+          },
+          
+        }}
       />
     </div>
   );

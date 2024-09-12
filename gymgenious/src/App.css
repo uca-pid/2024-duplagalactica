@@ -101,8 +101,8 @@
 
 .Table-Container {
   display: flex;
+  flex-direction: column;
   flex:1;
-  overflow-y: auto; 
   box-sizing: border-box;
   margin-bottom: 5vh;
   margin-left: 5vh;
@@ -155,10 +155,6 @@
     font-size: 75%;
   }
 }
-
-@media (max-height: 400) {
-}
-
 
 .Calendar-Grid {
   display: grid;

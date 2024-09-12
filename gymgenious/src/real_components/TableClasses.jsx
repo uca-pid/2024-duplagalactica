@@ -51,12 +51,25 @@ function EnhancedTable({ rows }) {
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2, backgroundColor: '#E5E5E5' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
+    <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
+      <Paper 
+        sx={{ 
+          width: '100%', 
+          mb: 2, 
+          backgroundColor: '#E5E5E5',
+        }}
+      >
+        <TableContainer>
+          <Table 
+            sx={{
+              width: '100%',
+              borderCollapse: 'collapse',
+            }} 
+            aria-labelledby="tableTitle" 
+            size={dense ? 'small' : 'medium'}
+          >
             <TableHead>
-              <TableRow sx={{ borderBottom: '1px solid #ccc' }}>
+              <TableRow sx={{ borderBottom: '1px solid #ccc', height: '5vh',width:'5vh' }}>
                 <TableCell sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
                   <TableSortLabel
                     active={orderBy === 'name'}
@@ -123,7 +136,7 @@ function EnhancedTable({ rows }) {
                   </TableCell>
                   <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
                   <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
-                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent==='Si' ? 'Sí' : 'No'}</TableCell>
+                  <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -141,7 +154,6 @@ function EnhancedTable({ rows }) {
       </Paper>
     </Box>
   );
-  
 }
 
 EnhancedTable.propTypes = {
