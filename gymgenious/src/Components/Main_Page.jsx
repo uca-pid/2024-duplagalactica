@@ -85,25 +85,31 @@ export default function Main_Page() {
     try {
       const data = await getClasses();
       setClasses(data);
-    
+      
       const calendarEvents = [];
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+  
       data.forEach(clase => {
         const startDate = new Date(clase.dateInicio);
-        const CorrectStarDate = new Date(startDate.getTime() + 60 *3* 60 * 1000);
-        const dayOfWeek = CorrectStarDate.getDay(); 
-        let nextStartDate = new Date(today);
-        let daysUntilNextClass = (dayOfWeek - today.getDay() + 7) % 7;
-        if (daysUntilNextClass === 0 && today > CorrectStarDate) {
-          daysUntilNextClass = 7; 
-        }
-        nextStartDate.setDate(today.getDate() + daysUntilNextClass);
-        nextStartDate.setHours(CorrectStarDate.getHours(), CorrectStarDate.getMinutes(), CorrectStarDate.getSeconds());
-        const endDate = new Date(clase.dateFin); 
-        const CorrectEndDate = new Date(endDate.getTime()+60*3*60*1000);
-        let nextEndDate = new Date(nextStartDate.getTime() + (CorrectEndDate.getTime() - CorrectStarDate.getTime()));
+        const CorrectStarDate = new Date(startDate.getTime() + 60 * 3 * 60 * 1000); 
+        const endDate = new Date(clase.dateFin);
+        const CorrectEndDate = new Date(endDate.getTime() + 60 * 3 * 60 * 1000);
+  
         if (clase.permanent === "Si") {
+          let nextStartDate = new Date(CorrectStarDate);
+          let nextEndDate = new Date(CorrectEndDate);
+  
+          if (nextStartDate < today) {
+            const dayOfWeek = CorrectStarDate.getDay(); 
+            let daysUntilNextClass = (dayOfWeek - today.getDay() + 7) % 7;
+            if (daysUntilNextClass === 0 && today > CorrectStarDate) {
+              daysUntilNextClass = 7;
+            }
+            nextStartDate.setDate(today.getDate() + daysUntilNextClass);
+            nextEndDate = new Date(nextStartDate.getTime() + (CorrectEndDate.getTime() - CorrectStarDate.getTime()));
+          }
+  
           for (let i = 0; i < 4; i++) {
             calendarEvents.push({
               title: clase.name,
@@ -131,6 +137,7 @@ export default function Main_Page() {
       console.error("Error fetching classes:", error);
     }
   };
+  
   
   
 
