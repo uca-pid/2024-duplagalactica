@@ -522,6 +522,55 @@ iframe {
   color: #E5E5E5 !important; 
 }
 
+.logOutModalContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  z-index: 1000;
+}
+  
+.logOutModalContent {
+  background-color: #E5E5E5;
+  border-radius: 8px;
+  width: 60%;
+  height: 30%;
+  z-index: 1001;
+  color:rgb(216, 52, 52);
+  position: absolute;
+  top: 25%;
+  left: 22.5%;
+  align-items: center;
+  justify-content: center;
+}
+.logOutModalButton{
+  position: absolute;
+  width: auto;
+  left: 40%;
+  top: 40%;
+  background-color: red;
+  color: white;
+}
+
+@media (max-width: 765px) {
+  .logOutModalContent {
+    left: 5%;
+    width: 90%;
+    top: 25%;
+    
+    }
+  }
+
+.logOutModalContainer.closing {
+  opacity: 0;
+  visibility: hidden;
+}
 
 
 
