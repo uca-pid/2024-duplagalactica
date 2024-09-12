@@ -381,6 +381,12 @@ iframe {
   font-size: 14px;
 }
 
+.input-small-container input,
+.input-small-container select {
+  height: 2.5rem;
+  font-size: 14px;
+}
+
 .input-small-container label {
   display: block;
   margin-bottom: 5px;
@@ -483,6 +489,10 @@ iframe {
 
 .reset-password-content {
   padding: 20px;
+}
+
+.rbc-events-container{
+  width: 100%;
 }
 
 .rbc-day-bg {

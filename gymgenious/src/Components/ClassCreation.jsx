@@ -97,7 +97,7 @@ export default function CreateClass() {
                   <option value="No">No</option>
                 </select>
               </div>
-              <div className="input-small-container" style={{ flex: 3, textAlign: 'right' }}>
+              <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
                 <label htmlFor="date" style={{color:'#14213D'}}>Fecha:</label>
                 <input 
                   type="date" 
