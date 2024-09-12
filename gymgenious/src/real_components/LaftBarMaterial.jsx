@@ -62,6 +62,7 @@ export default function LeftBar({ value }) {
                     height: '7%',
                     flexDirection: 'row',
                     justifyContent: 'center',
+                    position:'absolute',
                     top: 0,
                     bottom: 'auto',
                 }
@@ -84,7 +85,7 @@ export default function LeftBar({ value }) {
             > {showBox && (
                 <> {value === 'add' ? (
                     <ExitToApp
-                        onClick={()=>setShowModal(true)}
+                        onClick={changeValue}
                         style={{ fontSize: '6vh', color: 'red', cursor: 'pointer' }}
                     />
                 ) : (
@@ -155,15 +156,6 @@ export default function LeftBar({ value }) {
                 )}
             </> ) : (null)}
             </Box>
-            {showModal && (
-                <div className="logOutModalContainer" onClick={handleCloseModal}>
-                    <div className="logOutModalContent" onClick={handleCloseModal}>
-                        <button className='logOutModalButton' onClick={changeValue}>
-                            Cerrar sesión
-                        </button>
-                    </div>
-                </div>
-            )}
         </Box>
     );
 }
