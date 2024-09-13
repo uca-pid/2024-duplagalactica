@@ -56,11 +56,11 @@ export default function CreateClass() {
       <LeftBar value={'add'}/>
       <div className='class-creation-container'>
         <div className='class-creation-content'>
-          <h2 style={{color:'#14213D'}}>Crear clase</h2>
+          <h2 style={{color:'#14213D'}}>Create class</h2>
           <form onSubmit={handleSubmit}>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#14213D'}}>Hora inicio:</label>
+                <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
                 <input 
                   type="time" 
                   id="hour" 
@@ -70,7 +70,7 @@ export default function CreateClass() {
                 />
               </div>
               <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#14213D'}}>Hora fin:</label>
+                <label htmlFor="hour" style={{color:'#14213D'}}>End time:</label>
                 <input 
                   type="time" 
                   id="hourFin" 
@@ -80,7 +80,7 @@ export default function CreateClass() {
                 />
               </div>
               <div className="input-small-container">
-                <label htmlFor="name" style={{color:'#14213D'}}>Nombre:</label>
+                <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
                 <input 
                   type="text" 
                   id="name" 
@@ -92,20 +92,20 @@ export default function CreateClass() {
             </div>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container" style={{width:"100%"}}>
-                <label htmlFor="permanent" style={{color:'#14213D'}}>Permanente:</label>
+                <label htmlFor="permanent" style={{color:'#14213D'}}>Permanent:</label>
                 <select 
                   id="permanent" 
                   name="permanent" 
                   value={permanent} 
                   onChange={(e) => setPermanent(e.target.value)} 
                 >
-                  <option value="" >Seleccionar</option>
-                  <option value="Si">Sí</option>
+                  <option value="" >Select</option>
+                  <option value="Si">Yes</option>
                   <option value="No">No</option>
                 </select>
               </div>
               <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                <label htmlFor="date" style={{color:'#14213D'}}>Fecha:</label>
+                <label htmlFor="date" style={{color:'#14213D'}}>Date:</label>
                 <input 
                   type="date" 
                   id="date" 
