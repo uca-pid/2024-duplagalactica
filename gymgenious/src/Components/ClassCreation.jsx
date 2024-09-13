@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createClass } from '../routes/classes.js'; 
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 
 export default function CreateClass() {
@@ -20,31 +19,42 @@ export default function CreateClass() {
 
   const handleCreateClass = async () => {
     try {
-      if(hourFin<=hour){
+      if (hourFin <= hour) {
         throw new Error('La hora de fin no puede ser menor a la de inicio');
       }
+  
       const isoDateStringInicio = `${date}T${hour}:00Z`;
-      const isoDateStringFin= `${date}T${hourFin}:00Z`;
+      const isoDateStringFin = `${date}T${hourFin}:00Z`;
+  
       const newClass = {
         name: name,
         dateInicio: isoDateStringInicio,
-        dateFin: isoDateStringFin, 
+        dateFin: isoDateStringFin,
         hour: hour,
         day: day(date),
         permanent: permanent,
       };
-      await createClass(newClass); 
-      navigate('/', { state: { message: 'block' } }); 
+  
+      const response = await fetch('http://localhost:3000/create_class', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newClass),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error al crear la clase');
+      }
+  
+      navigate('/', { state: { message: 'block' } });
       alert("¡Clase creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la clase:", error);
-      if(hourFin<=hour){
-        alert('La hora de fin no puede ser menor o igual a la de inicio');
-      } else {
-      alert("Error al crear la clase");
-     }
+      alert(error.message);
     }
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();

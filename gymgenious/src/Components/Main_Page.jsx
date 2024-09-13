@@ -4,7 +4,6 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
-import { getClasses } from '../routes/classes.js';
 import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
 
@@ -84,23 +83,28 @@ export default function Main_Page() {
 
   const fetchClasses = async () => {
     try {
-      const data = await getClasses();
+      const response = await fetch('http://127.0.0.1:5000/get_classes');
+      console.log("HOLA")
+      if (!response.ok) {
+        throw new Error('Error al obtener las clases: ' + response.statusText);
+      }
+      const data = await response.json();
+      console.log(data);
       setClasses(data);
-      
       const calendarEvents = [];
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-  
+    
       data.forEach(clase => {
         const startDate = new Date(clase.dateInicio);
         const CorrectStarDate = new Date(startDate.getTime() + 60 * 3 * 60 * 1000); 
         const endDate = new Date(clase.dateFin);
         const CorrectEndDate = new Date(endDate.getTime() + 60 * 3 * 60 * 1000);
-  
+    
         if (clase.permanent === "Si") {
           let nextStartDate = new Date(CorrectStarDate);
           let nextEndDate = new Date(CorrectEndDate);
-  
+    
           if (nextStartDate < today) {
             const dayOfWeek = CorrectStarDate.getDay(); 
             let daysUntilNextClass = (dayOfWeek - today.getDay() + 7) % 7;
@@ -110,7 +114,7 @@ export default function Main_Page() {
             nextStartDate.setDate(today.getDate() + daysUntilNextClass);
             nextEndDate = new Date(nextStartDate.getTime() + (CorrectEndDate.getTime() - CorrectStarDate.getTime()));
           }
-  
+    
           for (let i = 0; i < 4; i++) {
             calendarEvents.push({
               title: clase.name,
@@ -132,12 +136,13 @@ export default function Main_Page() {
           });
         }
       });
-  
+    
       setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
+  
   
   
   

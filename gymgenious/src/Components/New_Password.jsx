@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getAuth, confirmPasswordReset } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
 
 export default function ChangePassword() {
     const [password, setPassword] = useState('');

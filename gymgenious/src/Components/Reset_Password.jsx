@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { useNavigate } from 'react-router-dom';
 import { getAuth,sendPasswordResetEmail } from 'firebase/auth';
-import { getUniqueUserByEmail } from '../routes/users.js'; 
 
 export default function ResetPassword() {
     const [email, setEmail] = useState('');
@@ -14,7 +13,8 @@ export default function ResetPassword() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await getUniqueUserByEmail(email); 
+            const url = new URL('http://localhost:3000/get_unique_user_by_email');
+            url.searchParams.append('mail', email); 
             await sendPasswordResetEmail(auth, email); 
             alert('¡Correo electrónico enviado con éxito!');
             navigate('/'); 
