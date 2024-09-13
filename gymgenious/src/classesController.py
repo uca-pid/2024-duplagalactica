@@ -7,10 +7,15 @@ from classesRoutes import get_classes, create_class
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+
+
+
 @app.route('/get_classes', methods=['GET'])
 def get_classes_route():
     try:
+        print("toy aca")
         classes_list = get_classes()
+        print("toy aca 3")
         return jsonify(classes_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
