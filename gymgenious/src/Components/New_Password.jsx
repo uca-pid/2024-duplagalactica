@@ -30,22 +30,22 @@ export default function ChangePassword() {
       const samePasswords = password == passwordAgain;
 
       if (!isValidLength) {
-          errors.push('La contraseña debe tener más de 8 caracteres.');
+        errors.push('The password must be more than 8 characters.');
       } 
       if (!hasNumber) {
-          errors.push('La contraseña debe contener al menos 1 número.');
+          errors.push('The password must contain at least 1 number.');
       } 
       if (!hasLowerCase) {
-          errors.push('La contraseña debe contener al menos 1 letra minúscula.');
+          errors.push('The password must contain at least 1 lowercase letter.');
       } 
       if (!hasUpperCase) {
-          errors.push('La contraseña debe contener al menos 1 letra mayúscula.');
+          errors.push('The password must contain at least 1 uppercase letter.');
       } 
       if (!hasSpecialChar) {
-          errors.push('La contraseña debe contener al menos 1 carácter especial.');
+          errors.push('The password must contain at least 1 special character.');
       }
       if (!samePasswords) {
-        errors.push('Las contraseñas no coinciden.');
+        errors.push('Passwords must be the same.');
       }
 
       setErrors(errors);
@@ -60,11 +60,11 @@ export default function ChangePassword() {
 
         try {
           await confirmPasswordReset(auth, oobCode, password);
-          alert('Contraseña restablecida exitosamente.');
+          alert('Password reset successfully.');
           navigate('/login');
         } catch (error) {
-          console.error('Error al restablecer la contraseña:', error);
-          alert('Error al restablecer la contraseña.');
+          console.error('Password reset error:', error);
+          alert('Password reset error.');
         }
       }
     };
@@ -73,10 +73,10 @@ export default function ChangePassword() {
         <LeftBar value={'profile'}/>
         <div className='new-password-container'>
           <div className='new-password-content'>
-            <h2>Nueva contraseña</h2>
+            <h2>Reset password</h2>
             <form onSubmit={handleSubmit}>
               <div className="input-container">
-                  <label htmlFor="password">Contraseña:</label>
+                  <label htmlFor="password">Password:</label>
                   <input 
                       type="password" 
                       id="password" 
@@ -86,7 +86,7 @@ export default function ChangePassword() {
                   />
               </div>
               <div className="input-container">
-                  <label htmlFor="password">Confirmar contraseña:</label>
+                  <label htmlFor="password">Confirm password:</label>
                   <input 
                       type="password" 
                       id="password" 
@@ -96,7 +96,7 @@ export default function ChangePassword() {
                   />
               </div>
               <button type="submit" className='button_create_account'>
-                  Confirmar nueva contraseña
+                  Confirm new password
               </button>
             </form>
           </div>
