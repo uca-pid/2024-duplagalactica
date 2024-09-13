@@ -20,6 +20,9 @@ export default function CreateClass() {
 
   const handleCreateClass = async () => {
     try {
+      if(hourFin<=hour){
+        throw new Error('La hora de fin no puede ser menor a la de inicio');
+      }
       const isoDateStringInicio = `${date}T${hour}:00Z`;
       const isoDateStringFin= `${date}T${hourFin}:00Z`;
       const newClass = {
@@ -35,7 +38,11 @@ export default function CreateClass() {
       alert("¡Clase creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la clase:", error);
+      if(hourFin<=hour){
+        alert('La hora de fin no puede ser menor o igual a la de inicio');
+      } else {
       alert("Error al crear la clase");
+     }
     }
   };
 
