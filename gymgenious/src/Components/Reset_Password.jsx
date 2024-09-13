@@ -16,11 +16,11 @@ export default function ResetPassword() {
         try {
             await getUniqueUserByEmail(email); 
             await sendPasswordResetEmail(auth, email); 
-            alert('¡Correo electrónico enviado con éxito!');
+            alert('Email sent successfully!');
             navigate('/'); 
         } catch (error) {
             setShowNoMatchEmail(true)
-            console.error("Error al enviar el correo electrónico:", error);
+            console.error("Error sending email:", error);
         }
     };
 
@@ -31,7 +31,7 @@ export default function ResetPassword() {
             <LeftBar value={'profile'}/>
             <div className='reset-password-container'>
                 <div className='reset-password-content'>
-                    <h2 style={{color:'#14213D'}}>Recuperar cuenta</h2>
+                    <h2 style={{color:'#14213D'}}>Reset password</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="input-container">
                             <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
@@ -45,10 +45,10 @@ export default function ResetPassword() {
                             />
                         </div>
                         <button type="submit" className='button_create_account'>
-                            Enviar mail de recuperación
+                            Send recovery email
                         </button>
                         {showNotMatchEmail ? (
-                            <div style={{color:'red'}}>No existe el correo electronico</div>
+                            <div style={{color:'red'}}>This account does not exist</div>
                         ):(
                             <div></div>
                         )}
