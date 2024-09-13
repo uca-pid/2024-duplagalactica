@@ -173,7 +173,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <button type="submit" className='button_create_account'>
-                            Crear cuenta
+                            Create account
                         </button>
                     </form>
                 </div>
