@@ -21,22 +21,22 @@ export default function CreateAccount() {
         let errors = [];
         
         if (name === '') {
-            errors.push('Por favor ingrese un nombre válido.');
+            errors.push('Please enter a valid name.');
         }
 
         if (lastName === '') {
-            errors.push('Por favor ingrese un apellido válido.');
+            errors.push('Please enter a valid last name.');
         }
 
         const today = new Date();
         const inputDate = new Date(date);
         if (inputDate >= today || date === '') {
-            errors.push('Por favor ingrese una fecha de nacimiento válida.');
+            errors.push('Please enter a valid birthdate.');
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            errors.push('Por favor ingrese un correo electrónico válido.');
+            errors.push('Please enter a valid email.');
         }
 
         const hasNumber = /[0-9]/.test(password);
@@ -46,23 +46,23 @@ export default function CreateAccount() {
         const isValidLength = password.length > 7;
 
         if (!isValidLength) {
-            errors.push('La contraseña debe tener más de 8 caracteres.');
+            errors.push('The password must be more than 8 characters.');
         } 
         if (!hasNumber) {
-            errors.push('La contraseña debe contener al menos 1 número.');
+            errors.push('The password must contain at least 1 number.');
         } 
         if (!hasLowerCase) {
-            errors.push('La contraseña debe contener al menos 1 letra minúscula.');
+            errors.push('The password must contain at least 1 lowercase letter.');
         } 
         if (!hasUpperCase) {
-            errors.push('La contraseña debe contener al menos 1 letra mayúscula.');
+            errors.push('The password must contain at least 1 uppercase letter.');
         } 
         if (!hasSpecialChar) {
-            errors.push('La contraseña debe contener al menos 1 carácter especial.');
+            errors.push('The password must contain at least 1 special character.');
         }
 
         if (gym === '') {
-            errors.push('Por favor ingrese un gimnasio.');
+            errors.push('Please enter a gym.');
         }
 
         setErrors(errors);
@@ -85,13 +85,13 @@ export default function CreateAccount() {
                 };
                 await createUser(newUser);
                 navigate('/'); 
-                alert("¡Cuenta creada exitosamente!");
+                alert("Account created successfully!");
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
-                    alert("Ya existe una cuenta con este email.");
+                    alert("An account already exists with this email.");
                 } else {
-                    console.error("Error al crear la cuenta:", error);
-                    alert("Error al crear la cuenta");
+                    console.error("Error creating account:", error);
+                    alert("Error creating account");
                 }
             }
         }
@@ -110,10 +110,10 @@ export default function CreateAccount() {
             <LeftBar value={'profile'}/>
             <div className='create-account-container'>
                 <div className='create-account-content'>
-                    <h2 style={{color:'#14213D'}}>Crear cuenta</h2>
+                    <h2 style={{color:'#14213D'}}>Create account</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="input-container">
-                            <label htmlFor="name" style={{color:'#14213D'}}>Nombre:</label>
+                            <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
                             <input 
                                 type="text" 
                                 id="name" 
@@ -123,7 +123,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="lastName" style={{color:'#14213D'}}>Apellido:</label>
+                            <label htmlFor="lastName" style={{color:'#14213D'}}>Last name:</label>
                             <input 
                                 type="text" 
                                 id="lastname" 
@@ -133,7 +133,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="date" style={{color:'#14213D'}}>Fecha de nacimiento:</label>
+                            <label htmlFor="date" style={{color:'#14213D'}}>Birthdate:</label>
                             <input 
                                 type="date" 
                                 id="date" 
@@ -153,7 +153,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="password" style={{color:'#14213D'}}>Contraseña:</label>
+                            <label htmlFor="password" style={{color:'#14213D'}}>Password:</label>
                             <input 
                                 type="password" 
                                 id="password" 
@@ -163,7 +163,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="gym" style={{color:'#14213D'}}>Gimnasio:</label>
+                            <label htmlFor="gym" style={{color:'#14213D'}}>Gym:</label>
                             <input 
                                 type="text" 
                                 id="gym" 
