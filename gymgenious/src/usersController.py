@@ -1,10 +1,8 @@
 from flask import Flask, request, jsonify
 from usersRoutes import get_unique_user_by_email, get_user, create_user, send_email
 
-app = Flask(__name__)
 
-@app.route('/get_unique_user_by_email', methods=['GET'])
-def get_unique_user_by_email_route():
+def get_unique_user_by_email_route(mail):
     try:
         mail = request.args.get('mail')
         user = get_unique_user_by_email(mail)
@@ -14,8 +12,7 @@ def get_unique_user_by_email_route():
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/get_user', methods=['GET'])
-def get_user_route():
+def get_user_route(password,mail):
     try:
         password = request.args.get('password')
         mail = request.args.get('mail')
@@ -26,8 +23,7 @@ def get_user_route():
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/create_user', methods=['POST'])
-def create_user_route():
+def create_user_route(user):
     try:
         user = request.json
         created_user = create_user(user)
@@ -35,8 +31,7 @@ def create_user_route():
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/send_email', methods=['POST'])
-def send_email_route():
+def send_email_route(to_email):
     try:
         to_email = request.json.get('toEmail')
         result = send_email(to_email)
@@ -44,5 +39,3 @@ def send_email_route():
     except RuntimeError as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)

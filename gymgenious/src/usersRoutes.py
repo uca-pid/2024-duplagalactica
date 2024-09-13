@@ -1,48 +1,56 @@
-from flask import Flask, request, jsonify
-from user_service import get_unique_user_by_email, get_user, create_user, send_email
+import firebase_admin
+from firebase_config import db
+from firebase_admin import credentials, firestore
+import logging
 
-app = Flask(__name__)
 
-@app.route('/get_user_by_email', methods=['GET'])
-def get_user_by_email():
+
+def get_unique_user_by_email(mail):
     try:
-        mail = request.args.get('mail')
-        user = get_unique_user_by_email(mail)
-        return jsonify(user), 200
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 404
-    except Exception as e:
-        return jsonify({"error": "No se pudo obtener el usuario"}), 500
+        users_collection = db.collection('users')
+        query = users_collection.where('Mail', '==', mail).stream()
+        users = [doc.to_dict() for doc in query]
 
-@app.route('/get_user', methods=['GET'])
-def get_user_route():
+        if users:
+            user = users[0]
+            user['id'] = query[0].id
+            return user
+        else:
+            raise ValueError('No existen usuarios con ese mail')
+    except Exception as error:
+        print("Error al obtener el usuario:", error)
+        raise ValueError('No existen usuarios con ese mail')
+
+def get_user(password, mail):
     try:
-        mail = request.args.get('mail')
-        password = request.args.get('password')
-        user = get_user(mail, password)
-        return jsonify(user), 200
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 404
-    except Exception as e:
-        return jsonify({"error": "No se pudo obtener el usuario"}), 500
+        users_collection = db.collection('users')
+        query = users_collection.where('password', '==', password).where('mail', '==', mail).stream()
+        users = [doc.to_dict() for doc in query]
 
-@app.route('/create_user', methods=['POST'])
-def create_user_route():
+        if users:
+            user = users[0]
+            user['id'] = query[0].id
+            return user
+        else:
+            raise ValueError('Usuario no encontrado')
+    except Exception as error:
+        print("Error al obtener el usuario:", error)
+        raise ValueError("No se pudo obtener el usuario")
+
+def create_user(user):
     try:
-        user = request.json
-        created_user = create_user(user)
-        return jsonify(created_user), 201
-    except Exception as e:
-        return jsonify({"error": "No se pudo crear el usuario"}), 500
+        users_collection = db.collection('users')
+        doc_ref = users_collection.add(user)
+        user['id'] = doc_ref.id
+        return user
+    except Exception as error:
+        print("Error al crear el usuario:", error)
+        raise ValueError("No se pudo crear el usuario")
 
-@app.route('/send_email', methods=['POST'])
-def send_email_route():
+def send_email(to_email):
     try:
-        to_email = request.json.get('toEmail')
-        response = send_email(to_email)
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify({"error": "No se pudo enviar el correo"}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        print(f"Enviar correo a: {to_email}")
+        return True
+    except Exception as error:
+        print("Error al enviar el correo:", error)
+        return False
