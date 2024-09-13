@@ -101,7 +101,7 @@ function EnhancedTable({ rows }) {
                     direction={orderBy === 'name' ? order : 'asc'}
                     onClick={(event) => handleRequestSort(event, 'name')}
                   >
-                    Nombre
+                    Name
                     {orderBy === 'name' ? (
                       <Box component="span" sx={visuallyHidden}>
                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -116,7 +116,7 @@ function EnhancedTable({ rows }) {
                       direction={orderBy === 'hour' ? order : 'asc'}
                       onClick={(event) => handleRequestSort(event, 'hour')}
                     >
-                      Hora
+                      Start time
                       {orderBy === 'hour' ? (
                         <Box component="span" sx={visuallyHidden}>
                           {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -132,7 +132,7 @@ function EnhancedTable({ rows }) {
                       direction={orderBy === 'dateInicio' ? order : 'asc'}
                       onClick={(event) => handleRequestSort(event, 'dateInicio')}
                     >
-                      Fecha
+                      Date
                       {orderBy === 'dateInicio' ? (
                         <Box component="span" sx={visuallyHidden}>
                           {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -148,7 +148,7 @@ function EnhancedTable({ rows }) {
                       direction={orderBy === 'permanent' ? order : 'asc'}
                       onClick={(event) => handleRequestSort(event, 'permanent')}
                     >
-                      Todas las semanas
+                      Every week
                       {orderBy === 'permanent' ? (
                         <Box component="span" sx={visuallyHidden}>
                           {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -206,12 +206,12 @@ function EnhancedTable({ rows }) {
         selectedEvent && (
           <div className="Modal" onClick={handleCloseModal}>
             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-              <h2>Detalles de la Clase</h2>
-              <p><strong>Nombre:</strong> {selectedEvent.name}</p>
-              <p><strong>Fecha:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
-              <p><strong>Hora:</strong> {selectedEvent.hour}</p>
-              <p><strong>Todas las semanas:</strong> {selectedEvent.permanent==='Si' ? 'Sí' : 'No'}</p>
-              <button onClick={handleCloseModal}>Cerrar</button>
+              <h2>Class details</h2>
+              <p><strong>Name:</strong> {selectedEvent.name}</p>
+              <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
+              <p><strong>Start time:</strong> {selectedEvent.hour}</p>
+              <p><strong>Every week:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+              <button onClick={handleCloseModal}>Close</button>
             </div>
           </div>
         )}
