@@ -5,43 +5,39 @@ import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 
 export default function ExerciseCreation() {
-    const [name, setName] = useState('');
+  const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const navigate = useNavigate();
 
-//   const handleCreateClass = async () => {
-//     try {  
-//       const newClass = {
-//         name: name,
-//         dateInicio: isoDateStringInicio,
-//         dateFin: isoDateStringFin,
-//         hour: hour,
-//         day: day(date),
-//         permanent: permanent,
-//       };
+  const handleCreateExersice = async () => {
+    try {  
+      const newExersice = {
+        name: name,
+        description: desc
+      };
   
-//       const response = await fetch('http://127.0.0.1:5000/create_class', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(newClass),
-//       });
+      const response = await fetch('http://127.0.0.1:5000/create_exersice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newExersice),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al crear ejercicio');
+      }
   
-//       if (!response.ok) {
-//         throw new Error('Error al crear la clase');
-//       }
-  
-//       navigate('/', { state: { message: 'block' } });
-//       alert("¡Clase creada exitosamente!");
-//     } catch (error) {
-//       console.error("Error al crear la clase:", error);
-//   };
-  
+      navigate('/', { state: { message: 'block' } });
+      alert("Ejercicio creado exitosamente!");
+    } catch (error) {
+      console.error("Error al crear el ejercicio:", error);
+  };
+} 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //handleCreateClass();
+    handleCreateExersice();
   };
 
   return (

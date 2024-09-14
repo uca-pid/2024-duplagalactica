@@ -3,10 +3,9 @@ from flask_cors import CORS
 import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
-from services.classesRoutes import get_classes, create_class
 from Controllers.classesController import get_classes_route, create_class_route 
 from Controllers.usersController import get_unique_user_by_email_route, get_user_route, send_email_route, create_user_route
-
+from Controllers.excersicesController import create_exersice_route
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -41,9 +40,14 @@ def create_user():
     return create_user_route(user)
 
 @app.route('/send_email', methods=['POST'])
-def send_email_route():
+def send_email():
     to_email = request.json.get('toEmail')
     return send_email_route(to_email)
+
+@app.route('/create_exersice', methods=['POST'])
+def create_exersice():
+    newExersice = request.json
+    return create_exersice_route(newExersice)
 
 
 
