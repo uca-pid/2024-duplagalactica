@@ -20,3 +20,7 @@ SqueakDebug.log
 # Metacello-github cache
 /github-cache
 github-*.zip
+
+/gymgenious/node_modules
+
+serviceAccountKey.json
