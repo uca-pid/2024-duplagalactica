@@ -18,7 +18,7 @@ def get_classes():
 def create_class(new_class):
     try:
         class_ref = db.collection('classes').add(new_class)
-        created_class = {'id': class_ref.id, **new_class}
+        created_class = {**new_class}
         return created_class
     except Exception as e:
         print(f"Error al crear la clase: {e}")

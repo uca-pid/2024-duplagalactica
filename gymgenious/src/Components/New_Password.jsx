@@ -14,7 +14,7 @@ export default function ChangePassword() {
     const [errors, setErrors] = useState('');
     const location = useLocation();
     const query = new URLSearchParams(location.search);
-    const oobCode = query.get('oobCode');
+    const oobCode = query.get('code');
     const auth = getAuth()
     useEffect(() => {
       if (!oobCode) {

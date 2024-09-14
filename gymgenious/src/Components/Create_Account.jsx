@@ -2,7 +2,7 @@ import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import Box from '@mui/material/Box';
 import Popper from '@mui/material/Popper';
 
@@ -12,7 +12,6 @@ export default function CreateAccount() {
     const [date, setDate] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [gym, setGym] = useState('');
     const [errors, setErrors] = useState([]);
     const navigate = useNavigate();
     const auth = getAuth();
@@ -61,10 +60,6 @@ export default function CreateAccount() {
             errors.push('The password must contain at least 1 special character.');
         }
 
-        if (gym === '') {
-            errors.push('Please enter a gym.');
-        }
-
         setErrors(errors);
         return errors.length === 0;
     }
@@ -80,17 +75,18 @@ export default function CreateAccount() {
                     Lastname: lastName,
                     Mail: email,
                     Birthday: date,
-                    Password: password,
-                    Gym: gym,
                 };
-                await fetch('http://localhost:3000/create_user', {
+                await fetch('http://127.0.0.1:5000/create_user', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(newUser),
                 });
-                navigate('/'); 
+                await sendEmailVerification(firebaseUser, {
+                    url: 'http://localhost:3000/redirections?mode=verifyEmail', 
+                    handleCodeInApp: true
+                });navigate('/'); 
                 alert("Account created successfully!");
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
@@ -185,16 +181,6 @@ export default function CreateAccount() {
                                     <p>The password must contain at least 1 special character.</p>
                                 </Box>
                             </Popper>
-                        </div>
-                        <div className="input-container">
-                            <label htmlFor="gym" style={{color:'#14213D'}}>Gym:</label>
-                            <input 
-                                type="text" 
-                                id="gym" 
-                                name="gym" 
-                                value={gym} 
-                                onChange={(e) => setGym(e.target.value)} 
-                            />
                         </div>
                         <button type="submit" className='button_create_account'>
                             Create account

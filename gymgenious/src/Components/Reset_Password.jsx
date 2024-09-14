@@ -15,7 +15,10 @@ export default function ResetPassword() {
         try {
             const url = new URL('http://localhost:3000/get_unique_user_by_email');
             url.searchParams.append('mail', email); 
-            await sendPasswordResetEmail(auth, email); 
+            await sendPasswordResetEmail(auth, email, {
+                url: 'http://localhost:3000/redirections?mode=resetPassword', 
+                handleCodeInApp: true
+            }); 
             alert('Email sent successfully!');
             navigate('/'); 
         } catch (error) {

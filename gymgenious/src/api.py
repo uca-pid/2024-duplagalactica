@@ -3,9 +3,9 @@ from flask_cors import CORS
 import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
-from classesRoutes import get_classes, create_class
-from classesController import get_classes_route, create_class_route 
-from usersController import get_unique_user_by_email_route, get_user_route, send_email_route, create_user_route
+from services.classesRoutes import get_classes, create_class
+from Controllers.classesController import get_classes_route, create_class_route 
+from Controllers.usersController import get_unique_user_by_email_route, get_user_route, send_email_route, create_user_route
 
 
 app = Flask(__name__)
@@ -20,11 +20,9 @@ def get_classes():
 
 @app.route('/create_class', methods=['POST'])
 def create_class():
+    
     new_class = request.json
     return create_class_route(new_class)
-
-
-
 
 @app.route('/get_unique_user_by_email', methods=['GET'])
 def get_unique_user_by_email():
@@ -40,7 +38,7 @@ def get_user():
 @app.route('/create_user', methods=['POST'])
 def create_user():
     user = request.json
-    return create_class_route(user)
+    return create_user_route(user)
 
 @app.route('/send_email', methods=['POST'])
 def send_email_route():

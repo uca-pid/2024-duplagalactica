@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from usersRoutes import get_unique_user_by_email, get_user, create_user, send_email
+from services.usersRoutes import get_unique_user_by_email, get_user, create_user, send_email
 
 
 def get_unique_user_by_email_route(mail):
