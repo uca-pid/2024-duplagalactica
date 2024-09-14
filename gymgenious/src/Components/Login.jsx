@@ -21,11 +21,11 @@ export default function Login() {
     e.preventDefault(); 
     try {
       await signInWithEmailAndPassword(auth, username, password);
-      alert("¡Login exitoso!");
+      alert("Successful login!");
       navigate('/', { state: { message: 'block' } });
     } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      alert("Error en las credenciales o en el servidor");
+      console.error("Login error:", error);
+      alert("Credentials or server error");
     }
   };
 
@@ -57,12 +57,12 @@ export default function Login() {
               />
             </div>
             <button type="submit" className='button_login'>
-              Ingresar
+              Login
             </button>
           </form>
           <div className='login-options'>
-            <button className='login-options-text' onClick={goToResetPassword}>Recuperar contraseña</button>
-            <button className='login-options-text' onClick={goToCreateAccount}> Crear cuenta</button>     
+            <button className='login-options-text' onClick={goToResetPassword}>Forgot password?</button>
+            <button className='login-options-text' onClick={goToCreateAccount}>Create account</button>     
           </div>
         </div>
       </div>

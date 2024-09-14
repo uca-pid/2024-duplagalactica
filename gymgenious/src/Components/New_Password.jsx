@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getAuth, confirmPasswordReset } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import Box from '@mui/material/Box';
+import Popper from '@mui/material/Popper';
 
 export default function ChangePassword() {
     const [password, setPassword] = useState('');
@@ -29,22 +32,22 @@ export default function ChangePassword() {
       const samePasswords = password == passwordAgain;
 
       if (!isValidLength) {
-          errors.push('La contraseña debe tener más de 8 caracteres.');
+        errors.push('The password must be more than 8 characters.');
       } 
       if (!hasNumber) {
-          errors.push('La contraseña debe contener al menos 1 número.');
+          errors.push('The password must contain at least 1 number.');
       } 
       if (!hasLowerCase) {
-          errors.push('La contraseña debe contener al menos 1 letra minúscula.');
+          errors.push('The password must contain at least 1 lowercase letter.');
       } 
       if (!hasUpperCase) {
-          errors.push('La contraseña debe contener al menos 1 letra mayúscula.');
+          errors.push('The password must contain at least 1 uppercase letter.');
       } 
       if (!hasSpecialChar) {
-          errors.push('La contraseña debe contener al menos 1 carácter especial.');
+          errors.push('The password must contain at least 1 special character.');
       }
       if (!samePasswords) {
-        errors.push('Las contraseñas no coinciden.');
+        errors.push('Passwords must be the same.');
       }
 
       setErrors(errors);
@@ -59,34 +62,62 @@ export default function ChangePassword() {
 
         try {
           await confirmPasswordReset(auth, oobCode, password);
-          alert('Contraseña restablecida exitosamente.');
+          alert('Password reset successfully.');
           navigate('/login');
         } catch (error) {
-          console.error('Error al restablecer la contraseña:', error);
-          alert('Error al restablecer la contraseña.');
+          console.error('Password reset error:', error);
+          alert('Password reset error.');
         }
       }
     };
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openPasswordRequirements, setOpenPasswordRequirements] = useState(false);
+    const handleOpenPasswordRequirements = (event) => {
+      setAnchorEl(anchorEl ? null : event.currentTarget);
+      setOpenPasswordRequirements(!openPasswordRequirements)
+    };    
+    const id = openPasswordRequirements ? 'simple-popper' : undefined;
+
+    const [anchorEl2, setAnchorEl2] = useState(null);
+    const [openPasswordRequirements2, setOpenPasswordRequirements2] = useState(false);
+    const handleOpenPasswordRequirements2 = (event) => {
+      setAnchorEl2(anchorEl2 ? null : event.currentTarget);
+      setOpenPasswordRequirements2(!openPasswordRequirements2)
+    };    
+    const id2 = openPasswordRequirements2 ? 'simple-popper' : undefined;
+
     return (
     <div className='App'>
         <LeftBar value={'profile'}/>
         <div className='new-password-container'>
           <div className='new-password-content'>
-            <h2>Nueva contraseña</h2>
+            <h2>Reset password</h2>
             <form onSubmit={handleSubmit}>
               <div className="input-container">
-                  <label htmlFor="password">Contraseña:</label>
-                  <input 
+                  <label htmlFor="password">Password:</label>
+                  <input
+                      onClick={handleOpenPasswordRequirements}
                       type="password" 
                       id="password" 
                       name="password" 
                       value={password} 
                       onChange={(e) => setPassword(e.target.value)} 
                   />
+                  <Popper id={id} open={openPasswordRequirements} anchorEl={anchorEl}>
+                    <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements}>
+                        <p>The password must contain more than 8 characters.</p>
+                        <p>The password must contain at least 1 number.</p>
+                        <p>The password must contain at least 1 lowercase letter.</p>
+                        <p>The password must contain at least 1 uppercase letter.</p>
+                        <p>The password must contain at least 1 special character.</p>
+                    </Box>
+                </Popper>
               </div>
               <div className="input-container">
-                  <label htmlFor="password">Confirmar contraseña:</label>
-                  <input 
+                  <label htmlFor="password">Confirm password:</label>
+                  <input
+                      onClick={handleOpenPasswordRequirements2}
                       type="password" 
                       id="password" 
                       name="password" 
@@ -94,8 +125,13 @@ export default function ChangePassword() {
                       onChange={(e) => setPasswordAgain(e.target.value)} 
                   />
               </div>
+              <Popper id={id2} open={openPasswordRequirements2} anchorEl={anchorEl2}>
+                    <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements2}>
+                        <p>Passwords must be the same</p>
+                    </Box>
+                </Popper>
               <button type="submit" className='button_create_account'>
-                  Confirmar nueva contraseña
+                  Confirm new password
               </button>
             </form>
           </div>

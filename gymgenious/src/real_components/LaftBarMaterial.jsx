@@ -41,6 +41,7 @@ export default function LeftBar({ value }) {
     }
 
     const changeValue = () => {
+        alert('Cierre de sesión exitoso!')
         navigate('/', { state: { message: '' } });
     }
 

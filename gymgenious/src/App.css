@@ -68,10 +68,11 @@
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  width: calc(100% - 8vw); 
-  height: 100vh;
+  width: 95%; 
+  height: 95%;
   background-color: #14213D;
   box-sizing: border-box;
+  margin-top: 3%;
 }
 
 @media screen and (max-width: 765px) {
@@ -80,6 +81,18 @@
     height: 93%;
     left: 1%;
     top: 6.5%;
+    position: absolute;
+    padding: 1%;
+    margin-top: 0%;
+  }
+}
+
+@media screen and (max-width: 385px) {
+  .WebApp-Body {
+    width: 98%;
+    height: 89.5%;
+    left: 1%;
+    top: 10%;
     position: absolute;
     padding: 1%;
   }
@@ -106,7 +119,7 @@
   box-sizing: border-box;
   margin-bottom: 5vh;
   margin-left: 5vh;
-  margin-top: 10vh;
+  margin-top: 11vh;
   margin-right: 5vh;
 }
 
@@ -385,6 +398,7 @@ iframe {
 .input-small-container select {
   height: 2.5rem;
   font-size: 14px;
+  width: 100%;
 }
 
 .input-small-container label {
@@ -499,6 +513,12 @@ iframe {
   background-color: #14213D !important;
   color: white !important;
 }
+
+.rbc-day-bg.rbc-today {
+  background-color: #3c5488 !important;
+  color: white !important;
+}
+
 .rbc-toolbar button {
   color: #E5E5E5 !important;
 }
@@ -538,9 +558,15 @@ iframe {
 
 .Toggle-Button {
   background: none;
-  border: none;
+  border: 1;
+  border-color: white;
   cursor: pointer;
   outline: none;
+  color: white;
+}
+
+.Toggle-Button:hover {
+  background-color:#fca311 ;
 }
 
 
