@@ -158,17 +158,15 @@ export default function Main_Page() {
       {!isSmallScreen ? (
   <>
     <div className="Calendar-Button">
-      <button onClick={changeShowCalendar} className="Toggle-Button">
-        {showCalendar ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 9L12 15L18 9H6Z" fill="#E5E5E5" />
-          </svg>
-        ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 6L15 12L9 18V6Z" fill="#E5E5E5" />
-          </svg>
-        )}
-      </button>
+      {showCalendar ? (
+        <button onClick={changeShowCalendar} className="Toggle-Button">
+          Show table
+        </button>
+      ) : (
+        <button onClick={changeShowCalendar} className="Toggle-Button">
+          Show calendar
+        </button>
+      )}
     </div>
 
     {showCalendar ? (
