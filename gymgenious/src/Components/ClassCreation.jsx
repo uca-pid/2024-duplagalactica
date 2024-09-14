@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createClass } from '../routes/classes.js'; 
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
+import moment from 'moment'
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
   const [hourFin, setHourFin] = useState('');
-  const [permanent, setPermanent] = useState();
+  const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
   const navigate = useNavigate();
@@ -19,9 +20,11 @@ export default function CreateClass() {
   };
 
   const handleCreateClass = async () => {
+    const format= "HH:mm";
+    const realHourEnd = moment(hourFin, format).subtract(30, 'minutes').format(format);
     try {
-      if(hourFin<=hour){
-        throw new Error('La hora de fin no puede ser menor a la de inicio');
+      if(moment(realHourEnd, format).isBefore(moment(hour, format))){
+        throw new Error('La clase debe durar al menos 30 minutos');
       }
       const isoDateStringInicio = `${date}T${hour}:00Z`;
       const isoDateStringFin= `${date}T${hourFin}:00Z`;
@@ -38,9 +41,15 @@ export default function CreateClass() {
       alert("¡Clase creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la clase:", error);
-      if(hourFin<=hour){
-        alert('La hora de fin no puede ser menor o igual a la de inicio');
-      } else {
+      if(moment(realHourEnd, format).isBefore(moment(hour, format))){
+        alert('La clase debe durar al menos 30 minutos');
+      } else if (name=='') {
+      alert("Ingrese un nombre para la clase");
+     } else if (permanent=='') {
+      alert("Ingrese si la clase es recurrente o no");
+     } else if (date=='') {
+      alert("Ingrese la fecha de la clase");
+     } else {
       alert("Error al crear la clase");
      }
     }
@@ -56,11 +65,11 @@ export default function CreateClass() {
       <LeftBar value={'add'}/>
       <div className='class-creation-container'>
         <div className='class-creation-content'>
-          <h2 style={{color:'#14213D'}}>Crear clase</h2>
+          <h2 style={{color:'#14213D'}}>Create class</h2>
           <form onSubmit={handleSubmit}>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#14213D'}}>Hora inicio:</label>
+                <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
                 <input 
                   type="time" 
                   id="hour" 
@@ -70,7 +79,7 @@ export default function CreateClass() {
                 />
               </div>
               <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#14213D'}}>Hora fin:</label>
+                <label htmlFor="hour" style={{color:'#14213D'}}>End time:</label>
                 <input 
                   type="time" 
                   id="hourFin" 
@@ -80,7 +89,7 @@ export default function CreateClass() {
                 />
               </div>
               <div className="input-small-container">
-                <label htmlFor="name" style={{color:'#14213D'}}>Nombre:</label>
+                <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
                 <input 
                   type="text" 
                   id="name" 
@@ -92,20 +101,20 @@ export default function CreateClass() {
             </div>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container" style={{width:"100%"}}>
-                <label htmlFor="permanent" style={{color:'#14213D'}}>Permanente:</label>
+                <label htmlFor="permanent" style={{color:'#14213D'}}>Recurrent:</label>
                 <select 
                   id="permanent" 
                   name="permanent" 
                   value={permanent} 
                   onChange={(e) => setPermanent(e.target.value)} 
                 >
-                  <option value="" >Seleccionar</option>
-                  <option value="Si">Sí</option>
+                  <option value="" >Select</option>
+                  <option value="Si">Yes</option>
                   <option value="No">No</option>
                 </select>
               </div>
               <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                <label htmlFor="date" style={{color:'#14213D'}}>Fecha:</label>
+                <label htmlFor="date" style={{color:'#14213D'}}>Date:</label>
                 <input 
                   type="date" 
                   id="date" 

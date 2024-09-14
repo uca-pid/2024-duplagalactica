@@ -7,6 +7,8 @@ import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getClasses } from '../routes/classes.js';
 import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const localizer = momentLocalizer(moment);
 
@@ -45,20 +47,18 @@ const Calendar = ({ events, onSelectEvent }) => {
               hour: '2-digit',
               minute: '2-digit',
             });
-          
             const endTime = new Date(date.end).toLocaleTimeString('es-ES', {
               hour: '2-digit',
               minute: '2-digit',
             });
-          
             return `${startTime} - ${endTime}`;
           },
-          
         }}
       />
     </div>
   );
 };
+
 
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
@@ -69,6 +69,7 @@ export default function Main_Page() {
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery('(max-width:250px)');
   const location = useLocation();
+  const [openCircularProgress, setOpenCircularProgress] = useState(true)
   useEffect(() => {
     if (location.state?.message === 'block') {
       setLeftBarOption('add');
@@ -132,16 +133,13 @@ export default function Main_Page() {
           });
         }
       });
-  
+      setOpenCircularProgress(false)
       setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
   
-  
-  
-
   useEffect(() => {
     fetchClasses();
   }, []);
@@ -157,20 +155,27 @@ export default function Main_Page() {
   return (
     <div className="App">
       <LeftBar value={leftBarOption}/>
+      {openCircularProgress ? (
+              <Backdrop
+              sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+              open={openCircularProgress}
+            >
+              <CircularProgress color="inherit" />
+          </Backdrop>
+      ) : null}
+
       {!isSmallScreen ? (
   <>
     <div className="Calendar-Button">
-      <button onClick={changeShowCalendar} className="Toggle-Button">
-        {showCalendar ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 9L12 15L18 9H6Z" fill="#E5E5E5" />
-          </svg>
-        ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 6L15 12L9 18V6Z" fill="#E5E5E5" />
-          </svg>
-        )}
-      </button>
+      {showCalendar ? (
+        <button onClick={changeShowCalendar} className="Toggle-Button">
+          Show table
+        </button>
+      ) : (
+        <button onClick={changeShowCalendar} className="Toggle-Button">
+          Show calendar
+        </button>
+      )}
     </div>
 
     {showCalendar ? (
@@ -194,12 +199,12 @@ export default function Main_Page() {
       {selectedEvent && (
         <div className="Modal" onClick={handleCloseModal}>
           <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-            <h2>Detalles de la Clase</h2>
-            <p><strong>Nombre:</strong> {selectedEvent.name}</p>
-            <p><strong>Fecha:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
-            <p><strong>Hora:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
-            <p><strong>Todas las semanas:</strong> {selectedEvent.permanent==='Si' ? 'Sí' : 'No'}</p>
-            <button onClick={handleCloseModal}>Cerrar</button>
+            <h2>Class details</h2>
+            <p><strong>Name:</strong> {selectedEvent.name}</p>
+            <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
+            <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+            <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+            <button onClick={handleCloseModal}>Close</button>
           </div>
         </div>
       )}
