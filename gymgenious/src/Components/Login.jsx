@@ -20,7 +20,12 @@ export default function Login() {
   const loginUser = async (e) => {
     e.preventDefault(); 
     try {
-      await signInWithEmailAndPassword(auth, username, password);
+      const userCredential= await signInWithEmailAndPassword(auth, username, password);
+      const user = userCredential.user;
+      if (!user.emailVerified) {
+        alert("Please verify your email address before logging in.");
+        return;
+      }
       alert("Successful login!");
       navigate('/', { state: { message: 'block' } });
     } catch (error) {

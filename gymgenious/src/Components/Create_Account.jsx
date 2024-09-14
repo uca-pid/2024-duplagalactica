@@ -2,7 +2,7 @@ import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import Box from '@mui/material/Box';
 import Popper from '@mui/material/Popper';
 
@@ -75,7 +75,6 @@ export default function CreateAccount() {
                     Lastname: lastName,
                     Mail: email,
                     Birthday: date,
-                    Password: password,
                 };
                 await fetch('http://127.0.0.1:5000/create_user', {
                     method: 'POST',
@@ -84,7 +83,10 @@ export default function CreateAccount() {
                     },
                     body: JSON.stringify(newUser),
                 });
-                navigate('/'); 
+                await sendEmailVerification(firebaseUser, {
+                    url: 'http://localhost:3000/redirections?mode=verifyEmail', 
+                    handleCodeInApp: true
+                });navigate('/'); 
                 alert("Account created successfully!");
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
