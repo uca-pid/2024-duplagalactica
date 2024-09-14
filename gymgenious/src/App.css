@@ -499,6 +499,12 @@ iframe {
   background-color: #14213D !important;
   color: white !important;
 }
+
+.rbc-day-bg.rbc-today {
+  background-color: #3c5488 !important;
+  color: white !important;
+}
+
 .rbc-toolbar button {
   color: #E5E5E5 !important;
 }

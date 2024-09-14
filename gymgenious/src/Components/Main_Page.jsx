@@ -45,20 +45,18 @@ const Calendar = ({ events, onSelectEvent }) => {
               hour: '2-digit',
               minute: '2-digit',
             });
-          
             const endTime = new Date(date.end).toLocaleTimeString('es-ES', {
               hour: '2-digit',
               minute: '2-digit',
             });
-          
             return `${startTime} - ${endTime}`;
           },
-          
         }}
       />
     </div>
   );
 };
+
 
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
