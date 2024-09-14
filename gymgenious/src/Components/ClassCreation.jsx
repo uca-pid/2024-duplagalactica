@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createClass } from '../routes/classes.js'; 
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
+import moment from 'moment'
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
   const [hourFin, setHourFin] = useState('');
-  const [permanent, setPermanent] = useState();
+  const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
   const navigate = useNavigate();
@@ -19,9 +20,11 @@ export default function CreateClass() {
   };
 
   const handleCreateClass = async () => {
+    const format= "HH:mm";
+    const realHourEnd = moment(hourFin, format).subtract(30, 'minutes').format(format);
     try {
-      if(hourFin<=hour){
-        throw new Error('La hora de fin no puede ser menor a la de inicio');
+      if(moment(realHourEnd, format).isBefore(moment(hour, format))){
+        throw new Error('La clase debe durar al menos 30 minutos');
       }
       const isoDateStringInicio = `${date}T${hour}:00Z`;
       const isoDateStringFin= `${date}T${hourFin}:00Z`;
@@ -38,9 +41,15 @@ export default function CreateClass() {
       alert("¡Clase creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la clase:", error);
-      if(hourFin<=hour){
-        alert('La hora de fin no puede ser menor o igual a la de inicio');
-      } else {
+      if(moment(realHourEnd, format).isBefore(moment(hour, format))){
+        alert('La clase debe durar al menos 30 minutos');
+      } else if (name=='') {
+      alert("Ingrese un nombre para la clase");
+     } else if (permanent=='') {
+      alert("Ingrese si la clase es recurrente o no");
+     } else if (date=='') {
+      alert("Ingrese la fecha de la clase");
+     } else {
       alert("Error al crear la clase");
      }
     }
