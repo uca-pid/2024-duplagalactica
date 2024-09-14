@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { createUser } from '../routes/users.js';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import Box from '@mui/material/Box';
+import Popper from '@mui/material/Popper';
 
 export default function CreateAccount() {
     const [name, setName] = useState('');
@@ -105,13 +107,21 @@ export default function CreateAccount() {
     const handleCloseModal = () => {
         setErrors([])
     }
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openPasswordRequirements, setOpenPasswordRequirements] = useState(false);
+    const handleOpenPasswordRequirements = (event) => {
+      setAnchorEl(anchorEl ? null : event.currentTarget);
+      setOpenPasswordRequirements(!openPasswordRequirements)
+    };
+    const id = openPasswordRequirements ? 'simple-popper' : undefined;
     return (
         <div className='App'>
             <LeftBar value={'profile'}/>
             <div className='create-account-container'>
                 <div className='create-account-content'>
                     <h2 style={{color:'#14213D'}}>Create account</h2>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} autoComplete='off'>
                         <div className="input-container">
                             <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
                             <input 
@@ -154,13 +164,23 @@ export default function CreateAccount() {
                         </div>
                         <div className="input-container">
                             <label htmlFor="password" style={{color:'#14213D'}}>Password:</label>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
+                            <input
+                                onClick={handleOpenPasswordRequirements}
+                                type="password"
+                                id="password"
+                                name="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
+                            <Popper id={id} open={openPasswordRequirements} anchorEl={anchorEl}>
+                                <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements}>
+                                    <p>The password must contain more than 8 characters.</p>
+                                    <p>The password must contain at least 1 number.</p>
+                                    <p>The password must contain at least 1 lowercase letter.</p>
+                                    <p>The password must contain at least 1 uppercase letter.</p>
+                                    <p>The password must contain at least 1 special character.</p>
+                                </Box>
+                            </Popper>
                         </div>
                         <div className="input-container">
                             <label htmlFor="gym" style={{color:'#14213D'}}>Gym:</label>

@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getAuth, confirmPasswordReset } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
+import Box from '@mui/material/Box';
+import Popper from '@mui/material/Popper';
 
 export default function ChangePassword() {
     const [password, setPassword] = useState('');
@@ -68,6 +70,23 @@ export default function ChangePassword() {
         }
       }
     };
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openPasswordRequirements, setOpenPasswordRequirements] = useState(false);
+    const handleOpenPasswordRequirements = (event) => {
+      setAnchorEl(anchorEl ? null : event.currentTarget);
+      setOpenPasswordRequirements(!openPasswordRequirements)
+    };    
+    const id = openPasswordRequirements ? 'simple-popper' : undefined;
+
+    const [anchorEl2, setAnchorEl2] = useState(null);
+    const [openPasswordRequirements2, setOpenPasswordRequirements2] = useState(false);
+    const handleOpenPasswordRequirements2 = (event) => {
+      setAnchorEl2(anchorEl2 ? null : event.currentTarget);
+      setOpenPasswordRequirements2(!openPasswordRequirements2)
+    };    
+    const id2 = openPasswordRequirements2 ? 'simple-popper' : undefined;
+
     return (
     <div className='App'>
         <LeftBar value={'profile'}/>
@@ -77,17 +96,28 @@ export default function ChangePassword() {
             <form onSubmit={handleSubmit}>
               <div className="input-container">
                   <label htmlFor="password">Password:</label>
-                  <input 
+                  <input
+                      onClick={handleOpenPasswordRequirements}
                       type="password" 
                       id="password" 
                       name="password" 
                       value={password} 
                       onChange={(e) => setPassword(e.target.value)} 
                   />
+                  <Popper id={id} open={openPasswordRequirements} anchorEl={anchorEl}>
+                    <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements}>
+                        <p>The password must contain more than 8 characters.</p>
+                        <p>The password must contain at least 1 number.</p>
+                        <p>The password must contain at least 1 lowercase letter.</p>
+                        <p>The password must contain at least 1 uppercase letter.</p>
+                        <p>The password must contain at least 1 special character.</p>
+                    </Box>
+                </Popper>
               </div>
               <div className="input-container">
                   <label htmlFor="password">Confirm password:</label>
-                  <input 
+                  <input
+                      onClick={handleOpenPasswordRequirements2}
                       type="password" 
                       id="password" 
                       name="password" 
@@ -95,6 +125,11 @@ export default function ChangePassword() {
                       onChange={(e) => setPasswordAgain(e.target.value)} 
                   />
               </div>
+              <Popper id={id2} open={openPasswordRequirements2} anchorEl={anchorEl2}>
+                    <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements2}>
+                        <p>Passwords must be the same</p>
+                    </Box>
+                </Popper>
               <button type="submit" className='button_create_account'>
                   Confirm new password
               </button>
