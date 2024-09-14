@@ -92,7 +92,7 @@ export default function CreateClass() {
             </div>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container" style={{width:"100%"}}>
-                <label htmlFor="permanent" style={{color:'#14213D'}}>Permanent:</label>
+                <label htmlFor="permanent" style={{color:'#14213D'}}>Recurrent:</label>
                 <select 
                   id="permanent" 
                   name="permanent" 

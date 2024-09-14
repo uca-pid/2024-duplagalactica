@@ -148,7 +148,7 @@ function EnhancedTable({ rows }) {
                       direction={orderBy === 'permanent' ? order : 'asc'}
                       onClick={(event) => handleRequestSort(event, 'permanent')}
                     >
-                      Every week
+                      Recurrent
                       {orderBy === 'permanent' ? (
                         <Box component="span" sx={visuallyHidden}>
                           {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -210,7 +210,7 @@ function EnhancedTable({ rows }) {
               <p><strong>Name:</strong> {selectedEvent.name}</p>
               <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
               <p><strong>Start time:</strong> {selectedEvent.hour}</p>
-              <p><strong>Every week:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+              <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
               <button onClick={handleCloseModal}>Close</button>
             </div>
           </div>

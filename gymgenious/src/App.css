@@ -398,6 +398,7 @@ iframe {
 .input-small-container select {
   height: 2.5rem;
   font-size: 14px;
+  width: 100%;
 }
 
 .input-small-container label {
