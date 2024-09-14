@@ -139,7 +139,7 @@ export default function CreateClass() {
               </div>
             </div>
             <button type="submit" className='button_login'>
-              Crear clase
+              Create class
             </button>
           </form>
         </div>

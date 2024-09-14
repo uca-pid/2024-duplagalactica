@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 
-export default function ExerciseCreation() {
+export default function RoutineCreation() {
     const [name, setName] = useState('');
-  const [desc, setDesc] = useState('');
-  const navigate = useNavigate();
+    const [desc, setDesc] = useState('');
+    const [exercises, setExercises] = useState('');
+    const navigate = useNavigate();
 
 //   const handleCreateClass = async () => {
 //     try {  
@@ -49,7 +50,7 @@ export default function ExerciseCreation() {
       <LeftBar value={'add'}/>
       <div className='class-creation-container'>
         <div className='class-creation-content'>
-          <h2 style={{color:'#14213D'}}>Create exercise</h2>
+          <h2 style={{color:'#14213D'}}>Create routine</h2>
           <form onSubmit={handleSubmit}>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
              <div className="input-small-container">
@@ -75,8 +76,24 @@ export default function ExerciseCreation() {
                     />
                 </div>
             </div>
+            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                <div className="input-small-container">
+                    <label htmlFor="exercises" style={{color:'#14213D'}}>Exercises:</label>
+                    <select 
+                        id="exercises" 
+                        name="exercises" 
+                        value={exercises} 
+                        onChange={(e) => setExercises(e.target.value)} 
+                        >
+                        <option value="" >Select</option>
+                        <option value="Bench press">Bench press</option>
+                        <option value="Barbell curl">Barbell curl</option>
+                        <option value="Bar Push Downs">Bar Push Downs</option>
+                    </select>
+                </div>
+            </div>
             <button type="submit" className='button_login'>
-              Create exercise
+              Create routine
             </button>
           </form>
         </div>

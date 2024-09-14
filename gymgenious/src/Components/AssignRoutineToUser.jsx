@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 
-export default function ExerciseCreation() {
-    const [name, setName] = useState('');
-  const [desc, setDesc] = useState('');
-  const navigate = useNavigate();
+export default function RoutineCreation() {
+    const [routine, setRoutine] = useState('');
+    const [users, setUsers] = useState('');
+    const navigate = useNavigate();
 
 //   const handleCreateClass = async () => {
 //     try {  
@@ -49,34 +49,42 @@ export default function ExerciseCreation() {
       <LeftBar value={'add'}/>
       <div className='class-creation-container'>
         <div className='class-creation-content'>
-          <h2 style={{color:'#14213D'}}>Create exercise</h2>
+          <h2 style={{color:'#14213D'}}>Assign users</h2>
           <form onSubmit={handleSubmit}>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-             <div className="input-small-container">
-                <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  name="name" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                />
-              </div>
+                <div className="input-small-container">
+                <label htmlFor="routine" style={{color:'#14213D'}}>Routine:</label>
+                    <select 
+                        id="routine" 
+                        name="routine" 
+                        value={routine} 
+                        onChange={(e) => setRoutine(e.target.value)} 
+                        >
+                        <option value="" >Select</option>
+                        <option value="Routine 1">Routine 1</option>
+                        <option value="Routine 2">Routine 2</option>
+                        <option value="Routine 3">Routine 3</option>
+                    </select>
+                </div>
             </div>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                 <div className="input-small-container">
-                    <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
-                    <input 
-                    type="text" 
-                    id="desc" 
-                    name="desc" 
-                    value={desc} 
-                    onChange={(e) => setDesc(e.target.value)} 
-                    />
+                    <label htmlFor="users" style={{color:'#14213D'}}>Users:</label>
+                    <select 
+                        id="users" 
+                        name="users" 
+                        value={users} 
+                        onChange={(e) => setUsers(e.target.value)} 
+                        >
+                        <option value="" >Select</option>
+                        <option value="User 1">User 1</option>
+                        <option value="User 2">User 2</option>
+                        <option value="User 3">User 3</option>
+                    </select>
                 </div>
             </div>
             <button type="submit" className='button_login'>
-              Create exercise
+              Assign users
             </button>
           </form>
         </div>
