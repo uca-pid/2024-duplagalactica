@@ -5,43 +5,38 @@ import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 
 export default function RoutineCreation() {
-    const [routine, setRoutine] = useState('');
+    const [routineAssigned, setRoutine] = useState('');
     const [users, setUsers] = useState('');
     const navigate = useNavigate();
 
-//   const handleCreateClass = async () => {
-//     try {  
-//       const newClass = {
-//         name: name,
-//         dateInicio: isoDateStringInicio,
-//         dateFin: isoDateStringFin,
-//         hour: hour,
-//         day: day(date),
-//         permanent: permanent,
-//       };
-  
-//       const response = await fetch('http://127.0.0.1:5000/create_class', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(newClass),
-//       });
-  
-//       if (!response.ok) {
-//         throw new Error('Error al crear la clase');
-//       }
-  
-//       navigate('/', { state: { message: 'block' } });
-//       alert("¡Clase creada exitosamente!");
-//     } catch (error) {
-//       console.error("Error al crear la clase:", error);
-//   };
-  
+  const handleAssignRoutine = async () => {
+    try {  
+      const newAsignRoutine = {
+        routine: routineAssigned,
+        user: users
+      };
+      const response = await fetch('http://127.0.0.1:5000/assign_routine_to_user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newAsignRoutine),
+      });
+ 
+      if (!response.ok) {
+        throw new Error('Error al asignar la rutina');
+      }
+ 
+      navigate('/', { state: { message: 'block' } });
+      alert("¡Rutina asignada exitosamente!");
+    } catch (error) {
+      console.error("Error al asigna la rutina:", error);
+    };
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //handleCreateClass();
+    handleAssignRoutine();
   };
 
   return (
@@ -53,11 +48,11 @@ export default function RoutineCreation() {
           <form onSubmit={handleSubmit}>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                 <div className="input-small-container">
-                <label htmlFor="routine" style={{color:'#14213D'}}>Routine:</label>
+                <label htmlFor="routineAssigned" style={{color:'#14213D'}}>Routine:</label>
                     <select 
-                        id="routine" 
-                        name="routine" 
-                        value={routine} 
+                        id="routineAssigned" 
+                        name="routineAssigned" 
+                        value={routineAssigned} 
                         onChange={(e) => setRoutine(e.target.value)} 
                         >
                         <option value="" >Select</option>

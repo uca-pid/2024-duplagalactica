@@ -10,39 +10,35 @@ export default function RoutineCreation() {
     const [exercises, setExercises] = useState('');
     const navigate = useNavigate();
 
-//   const handleCreateClass = async () => {
-//     try {  
-//       const newClass = {
-//         name: name,
-//         dateInicio: isoDateStringInicio,
-//         dateFin: isoDateStringFin,
-//         hour: hour,
-//         day: day(date),
-//         permanent: permanent,
-//       };
-  
-//       const response = await fetch('http://127.0.0.1:5000/create_class', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(newClass),
-//       });
-  
-//       if (!response.ok) {
-//         throw new Error('Error al crear la clase');
-//       }
-  
-//       navigate('/', { state: { message: 'block' } });
-//       alert("¡Clase creada exitosamente!");
-//     } catch (error) {
-//       console.error("Error al crear la clase:", error);
-//   };
-  
+  const handleCreateRoutine = async () => {
+    try {  
+      const newRoutine = {
+        name: name,
+        description: desc,
+        excercises: exercises,
+      };
+      const response = await fetch('http://127.0.0.1:5000/create_routine', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newRoutine),
+      });
+ 
+      if (!response.ok) {
+        throw new Error('Error al crear la rutina');
+      }
+ 
+      navigate('/', { state: { message: 'block' } });
+      alert("¡Rutina creada exitosamente!");
+    } catch (error) {
+      console.error("Error al crear la rutina:", error);
+  };
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //handleCreateClass();
+    handleCreateRoutine();
   };
 
   return (

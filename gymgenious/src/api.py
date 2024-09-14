@@ -6,6 +6,7 @@ from firebase_admin import credentials, firestore
 from Controllers.classesController import get_classes_route, create_class_route 
 from Controllers.usersController import get_unique_user_by_email_route, get_user_route, send_email_route, create_user_route
 from Controllers.excersicesController import create_exersice_route
+from Controllers.routineController import create_routine_route,assign_routine_to_user_route
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -49,9 +50,15 @@ def create_exersice():
     newExersice = request.json
     return create_exersice_route(newExersice)
 
+@app.route('/create_routine', methods=['POST'])
+def create_routine():
+    newRoutine = request.json
+    return create_routine_route(newRoutine)
 
-
-
+@app.route('/assign_routine_to_user', methods=['POST'])
+def assign_routine_to_user():
+    newAssignRoutine = request.json
+    return assign_routine_to_user_route(newAssignRoutine)
 
 if __name__ == '__main__':
     app.run(debug=True)
