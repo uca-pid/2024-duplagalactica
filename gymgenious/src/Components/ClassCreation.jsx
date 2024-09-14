@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createClass } from '../routes/classes.js'; 
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 
@@ -26,18 +25,32 @@ export default function CreateClass() {
       if(moment(realHourEnd, format).isBefore(moment(hour, format))){
         throw new Error('La clase debe durar al menos 30 minutos');
       }
+  
       const isoDateStringInicio = `${date}T${hour}:00Z`;
-      const isoDateStringFin= `${date}T${hourFin}:00Z`;
+      const isoDateStringFin = `${date}T${hourFin}:00Z`;
+  
       const newClass = {
         name: name,
         dateInicio: isoDateStringInicio,
-        dateFin: isoDateStringFin, 
+        dateFin: isoDateStringFin,
         hour: hour,
         day: day(date),
         permanent: permanent,
       };
-      await createClass(newClass); 
-      navigate('/', { state: { message: 'block' } }); 
+  
+      const response = await fetch('http://localhost:3000/create_class', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newClass),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error al crear la clase');
+      }
+  
+      navigate('/', { state: { message: 'block' } });
       alert("¡Clase creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la clase:", error);
@@ -54,6 +67,7 @@ export default function CreateClass() {
      }
     }
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createUser } from '../routes/users.js';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import Box from '@mui/material/Box';
@@ -15,7 +14,6 @@ export default function CreateAccount() {
     const [password, setPassword] = useState('');
     const [gym, setGym] = useState('');
     const [errors, setErrors] = useState([]);
-    const [errorsModal, setErrorsModal] = useState(false);
     const navigate = useNavigate();
     const auth = getAuth();
 
@@ -85,7 +83,13 @@ export default function CreateAccount() {
                     Password: password,
                     Gym: gym,
                 };
-                await createUser(newUser);
+                await fetch('http://localhost:3000/create_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newUser),
+                });
                 navigate('/'); 
                 alert("Account created successfully!");
             } catch (error) {

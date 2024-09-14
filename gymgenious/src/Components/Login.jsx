@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUser } from '../routes/users.js'; 
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
