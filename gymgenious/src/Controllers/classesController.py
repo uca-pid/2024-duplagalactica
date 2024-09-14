@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from classesRoutes import get_classes, create_class
+from services.classesRoutes import get_classes, create_class
 
 
 

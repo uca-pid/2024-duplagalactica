@@ -29,7 +29,7 @@ def get_user(password, mail):
 
         if users:
             user = users[0]
-            user['id'] = query[0].id
+            user['uid'] = query[0].id
             return user
         else:
             raise ValueError('Usuario no encontrado')
@@ -39,9 +39,9 @@ def get_user(password, mail):
 
 def create_user(user):
     try:
+        print(user)
         users_collection = db.collection('users')
-        doc_ref = users_collection.add(user)
-        user['id'] = doc_ref.id
+        users_collection.add(user)
         return user
     except Exception as error:
         print("Error al crear el usuario:", error)

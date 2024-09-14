@@ -2,13 +2,13 @@ import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase-config.js';
+import {signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const auth = getAuth()
   const goToCreateAccount = () => {
     navigate('/create-account');
   };
