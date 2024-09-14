@@ -7,6 +7,8 @@ import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import { getClasses } from '../routes/classes.js';
 import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const localizer = momentLocalizer(moment);
 
@@ -67,6 +69,7 @@ export default function Main_Page() {
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery('(max-width:250px)');
   const location = useLocation();
+  const [openCircularProgress, setOpenCircularProgress] = useState(true)
   useEffect(() => {
     if (location.state?.message === 'block') {
       setLeftBarOption('add');
@@ -130,16 +133,13 @@ export default function Main_Page() {
           });
         }
       });
-  
+      setOpenCircularProgress(false)
       setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
   
-  
-  
-
   useEffect(() => {
     fetchClasses();
   }, []);
@@ -155,6 +155,15 @@ export default function Main_Page() {
   return (
     <div className="App">
       <LeftBar value={leftBarOption}/>
+      {openCircularProgress ? (
+              <Backdrop
+              sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+              open={openCircularProgress}
+            >
+              <CircularProgress color="inherit" />
+          </Backdrop>
+      ) : null}
+
       {!isSmallScreen ? (
   <>
     <div className="Calendar-Button">
