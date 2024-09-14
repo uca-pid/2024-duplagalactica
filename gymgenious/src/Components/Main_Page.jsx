@@ -168,51 +168,47 @@ export default function Main_Page() {
       ) : null}
 
       {!isSmallScreen ? (
-  <>
-    <div className="Calendar-Button">
-      {showCalendar ? (
-        <button onClick={changeShowCalendar} className="Toggle-Button">
-          Show table
-        </button>
-      ) : (
-        <button onClick={changeShowCalendar} className="Toggle-Button">
-          Show calendar
-        </button>
-      )}
-    </div>
-
-    {showCalendar ? (
-      <div className="WebApp-Body">
-        <Calendar events={events} onSelectEvent={handleSelectEvent} />
-      </div>
-    ) : (
-      <div className="Table-Container">
-        <EnhancedTable rows={classes} user={leftBarOption} />
-      </div>
-    )}
-  </>
-) : (
-  <div className="Table-Container">
-        <EnhancedTable rows={classes} />
-      </div>
-)}
-
-
-
-      {selectedEvent && (
-        <div className="Modal" onClick={handleCloseModal}>
-          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-            <h2>Class details</h2>
-            <p><strong>Name:</strong> {selectedEvent.name}</p>
-            <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
-            <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
-            <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-            { leftBarOption==='add' &&
-               ( <button onClick={handleCloseModal}>Booking</button> )}
-            <button onClick={handleCloseModal}>Close</button>
-          </div>
+      <>
+        <div className="Calendar-Button">
+          {showCalendar ? (
+            <button onClick={changeShowCalendar} className="Toggle-Button">
+              Show table
+            </button>
+          ) : (
+            <button onClick={changeShowCalendar} className="Toggle-Button">
+              Show calendar
+            </button>
+          )}
+        </div>
+        {showCalendar ? (
+        <div className="WebApp-Body">
+          <Calendar events={events} onSelectEvent={handleSelectEvent} />
+        </div>
+        ) : (
+        <div className="Table-Container">
+          <EnhancedTable rows={classes} user={leftBarOption} />
         </div>
       )}
+      </>
+  ) : (
+    <div className="Table-Container">
+          <EnhancedTable rows={classes} />
+    </div>
+  )}
+  {selectedEvent && (
+    <div className="Modal" onClick={handleCloseModal}>
+      <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+        <h2>Class details</h2>
+        <p><strong>Name:</strong> {selectedEvent.name}</p>
+        <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
+        <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+        <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+        { leftBarOption==='add' &&
+            ( <button onClick={handleCloseModal}>Booking</button> )}
+        <button onClick={handleCloseModal}>Close</button>
+      </div>
+    </div>
+  )}
     </div>
   );
 }
