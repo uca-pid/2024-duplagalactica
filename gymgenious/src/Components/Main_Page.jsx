@@ -187,7 +187,7 @@ export default function Main_Page() {
       </div>
     ) : (
       <div className="Table-Container">
-        <EnhancedTable rows={classes} />
+        <EnhancedTable rows={classes} user={leftBarOption} />
       </div>
     )}
   </>
@@ -207,6 +207,8 @@ export default function Main_Page() {
             <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
             <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+            { leftBarOption==='add' &&
+               ( <button onClick={handleCloseModal}>Booking</button> )}
             <button onClick={handleCloseModal}>Close</button>
           </div>
         </div>
