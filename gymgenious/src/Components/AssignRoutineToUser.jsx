@@ -49,7 +49,7 @@ export default function RoutineCreation() {
       <LeftBar value={'add'}/>
       <div className='class-creation-container'>
         <div className='class-creation-content'>
-          <h2 style={{color:'#14213D'}}>Create routine</h2>
+          <h2 style={{color:'#14213D'}}>Assign users</h2>
           <form onSubmit={handleSubmit}>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                 <div className="input-small-container">
