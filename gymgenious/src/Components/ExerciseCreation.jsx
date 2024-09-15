@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 
 export default function ExerciseCreation() {
@@ -41,41 +40,38 @@ export default function ExerciseCreation() {
   };
 
   return (
-    <div className='App'>
-      <LeftBar value={'add'}/>
-      <div className='class-creation-container'>
-        <div className='class-creation-content'>
-          <h2 style={{color:'#14213D'}}>Create exercise</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-             <div className="input-small-container">
-                <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
-                <input 
+    <div className='class-creation-container'>
+      <div className='class-creation-content'>
+        <h2 style={{color:'#14213D'}}>Create exercise</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+            <div className="input-small-container">
+              <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+              />
+            </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                  <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
+                  <input 
                   type="text" 
-                  id="name" 
-                  name="name" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                />
+                  id="desc" 
+                  name="desc" 
+                  value={desc} 
+                  onChange={(e) => setDesc(e.target.value)} 
+                  />
               </div>
-            </div>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                <div className="input-small-container">
-                    <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
-                    <input 
-                    type="text" 
-                    id="desc" 
-                    name="desc" 
-                    value={desc} 
-                    onChange={(e) => setDesc(e.target.value)} 
-                    />
-                </div>
-            </div>
-            <button type="submit" className='button_login'>
-              Create exercise
-            </button>
-          </form>
-        </div>
+          </div>
+          <button type="submit" className='button_login'>
+            Create exercise
+          </button>
+        </form>
       </div>
     </div>
   );

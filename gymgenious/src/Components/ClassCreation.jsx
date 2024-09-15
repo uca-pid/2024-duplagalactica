@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
+import NewLeftBar from '../real_components/NewLeftBar.jsx'
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
