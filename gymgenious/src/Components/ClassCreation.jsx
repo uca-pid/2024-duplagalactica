@@ -80,7 +80,7 @@ export default function CreateClass() {
 
   return (
     <div className='App'>
-      <LeftBar value={'add'}/>
+      <LeftBar email={userMail} type={userType}/>
       <div className='class-creation-container'>
         <div className='class-creation-content'>
           <h2 style={{color:'#14213D'}}>Create class</h2>
