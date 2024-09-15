@@ -15,6 +15,7 @@ export default function RoutineCreation({email}) {
         name: name,
         description: desc,
         excercises: exercises,
+        owner: email,
       };
       const response = await fetch('http://127.0.0.1:5000/create_routine', {
         method: 'POST',
@@ -28,7 +29,7 @@ export default function RoutineCreation({email}) {
         throw new Error('Error al crear la rutina');
       }
  
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/managing-routines?mail=${email}&step=${2}`);
       alert("¡Rutina creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la rutina:", error);

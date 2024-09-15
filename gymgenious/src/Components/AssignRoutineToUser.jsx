@@ -13,7 +13,8 @@ export default function RoutineCreation({email}) {
     try {  
       const newAsignRoutine = {
         routine: routineAssigned,
-        user: users
+        user: users,
+        owner: email
       };
       const response = await fetch('http://127.0.0.1:5000/assign_routine_to_user', {
         method: 'POST',
@@ -27,7 +28,7 @@ export default function RoutineCreation({email}) {
         throw new Error('Error al asignar la rutina');
       }
  
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/?mail=${email}`);
       alert("¡Rutina asignada exitosamente!");
     } catch (error) {
       console.error("Error al asigna la rutina:", error);

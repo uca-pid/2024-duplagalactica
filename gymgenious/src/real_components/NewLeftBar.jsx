@@ -46,7 +46,7 @@ export default function TemporaryDrawer({value, email=null}) {
     };
     const goToManageRoutines = () => {
       if (email!=null) {
-        navigate(`/managing-routines?mail=${email}`); 
+        navigate(`/managing-routines?mail=${email}&step=${0}`); 
       } else {
         navigate(`/managing-routines`); 
       }

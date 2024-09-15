@@ -28,7 +28,7 @@ export default function ExerciseCreation({email}) {
         throw new Error('Error al crear ejercicio');
       }
   
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/managing-routines?mail=${email}&step=${1}`);
       alert("Ejercicio creado exitosamente!");
     } catch (error) {
       console.error("Error al crear el ejercicio:", error);

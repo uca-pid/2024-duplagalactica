@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState,useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import Box from '@mui/material/Box';
@@ -13,10 +13,11 @@ import RoutineCreation from './RoutineCreation.jsx'
 import AssignRoutineToUser from './AssignRoutineToUser.jsx'
 
 export default function ManagingRoutines () {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [skipped, setSkipped] = React.useState(new Set());
   const urlParams = new URLSearchParams(window.location.search);
   const userMail = urlParams.get('mail');
+  const step = parseInt(urlParams.get('step'))
+  const [activeStep, setActiveStep] = React.useState(step);
+  const [skipped, setSkipped] = React.useState(new Set());
   const steps = ['Create exercise', 'Create routine', 'Assign routine'];
 
     const isStepOptional = () => {
@@ -58,6 +59,12 @@ export default function ManagingRoutines () {
   const handleReset = () => {
     setActiveStep(0);
   };
+
+  useEffect(() => {
+    if (step >= 0 && step < steps.length) {
+      setActiveStep(step);
+    }
+  }, [step]);
 
   return (
     <div className='App'>
