@@ -4,13 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 
-export default function RoutineCreation() {
+export default function RoutineCreation({email}) {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [exercises, setExercises] = useState('');
     const navigate = useNavigate();
-    const urlParams = new URLSearchParams(window.location.search);
-    const userMail = urlParams.get('mail');
   const handleCreateRoutine = async () => {
     try {  
       const newRoutine = {

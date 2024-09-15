@@ -163,7 +163,7 @@ export default function Main_Page() {
 
   return (
     <div className="App">
-      <NewLeftBar/>
+      <NewLeftBar email={userMail}/>
       {openCircularProgress ? (
               <Backdrop
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

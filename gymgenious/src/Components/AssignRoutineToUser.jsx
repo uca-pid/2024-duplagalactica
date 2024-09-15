@@ -5,12 +5,10 @@ import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 import UserAssignment from './UsersAssignment.jsx'
 
-export default function RoutineCreation() {
+export default function RoutineCreation({email}) {
     const [routineAssigned, setRoutine] = useState('');
     const [users, setUsers] = useState('');
     const navigate = useNavigate();
-    const urlParams = new URLSearchParams(window.location.search);
-    const userMail = urlParams.get('mail');
   const handleAssignRoutine = async () => {
     try {  
       const newAsignRoutine = {

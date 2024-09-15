@@ -3,17 +3,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment'
 
-export default function ExerciseCreation() {
+export default function ExerciseCreation({email}) {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const navigate = useNavigate();
-  const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');
   const handleCreateExersice = async () => {
+    console.log(email)
     try {  
       const newExersice = {
         name: name,
-        description: desc
+        description: desc,
+        owner: email
       };
   
       const response = await fetch('http://127.0.0.1:5000/create_exersice', {

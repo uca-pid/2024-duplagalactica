@@ -8,7 +8,6 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import moment from 'moment';
 import ExerciseCreation from './ExerciseCreation.jsx'
 import RoutineCreation from './RoutineCreation.jsx'
 import AssignRoutineToUser from './AssignRoutineToUser.jsx'
@@ -16,47 +15,9 @@ import AssignRoutineToUser from './AssignRoutineToUser.jsx'
 export default function ManagingRoutines () {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
-  const [routine, setRoutine] = useState('');
-  const [users, setUsers] = useState('');
-  const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
   const userMail = urlParams.get('mail');
   const steps = ['Create exercise', 'Create routine', 'Assign routine'];
-
-//   const handleCreateClass = async () => {
-//     try {  
-//       const newClass = {
-//         name: name,
-//         dateInicio: isoDateStringInicio,
-//         dateFin: isoDateStringFin,
-//         hour: hour,
-//         day: day(date),
-//         permanent: permanent,
-//       };
-
-//       const response = await fetch('http://127.0.0.1:5000/create_class', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(newClass),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error('Error al crear la clase');
-//       }
-
-//       navigate('/', { state: { message: 'block' } });
-//       alert("¡Clase creada exitosamente!");
-//     } catch (error) {
-//       console.error("Error al crear la clase:", error);
-//   };
-
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        //handleCreateClass();
-    };
 
     const isStepOptional = () => {
         return true;
@@ -83,8 +44,6 @@ export default function ManagingRoutines () {
 
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
 
@@ -161,13 +120,13 @@ export default function ManagingRoutines () {
             </Box>
         </div>
         {activeStep===0 && (
-            <ExerciseCreation/>
+            <ExerciseCreation  email={userMail}/>
         )}
         {activeStep===1 && (
-            <RoutineCreation/>
+            <RoutineCreation  email={userMail}/>
         )}
         {activeStep===2 && (
-            <AssignRoutineToUser/>
+            <AssignRoutineToUser  email={userMail}/>
         )}
     </div>
   );
