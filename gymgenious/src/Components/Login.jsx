@@ -26,8 +26,11 @@ export default function Login() {
         alert("Please verify your email address before logging in.");
         return;
       }
+      console.log("llegue 1")
+      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${username}`);
+      const data = await response.json();
       alert("Successful login!");
-      navigate(`/?mail=${username}`);
+      navigate(`/?mail=${username}&type=${data.type}`);
     } catch (error) {
       console.error("Login error:", error);
       alert("Credentials or server error");

@@ -17,7 +17,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ExitToApp from '@mui/icons-material/ExitToApp'
 import { useNavigate } from 'react-router-dom';
 
-export default function TemporaryDrawer({value, email=null}) {
+export default function TemporaryDrawer({value, email=null,type=null}) {
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
     
@@ -38,14 +38,14 @@ export default function TemporaryDrawer({value, email=null}) {
     };
     const goToClassCreation = () => {
       if (email!=null) {
-        navigate(`/class-creation?mail=${email}`); 
+        navigate(`/class-creation?mail=${email}&type=${type}`); 
       } else {
         navigate(`/class-creation`); 
       }
     };
     const goToManageRoutines = () => {
       if (email!=null) {
-        navigate(`/managing-routines?mail=${email}&step=${0}`); 
+        navigate(`/managing-routines?mail=${email}&step=${0}&type=${type}`); 
       } else {
         navigate(`/managing-routines`); 
       }
