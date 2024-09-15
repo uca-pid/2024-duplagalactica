@@ -26,8 +26,9 @@ def create_class():
 
 @app.route('/get_unique_user_by_email', methods=['GET'])
 def get_unique_user_by_email():
-    mail = request.args.get('mail')
-    return get_unique_user_by_email_route(mail)
+    username = request.args.get('mail')
+    print(f"Received email: {username}")
+    return get_unique_user_by_email_route(username)
 
 @app.route('/get_user', methods=['GET'])
 def get_user():

@@ -15,6 +15,7 @@ import AssignRoutineToUser from './AssignRoutineToUser.jsx'
 export default function ManagingRoutines () {
   const urlParams = new URLSearchParams(window.location.search);
   const userMail = urlParams.get('mail');
+  const userType = urlParams.get('type');
   const step = parseInt(urlParams.get('step'))
   const [activeStep, setActiveStep] = React.useState(step);
   const [skipped, setSkipped] = React.useState(new Set());

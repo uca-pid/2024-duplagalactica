@@ -72,6 +72,7 @@ export default function Main_Page() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const userMail = urlParams.get('mail');
+  const userType = urlParams.get('type');
 
 
   useEffect(() => {
@@ -162,7 +163,7 @@ export default function Main_Page() {
 
   return (
     <div className="App">
-      <NewLeftBar email={userMail}/>
+      <NewLeftBar email={userMail} type={userType}/>
       {openCircularProgress ? (
               <Backdrop
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

@@ -4,8 +4,9 @@ from services.usersRoutes import get_unique_user_by_email, get_user, create_user
 
 def get_unique_user_by_email_route(mail):
     try:
-        mail = request.args.get('mail')
+        print(mail)
         user = get_unique_user_by_email(mail)
+        print("controller final",user)
         return jsonify(user), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 404

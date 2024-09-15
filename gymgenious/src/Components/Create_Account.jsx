@@ -13,6 +13,7 @@ export default function CreateAccount() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState([]);
+    const [typeAccount,setTypeAccount] = useState('')
     const navigate = useNavigate();
     const auth = getAuth();
 
@@ -75,6 +76,7 @@ export default function CreateAccount() {
                     Lastname: lastName,
                     Mail: email,
                     Birthday: date,
+                    type: typeAccount
                 };
                 await fetch('http://127.0.0.1:5000/create_user', {
                     method: 'POST',
@@ -181,6 +183,16 @@ export default function CreateAccount() {
                                     <p>The password must contain at least 1 special character.</p>
                                 </Box>
                             </Popper>
+                        </div>
+                        <div className="input-container">
+                            <label htmlFor="typeAccount" style={{color:'#14213D'}}>Type of account:</label>
+                            <input 
+                                type="typeAccount" 
+                                id="typeAccount" 
+                                name="typeAccount" 
+                                value={typeAccount} 
+                                onChange={(e) => setTypeAccount(e.target.value)} 
+                            />
                         </div>
                         <button type="submit" className='button_create_account'>
                             Create account

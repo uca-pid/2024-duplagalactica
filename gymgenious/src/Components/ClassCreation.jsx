@@ -13,7 +13,8 @@ export default function CreateClass() {
   const [name, setName] = useState('');
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');
+  const userMail = urlParams.get('mail');  
+  const userType = urlParams.get('type');
   const day = (dateString) => {
     const date = new Date(dateString);
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
