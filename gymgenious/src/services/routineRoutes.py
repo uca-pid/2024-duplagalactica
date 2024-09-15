@@ -25,10 +25,10 @@ def assign_routine_to_user(newAssignRoutine):
         raise RuntimeError("No se pudo asignar la rutina")
     
 
-def get_routines():
+def get_routines_by_owner(owner):
     try:
         routines_ref = db.collection('routines')
-        docs = routines_ref.stream()
+        docs = routines_ref.where('owner', '==', owner).stream()
         routines = [{**doc.to_dict()} for doc in docs]
         return routines
     except Exception as e:

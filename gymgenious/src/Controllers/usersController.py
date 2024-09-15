@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from services.usersRoutes import get_unique_user_by_email, get_user, create_user, send_email,get_users,get_clients_users
+from services.usersRoutes import get_unique_user_by_email, get_user, create_user, send_email,get_users,get_clients_users,get_client_users_no_match_routine
 
 
 def get_unique_user_by_email_route(mail):
@@ -50,6 +50,14 @@ def get_users_route():
 def get_clients_users_route():
     try:
         users_list = get_clients_users()
+        return jsonify(users_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def get_client_users_no_match_routine_route(routine):
+    try:
+        users_list = get_client_users_no_match_routine(routine)
         return jsonify(users_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

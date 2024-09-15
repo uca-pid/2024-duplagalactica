@@ -17,7 +17,7 @@ function intersection(a, b) {
   return a.filter((value) => b.includes(value));
 }
 
-export default function UsserAssignment({ onUsersChange }) {
+export default function UsserAssignment({ onUsersChange ,routine}) {
   const [users, setUsers] = useState([]);
   const [checked, setChecked] = useState([]);
   const [left, setLeft] = useState([]);
@@ -31,7 +31,7 @@ export default function UsserAssignment({ onUsersChange }) {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/get_client_users');
+      const response = await fetch(`http://127.0.0.1:5000/get_client_users_no_match_routine?routine=${routine}`);
       if (!response.ok) {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }
@@ -44,8 +44,10 @@ export default function UsserAssignment({ onUsersChange }) {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (routine) {
+      fetchUsers(routine);
+    }
+  }, [routine]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);

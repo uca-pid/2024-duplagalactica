@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import UsserAssignment from './UsersAssignment.jsx';
 
 export default function RoutineCreation({ email }) {
-    const [routineAssigned, setRoutine] = useState('');
+    const [routineAssigned, setRoutine] = useState(' ');
     const [users, setUsers] = useState([]);
     const [routines, setRoutines] = useState([]);
     const navigate = useNavigate();
 
     const fetchRoutines = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/get_routines');
+            const response = await fetch(`http://127.0.0.1:5000/get_routines_by_owner?owner=${email}`);
             if (!response.ok) {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
             }
@@ -87,7 +87,7 @@ export default function RoutineCreation({ email }) {
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
                             <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
-                            <UsserAssignment onUsersChange={handleUsersChange} />
+                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned}/>
                         </div>
                     </div>
                     <button type="submit" className='button_login'>

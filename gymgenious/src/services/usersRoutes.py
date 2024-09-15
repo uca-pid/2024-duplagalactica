@@ -80,3 +80,26 @@ def get_clients_users():
     except Exception as e:
         print(f"Error al obtener los usuarios: {e}")
         raise RuntimeError("No se pudo obtener las usuarios")
+
+
+def get_client_users_no_match_routine(routine):
+    try:
+        routines_ref = db.collection('assigned_routines')
+        docs = routines_ref.where('routine', '!=', routine).stream()
+        emails = set()
+        datitos = [{**doc.to_dict()} for doc in docs]
+        for dat in datitos:
+            for user in dat['user']:
+                if 'Mail' in user:
+                    emails.add(user['Mail'])
+        email_list = [{'Mail': email} for email in emails]
+        users_ref = db.collection('users')
+        final_data = []
+        for email_dict in email_list:
+            docs_final = users_ref.where('Mail', '==', email_dict['Mail']).stream()
+            for doc in docs_final:
+                final_data.append(doc.to_dict())        
+        return final_data  
+    except Exception as e:
+        print(f"Error al obtener los usuarios: {e}")
+        raise RuntimeError("No se pudo obtener los usuarios")
