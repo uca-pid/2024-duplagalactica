@@ -17,7 +17,7 @@ function intersection(a, b) {
   return a.filter((value) => b.includes(value));
 }
 
-export default function UsserAssignment() {
+export default function UsserAssignment({ onUsersChange }) {
   const [users, setUsers] = useState([]);
   const [checked, setChecked] = useState([]);
   const [left, setLeft] = useState([]);
@@ -25,6 +25,9 @@ export default function UsserAssignment() {
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
+  useEffect(() => {
+    onUsersChange(right); 
+  }, [right, onUsersChange]);
 
   const fetchUsers = async () => {
     try {
@@ -33,10 +36,8 @@ export default function UsserAssignment() {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }
       const data = await response.json();
-      console.log(data)
       setUsers(data);
-      setLeft(data.slice(0, Math.ceil(data.length / 2)));
-      setRight(data.slice(Math.ceil(data.length / 2)));
+      setLeft(data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -60,25 +61,33 @@ export default function UsserAssignment() {
   };
 
   const handleAllRight = () => {
-    setRight(right.concat(left));
+    const newRight = right.concat(left);
+    setRight(newRight);
     setLeft([]);
+    onUsersChange(newRight);
   };
 
   const handleCheckedRight = () => {
-    setRight(right.concat(leftChecked));
+    const newRight = right.concat(leftChecked);
+    setRight(newRight);
     setLeft(not(left, leftChecked));
     setChecked(not(checked, leftChecked));
+    onUsersChange(newRight);
   };
 
   const handleCheckedLeft = () => {
-    setLeft(left.concat(rightChecked));
+    const newLeft = left.concat(rightChecked);
+    setLeft(newLeft);
     setRight(not(right, rightChecked));
     setChecked(not(checked, rightChecked));
+    onUsersChange(newLeft); 
   };
 
   const handleAllLeft = () => {
-    setLeft(left.concat(right));
+    const newLeft = left.concat(right);
+    setLeft(newLeft);
     setRight([]);
+    onUsersChange(newLeft); 
   };
 
   const customList = (items) => (
