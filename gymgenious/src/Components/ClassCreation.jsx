@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
+import LeftBar from '../real_components/NewLeftBar.jsx';
 import moment from 'moment'
 import NewLeftBar from '../real_components/NewLeftBar.jsx'
 
@@ -12,7 +12,8 @@ export default function CreateClass() {
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
   const navigate = useNavigate();
-
+  const urlParams = new URLSearchParams(window.location.search);
+  const userMail = urlParams.get('mail');
   const day = (dateString) => {
     const date = new Date(dateString);
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -37,6 +38,7 @@ export default function CreateClass() {
         hour: hour,
         day: day(date),
         permanent: permanent,
+        owner: userMail
       };
   
       const response = await fetch('http://127.0.0.1:5000/create_class', {
@@ -51,7 +53,7 @@ export default function CreateClass() {
         throw new Error('Error al crear la clase');
       }
   
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/?mail=${userMail}`, { state: { message: 'block' } });
       alert("¡Clase creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la clase:", error);

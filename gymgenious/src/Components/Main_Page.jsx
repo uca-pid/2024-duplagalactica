@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';

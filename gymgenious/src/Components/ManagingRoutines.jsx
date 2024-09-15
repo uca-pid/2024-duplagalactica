@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState,useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
+import LeftBar from '../real_components/NewLeftBar.jsx';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';

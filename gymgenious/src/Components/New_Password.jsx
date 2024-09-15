@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
+import LeftBar from '../real_components/NewLeftBar.jsx';
 import { getAuth, confirmPasswordReset } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import Box from '@mui/material/Box';

@@ -34,7 +34,6 @@ export default function TemporaryDrawer({value, email=null}) {
         }
     };
     const goToLogin = () => {
-      
         navigate('/login');
     };
     const goToClassCreation = () => {
