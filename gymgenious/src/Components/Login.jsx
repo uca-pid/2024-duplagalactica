@@ -27,7 +27,7 @@ export default function Login() {
         return;
       }
       alert("Successful login!");
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/?mail=${username}`);
     } catch (error) {
       console.error("Login error:", error);
       alert("Credentials or server error");

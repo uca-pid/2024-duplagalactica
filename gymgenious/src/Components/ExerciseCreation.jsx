@@ -7,7 +7,8 @@ export default function ExerciseCreation() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const navigate = useNavigate();
-
+  const urlParams = new URLSearchParams(window.location.search);
+  const userMail = urlParams.get('mail');
   const handleCreateExersice = async () => {
     try {  
       const newExersice = {

@@ -19,7 +19,8 @@ export default function ManagingRoutines () {
   const [routine, setRoutine] = useState('');
   const [users, setUsers] = useState('');
   const navigate = useNavigate();
-
+  const urlParams = new URLSearchParams(window.location.search);
+  const userMail = urlParams.get('mail');
   const steps = ['Create exercise', 'Create routine', 'Assign routine'];
 
 //   const handleCreateClass = async () => {

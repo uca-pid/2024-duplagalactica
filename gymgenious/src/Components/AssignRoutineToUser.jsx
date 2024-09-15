@@ -9,7 +9,8 @@ export default function RoutineCreation() {
     const [routineAssigned, setRoutine] = useState('');
     const [users, setUsers] = useState('');
     const navigate = useNavigate();
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const userMail = urlParams.get('mail');
   const handleAssignRoutine = async () => {
     try {  
       const newAsignRoutine = {

@@ -20,7 +20,7 @@ export default function UsserAssignment() {
   const [checked, setChecked] = React.useState([]);
   const [left, setLeft] = React.useState([0, 1, 2, 3]);
   const [right, setRight] = React.useState([4, 5, 6, 7]);
-
+  
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
 
