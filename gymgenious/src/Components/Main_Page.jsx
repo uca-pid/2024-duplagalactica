@@ -8,6 +8,7 @@ import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import NewLeftBar from '../real_components/NewLeftBar.jsx'
 
 const localizer = momentLocalizer(moment);
 
@@ -157,7 +158,7 @@ export default function Main_Page() {
 
   return (
     <div className="App">
-      <LeftBar value={leftBarOption}/>
+      <NewLeftBar/>
       {openCircularProgress ? (
               <Backdrop
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
