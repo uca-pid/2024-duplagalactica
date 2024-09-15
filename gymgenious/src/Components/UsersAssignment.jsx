@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -17,12 +18,33 @@ function intersection(a, b) {
 }
 
 export default function UsserAssignment() {
-  const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([0, 1, 2, 3]);
-  const [right, setRight] = React.useState([4, 5, 6, 7]);
-  
+  const [users, setUsers] = useState([]);
+  const [checked, setChecked] = useState([]);
+  const [left, setLeft] = useState([]);
+  const [right, setRight] = useState([]);
+
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/get_client_users');
+      if (!response.ok) {
+        throw new Error('Error al obtener los usuarios: ' + response.statusText);
+      }
+      const data = await response.json();
+      console.log(data)
+      setUsers(data);
+      setLeft(data.slice(0, Math.ceil(data.length / 2)));
+      setRight(data.slice(Math.ceil(data.length / 2)));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -60,20 +82,20 @@ export default function UsserAssignment() {
   };
 
   const customList = (items) => (
-    <Paper sx={{ width: 200, height: 230, overflow: 'auto' }}>
+    <Paper sx={{ width: 300, height: 400, overflow: 'auto' }}>
       <List dense component="div" role="list">
-        {items.map((value) => {
-          const labelId = `transfer-list-item-${value}-label`;
+        {items.map((user) => {
+          const labelId = `transfer-list-item-${user.Mail}-label`;
 
           return (
             <ListItemButton
-              key={value}
+              key={user.id}
               role="listitem"
-              onClick={handleToggle(value)}
+              onClick={handleToggle(user)}
             >
               <ListItemIcon>
                 <Checkbox
-                  checked={checked.includes(value)}
+                  checked={checked.includes(user)}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{
@@ -81,7 +103,7 @@ export default function UsserAssignment() {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`List item ${value + 1}`} />
+              <ListItemText id={labelId} primary={user.Mail} />
             </ListItemButton>
           );
         })}

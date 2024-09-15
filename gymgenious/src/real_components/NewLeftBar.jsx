@@ -34,7 +34,9 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
         }
     };
     const goToLogin = () => {
-        navigate('/login');
+      if (email==null) {
+        navigate('/login');  /// X AHORA NO TE DEJA VOLVER AL LOGIN PERO SIGUE APARECIENDO EL ICONO
+      }
     };
     const goToClassCreation = () => {
       if (email!=null) {

@@ -91,7 +91,6 @@ export default function Main_Page() {
   const fetchClasses = async () => {
     try {
       const response = await fetch('http://127.0.0.1:5000/get_classes');
-      console.log("HOLA")
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }

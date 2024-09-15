@@ -4,7 +4,7 @@ import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
 from Controllers.classesController import get_classes_route, create_class_route 
-from Controllers.usersController import get_unique_user_by_email_route, get_user_route, send_email_route, create_user_route
+from Controllers.usersController import get_unique_user_by_email_route, get_user_route, send_email_route, create_user_route,get_users_route,get_clients_users_route
 from Controllers.excersicesController import create_exersice_route
 from Controllers.routineController import create_routine_route,assign_routine_to_user_route
 
@@ -45,6 +45,19 @@ def create_user():
 def send_email():
     to_email = request.json.get('toEmail')
     return send_email_route(to_email)
+
+
+
+@app.route('/get_users', methods=['GET'])
+def get_users():
+    return get_users_route()
+
+@app.route('/get_client_users', methods=['GET'])
+def get_client_users():
+    return get_clients_users_route()
+
+
+
 
 @app.route('/create_exersice', methods=['POST'])
 def create_exersice():
