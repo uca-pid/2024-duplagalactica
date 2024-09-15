@@ -12,6 +12,7 @@ import Redirections from './Components/redirections.jsx';
 import ExerciseCreation from './Components/ExerciseCreation.jsx';
 import RoutineCreation from './Components/RoutineCreation.jsx';
 import AssignRoutineToUser from './Components/AssignRoutineToUser.jsx';
+import ManagingRoutines from './Components/ManagingRoutines.jsx';
 
 function App() {
   return (
@@ -25,9 +26,7 @@ function App() {
         <Route path="/new-password" element={<New_Password/>}/>
         <Route path="/verify-email" element={<Verify_email/>}/>
         <Route path="/redirections" element={<Redirections/>}/>
-        <Route path="/exersice-creation" element={<ExerciseCreation/>}/>
-        <Route path="/routine-creation" element={<RoutineCreation/>}/>
-        <Route path="/assign-routine-to-user" element={<AssignRoutineToUser/>}/>
+        <Route path="/managing-routines" element={<ManagingRoutines/>}/>
       </Routes>
     </Router>
   );

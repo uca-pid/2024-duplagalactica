@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
+import UserAssignment from './UsersAssignment.jsx'
 
 export default function RoutineCreation() {
     const [routineAssigned, setRoutine] = useState('');
@@ -40,49 +41,36 @@ export default function RoutineCreation() {
   };
 
   return (
-    <div className='App'>
-      <LeftBar value={'add'}/>
-      <div className='class-creation-container'>
-        <div className='class-creation-content'>
-          <h2 style={{color:'#14213D'}}>Assign users</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                <div className="input-small-container">
-                <label htmlFor="routineAssigned" style={{color:'#14213D'}}>Routine:</label>
-                    <select 
-                        id="routineAssigned" 
-                        name="routineAssigned" 
-                        value={routineAssigned} 
-                        onChange={(e) => setRoutine(e.target.value)} 
-                        >
-                        <option value="" >Select</option>
-                        <option value="Routine 1">Routine 1</option>
-                        <option value="Routine 2">Routine 2</option>
-                        <option value="Routine 3">Routine 3</option>
-                    </select>
-                </div>
-            </div>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                <div className="input-small-container">
-                    <label htmlFor="users" style={{color:'#14213D'}}>Users:</label>
-                    <select 
-                        id="users" 
-                        name="users" 
-                        value={users} 
-                        onChange={(e) => setUsers(e.target.value)} 
-                        >
-                        <option value="" >Select</option>
-                        <option value="User 1">User 1</option>
-                        <option value="User 2">User 2</option>
-                        <option value="User 3">User 3</option>
-                    </select>
-                </div>
-            </div>
-            <button type="submit" className='button_login'>
-              Assign users
-            </button>
-          </form>
-        </div>
+    <div className='class-creation-container'>
+      <div className='class-creation-content'>
+        <h2 style={{color:'#14213D'}}>Assign users</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+              <label htmlFor="routineAssigned" style={{color:'#14213D'}}>Routine:</label>
+                  <select 
+                      id="routineAssigned" 
+                      name="routineAssigned" 
+                      value={routineAssigned} 
+                      onChange={(e) => setRoutine(e.target.value)} 
+                      >
+                      <option value="" >Select</option>
+                      <option value="Routine 1">Routine 1</option>
+                      <option value="Routine 2">Routine 2</option>
+                      <option value="Routine 3">Routine 3</option>
+                  </select>
+              </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                  <label htmlFor="users" style={{color:'#14213D'}}>Users:</label>
+                  <UserAssignment/>
+              </div>
+          </div>
+          <button type="submit" className='button_login'>
+            Assign users
+          </button>
+        </form>
       </div>
     </div>
   );

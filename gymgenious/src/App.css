@@ -9,7 +9,7 @@
   border-width: 1px;
   border-style: solid;
   background-color: #E5E5E5;
-  width: 8vw;
+  width: 8%;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -763,4 +763,20 @@ iframe {
   padding-left:20px;
   padding-right: 20px;
   padding-bottom: 20px;
+}
+
+.stepper-container {
+  background-color: red;
+  width: 80%;
+  margin-left: 8%;
+  height: fit-content;
+  margin-top: 2%;
+}
+@media screen and (max-width: 765px) {
+  .stepper-container {
+    left: 10%;
+    width: 90%;
+    margin-top: 15%;
+    margin-left: 5%;
+  }
 }

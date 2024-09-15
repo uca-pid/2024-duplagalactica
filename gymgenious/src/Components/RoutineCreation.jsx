@@ -42,57 +42,54 @@ export default function RoutineCreation() {
   };
 
   return (
-    <div className='App'>
-      <LeftBar value={'add'}/>
-      <div className='class-creation-container'>
-        <div className='class-creation-content'>
-          <h2 style={{color:'#14213D'}}>Create routine</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-             <div className="input-small-container">
-                <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
-                <input 
+    <div className='class-creation-container'>
+      <div className='class-creation-content'>
+        <h2 style={{color:'#14213D'}}>Create routine</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+            <div className="input-small-container">
+              <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+              />
+            </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                  <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
+                  <input 
                   type="text" 
-                  id="name" 
-                  name="name" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                />
+                  id="desc" 
+                  name="desc" 
+                  value={desc} 
+                  onChange={(e) => setDesc(e.target.value)} 
+                  />
               </div>
-            </div>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                <div className="input-small-container">
-                    <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
-                    <input 
-                    type="text" 
-                    id="desc" 
-                    name="desc" 
-                    value={desc} 
-                    onChange={(e) => setDesc(e.target.value)} 
-                    />
-                </div>
-            </div>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                <div className="input-small-container">
-                    <label htmlFor="exercises" style={{color:'#14213D'}}>Exercises:</label>
-                    <select 
-                        id="exercises" 
-                        name="exercises" 
-                        value={exercises} 
-                        onChange={(e) => setExercises(e.target.value)} 
-                        >
-                        <option value="" >Select</option>
-                        <option value="Bench press">Bench press</option>
-                        <option value="Barbell curl">Barbell curl</option>
-                        <option value="Bar Push Downs">Bar Push Downs</option>
-                    </select>
-                </div>
-            </div>
-            <button type="submit" className='button_login'>
-              Create routine
-            </button>
-          </form>
-        </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                  <label htmlFor="exercises" style={{color:'#14213D'}}>Exercises:</label>
+                  <select 
+                      id="exercises" 
+                      name="exercises" 
+                      value={exercises} 
+                      onChange={(e) => setExercises(e.target.value)} 
+                      >
+                      <option value="" >Select</option>
+                      <option value="Bench press">Bench press</option>
+                      <option value="Barbell curl">Barbell curl</option>
+                      <option value="Bar Push Downs">Bar Push Downs</option>
+                  </select>
+              </div>
+          </div>
+          <button type="submit" className='button_login'>
+            Create routine
+          </button>
+        </form>
       </div>
     </div>
   );
