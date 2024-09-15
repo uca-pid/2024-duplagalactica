@@ -17,25 +17,38 @@ import PersonIcon from '@mui/icons-material/Person';
 import ExitToApp from '@mui/icons-material/ExitToApp'
 import { useNavigate } from 'react-router-dom';
 
-export default function TemporaryDrawer({value}) {
+export default function TemporaryDrawer({value, email=null}) {
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
-
+    
     const goToMainPage = () => {
         if (value === 'add') {
             navigate('/', { state: { message: 'block' } });
         } else {
-            navigate('/');
+            if (email!=null) {
+              navigate(`/?mail=${email}`); 
+            } else {
+              navigate(`/`); 
+            }
+            
         }
     };
     const goToLogin = () => {
         navigate('/login');
     };
     const goToClassCreation = () => {
-        navigate('/class-creation');
+      if (email!=null) {
+        navigate(`/class-creation?mail=${email}`); 
+      } else {
+        navigate(`/class-creation`); 
+      }
     };
     const goToManageRoutines = () => {
-        navigate('/managing-routines')
+      if (email!=null) {
+        navigate(`/managing-routines?mail=${email}&step=${0}`); 
+      } else {
+        navigate(`/managing-routines`); 
+      }
     }
     const navigateTo = (index) => {
         if (index===0){

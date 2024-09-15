@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
@@ -70,6 +69,11 @@ export default function Main_Page() {
   const isSmallScreen = useMediaQuery('(max-width:250px)');
   const location = useLocation();
   const [openCircularProgress, setOpenCircularProgress] = useState(true)
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const userMail = urlParams.get('mail');
+
+
   useEffect(() => {
     if (location.state?.message === 'block') {
       setLeftBarOption('add');
@@ -158,7 +162,7 @@ export default function Main_Page() {
 
   return (
     <div className="App">
-      <NewLeftBar/>
+      <NewLeftBar email={userMail}/>
       {openCircularProgress ? (
               <Backdrop
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -199,7 +203,7 @@ export default function Main_Page() {
   {selectedEvent && (
     <div className="Modal" onClick={handleCloseModal}>
       <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-        <h2>Class details</h2>
+        <h2>Classes details:</h2>
         <p><strong>Name:</strong> {selectedEvent.name}</p>
         <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>

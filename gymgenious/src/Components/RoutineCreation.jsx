@@ -4,18 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 
-export default function RoutineCreation() {
+export default function RoutineCreation({email}) {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [exercises, setExercises] = useState('');
     const navigate = useNavigate();
-
   const handleCreateRoutine = async () => {
     try {  
       const newRoutine = {
         name: name,
         description: desc,
         excercises: exercises,
+        owner: email,
       };
       const response = await fetch('http://127.0.0.1:5000/create_routine', {
         method: 'POST',
@@ -29,7 +29,7 @@ export default function RoutineCreation() {
         throw new Error('Error al crear la rutina');
       }
  
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/managing-routines?mail=${email}&step=${2}`);
       alert("¡Rutina creada exitosamente!");
     } catch (error) {
       console.error("Error al crear la rutina:", error);

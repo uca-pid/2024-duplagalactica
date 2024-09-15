@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
+import LeftBar from '../real_components/NewLeftBar.jsx';
 import { auth } from '../firebase-config.js';
 import {signInWithEmailAndPassword } from 'firebase/auth';
 
@@ -27,7 +27,7 @@ export default function Login() {
         return;
       }
       alert("Successful login!");
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/?mail=${username}`);
     } catch (error) {
       console.error("Login error:", error);
       alert("Credentials or server error");

@@ -5,16 +5,16 @@ import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 import UserAssignment from './UsersAssignment.jsx'
 
-export default function RoutineCreation() {
+export default function RoutineCreation({email}) {
     const [routineAssigned, setRoutine] = useState('');
     const [users, setUsers] = useState('');
     const navigate = useNavigate();
-
   const handleAssignRoutine = async () => {
     try {  
       const newAsignRoutine = {
         routine: routineAssigned,
-        user: users
+        user: users,
+        owner: email
       };
       const response = await fetch('http://127.0.0.1:5000/assign_routine_to_user', {
         method: 'POST',
@@ -28,7 +28,7 @@ export default function RoutineCreation() {
         throw new Error('Error al asignar la rutina');
       }
  
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/?mail=${email}`);
       alert("¡Rutina asignada exitosamente!");
     } catch (error) {
       console.error("Error al asigna la rutina:", error);

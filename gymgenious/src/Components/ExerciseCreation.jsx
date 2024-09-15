@@ -3,16 +3,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment'
 
-export default function ExerciseCreation() {
+export default function ExerciseCreation({email}) {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const navigate = useNavigate();
-
   const handleCreateExersice = async () => {
+    console.log(email)
     try {  
       const newExersice = {
         name: name,
-        description: desc
+        description: desc,
+        owner: email
       };
   
       const response = await fetch('http://127.0.0.1:5000/create_exersice', {
@@ -27,7 +28,7 @@ export default function ExerciseCreation() {
         throw new Error('Error al crear ejercicio');
       }
   
-      navigate('/', { state: { message: 'block' } });
+      navigate(`/managing-routines?mail=${email}&step=${1}`);
       alert("Ejercicio creado exitosamente!");
     } catch (error) {
       console.error("Error al crear el ejercicio:", error);

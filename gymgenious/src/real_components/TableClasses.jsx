@@ -19,7 +19,8 @@ function EnhancedTable({ rows, user }) {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEvent, setSelectedEvent] = useState(null);
-
+  const urlParams = new URLSearchParams(window.location.search);
+  const userMail = urlParams.get('mail');
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
 
