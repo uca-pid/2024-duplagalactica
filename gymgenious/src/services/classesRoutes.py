@@ -23,3 +23,56 @@ def create_class(new_class):
     except Exception as e:
         print(f"Error al crear la clase: {e}")
         raise RuntimeError("No se pudo crear la clase")
+
+
+def book_class(event, mail):
+    try:
+        print("hgola")
+        print(event, mail)
+        users_ref = db.collection('classes')
+        docs = users_ref.where('name', '==', event).stream()
+        updated = False
+
+        for doc in docs:
+            doc_ref = users_ref.document(doc.id)
+            current_data = doc_ref.get().to_dict()
+            booked_users = current_data.get('BookedUsers', [])
+            if mail not in booked_users:
+                booked_users.append(mail)
+            doc_ref.update({
+                'BookedUsers': booked_users
+            })
+            updated = True
+
+        if not updated:
+            print(f"No se encontró una clase con el nombre: {event}")
+        return {"message": "Actualización realizada"} 
+    except Exception as e:
+        print(f"Error actualizando el usuario: {e}")
+        raise RuntimeError("No se pudo actualizar el usuario")
+    
+def unbook_class(event, mail):
+    try:
+        print("hgola")
+        print(event, mail)
+        users_ref = db.collection('classes')
+        docs = users_ref.where('name', '==', event).stream()
+        updated = False
+
+        for doc in docs:
+            doc_ref = users_ref.document(doc.id)
+            current_data = doc_ref.get().to_dict()
+            booked_users = current_data.get('BookedUsers', [])
+            if mail in booked_users:
+                booked_users.remove(mail)
+                doc_ref.update({
+                    'BookedUsers': booked_users
+                })
+                updated = True
+
+        if not updated:
+            print(f"No se encontró una clase con el nombre: {event}")
+        return {"message": "Actualización realizada"} 
+    except Exception as e:
+        print(f"Error actualizando el usuario: {e}")
+        raise RuntimeError("No se pudo actualizar el usuario")

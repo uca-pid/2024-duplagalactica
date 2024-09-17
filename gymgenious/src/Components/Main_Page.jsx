@@ -88,6 +88,46 @@ export default function Main_Page() {
     handleCloseModal()
   };
 
+
+  const handleBookClass = async (event) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/book_class', {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    }
+    await fetchClasses();
+    handleCloseModal();
+  };
+
+
+  const handleUnbookClass = async (event) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/unbook_class', {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    }
+    await fetchClasses();
+    handleCloseModal();
+  };
+
   const fetchClasses = async () => {
     try {
       const response = await fetch('http://127.0.0.1:5000/get_classes');
@@ -208,8 +248,11 @@ export default function Main_Page() {
         <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-        { leftBarOption==='add' &&
-            ( <button onClick={handleCloseModal}>Booking</button> )}
+        {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail) ? (
+              <button onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook</button>
+            ) : (
+              <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
+        )}
         <button onClick={handleCloseModal}>Close</button>
       </div>
     </div>

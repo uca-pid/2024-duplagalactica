@@ -54,6 +54,14 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
         navigate(`/managing-routines`); 
       }
     }
+    
+    const gotToBookedClasses = () => {
+      if (email!=null) {
+        navigate(`/user-classes?mail=${email}`); 
+      } else {
+        navigate(`/user-classes`); 
+      }
+    }
     const navigateTo = (index) => {
         if (index===0){
             goToMainPage();
@@ -72,7 +80,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
       } else if (index===1){
           goToLogin();
       } else if (index===2){
-          goToClassCreation();
+          gotToBookedClasses();
       } else if (index===3){
           goToManageRoutines()
       }
@@ -104,8 +112,8 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
       <List>
         {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon onClick={()=>navigateFromUserTo(index)}>
+            <ListItemButton onClick={()=>navigateFromUserTo(index)}>
+              <ListItemIcon>
                 {index === 0 && <HomeIcon/> }
                 {index === 1 && <PersonIcon/> }
                 {index === 2 && <AddIcon/> }

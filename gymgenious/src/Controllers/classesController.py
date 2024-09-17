@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from services.classesRoutes import get_classes, create_class
+from services.classesRoutes import get_classes, create_class,book_class,unbook_class
 
 
 
@@ -19,4 +19,16 @@ def create_class_route(new_class):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+def book_class_route(event,mail):
+    try:
+        booked_class = book_class(event,mail)
+        return jsonify({"message": "Clase actualizado exitosamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+def unbook_class_route(event,mail):
+    try:
+        booked_class = unbook_class(event,mail)
+        return jsonify({"message": "Clase actualizado exitosamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
