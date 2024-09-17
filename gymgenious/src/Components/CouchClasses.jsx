@@ -319,6 +319,7 @@ const visibleRows = [
                     <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
                     <button onClick={handleEditClass}>Edit class</button>
                     <button onClick={handleCloseModal}>Close</button>
+                    <button onClick={handleCloseModal}>Delete class</button>
                     </div>
                 </div>
                 )}
