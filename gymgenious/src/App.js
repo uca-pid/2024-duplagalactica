@@ -9,10 +9,11 @@ import Reset_Password from './Components/Reset_Password.jsx';
 import New_Password from './Components/New_Password.jsx';
 import Verify_email from './Components/VerifyEmail.jsx';
 import Redirections from './Components/redirections.jsx';
-import ExerciseCreation from './Components/ExerciseCreation.jsx';
-import RoutineCreation from './Components/RoutineCreation.jsx';
-import AssignRoutineToUser from './Components/AssignRoutineToUser.jsx';
 import ManagingRoutines from './Components/ManagingRoutines.jsx';
+import UserProfile from './Components/UserProfile.jsx';
+import UserClasses from './Components/UserClasses.jsx';
+import CouchClasses from './Components/CouchClasses.jsx';
+import UserRoutines from './Components/UserRoutines.jsx';
 
 function App() {
   return (
@@ -27,6 +28,10 @@ function App() {
         <Route path="/verify-email" element={<Verify_email/>}/>
         <Route path="/redirections" element={<Redirections/>}/>
         <Route path="/managing-routines" element={<ManagingRoutines/>}/>
+        <Route path="/user-profile" element={<UserProfile/>}/>
+        <Route path="/user-classes" element={<UserClasses/>}/>
+        <Route path="/couch-classes" element={<CouchClasses/>}/>
+        <Route path="/user-routines" element={<UserRoutines/>}/>
       </Routes>
     </Router>
   );
