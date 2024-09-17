@@ -37,7 +37,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
       if (email==null) {
         navigate('/login');  /// X AHORA NO TE DEJA VOLVER AL LOGIN PERO SIGUE APARECIENDO EL ICONO
       } else{
-        navigate('/user-profile')  /// ESTO LO HIZO AGUS, FIJATE COMO HACES LA CONSULTA
+        navigate(`/user-profile?mail=${email}`)  /// ESTO LO HIZO AGUS, FIJATE COMO HACES LA CONSULTA
       }
     };
     const goToClassCreation = () => {
