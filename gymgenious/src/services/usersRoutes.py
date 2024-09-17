@@ -103,3 +103,27 @@ def get_client_users_no_match_routine(routine):
     except Exception as e:
         print(f"Error al obtener los usuarios: {e}")
         raise RuntimeError("No se pudo obtener los usuarios")
+
+def update_client_user(newUser):
+    try:
+        print(newUser)
+        users_ref = db.collection('users')
+        docs = users_ref.where('Mail', '==', newUser['Mail']).stream()
+        updated = False
+
+        for doc in docs:
+            doc_ref = users_ref.document(doc.id)
+            doc_ref.update({
+                'Name': newUser['Name'],
+                'Lastname': newUser['Lastname'],
+                'Birthday': newUser['Birthday']
+            })
+            updated = True
+
+        if not updated:
+            print(f"No se encontró un usuario con el correo: {newUser.Mail}")
+        return {"message": "Actualización realizada"} 
+    except Exception as e:
+        print(f"Error actualizando el usuario: {e}")
+        raise RuntimeError("No se pudo actualizar el usuario")
+

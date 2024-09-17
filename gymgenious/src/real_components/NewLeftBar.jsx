@@ -37,7 +37,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
       if (email==null) {
         navigate('/login');  /// X AHORA NO TE DEJA VOLVER AL LOGIN PERO SIGUE APARECIENDO EL ICONO
       } else{
-        navigate('/user-profile')  /// ESTO LO HIZO AGUS, FIJATE COMO HACES LA CONSULTA
+        navigate(`/user-profile?mail=${email}`)  /// ESTO LO HIZO AGUS, FIJATE COMO HACES LA CONSULTA
       }
     };
     const goToClassCreation = () => {
@@ -52,6 +52,14 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
         navigate(`/managing-routines?mail=${email}&step=${0}&type=${type}`); 
       } else {
         navigate(`/managing-routines`); 
+      }
+    }
+    
+    const gotToBookedClasses = () => {
+      if (email!=null) {
+        navigate(`/user-classes?mail=${email}`); 
+      } else {
+        navigate(`/user-classes`); 
       }
     }
     const navigateTo = (index) => {
@@ -72,7 +80,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
       } else if (index===1){
           goToLogin();
       } else if (index===2){
-          goToClassCreation();
+          gotToBookedClasses();
       } else if (index===3){
           goToManageRoutines()
       }
@@ -104,8 +112,8 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
       <List>
         {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon onClick={()=>navigateFromUserTo(index)}>
+            <ListItemButton onClick={()=>navigateFromUserTo(index)}>
+              <ListItemIcon>
                 {index === 0 && <HomeIcon/> }
                 {index === 1 && <PersonIcon/> }
                 {index === 2 && <AddIcon/> }

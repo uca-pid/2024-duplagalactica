@@ -22,6 +22,7 @@ function UsserClasses() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const urlParams = new URLSearchParams(window.location.search);
   const userMail = urlParams.get('mail');
+  const [visibleRows,setClasses]=useState([])
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
 
@@ -47,60 +48,46 @@ function UsserClasses() {
     setSelectedEvent(null);
   };
 
-//   const visibleRows = React.useMemo(
-//     () =>
-//       [...rows]
-//         .sort((a, b) =>
-//           order === 'asc'
-//             ? a[orderBy] < b[orderBy]
-//               ? -1
-//               : 1
-//             : a[orderBy] > b[orderBy]
-//             ? -1
-//             : 1
-//         )
-//         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-//     [order, orderBy, page, rowsPerPage, rows]
-//   );
-
-const visibleRows = [
-    { 
-      id: 1, 
-      name: 'Clase de Yoga', 
-      hour: '10:00 AM', 
-      dateInicio: '2024-09-17T10:00:00', 
-      permanent: 'Si' 
-    },
-    { 
-      id: 2, 
-      name: 'Entrenamiento Funcional', 
-      hour: '12:00 PM', 
-      dateInicio: '2024-09-18T12:00:00', 
-      permanent: 'No' 
-    },
-    { 
-      id: 3, 
-      name: 'Pilates', 
-      hour: '02:00 PM', 
-      dateInicio: '2024-09-19T14:00:00', 
-      permanent: 'No' 
-    },
-    { 
-      id: 4, 
-      name: 'CrossFit', 
-      hour: '06:00 PM', 
-      dateInicio: '2024-09-20T18:00:00', 
-      permanent: 'Si' 
-    },
-    { 
-      id: 5, 
-      name: 'Zumba', 
-      hour: '08:00 AM', 
-      dateInicio: '2024-09-21T08:00:00', 
-      permanent: 'No' 
+  const handleUnbookClass = async (event) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/unbook_class', {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
     }
-  ]; //ES UNA TABLA RANDOM, HAY QUE CAMBIAR POR LAS CLASES QUE ESTA ANOTADO EL USUARIO
-  
+    await fetchClasses();
+    handleCloseModal();
+  };
+
+  const fetchClasses = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/get_classes');
+      if (!response.ok) {
+        throw new Error('Error al obtener las clases: ' + response.statusText);
+      }
+      const data = await response.json();
+      console.log(data);
+      const filteredClasses = data.filter(event => event.BookedUsers.includes("j.lopez.s.252001@gmail.com"));
+
+      setClasses(filteredClasses);
+
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
 
   return (
     <div className="App">
@@ -240,7 +227,7 @@ const visibleRows = [
                     <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
                     <p><strong>Start time:</strong> {selectedEvent.hour}</p>
                     <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-                    <button style={{color:'red'}} onClick={handleCloseModal}>Unbook class</button>
+                    <button style={{color:'red'}} onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook class</button>
                     <button onClick={handleCloseModal}>Close</button>
                     </div>
                 </div>
@@ -253,8 +240,5 @@ const visibleRows = [
   
 }
 
-// UsserClasses.propTypes = {
-//   rows: PropTypes.array.isRequired,
-// };
 
 export default UsserClasses;
