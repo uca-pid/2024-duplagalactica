@@ -12,6 +12,7 @@ import Redirections from './Components/redirections.jsx';
 import ManagingRoutines from './Components/ManagingRoutines.jsx';
 import UserProfile from './Components/UserProfile.jsx';
 import UserClasses from './Components/UserClasses.jsx';
+import CouchClasses from './Components/CouchClasses.jsx';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/managing-routines" element={<ManagingRoutines/>}/>
         <Route path="/user-profile" element={<UserProfile/>}/>
         <Route path="/user-classes" element={<UserClasses/>}/>
+        <Route path="/couch-classes" element={<CouchClasses/>}/>
       </Routes>
     </Router>
   );
