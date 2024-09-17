@@ -10,7 +10,8 @@ import New_Password from './Components/New_Password.jsx';
 import Verify_email from './Components/VerifyEmail.jsx';
 import Redirections from './Components/redirections.jsx';
 import ManagingRoutines from './Components/ManagingRoutines.jsx';
-import UserProfile from './Components/UserProfile.jsx'
+import UserProfile from './Components/UserProfile.jsx';
+import UserClasses from './Components/UserClasses.jsx';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/redirections" element={<Redirections/>}/>
         <Route path="/managing-routines" element={<ManagingRoutines/>}/>
         <Route path="/user-profile" element={<UserProfile/>}/>
+        <Route path="/user-classes" element={<UserClasses/>}/>
       </Routes>
     </Router>
   );
