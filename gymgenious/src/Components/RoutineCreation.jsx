@@ -90,12 +90,12 @@ export default function RoutineCreation({email}) {
                   </select>
               </div>
           </div> */}
-                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div className="input-small-container">
-                            <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
-                            <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={email}/>
-                        </div>
-                    </div>
+          <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div className="input-small-container">
+                  <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
+                  <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={email}/>
+              </div>
+          </div>
           <button type="submit" className='button_login'>
             Create routine
           </button>

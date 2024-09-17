@@ -19,7 +19,7 @@ def get_excersice_by_owner_route(owner):
         print(owner)
         users_list = get_excersice_by_owner(owner)
         print("toy aca")
-        print(jsonify(user_list),200)
+        print(jsonify(users_list),200)
         return jsonify(users_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

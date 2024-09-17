@@ -96,7 +96,7 @@ export default function UsserAssignment({ onUsersChange,owner}) {
     <Paper sx={{ width: 300, height: 400, overflow: 'auto' }}>
       <List dense component="div" role="list">
         {items.map((user) => {
-          const labelId = `transfer-list-item-${user.owner}-label`;
+          const labelId = `transfer-list-item-${user.name}-label`;
 
           return (
             <ListItemButton
@@ -114,7 +114,7 @@ export default function UsserAssignment({ onUsersChange,owner}) {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={user.owner} />
+              <ListItemText id={labelId} primary={user.name} />
             </ListItemButton>
           );
         })}
