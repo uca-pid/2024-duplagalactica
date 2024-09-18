@@ -1,27 +1,94 @@
 .App {
   display: flex;
   flex-direction: row;
+  background-image: '../public/walk.jpg';
+  background-size: cover;
+  background-position: center;
   height: 100vh;
-  background-color: #14213D;
+  width: 100%;
 }
-
-.Left-Bar {
-  border-width: 1px;
-  border-style: solid;
-  background-color: #E5E5E5;
-  width: 8%;
-  height: 100vh;
+.full-screen-image-login {
   display: flex;
-  flex-direction: column;
-  align-items: center; 
-  padding: 0.5%;
-  box-sizing: border-box;
+  flex-direction: row;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('../public/walk.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
 }
 
-@media screen and (max-width: 768px) {
-  .Left-Bar {
-    display:none;
-  }
+.full-screen-image-1 {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('../public/verdeamarela1.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+}
+
+.full-screen-image-2 {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('../public/verdeamarela2.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+}
+
+.full-screen-image-3 {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('../public/verdeamarela3.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+}
+
+.full-screen-image-4 {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('../public/walk.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+}
+
+.full-screen-image-5 {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('../public/walk.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
 }
 
 .Logo-Container {
@@ -70,7 +137,7 @@
   justify-content: center;
   width: 100%; 
   height: 95%;
-  background-color: #14213D;
+  background-color: white;
   box-sizing: border-box;
   margin-top: 3%;
 }
@@ -136,11 +203,11 @@
   flex: 1; 
   padding: 1rem;
   box-sizing: border-box;
-  border: 2px solid #14213D;
+  border: 2px solid white;
   border-radius: 15px;
   top: 10vh;
   height: 43vh;
-  background-color: #14213D;
+  background-color: white;
 }
 
 .Calendar-Header {
@@ -148,7 +215,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
-  background-color: #14213D;
+  background-color: white;
   color: white;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -180,14 +247,14 @@
 
 .Calendar-Grid-Header {
   text-align: center;
-  background-color: #E5E5E5;
+  background-color: #14213D;
   padding: 0.5rem;
 }
 
 .Calendar-Day {
   text-align: center;
   padding: 5%;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #14213D;
 }
 
 .Calendar-Day.filled {
@@ -205,7 +272,7 @@ table {
 }
 
 .Table-Classes-Header {
-  background-color: #14213D;
+  background-color: #E5E5E5;
   color: white;
 }
 
@@ -238,7 +305,7 @@ iframe {
   border-style: solid;
   border-color: black;
   overflow: hidden;
-  background-color: #14213D;
+  background-color: #E5E5E5;
   border-radius: 30px;
 }
 
@@ -271,8 +338,8 @@ iframe {
 }
 
 .login-container {
-  background-color: #E5E5E5;
-  color:'#14213D';
+  background-color: #fdf0d5;
+  color:'#c1121f';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 45%;
@@ -304,6 +371,7 @@ iframe {
   padding-left:20px;
   padding-right: 20px;
   padding-bottom: 20px;
+  color: #c1121f;
 }
 
 .input-container {
@@ -328,7 +396,7 @@ iframe {
 
 .button_login {
   background-color: #fca311;
-  color: #14213D;
+  color: #c1121f;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
@@ -338,7 +406,7 @@ iframe {
 }
 
 .button_login:hover {
-  background-color: #14213D;
+  background-color: #E5E5E5;
   color: white;
 }
 
@@ -431,7 +499,7 @@ iframe {
   margin-right: 5px;
 }
 .create-account-container {
-  background-color: #E5E5E5;
+  background-color: #14213D;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 45%;
@@ -458,7 +526,7 @@ iframe {
 
 .button_create_account {
   background-color: #fca311;
-  color: #14213D;
+  color: #E5E5E5;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
@@ -468,11 +536,11 @@ iframe {
 }
 
 .button_create_account:hover {
-  background-color: #14213D;
+  background-color: #E5E5E5;
   color: white;
 }
 .reset-password-container {
-  background-color: #E5E5E5;
+  background-color: #14213D;
   color:white;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -510,7 +578,7 @@ iframe {
 }
 
 .rbc-day-bg {
-  background-color: #14213D !important;
+  background-color: #E5E5E5 !important;
   color: white !important;
 }
 
@@ -520,7 +588,7 @@ iframe {
 }
 
 .rbc-toolbar button {
-  color: #E5E5E5 !important;
+  color: #14213D !important;
 }
 
 .rbc-toolbar button:hover {
@@ -532,14 +600,14 @@ iframe {
 }
 
 .rbc-header {
-  color: #E5E5E5; 
+  color: #14213D; 
 }
 
 .rbc-toolbar-label {
-  color: #E5E5E5; 
+  color: #14213D; 
 }
 .rbc-day {
-  color: #E5E5E5 !important; 
+  color: #14213D !important; 
 }
 
 .Calendar-Button {
@@ -586,7 +654,7 @@ iframe {
 }
 
 .Modal-Content {
-  background-color: #E5E5E5;
+  background-color: #14213D;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
@@ -602,7 +670,7 @@ iframe {
 }
 
 .Modal-Content button {
-  background-color: #14213d;
+  background-color: #E5E5E5;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -668,7 +736,7 @@ iframe {
 }
   
 .errorsCreateAccountContentModal {
-  background-color: #E5E5E5;
+  background-color: #14213D;
   border-radius: 8px;
   width: 60%;
   height: auto;
@@ -692,7 +760,7 @@ iframe {
   visibility: hidden;
 }
 .new-password-container {
-  background-color: #E5E5E5;
+  background-color: #14213D;
   color:'#14213D';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -728,8 +796,8 @@ iframe {
 }
 
 .class-creation-container {
-  background-color: #E5E5E5;
-  color:'#14213D';
+  background-color: #14213D;
+  color:'#E5E5E5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 45%;

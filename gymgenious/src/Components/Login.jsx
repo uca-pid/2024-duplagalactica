@@ -38,25 +38,27 @@ export default function Login() {
   };
 
   return (
-    <div className='App'>
+    <div className='full-screen-image-1'>
       <LeftBar value={'profile'}/>
       <div className='login-container'>
         <div className='login-content'>
-          <h2 style={{color:'#14213D'}}>Login</h2>
+          <h2 style={{color:'#c1121f'}}>Login</h2>
           <form onSubmit={loginUser}>
             <div className="input-container">
-              <label htmlFor="username" style={{color:'#14213D'}}>Email:</label>
+              <label htmlFor="username" style={{color:'#c1121f'}}>Email:</label>
               <input 
                 type="text" 
                 id="username" 
                 name="username" 
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)} 
+                style={{color:'#c1121f'}}
               />
             </div>
             <div className="input-container">
-              <label htmlFor="password" style={{color:'#14213D'}}>Password:</label>
+              <label htmlFor="password" style={{color:'#c1121f'}}>Password:</label>
               <input 
+              color='#c1121f'
                 type="password" 
                 id="password" 
                 name="password" 

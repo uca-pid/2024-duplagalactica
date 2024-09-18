@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
 import moment from 'moment'
 import ExcersiceAssignment from './ExcersiceAssignment.jsx'
 

@@ -68,7 +68,7 @@ export default function ManagingRoutines () {
   }, [step]);
 
   return (
-    <div className='App'>
+    <div className='full-screen-image-3'>
         <LeftBar value={'add'}/>
         <div className='stepper-container'>
             <Box sx={{ width: '100%' }}>
