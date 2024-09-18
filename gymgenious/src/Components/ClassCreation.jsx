@@ -79,7 +79,7 @@ export default function CreateClass() {
   };
 
   return (
-    <div className='App'>
+    <div className='full-screen-image-2'>
       <LeftBar email={userMail} type={userType}/>
       <div className='class-creation-container'>
         <div className='class-creation-content'>
