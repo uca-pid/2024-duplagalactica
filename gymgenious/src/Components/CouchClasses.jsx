@@ -13,6 +13,13 @@ import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import NewLeftBar from '../real_components/NewLeftBar'
 import moment from 'moment'
+import { useNavigate } from 'react-router-dom';
+ 
+const day = (dateString) => {
+  const date = new Date(dateString);
+  const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  return daysOfWeek[date.getDay()];
+};
 
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
@@ -32,7 +39,7 @@ function CouchClasses() {
   const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
-  const userType = urlParams.get('type');
+  const navigate = useNavigate();
   const day = (dateString) => {
     const date = new Date(dateString);
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -67,7 +74,37 @@ function CouchClasses() {
     setPermanent('');
     setDate('');
     setName('');
-  }  
+  } 
+  const fetchModifyClassInformation = async () => {
+    try {
+        const isoDateStringInicio = `${date}T${hour}:00Z`;
+        const isoDateStringFin = `${date}T${hourFin}:00Z`;
+        const updatedUser = {
+            NameOriginal: selectedEvent.name,
+            DateFin: isoDateStringFin,
+            DateInicio: isoDateStringInicio,
+            Day: day(date),
+            Name: name,
+            Permanent: permanent
+        };
+        const response = await fetch('http://127.0.0.1:5000/update_class_info', {
+            method: 'PUT', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ newUser: updatedUser })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        await fetchClasses();
+        handleCloseModal(); 
+    } catch (error) {
+        console.error("Error updating user:", error);
+    }
+};
 
   const handleDeleteClass = async (event) => {
     try {
@@ -325,7 +362,7 @@ function CouchClasses() {
                         <button onClick={handleEditClass} className='button_login'>
                             Cancell
                         </button>
-                        <button onClick={handleEditClass} type="submit" className='button_login'>
+                        <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>
                             Save changes
                         </button>
                     </form>

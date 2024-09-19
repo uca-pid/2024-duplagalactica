@@ -3,7 +3,7 @@ from flask_cors import CORS
 import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
-from Controllers.classesController import get_classes_route, create_class_route,book_class_route,unbook_class_route,delete_class_route
+from Controllers.classesController import get_classes_route, create_class_route,book_class_route,unbook_class_route,delete_class_route,update_class_info_route
 from Controllers.usersController import get_unique_user_by_email_route, get_user_route, send_email_route, create_user_route,get_users_route,get_clients_users_route,get_client_users_no_match_routine_route,update_users_info_route
 from Controllers.excersicesController import create_exersice_route,get_excersice_by_owner_route
 from Controllers.routineController import create_routine_route,assign_routine_to_user_route,get_routines_by_owner_route
@@ -24,6 +24,11 @@ def create_class():
     new_class = request.json
     return create_class_route(new_class)
 
+@app.route('/update_class_info', methods=['PUT'])
+def update_class_info():
+    newUser = request.json.get('newUser')
+    print(newUser)
+    return update_class_info_route(newUser)
 
 @app.route('/book_class', methods=['PUT'])
 def book_class():
@@ -70,6 +75,7 @@ def send_email():
 def update_users_info():
     newUser = request.json.get('newUser')
     return update_users_info_route(newUser)
+
 
 
 @app.route('/get_users', methods=['GET'])
