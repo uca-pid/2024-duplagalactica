@@ -13,6 +13,13 @@ import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import NewLeftBar from '../real_components/NewLeftBar'
 import moment from 'moment'
+import { useNavigate } from 'react-router-dom';
+ 
+const day = (dateString) => {
+  const date = new Date(dateString);
+  const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  return daysOfWeek[date.getDay()];
+};
 
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
@@ -24,15 +31,16 @@ function CouchClasses() {
   const [editClass, setEditClass] = useState(false);
   const urlParams = new URLSearchParams(window.location.search);
   const userMail = urlParams.get('mail');
+  const userType = urlParams.get('type');
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
-
+  const [visibleRows,setClasses]=useState([])
   const [hour, setHour] = useState('');
   const [hourFin, setHourFin] = useState('');
   const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
-  const userType = urlParams.get('type');
+  const navigate = useNavigate();
   const day = (dateString) => {
     const date = new Date(dateString);
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -67,128 +75,88 @@ function CouchClasses() {
     setPermanent('');
     setDate('');
     setName('');
-  }  
-
-  const handleCreateClass = async () => {
-    const format= "HH:mm";
-    const realHourEnd = moment(hourFin, format).subtract(30, 'minutes').format(format);
+  } 
+  const fetchModifyClassInformation = async () => {
     try {
-      if(moment(realHourEnd, format).isBefore(moment(hour, format))){
-        throw new Error('La clase debe durar al menos 30 minutos');
-      }
-  
-      const isoDateStringInicio = `${date}T${hour}:00Z`;
-      const isoDateStringFin = `${date}T${hourFin}:00Z`;
-  
-      const newClass = {
-        name: name,
-        dateInicio: isoDateStringInicio,
-        dateFin: isoDateStringFin,
-        hour: hour,
-        day: day(date),
-        permanent: permanent,
-        owner: userMail
-      };
-  
-      const response = await fetch('http://127.0.0.1:5000/create_class', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newClass),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Error al crear la clase');
-      }
-  
+        const isoDateStringInicio = `${date}T${hour}:00Z`;
+        const isoDateStringFin = `${date}T${hourFin}:00Z`;
+        const updatedUser = {
+            NameOriginal: selectedEvent.name,
+            DateFin: isoDateStringFin,
+            DateInicio: isoDateStringInicio,
+            Day: day(date),
+            Name: name,
+            Permanent: permanent
+        };
+        const response = await fetch('http://127.0.0.1:5000/update_class_info', {
+            method: 'PUT', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ newUser: updatedUser })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        await fetchClasses();
+        handleCloseModal(); 
     } catch (error) {
-      console.error("Error al crear la clase:", error);
-      if(moment(realHourEnd, format).isBefore(moment(hour, format))){
-        alert('La clase debe durar al menos 30 minutos');
-      } else if (name=='') {
-      alert("Ingrese un nombre para la clase");
-     } else if (permanent=='') {
-      alert("Ingrese si la clase es recurrente o no");
-     } else if (date=='') {
-      alert("Ingrese la fecha de la clase");
-     } else {
-      alert("Error al crear la clase");
-     }
+        console.error("Error updating user:", error);
+    }
+};
+
+  const handleDeleteClass = async (event) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/delete_class', {
+        method: 'DELETE', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    }
+    await fetchClasses();
+    handleCloseModal();
+  };
+
+  const fetchClasses = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/get_classes');
+      if (!response.ok) {
+        throw new Error('Error al obtener las clases: ' + response.statusText);
+      }
+      const data = await response.json();
+      console.log(data);
+      const filteredClasses = data.filter(event => event.owner == userMail);
+
+      setClasses(filteredClasses);
+
+    } catch (error) {
+      console.error("Error fetching classes:", error);
     }
   };
-  
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleCreateClass();
-  };
-
-//   const visibleRows = React.useMemo(
-//     () =>
-//       [...rows]
-//         .sort((a, b) =>
-//           order === 'asc'
-//             ? a[orderBy] < b[orderBy]
-//               ? -1
-//               : 1
-//             : a[orderBy] > b[orderBy]
-//             ? -1
-//             : 1
-//         )
-//         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-//     [order, orderBy, page, rowsPerPage, rows]
-//   );
-
-const visibleRows = [
-    { 
-      id: 1, 
-      name: 'Clase de Yoga', 
-      hour: '10:00 AM', 
-      dateInicio: '2024-09-17T10:00:00', 
-      permanent: 'Si' 
-    },
-    { 
-      id: 2, 
-      name: 'Entrenamiento Funcional', 
-      hour: '12:00 PM', 
-      dateInicio: '2024-09-18T12:00:00', 
-      permanent: 'No' 
-    },
-    { 
-      id: 3, 
-      name: 'Pilates', 
-      hour: '02:00 PM', 
-      dateInicio: '2024-09-19T14:00:00', 
-      permanent: 'No' 
-    },
-    { 
-      id: 4, 
-      name: 'CrossFit', 
-      hour: '06:00 PM', 
-      dateInicio: '2024-09-20T18:00:00', 
-      permanent: 'Si' 
-    },
-    { 
-      id: 5, 
-      name: 'Zumba', 
-      hour: '08:00 AM', 
-      dateInicio: '2024-09-21T08:00:00', 
-      permanent: 'No' 
-    }
-  ]; //ES UNA TABLA RANDOM, HAY QUE CAMBIAR POR LAS CLASES QUE ESTA ANOTADO EL USUARIO
-  
+  useEffect(() => {
+    fetchClasses();
+  }, []);
 
   return (
     <div className="App">
-        <NewLeftBar/>
+        <NewLeftBar email={userMail} type={userType}/>
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
             <Paper 
                 sx={{ 
-                width: '100%', 
-                mb: 2, 
-                backgroundColor: '#E5E5E5',
+                width: '100%',
+                backgroundColor: '#ffe0b5',
+                border: '2px solid #BC6C25'
                 }}
             >
                 <TableContainer>
@@ -201,8 +169,8 @@ const visibleRows = [
                     size={dense ? 'small' : 'medium'}
                 >
                     <TableHead>
-                    <TableRow sx={{ borderBottom: '1px solid #ccc', height: '5vh',width:'5vh' }}>
-                        <TableCell sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                    <TableRow sx={{height: '5vh',width:'5vh',color:'#54311a' }}>
+                        <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
                         <TableSortLabel
                             active={orderBy === 'name'}
                             direction={orderBy === 'name' ? order : 'asc'}
@@ -217,7 +185,7 @@ const visibleRows = [
                         </TableSortLabel>
                         </TableCell>
                         {!isSmallScreen && (
-                        <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
                             <TableSortLabel
                             active={orderBy === 'hour'}
                             direction={orderBy === 'hour' ? order : 'asc'}
@@ -233,7 +201,7 @@ const visibleRows = [
                         </TableCell>
                         )}
                         {!isSmallScreen250 && (
-                        <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                        <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
                             <TableSortLabel
                             active={orderBy === 'dateInicio'}
                             direction={orderBy === 'dateInicio' ? order : 'asc'}
@@ -249,7 +217,7 @@ const visibleRows = [
                         </TableCell>
                         )}
                         {!isSmallScreen && (
-                        <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
                             <TableSortLabel
                             active={orderBy === 'permanent'}
                             direction={orderBy === 'permanent' ? order : 'asc'}
@@ -269,17 +237,17 @@ const visibleRows = [
                     <TableBody>
                     {visibleRows.map((row) => (
                         <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                        <TableCell component="th" scope="row" sx={{ border: '1px solid #ccc' }}>
+                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
                             {row.name}
                         </TableCell>
                         {!isSmallScreen && (
-                            <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{row.hour}</TableCell>
                         )}
                         {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
                         )}
                         {!isSmallScreen && (
-                            <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
                         )}
                         </TableRow>
                     ))}
@@ -319,7 +287,7 @@ const visibleRows = [
                     <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
                     <button onClick={handleEditClass}>Edit class</button>
                     <button onClick={handleCloseModal}>Close</button>
-                    <button onClick={handleCloseModal}>Delete class</button>
+                    <button onClick={() => handleDeleteClass(selectedEvent.name)}>Delete class</button>
                     </div>
                 </div>
                 )}
@@ -395,7 +363,7 @@ const visibleRows = [
                         <button onClick={handleEditClass} className='button_login'>
                             Cancell
                         </button>
-                        <button onClick={handleEditClass} type="submit" className='button_login'>
+                        <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>
                             Save changes
                         </button>
                     </form>

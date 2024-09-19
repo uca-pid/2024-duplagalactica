@@ -19,6 +19,7 @@ export default function CreateAccount() {
     const [user, setUser] = useState({});
     const urlParams = new URLSearchParams(window.location.search);
     const userMail = urlParams.get('mail');
+    const userType = urlParams.get('type');
 
     const fetchUserInformation = async () => {
         try {
@@ -86,7 +87,7 @@ export default function CreateAccount() {
 
     return (
         <div className='App'>
-            <LeftBar value={'profile'} />
+            <LeftBar email={userMail} type={userType} value={'profile'}/>
             <div className='create-account-container'>
                 <div className='create-account-content'>
                     <h2 style={{ color: '#14213D' }}>Profile</h2>

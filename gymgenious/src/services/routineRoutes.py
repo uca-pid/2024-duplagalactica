@@ -34,3 +34,13 @@ def get_routines_by_owner(owner):
     except Exception as e:
         print(f"Error al obtener las rutinas: {e}")
         raise RuntimeError("No se pudo obtener las rutinas")
+    
+def get_assigned_routines():
+    try:
+        routines_ref = db.collection('assigned_routines')
+        docs = routines_ref.stream()
+        routines = [{**doc.to_dict()} for doc in docs]
+        return routines
+    except Exception as e:
+        print(f"Error al obtener las rutinas: {e}")
+        raise RuntimeError("No se pudo obtener las rutinas")

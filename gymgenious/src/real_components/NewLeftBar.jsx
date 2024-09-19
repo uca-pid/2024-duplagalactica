@@ -54,14 +54,31 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
         navigate(`/managing-routines`); 
       }
     }
+    const goToCouchClasses = () => {
+      if (email!=null) {
+        navigate(`/couch-classes?mail=${email}&type=${type}`); 
+      } else {
+        navigate(`/couch-classes`); 
+      }
+    }
     
     const gotToBookedClasses = () => {
       if (email!=null) {
-        navigate(`/user-classes?mail=${email}`); 
+        navigate(`/user-classes?mail=${email}&type=${type}`); 
       } else {
         navigate(`/user-classes`); 
       }
     }
+
+    const goToMyRoutines = () => {
+      if (email!=null) {
+        navigate(`/user-routines?mail=${email}&type=${type}`); 
+      } else {
+        navigate(`/user-routines`); 
+      }
+    }
+
+
     const navigateTo = (index) => {
         if (index===0){
             goToMainPage();
@@ -71,6 +88,10 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
             goToClassCreation();
         } else if (index===3){
             goToManageRoutines()
+        }else if (index===4){
+          goToManageRoutines()
+        }else if (index===5){
+          goToCouchClasses()
         }
     }
 
@@ -83,6 +104,10 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
           gotToBookedClasses();
       } else if (index===3){
           goToManageRoutines()
+      }else if (index===4){
+        goToManageRoutines()
+      }else if (index===5){
+        goToMyRoutines()
       }
   }
 
@@ -91,36 +116,38 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
     };
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250 , background:'#FEFAE0'}} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Home', 'Profile', 'Create class', 'Manage routines', 'Logout'].map((text, index) => (
+        {['Home', 'Profile', 'Create class', 'Manage routines', 'Logout','MyClasses'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={()=>navigateTo(index)}>
               <ListItemIcon>
-                {index === 0 && <HomeIcon/> }
-                {index === 1 && <PersonIcon/> }
-                {index === 2 && <AddIcon/> }
-                {index === 3 && <HomeIcon/>}
-                {index === 4 && <ExitToApp/>}
+                {index === 0 && <HomeIcon  sx={{color:'#BC6C25'}}/> }
+                {index === 1 && <PersonIcon  sx={{color:'#BC6C25'}}/> }
+                {index === 2 && <AddIcon  sx={{color:'#BC6C25'}}/> }
+                {index === 3 && <HomeIcon  sx={{color:'#BC6C25'}}/>}
+                {index === 4 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
+                {index === 5 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
       <Divider />
       <List>
-        {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout'].map((text, index) => (
+        {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout','MyRoutines'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={()=>navigateFromUserTo(index)}>
               <ListItemIcon>
-                {index === 0 && <HomeIcon/> }
-                {index === 1 && <PersonIcon/> }
-                {index === 2 && <AddIcon/> }
-                {index === 3 && <HomeIcon/>}
-                {index === 4 && <ExitToApp/>}
+                {index === 0 && <HomeIcon sx={{color:'#BC6C25'}}/> }
+                {index === 1 && <PersonIcon sx={{color:'#BC6C25'}}/> }
+                {index === 2 && <AddIcon  sx={{color:'#BC6C25'}}/> }
+                {index === 3 && <HomeIcon  sx={{color:'#BC6C25'}}/>}
+                {index === 4 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
+                {index === 5 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -130,10 +157,10 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
 
   return (
     <div className='leftBar'>
-      <Button onClick={toggleDrawer(true)}>
-        <MenuIcon/>
+      <Button onClick={toggleDrawer(true)} style={{backgroundColor: '#432818',borderRadius: '50%',top:'0.5vh',left:'0.5vh ',width: '5vh', height: '5vh', minWidth: '0', minHeight: '0', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <MenuIcon sx={{color:'#FEFAE0'}}/>
       </Button>
-      <Drawer open={open} onClose={toggleDrawer(false)}>
+      <Drawer open={open}  PaperProps={{sx: {backgroundColor: '#FEFAE0'}}} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
     </div>

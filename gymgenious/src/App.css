@@ -1,18 +1,18 @@
 .App {
   display: flex;
   flex-direction: row;
-  background-image: '../public/walk.jpg';
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
+  position: absolute;
+  height: 100%;
   width: 100%;
+  background-image: url('../public/marron1.jpg');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
 }
 .full-screen-image-login {
   display: flex;
   flex-direction: row;
   position: absolute;
-  top: 0;
-  left: 0;
   height: 100%;
   width: 100%;
   background-image: url('../public/walk.jpg');
@@ -25,11 +25,9 @@
   display: flex;
   flex-direction: row;
   position: absolute;
-  top: 0;
-  left: 0;
   height: 100%;
   width: 100%;
-  background-image: url('../public/verdeamarela1.jpg');
+  background-image: url('../public/marron3.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -43,7 +41,7 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background-image: url('../public/verdeamarela2.jpg');
+  background-image: url('../public/marron4.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -57,7 +55,7 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background-image: url('../public/verdeamarela3.jpg');
+  background-image: url('../public/marron5.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -137,7 +135,6 @@
   justify-content: center;
   width: 100%; 
   height: 95%;
-  background-color: white;
   box-sizing: border-box;
   margin-top: 3%;
 }
@@ -203,11 +200,10 @@
   flex: 1; 
   padding: 1rem;
   box-sizing: border-box;
-  border: 2px solid white;
   border-radius: 15px;
   top: 10vh;
   height: 43vh;
-  background-color: white;
+  background-color: transparent !important;
 }
 
 .Calendar-Header {
@@ -215,14 +211,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
-  background-color: white;
-  color: white;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
 
 .calendar-content {
-  color: white;
+  color: #5e2404 !important;
 }
 
 @media (max-width: 768px) {
@@ -236,18 +230,20 @@
   }
 }
 
-.Calendar-Grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-}
 
 .rbc-day-slot.rbc-time-column.rbc-now.rbc-today {
-  background-color: #114174;
+  background-color: #FEFAE0;
 }
+
+.rbc-day-slot {
+  background-color: #FEFAE0; 
+}
+
+
+
 
 .Calendar-Grid-Header {
   text-align: center;
-  background-color: #14213D;
   padding: 0.5rem;
 }
 
@@ -338,8 +334,9 @@ iframe {
 }
 
 .login-container {
-  background-color: #fdf0d5;
-  color:'#c1121f';
+  background-color: #FEFAE0;
+  border-color: #BC6C25;
+  border-width: 1px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 45%;
@@ -349,6 +346,7 @@ iframe {
   text-align: center;
   position:absolute;
   overflow-y: auto;
+  border-style: solid;
 }
 
 @media screen and (max-width: 765px) {
@@ -371,7 +369,7 @@ iframe {
   padding-left:20px;
   padding-right: 20px;
   padding-bottom: 20px;
-  color: #c1121f;
+  color: #DDA15E;
 }
 
 .input-container {
@@ -395,8 +393,9 @@ iframe {
 }
 
 .button_login {
-  background-color: #fca311;
-  color: #c1121f;
+  background-color: #b87d48 !important;
+  color: white !important; 
+  font-weight: bold;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
@@ -406,8 +405,8 @@ iframe {
 }
 
 .button_login:hover {
-  background-color: #E5E5E5;
-  color: white;
+  background-color:#5e2404 !important;
+  color: white !important;
 }
 
 .login-options {
@@ -430,7 +429,9 @@ iframe {
     cursor: pointer;
     transition: color 0.3s ease;
     text-decoration: 0.3s ease;
-    color: #007bff;
+    color: #DDA15E;
+    font-weight: bold;
+    text-decoration: underline;
     border: 0;
     background-color: transparent;
     width: max-content;
@@ -577,37 +578,60 @@ iframe {
   width: 100%;
 }
 
+.rbc-event {
+  background-color: #5e2404 !important;
+  border-radius: 1vh !important;
+  color: #FEFAE0 !important; 
+  text-align: center;
+}
+
+
+
+.rbc-time-gutter {
+  background-color: #5e2404;
+  color: white;
+  text-decoration: underline;
+}
+
+.rbc-time-header {
+  background-color: #5e2404;
+  color: white;
+  text-decoration: underline;
+}
+
 .rbc-day-bg {
-  background-color: #E5E5E5 !important;
-  color: white !important;
+  background-color: rgba(254, 250, 224, 0.8) !important;
 }
 
 .rbc-day-bg.rbc-today {
-  background-color: #3c5488 !important;
-  color: white !important;
+  background-color: rgba(221, 161, 94, 0.6) !important;
 }
 
 .rbc-toolbar button {
-  color: #14213D !important;
+  background-color: #b87d48 !important;
+  color: white !important; 
 }
 
 .rbc-toolbar button:hover {
-  background-color:#fca311 !important;
+  background-color:#5e2404 !important;
+  color: white !important;
 }
 
 .rbc-toolbar button.rbc-active {
-  background-color:#fca311 !important;
+  background-color:#5e2404 !important;
+  color: white !important;
 }
 
 .rbc-header {
-  color: #14213D; 
+  background-color:  #b87d48;
+  color: white; 
 }
 
 .rbc-toolbar-label {
-  color: #14213D; 
-}
-.rbc-day {
-  color: #14213D !important; 
+  color: #5e2404;
+  font-weight: bold;
+  text-decoration:underline;
+  font-size: 2.5vh;  
 }
 
 .Calendar-Button {
@@ -624,15 +648,17 @@ iframe {
 }
 
 .Toggle-Button {
-  background: none;
-  border: 1;
-  border-color: white;
-  cursor: pointer;
+  background-color: #b87d48;
+  border: none;
+  border-radius: 0.5vh;
   color: white;
+  border-color: white;
+  border-style: solid;
+  border-width: 0.5px;
 }
 
 .Toggle-Button:hover {
-  background-color:#fca311 ;
+  background-color: #5e2404;
 }
 
 
@@ -654,10 +680,12 @@ iframe {
 }
 
 .Modal-Content {
-  background-color: #14213D;
+  background-color: #FEFAE0;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
+  color: #5e2404;
+  font-weight: bold;
   max-width: 500px;
   text-align: center;
   position: relative;
@@ -670,7 +698,7 @@ iframe {
 }
 
 .Modal-Content button {
-  background-color: #E5E5E5;
+  background-color: #b87d48;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -679,7 +707,7 @@ iframe {
 }
 
 .Modal-Content button:hover {
-  background-color: #fca311;
+  background-color: #5e2404;
 }
 
 @media (max-width: 768px) {
@@ -796,7 +824,7 @@ iframe {
 }
 
 .class-creation-container {
-  background-color: #14213D;
+  background-color: #FEFAE0;
   color:'#E5E5E5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -832,7 +860,7 @@ iframe {
 }
 
 .stepper-container {
-  background-color: red;
+  background-color: #FEFAE0;
   width: 80%;
   margin-left: 8%;
   height: fit-content;
@@ -850,4 +878,15 @@ iframe {
   position: absolute;
   width: 5%;
   height: 5%;
+}
+
+
+
+
+.stepper-container .MuiStepIcon-root.Mui-completed {
+  color: #432818; /* Color for completed step icons */
+}
+
+.stepper-container .MuiStepIcon-root.Mui-active {
+  color: #BC6C25; /* Color for the active step icon */
 }
