@@ -63,12 +63,11 @@ function EnhancedTable({ rows, user }) {
   );
 
   return (
-    <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
+    <Box sx={{ width: '100%', flexWrap: 'wrap',background:'#ffe0b5',border: '2px solid #BC6C25' }}>
       <Paper 
         sx={{ 
           width: '100%', 
-          mb: 2, 
-          backgroundColor: '#E5E5E5',
+          backgroundColor: '#ffe0b5',
         }}
       >
         <TableContainer>
@@ -81,8 +80,8 @@ function EnhancedTable({ rows, user }) {
             size={dense ? 'small' : 'medium'}
           >
             <TableHead>
-              <TableRow sx={{ borderBottom: '1px solid #ccc', height: '5vh',width:'5vh' }}>
-                <TableCell sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+              <TableRow sx={{height: '5vh',width:'5vh' }}>
+                <TableCell sx={{  borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
                   <TableSortLabel
                     active={orderBy === 'name'}
                     direction={orderBy === 'name' ? order : 'asc'}
@@ -97,7 +96,7 @@ function EnhancedTable({ rows, user }) {
                   </TableSortLabel>
                 </TableCell>
                 {!isSmallScreen && (
-                  <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                  <TableCell align="right" sx={{  borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25' , fontWeight: 'bold',color:'#54311a' }}>
                     <TableSortLabel
                       active={orderBy === 'hour'}
                       direction={orderBy === 'hour' ? order : 'asc'}
@@ -113,7 +112,7 @@ function EnhancedTable({ rows, user }) {
                   </TableCell>
                 )}
                 {!isSmallScreen250 && (
-                  <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25' ,fontWeight: 'bold',color:'#54311a' }}>
                     <TableSortLabel
                       active={orderBy === 'dateInicio'}
                       direction={orderBy === 'dateInicio' ? order : 'asc'}
@@ -129,7 +128,7 @@ function EnhancedTable({ rows, user }) {
                   </TableCell>
                 )}
                 {!isSmallScreen && (
-                  <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                  <TableCell align="right" sx={{  borderBottom: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
                     <TableSortLabel
                       active={orderBy === 'permanent'}
                       direction={orderBy === 'permanent' ? order : 'asc'}
@@ -148,18 +147,18 @@ function EnhancedTable({ rows, user }) {
             </TableHead>
             <TableBody>
               {visibleRows.map((row) => (
-                <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                  <TableCell component="th" scope="row" sx={{ border: '1px solid #ccc' }}>
+                <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #BC6C25' }}>
+                  <TableCell component="th" scope="row" sx={{  borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a'}}>
                     {row.name}
                   </TableCell>
                   {!isSmallScreen && (
-                    <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
+                    <TableCell align="right" sx={{  borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a'  }}>{row.hour}</TableCell>
                   )}
                   {!isSmallScreen250 && (
-                    <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                    <TableCell align="right" sx={{  borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a'  }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
                   )}
                   {!isSmallScreen && (
-                    <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                    <TableCell align="right" sx={{  borderBottom: '1px solid #BC6C25',color:'#54311a'}}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
                   )}
                 </TableRow>
               ))}
@@ -175,6 +174,7 @@ function EnhancedTable({ rows, user }) {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          
         />
       ) : (
         <TablePagination

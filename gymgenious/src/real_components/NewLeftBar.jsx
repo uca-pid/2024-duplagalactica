@@ -91,19 +91,19 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
     };
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250 , background:'#FEFAE0'}} role="presentation" onClick={toggleDrawer(false)}>
       <List>
         {['Home', 'Profile', 'Create class', 'Manage routines', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={()=>navigateTo(index)}>
               <ListItemIcon>
-                {index === 0 && <HomeIcon/> }
-                {index === 1 && <PersonIcon/> }
-                {index === 2 && <AddIcon/> }
-                {index === 3 && <HomeIcon/>}
-                {index === 4 && <ExitToApp/>}
+                {index === 0 && <HomeIcon  sx={{color:'#BC6C25'}}/> }
+                {index === 1 && <PersonIcon  sx={{color:'#BC6C25'}}/> }
+                {index === 2 && <AddIcon  sx={{color:'#BC6C25'}}/> }
+                {index === 3 && <HomeIcon  sx={{color:'#BC6C25'}}/>}
+                {index === 4 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -114,13 +114,13 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={()=>navigateFromUserTo(index)}>
               <ListItemIcon>
-                {index === 0 && <HomeIcon/> }
-                {index === 1 && <PersonIcon/> }
-                {index === 2 && <AddIcon/> }
-                {index === 3 && <HomeIcon/>}
-                {index === 4 && <ExitToApp/>}
+                {index === 0 && <HomeIcon sx={{color:'#BC6C25'}}/> }
+                {index === 1 && <PersonIcon sx={{color:'#BC6C25'}}/> }
+                {index === 2 && <AddIcon  sx={{color:'#BC6C25'}}/> }
+                {index === 3 && <HomeIcon  sx={{color:'#BC6C25'}}/>}
+                {index === 4 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -131,9 +131,9 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
   return (
     <div className='leftBar'>
       <Button onClick={toggleDrawer(true)}>
-        <MenuIcon/>
+        <MenuIcon sx={{color:'#FEFAE0'}}/>
       </Button>
-      <Drawer open={open} onClose={toggleDrawer(false)}>
+      <Drawer open={open}  PaperProps={{sx: {backgroundColor: '#FEFAE0'}}} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
     </div>

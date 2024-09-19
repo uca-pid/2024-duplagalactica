@@ -42,23 +42,23 @@ export default function Login() {
       <LeftBar value={'profile'}/>
       <div className='login-container'>
         <div className='login-content'>
-          <h2 style={{color:'#c1121f'}}>Login</h2>
+          <h2 style={{color:'#283618'}}>Login</h2>
           <form onSubmit={loginUser}>
             <div className="input-container">
-              <label htmlFor="username" style={{color:'#c1121f'}}>Email:</label>
+              <label htmlFor="username" style={{color:'#283618'}}>Email:</label>
               <input 
                 type="text" 
                 id="username" 
                 name="username" 
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)} 
-                style={{color:'#c1121f'}}
+                style={{color:'#283618'}}
               />
             </div>
             <div className="input-container">
-              <label htmlFor="password" style={{color:'#c1121f'}}>Password:</label>
+              <label htmlFor="password" style={{color:'#283618'}}>Password:</label>
               <input 
-              color='#c1121f'
+              color='#283618'
                 type="password" 
                 id="password" 
                 name="password" 
