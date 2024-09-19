@@ -56,7 +56,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
     }
     const goToCouchClasses = () => {
       if (email!=null) {
-        navigate(`/couch-classes?mail=${email}`); 
+        navigate(`/couch-classes?mail=${email}&type=${type}`); 
       } else {
         navigate(`/couch-classes`); 
       }
@@ -64,11 +64,21 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
     
     const gotToBookedClasses = () => {
       if (email!=null) {
-        navigate(`/user-classes?mail=${email}`); 
+        navigate(`/user-classes?mail=${email}&type=${type}`); 
       } else {
         navigate(`/user-classes`); 
       }
     }
+
+    const goToMyRoutines = () => {
+      if (email!=null) {
+        navigate(`/user-routines?mail=${email}&type=${type}`); 
+      } else {
+        navigate(`/user-routines`); 
+      }
+    }
+
+
     const navigateTo = (index) => {
         if (index===0){
             goToMainPage();
@@ -94,6 +104,10 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
           gotToBookedClasses();
       } else if (index===3){
           goToManageRoutines()
+      }else if (index===4){
+        goToManageRoutines()
+      }else if (index===5){
+        goToMyRoutines()
       }
   }
 
@@ -122,7 +136,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
       </List>
       <Divider />
       <List>
-        {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout'].map((text, index) => (
+        {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout','MyRoutines'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={()=>navigateFromUserTo(index)}>
               <ListItemIcon>
@@ -131,6 +145,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
                 {index === 2 && <AddIcon  sx={{color:'#BC6C25'}}/> }
                 {index === 3 && <HomeIcon  sx={{color:'#BC6C25'}}/>}
                 {index === 4 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
+                {index === 5 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>

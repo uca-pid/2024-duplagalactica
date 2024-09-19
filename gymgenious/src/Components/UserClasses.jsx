@@ -22,6 +22,7 @@ function UsserClasses() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const urlParams = new URLSearchParams(window.location.search);
   const userMail = urlParams.get('mail');
+  const userType = urlParams.get('type');
   const [visibleRows,setClasses]=useState([])
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
@@ -91,7 +92,7 @@ function UsserClasses() {
 
   return (
     <div className="App">
-        <NewLeftBar/>
+        <NewLeftBar email={userMail} type={userType}/>
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
             <Paper 

@@ -69,7 +69,7 @@ export default function ManagingRoutines () {
 
   return (
     <div className='full-screen-image-3'>
-        <LeftBar value={'add'}/>
+        <LeftBar email={userMail} type={userType} value={'add'}/>
         <div className='stepper-container'>
             <Box sx={{ width: '100%' }}>
             <Stepper activeStep={activeStep}>

@@ -31,6 +31,7 @@ function CouchClasses() {
   const [editClass, setEditClass] = useState(false);
   const urlParams = new URLSearchParams(window.location.search);
   const userMail = urlParams.get('mail');
+  const userType = urlParams.get('type');
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
   const [visibleRows,setClasses]=useState([])
@@ -148,7 +149,7 @@ function CouchClasses() {
 
   return (
     <div className="App">
-        <NewLeftBar/>
+        <NewLeftBar email={userMail} type={userType}/>
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
             <Paper 
