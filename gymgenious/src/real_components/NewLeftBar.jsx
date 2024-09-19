@@ -54,6 +54,13 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
         navigate(`/managing-routines`); 
       }
     }
+    const goToCouchClasses = () => {
+      if (email!=null) {
+        navigate(`/couch-classes?mail=${email}`); 
+      } else {
+        navigate(`/couch-classes`); 
+      }
+    }
     
     const gotToBookedClasses = () => {
       if (email!=null) {
@@ -71,6 +78,10 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
             goToClassCreation();
         } else if (index===3){
             goToManageRoutines()
+        }else if (index===4){
+          goToManageRoutines()
+        }else if (index===5){
+          goToCouchClasses()
         }
     }
 
@@ -93,7 +104,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
   const DrawerList = (
     <Box sx={{ width: 250 , background:'#FEFAE0'}} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Home', 'Profile', 'Create class', 'Manage routines', 'Logout'].map((text, index) => (
+        {['Home', 'Profile', 'Create class', 'Manage routines', 'Logout','MyClasses'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={()=>navigateTo(index)}>
               <ListItemIcon>
@@ -102,6 +113,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
                 {index === 2 && <AddIcon  sx={{color:'#BC6C25'}}/> }
                 {index === 3 && <HomeIcon  sx={{color:'#BC6C25'}}/>}
                 {index === 4 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
+                {index === 5 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>
@@ -130,7 +142,7 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
 
   return (
     <div className='leftBar'>
-      <Button onClick={toggleDrawer(true)}>
+      <Button onClick={toggleDrawer(true)} style={{backgroundColor: '#432818',borderRadius: '50%',top:'0.5vh',left:'0.5vh ',width: '5vh', height: '5vh', minWidth: '0', minHeight: '0', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <MenuIcon sx={{color:'#FEFAE0'}}/>
       </Button>
       <Drawer open={open}  PaperProps={{sx: {backgroundColor: '#FEFAE0'}}} onClose={toggleDrawer(false)}>

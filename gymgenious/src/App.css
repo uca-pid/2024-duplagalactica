@@ -4,7 +4,7 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  background-image: url('../public/verdeamarela1.jpg');
+  background-image: url('../public/marron1.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -27,7 +27,7 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  background-image: url('../public/verdeamarela1.jpg');
+  background-image: url('../public/marron3.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -41,7 +41,7 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background-image: url('../public/verdeamarela2.jpg');
+  background-image: url('../public/marron4.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -55,7 +55,7 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background-image: url('../public/verdeamarela3.jpg');
+  background-image: url('../public/marron5.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -393,8 +393,8 @@ iframe {
 }
 
 .button_login {
-  background-color: #BC6C25;
-  color: #283618;
+  background-color: #b87d48 !important;
+  color: white !important; 
   font-weight: bold;
   padding: 10px 15px;
   border: none;
@@ -405,8 +405,8 @@ iframe {
 }
 
 .button_login:hover {
-  background-color: #E5E5E5;
-  color: white;
+  background-color:#5e2404 !important;
+  color: white !important;
 }
 
 .login-options {
@@ -429,7 +429,7 @@ iframe {
     cursor: pointer;
     transition: color 0.3s ease;
     text-decoration: 0.3s ease;
-    color: #29bf12;
+    color: #DDA15E;
     font-weight: bold;
     text-decoration: underline;
     border: 0;
@@ -680,10 +680,12 @@ iframe {
 }
 
 .Modal-Content {
-  background-color: #14213D;
+  background-color: #FEFAE0;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
+  color: #5e2404;
+  font-weight: bold;
   max-width: 500px;
   text-align: center;
   position: relative;
@@ -696,7 +698,7 @@ iframe {
 }
 
 .Modal-Content button {
-  background-color: #E5E5E5;
+  background-color: #b87d48;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -705,7 +707,7 @@ iframe {
 }
 
 .Modal-Content button:hover {
-  background-color: #fca311;
+  background-color: #5e2404;
 }
 
 @media (max-width: 768px) {
@@ -822,7 +824,7 @@ iframe {
 }
 
 .class-creation-container {
-  background-color: #14213D;
+  background-color: #FEFAE0;
   color:'#E5E5E5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -858,7 +860,7 @@ iframe {
 }
 
 .stepper-container {
-  background-color: red;
+  background-color: #FEFAE0;
   width: 80%;
   margin-left: 8%;
   height: fit-content;
@@ -876,4 +878,15 @@ iframe {
   position: absolute;
   width: 5%;
   height: 5%;
+}
+
+
+
+
+.stepper-container .MuiStepIcon-root.Mui-completed {
+  color: #432818; /* Color for completed step icons */
+}
+
+.stepper-container .MuiStepIcon-root.Mui-active {
+  color: #BC6C25; /* Color for the active step icon */
 }

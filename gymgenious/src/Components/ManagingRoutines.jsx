@@ -76,6 +76,7 @@ export default function ManagingRoutines () {
                 {steps.map((label, index) => {
                 const stepProps = {};
                 const labelProps = {};
+                
                 if (isStepOptional(index)) {
                     labelProps.optional = (
                     <Typography variant="caption">Optional</Typography>
@@ -93,7 +94,7 @@ export default function ManagingRoutines () {
             </Stepper>
             {activeStep === steps.length ? (
                 <React.Fragment>
-                <Typography sx={{ mt: 2, mb: 1 }}>
+                <Typography>
                     All steps completed - you&apos;re finished
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
@@ -103,7 +104,6 @@ export default function ManagingRoutines () {
                 </React.Fragment>
             ) : (
                 <React.Fragment>
-                <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                     <Button
                     color="inherit"
@@ -115,7 +115,7 @@ export default function ManagingRoutines () {
                     </Button>
                     <Box sx={{ flex: '1 1 auto' }} />
                     {isStepOptional(activeStep) && (
-                    <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                    <Button color="inherit" onClick={handleSkip}>
                         Skip
                     </Button>
                     )}

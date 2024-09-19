@@ -53,8 +53,6 @@ def book_class(event, mail):
     
 def unbook_class(event, mail):
     try:
-        print("hgola")
-        print(event, mail)
         users_ref = db.collection('classes')
         docs = users_ref.where('name', '==', event).stream()
         updated = False
@@ -73,6 +71,22 @@ def unbook_class(event, mail):
         if not updated:
             print(f"No se encontró una clase con el nombre: {event}")
         return {"message": "Actualización realizada"} 
+    except Exception as e:
+        print(f"Error actualizando el usuario: {e}")
+        raise RuntimeError("No se pudo actualizar el usuario")
+
+def delete_class(event,mail):
+    try:
+        users_ref = db.collection('classes')
+        docs = users_ref.where('name', '==', event).where('owner','==',mail).stream()
+        deleted_count = 0
+        for doc in docs:
+            doc.reference.delete()
+            deleted_count += 1
+        if deleted_count > 0:
+            return {"message": f"Se eliminaron {deleted_count} clase(s)"}
+        else:
+            return {"message": "No se encontraron clases para eliminar"}
     except Exception as e:
         print(f"Error actualizando el usuario: {e}")
         raise RuntimeError("No se pudo actualizar el usuario")

@@ -42,10 +42,10 @@ export default function Login() {
       <LeftBar value={'profile'}/>
       <div className='login-container'>
         <div className='login-content'>
-          <h2 style={{color:'#283618'}}>Login</h2>
+          <h2 style={{color:'#5e2404'}}>Login</h2>
           <form onSubmit={loginUser}>
             <div className="input-container">
-              <label htmlFor="username" style={{color:'#283618'}}>Email:</label>
+              <label htmlFor="username" style={{color:'#5e2404'}}>Email:</label>
               <input 
                 type="text" 
                 id="username" 
@@ -56,7 +56,7 @@ export default function Login() {
               />
             </div>
             <div className="input-container">
-              <label htmlFor="password" style={{color:'#283618'}}>Password:</label>
+              <label htmlFor="password" style={{color:'#5e2404'}}>Password:</label>
               <input 
               color='#283618'
                 type="password" 
