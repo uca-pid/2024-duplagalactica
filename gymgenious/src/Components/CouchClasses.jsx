@@ -14,6 +14,10 @@ import { visuallyHidden } from '@mui/utils';
 import NewLeftBar from '../real_components/NewLeftBar'
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Slide from '@mui/material/Slide';
  
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -41,6 +45,11 @@ function CouchClasses() {
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
   const navigate = useNavigate();
+  const [openCircularProgress, setOpenCircularProgress] = useState(false);
+  const [warningFetchingModifiedClasses, setWarningFetchingModifiedClasses] = useState(false);
+  const [warningDeletingClasses, setWarningDeletingClasses] = useState(false);
+  const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
+
   const day = (dateString) => {
     const date = new Date(dateString);
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -77,6 +86,7 @@ function CouchClasses() {
     setName('');
   } 
   const fetchModifyClassInformation = async () => {
+    setOpenCircularProgress(true);
     try {
         const isoDateStringInicio = `${date}T${hour}:00Z`;
         const isoDateStringFin = `${date}T${hourFin}:00Z`;
@@ -101,13 +111,20 @@ function CouchClasses() {
         }
         const data = await response.json();
         await fetchClasses();
+        setOpenCircularProgress(false);
         handleCloseModal(); 
     } catch (error) {
         console.error("Error updating user:", error);
+        setOpenCircularProgress(false);
+        setWarningFetchingModifiedClasses(true);
+        setTimeout(() => {
+          setWarningFetchingModifiedClasses(false);
+        }, 3000);
     }
 };
 
   const handleDeleteClass = async (event) => {
+    setOpenCircularProgress(true);
     try {
       const response = await fetch('http://127.0.0.1:5000/delete_class', {
         method: 'DELETE', 
@@ -119,14 +136,21 @@ function CouchClasses() {
       if (!response.ok) {
         throw new Error('Error al actualizar la clase: ' + response.statusText);
       }
+      await fetchClasses();
+      setOpenCircularProgress(false);
+      handleCloseModal();
     } catch (error) {
       console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningDeletingClasses(true);
+      setTimeout(() => {
+        setWarningDeletingClasses(false);
+      }, 3000);
     }
-    await fetchClasses();
-    handleCloseModal();
   };
 
   const fetchClasses = async () => {
+    setOpenCircularProgress(true);
     try {
       const response = await fetch('http://127.0.0.1:5000/get_classes');
       if (!response.ok) {
@@ -135,11 +159,16 @@ function CouchClasses() {
       const data = await response.json();
       console.log(data);
       const filteredClasses = data.filter(event => event.owner == userMail);
-
+      setOpenCircularProgress(false);
       setClasses(filteredClasses);
 
     } catch (error) {
       console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningFetchingClasses(true);
+      setTimeout(() => {
+        setWarningFetchingClasses(false);
+      }, 3000);
     }
   };
 
@@ -150,6 +179,59 @@ function CouchClasses() {
   return (
     <div className="App">
         <NewLeftBar email={userMail} type={userType}/>
+        {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
+                >
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+      { warningFetchingClasses ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={warningFetchingClasses} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                Error fetching classes. Try again!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+            { warningDeletingClasses ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={warningDeletingClasses} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                Error deleting class. Try again!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+            { warningFetchingModifiedClasses ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={warningFetchingModifiedClasses} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                Error fetching modified class. Try again!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
             <Paper 
