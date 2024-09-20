@@ -11,7 +11,8 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import NewLeftBar from '../real_components/NewLeftBar'
+import NewLeftBar from '../real_components/NewLeftBar';
+import {jwtDecode} from "jwt-decode";
 
 function UsserClasses() {
   const [order, setOrder] = useState('asc');
@@ -20,9 +21,7 @@ function UsserClasses() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');
-  const userType = urlParams.get('type');
+  const [userMail,setUserMail] = useState('')
   const [visibleRows,setClasses]=useState([])
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
@@ -85,14 +84,31 @@ function UsserClasses() {
     }
   };
 
+  const verifyToken = async (token) => {
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        throw error;
+    }
+  };
+
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
     fetchClasses();
   }, []);
 
 
   return (
     <div className="App">
-        <NewLeftBar email={userMail} type={userType}/>
+        <NewLeftBar/>
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
             <Paper 

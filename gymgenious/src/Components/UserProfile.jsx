@@ -2,6 +2,7 @@ import '../App.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/NewLeftBar.jsx';
+import {jwtDecode} from "jwt-decode";
 
 export default function CreateAccount() {
     const [name, setName] = useState('');
@@ -17,9 +18,7 @@ export default function CreateAccount() {
     const navigate = useNavigate();
     const [isDisabled, setIsDisabled] = useState(true);
     const [user, setUser] = useState({});
-    const urlParams = new URLSearchParams(window.location.search);
-    const userMail = urlParams.get('mail');
-    const userType = urlParams.get('type');
+    const [userMail, setUserMail] = useState('')
 
     const fetchUserInformation = async () => {
         try {
@@ -80,14 +79,34 @@ export default function CreateAccount() {
         setIsDisabled(!isDisabled);
         fetchUserInformation();
     };
+    const verifyToken = async (token) => {
+        try {
+            const decodedToken = jwtDecode(token);
+            setUserMail(decodedToken.email);
+        } catch (error) {
+            console.error('Error al verificar el token:', error);
+            throw error;
+        }
+    };
 
     useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        console.log('Token:', token);
+        if (token) {
+            verifyToken(token);
+        } else {
+            console.error('No token found');
+        }
         fetchUserInformation();
     }, [userMail]); 
 
+    
+  
+
+
     return (
         <div className='App'>
-            <LeftBar email={userMail} type={userType} value={'profile'}/>
+            <LeftBar/>
             <div className='create-account-container'>
                 <div className='create-account-content'>
                     <h2 style={{ color: '#14213D' }}>Profile</h2>

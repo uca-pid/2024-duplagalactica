@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/NewLeftBar.jsx';
 import moment from 'moment'
@@ -10,6 +10,7 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Slide from '@mui/material/Slide';
 import Popper from '@mui/material/Popper';
+import {jwtDecode} from "jwt-decode";
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
@@ -18,9 +19,7 @@ export default function CreateClass() {
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
   const navigate = useNavigate();
-  const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');  
-  const userType = urlParams.get('type');
+  const [userMail,setUserMail] = useState('')
   const [errors, setErrors] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -123,6 +122,27 @@ export default function CreateClass() {
     handleCreateClass();
   };
 
+  const verifyToken = async (token) => {
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        throw error;
+    }
+  };
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
+  }, []);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [openHourRequirements, setOpenHourRequirements] = useState(false);
   const handleOpenHourRequirements = (event) => {
@@ -137,7 +157,7 @@ export default function CreateClass() {
 
   return (
     <div className='full-screen-image-2'>
-      <LeftBar email={userMail} type={userType}/>
+      <LeftBar/>
       {openCircularProgress ? (
           <Backdrop
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
