@@ -106,7 +106,6 @@ export default function CreateAccount() {
                     setSuccess(false);
                     navigate('/'); 
                 }, 3000);
-                alert("Account created successfully!");
             } catch (error) {
                 setOpenCircularProgress(false);
                 if (error.code === 'auth/email-already-in-use') {
@@ -159,7 +158,7 @@ export default function CreateAccount() {
                     <div className='alert-content'>
                         <Box sx={{ position: 'relative', zIndex: 1 }}>
                         <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
-                            Successful login!
+                            Account created successfully 
                         </Alert>
                         </Box>
                     </div>
@@ -168,20 +167,25 @@ export default function CreateAccount() {
                 null
             )}
             { failureErrors ? (
-                <div className='errorsCreateAccountModal'>
-                    <div className='errorsCreateAccountContentModal'>
+                <div className='alert-container'>
+                    <div className='alert-content'>
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
-                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Error creating account</Alert>
+                        <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
+                        <div>
+                            <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                            Error creating account.
+                            </Alert>
+                            {errors.length > 0 && errors.map((error, index) => (
+                            <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                                <li>{error}</li>
+                            </Alert>
+                            ))}
+                        </div>
                         </Slide>
                     </Box>
-                    <ul>
-                        {errors.map((error, index) => (
-                            <li key={index}>{error}</li>
-                        ))}
-                    </ul>
+                    </div>
                 </div>
-            </div>
+              
             ) : (
                 null
             )}

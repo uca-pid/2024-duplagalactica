@@ -18,6 +18,7 @@ export default function Login() {
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
+  const [verifyEmail, setVerifyEmail] = useState(false);
   const goToCreateAccount = () => {
     navigate('/create-account');
   };
@@ -33,7 +34,11 @@ export default function Login() {
       const userCredential= await signInWithEmailAndPassword(auth, username, password);
       const user = userCredential.user;
       if (!user.emailVerified) {
-        alert("Please verify your email address before logging in.");
+        setOpenCircularProgress(false);
+        setVerifyEmail(true);
+        setTimeout(() => {
+          setVerifyEmail(false);
+      }, 3000);
         return;
       }
       console.log("llegue 1")
@@ -88,6 +93,19 @@ export default function Login() {
                 </Slide>
               </Box>
             </div>
+        </div>
+      ) : (
+        null
+      )}
+       { verifyEmail ? (
+        <div className='alert-container'>
+          <div className='alert-content'>
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                Please verify your email address before logging in.
+              </Alert>
+            </Box>
+          </div>
         </div>
       ) : (
         null
