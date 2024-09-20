@@ -14,6 +14,7 @@ import UserProfile from './Components/UserProfile.jsx';
 import UserClasses from './Components/UserClasses.jsx';
 import CouchClasses from './Components/CouchClasses.jsx';
 import UserRoutines from './Components/UserRoutines.jsx';
+import Logout from './Components/Logout.jsx'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/user-classes" element={<UserClasses/>}/>
         <Route path="/couch-classes" element={<CouchClasses/>}/>
         <Route path="/user-routines" element={<UserRoutines/>}/>
+        <Route path="/logout" element={<Logout/>}/>
       </Routes>
     </Router>
   );

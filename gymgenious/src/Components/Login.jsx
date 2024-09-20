@@ -31,34 +31,32 @@ export default function Login() {
     setOpenCircularProgress(true);
     e.preventDefault(); 
     try {
-      const userCredential= await signInWithEmailAndPassword(auth, username, password);
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
       const user = userCredential.user;
+  
       if (!user.emailVerified) {
         setOpenCircularProgress(false);
         setVerifyEmail(true);
-        setTimeout(() => {
-          setVerifyEmail(false);
-      }, 3000);
+        setTimeout(() => setVerifyEmail(false), 3000);
         return;
       }
-      console.log("llegue 1")
-      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${username}`);
-      const data = await response.json();
+      const token = await user.getIdToken();
+      localStorage.setItem('authToken', token);
+      console.log('Token almacenado:', localStorage.getItem('authToken'));
       setOpenCircularProgress(false);
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
-        navigate(`/?mail=${username}&type=${data.type}`);
+        navigate(`/`);
       }, 3000);
     } catch (error) {
       console.error("Login error:", error);
       setOpenCircularProgress(false);
       setFailure(true);
-      setTimeout(() => {
-        setFailure(false);
-      }, 3000);
+      setTimeout(() => setFailure(false), 3000);
     }
   };
+  
 
   return (
     <div className='full-screen-image-1'>
