@@ -8,11 +8,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
-import ErrorIcon from '@mui/icons-material/Error';
 import Box from '@mui/material/Box';
-import Switch from '@mui/material/Switch';
-import Zoom from '@mui/material/Zoom';
-import Paper from '@mui/material/Paper';
 import Slide from '@mui/material/Slide';
 
 export default function Login() {

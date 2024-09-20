@@ -5,6 +5,11 @@ import LeftBar from '../real_components/NewLeftBar.jsx';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import Box from '@mui/material/Box';
 import Popper from '@mui/material/Popper';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
+import Slide from '@mui/material/Slide';
 
 export default function CreateAccount() {
     const [name, setName] = useState('');
@@ -15,6 +20,11 @@ export default function CreateAccount() {
     const [errors, setErrors] = useState([]);
     const [typeAccount,setTypeAccount] = useState('')
     const navigate = useNavigate();
+    const [openCircularProgress, setOpenCircularProgress] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [failureEmailRepeated, setFailureEmailRepeated] = useState(false);
+    const [failure, setFailure] = useState(false);
+    const [failureErrors, setFailureErrors] = useState(false);
     const auth = getAuth();
 
     const validateForm = () => {
@@ -66,7 +76,8 @@ export default function CreateAccount() {
     }
 
     const handleCreateAccount = async () => {
-        if (validateForm()) {
+        setOpenCircularProgress(true);
+        if(validateForm()){
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const firebaseUser = userCredential.user;
@@ -88,16 +99,35 @@ export default function CreateAccount() {
                 await sendEmailVerification(firebaseUser, {
                     url: 'http://localhost:3000/redirections?mode=verifyEmail', 
                     handleCodeInApp: true
-                });navigate('/'); 
+                });
+                setOpenCircularProgress(false);
+                setSuccess(true);
+                setTimeout(() => {
+                    setSuccess(false);
+                    navigate('/'); 
+                }, 3000);
                 alert("Account created successfully!");
             } catch (error) {
+                setOpenCircularProgress(false);
                 if (error.code === 'auth/email-already-in-use') {
-                    alert("An account already exists with this email.");
+                    setFailureEmailRepeated(true);
+                    setTimeout(() => {
+                        setFailureEmailRepeated(false);
+                        }, 3000);
                 } else {
                     console.error("Error creating account:", error);
-                    alert("Error creating account");
+                    setFailure(true);
+                    setTimeout(() => {
+                        setFailure(false);
+                        }, 3000);
                 }
             }
+        } else {
+            setOpenCircularProgress(false);
+            setFailureErrors(true);
+            setTimeout(() => {
+                setFailureErrors(false);
+                }, 3000);
         }
     };
 
@@ -105,10 +135,6 @@ export default function CreateAccount() {
         e.preventDefault();
         handleCreateAccount();
     };
-
-    const handleCloseModal = () => {
-        setErrors([])
-    }
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [openPasswordRequirements, setOpenPasswordRequirements] = useState(false);
@@ -120,6 +146,71 @@ export default function CreateAccount() {
     return (
         <div className='App'>
             <LeftBar value={'profile'}/>
+            {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
+                >
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+            { success ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                            Successful login!
+                        </Alert>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+            { failureErrors ? (
+                <div className='errorsCreateAccountModal'>
+                    <div className='errorsCreateAccountContentModal'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Error creating account</Alert>
+                        </Slide>
+                    </Box>
+                    <ul>
+                        {errors.map((error, index) => (
+                            <li key={index}>{error}</li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+            ) : (
+                null
+            )}
+            { failureEmailRepeated ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>An account already exists with this email.</Alert>
+                        </Slide>
+                    </Box>
+                </div>
+            </div>
+            ) : (
+                null
+            )}
+            { failure ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Error creating account. Try again!</Alert>
+                        </Slide>
+                    </Box>
+                </div>
+            </div>
+            ) : (
+                null
+            )}
             <div className='create-account-container'>
                 <div className='create-account-content'>
                     <h2 style={{color:'#14213D'}}>Create account</h2>
@@ -200,17 +291,6 @@ export default function CreateAccount() {
                     </form>
                 </div>
             </div>
-            {errors.length > 0 && (
-                <div className="errorsCreateAccountModal" onClick={handleCloseModal}>
-                    <div className="errorsCreateAccountContentModal" onClick={handleCloseModal}>
-                        <ul>
-                            {errors.map((error, index) => (
-                                <li key={index}>{error}</li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
