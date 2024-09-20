@@ -8,6 +8,7 @@ export default function RoutineCreation({email}) {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [exercises, setExercises] = useState('');
+    const [day, setDay] = useState('');
     const navigate = useNavigate();
     const handleExcersiceChange = (newExcersices) => {
       setExercises(newExcersices);
@@ -71,6 +72,26 @@ export default function RoutineCreation({email}) {
                   value={desc} 
                   onChange={(e) => setDesc(e.target.value)} 
                   />
+              </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                  <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
+                  <select
+                  id="day" 
+                  name="day" 
+                  value={day} 
+                  onChange={(e) => setDay(e.target.value)} 
+                >
+                  <option value="" >Select</option>
+                  <option value="monday">Monday</option>
+                  <option value="tuesday">Tuesday</option>
+                  <option value="wednesday">Wednesday</option>
+                  <option value="thursday">Thursday</option>
+                  <option value="friday">Friday</option>
+                  <option value="saturday">Saturday</option>
+                  <option value="sunday">Sunday</option>
+                </select>
               </div>
           </div>
           {/* <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
