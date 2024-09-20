@@ -75,7 +75,7 @@ export default function Login() {
         <div className='alert-container'>
           <div className='alert-content'>
             <Box sx={{ position: 'relative', zIndex: 1 }}>
-              <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+              <Slide direction="up" in={success} mountOnEnter unmountOnExit >
                   <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
                     Successful login!
                   </Alert>
@@ -103,9 +103,11 @@ export default function Login() {
         <div className='alert-container'>
           <div className='alert-content'>
             <Box sx={{ position: 'relative', zIndex: 1 }}>
-              <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                Please verify your email address before logging in.
-              </Alert>
+            <Slide direction="up" in={verifyEmail} mountOnEnter unmountOnExit >
+                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                  Please verify your email address before logging in.
+                </Alert>
+              </Slide>
             </Box>
           </div>
         </div>
