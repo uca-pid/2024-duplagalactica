@@ -114,7 +114,7 @@ export default function RoutineCreation({email}) {
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
                     <Slide direction="up" in={success} mountOnEnter unmountOnExit >
                         <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
-                            Routine successfully assigned!
+                            Routine successfully created!
                         </Alert>
                     </Slide>
                     </Box>
@@ -130,7 +130,7 @@ export default function RoutineCreation({email}) {
                         <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
                         <div>
                             <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                            Error assigning routine.
+                            Error creating routine.
                             </Alert>
                             {errors.length > 0 && errors.map((error, index) => (
                             <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
@@ -152,7 +152,7 @@ export default function RoutineCreation({email}) {
                         <Box sx={{ position: 'relative', zIndex: 1 }}>
                         <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
                             <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error assigning routine. Try again!
+                                Error creating routine. Try again!
                             </Alert>
                         </Slide>
                         </Box>
