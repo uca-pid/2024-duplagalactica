@@ -8,6 +8,11 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Slide from '@mui/material/Slide';
 
 function not(a, b) {
   return a.filter((value) => !b.includes(value));
@@ -22,6 +27,8 @@ export default function UsserAssignment({ onUsersChange,owner}) {
   const [checked, setChecked] = useState([]);
   const [left, setLeft] = useState([]);
   const [right, setRight] = useState([]);
+  const [openCircularProgress, setOpenCircularProgress] = useState(false);
+  const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -29,23 +36,30 @@ export default function UsserAssignment({ onUsersChange,owner}) {
     onUsersChange(right); 
   }, [right, onUsersChange]);
 
-  const fetchUsers = async () => {
+  const fetchExercises = async () => {
+    setOpenCircularProgress(true)
     try {
       const response = await fetch(`http://127.0.0.1:5000/get_excersice_by_owner?owner=${owner}`);
       if (!response.ok) {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }
       const data = await response.json();
+      setOpenCircularProgress(false);
       setUsers(data);
       setLeft(data);
     } catch (error) {
       console.error("Error fetching users:", error);
+      setOpenCircularProgress(false);
+      setWarningFetchingExercises(true);
+      setTimeout(() => {
+        setWarningFetchingExercises(false);
+      }, 3000);
     }
   };
 
   useEffect(() => {
     if (owner) {
-      fetchUsers(owner);
+      fetchExercises(owner);
     }
   }, [owner]);
 
@@ -174,6 +188,29 @@ export default function UsserAssignment({ onUsersChange,owner}) {
         </Grid>
       </Grid>
       <Grid item>{customList(right)}</Grid>
+      {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
+                >
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+      { warningFetchingExercises ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={warningFetchingExercises} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                Error fetching exercises. Try again!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
     </Grid>
   );
 }

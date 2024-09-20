@@ -1,8 +1,14 @@
 import '../App.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import moment from 'moment'
-import ExcersiceAssignment from './ExcersiceAssignment.jsx'
+import moment from 'moment';
+import ExcersiceAssignment from './ExcersiceAssignment.jsx';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
+import Box from '@mui/material/Box';
+import Slide from '@mui/material/Slide';
 
 export default function RoutineCreation({email}) {
     const [name, setName] = useState('');
@@ -10,34 +16,81 @@ export default function RoutineCreation({email}) {
     const [exercises, setExercises] = useState('');
     const [day, setDay] = useState('');
     const navigate = useNavigate();
+    const [openCircularProgress, setOpenCircularProgress] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [failure, setFailure] = useState(false);
+    const [errors, setErrors] = useState([]);
+    const [failureErrors, setFailureErrors] = useState(false);
+
     const handleExcersiceChange = (newExcersices) => {
       setExercises(newExcersices);
     };
-  const handleCreateRoutine = async () => {
-    try {  
-      const newRoutine = {
-        name: name,
-        description: desc,
-        excercises: exercises,
-        owner: email,
-      };
-      const response = await fetch('http://127.0.0.1:5000/create_routine', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newRoutine),
-      });
- 
-      if (!response.ok) {
-        throw new Error('Error al crear la rutina');
+
+    const validateForm = () => {
+      let errors = [];
+      
+      if (name === '') {
+          errors.push('Please assign a name to the routine.');
       }
- 
-      navigate(`/managing-routines?mail=${email}&step=${2}`);
-      alert("¡Rutina creada exitosamente!");
-    } catch (error) {
-      console.error("Error al crear la rutina:", error);
-  };
+
+      if (desc === '') {
+        errors.push('Please assign a description to the routine.');
+      }
+
+      if (day === '') {
+        errors.push('Please select one day to assign the routine.');
+      }
+      
+      if (exercises === '') {
+        errors.push('Please select at least one exercise to assign the routine.');
+      }
+
+      setErrors(errors);
+      return errors.length===0;
+  }
+
+  const handleCreateRoutine = async () => {
+    setOpenCircularProgress(true);
+    if(validateForm()){
+      try {  
+        const newRoutine = {
+          name: name,
+          description: desc,
+          excercises: exercises,
+          owner: email,
+        };
+        const response = await fetch('http://127.0.0.1:5000/create_routine', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newRoutine),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Error al crear la rutina');
+        }
+        setOpenCircularProgress(false);
+        setSuccess(true);
+        setTimeout(() => {
+            setSuccess(false);
+            navigate(`/managing-routines?mail=${email}&step=${2}`);
+        }, 3000);
+      } catch (error) {
+        console.error("Error al crear la rutina:", error);
+        setOpenCircularProgress(false);
+        setFailure(true);
+        setTimeout(() => {
+            setFailure(false);
+        }, 3000);
+      };
+    } else {
+        setOpenCircularProgress(false);
+        setFailureErrors(true);
+        setTimeout(() => {
+            setFailureErrors(false);
+            }, 3000);
+      }
   }
 
   const handleSubmit = (e) => {
@@ -47,6 +100,67 @@ export default function RoutineCreation({email}) {
 
   return (
     <div className='class-creation-container'>
+      {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
+                >
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+            { success ? (
+                <div className='alert-container'>
+                <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                            Routine successfully assigned!
+                        </Alert>
+                    </Slide>
+                    </Box>
+                </div>
+                </div>
+            ) : (
+                null
+            )}
+            { failureErrors ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
+                        <div>
+                            <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                            Error assigning routine.
+                            </Alert>
+                            {errors.length > 0 && errors.map((error, index) => (
+                            <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                                <li>{error}</li>
+                            </Alert>
+                            ))}
+                        </div>
+                        </Slide>
+                    </Box>
+                    </div>
+                </div>
+              
+            ) : (
+                null
+            )}
+            { failure ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                Error assigning routine. Try again!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
       <div className='class-creation-content'>
         <h2 style={{color:'#14213D'}}>Create routine</h2>
         <form onSubmit={handleSubmit}>
@@ -112,7 +226,7 @@ export default function RoutineCreation({email}) {
           </div> */}
           <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div className="input-small-container">
-                  <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
+                  <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
                   <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={email}/>
               </div>
           </div>
