@@ -281,13 +281,17 @@ export default function CreateAccount() {
                         </div>
                         <div className="input-container">
                             <label htmlFor="typeAccount" style={{color:'#14213D'}}>Type of account:</label>
-                            <input 
+                            <select
                                 type="typeAccount" 
                                 id="typeAccount" 
                                 name="typeAccount" 
                                 value={typeAccount} 
                                 onChange={(e) => setTypeAccount(e.target.value)} 
-                            />
+                            >
+                                <option value="" >Select</option>
+                                <option value="client">Client</option>
+                                <option value="coach">Coach</option>
+                            </select>
                         </div>
                         <button type="submit" className='button_create_account'>
                             Create account

@@ -377,7 +377,7 @@ export default function Main_Page() {
               <Box sx={{ position: 'relative', zIndex: 1 }}>
               <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
                   <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
-                      Invalid Token. Try again!
+                      Invalid Token!
                   </Alert>
               </Slide>
               </Box>

@@ -21,10 +21,11 @@ export default function CreateClass() {
   const navigate = useNavigate();
   const [userMail,setUserMail] = useState('')
   const [errors, setErrors] = useState([]);
-  const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
   const [failureErrors, setFailureErrors] = useState(false);
+  const [openCircularProgress, setOpenCircularProgress] = useState(false);
+  const [errorToken,setErrorToken] = useState(false);
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -56,11 +57,12 @@ export default function CreateClass() {
         errors.push('Please enter a date.')
       }
 
-      const today = new Date();
-      const inputDate = Date(date);
-      if (inputDate < today || (inputDate == today && moment(hour, format).isBefore(moment()))){
-        errors.push('Please enter a day and time after the current one');
-      }
+      ////@@@@@@@@@@@@@@@ REVISAR ESTO @@@@@@@@@@@@@@@@@@
+      // const today = new Date();
+      // const inputDate = Date(date);
+      // if (inputDate < today || (inputDate == today && moment(hour, format).isBefore(moment()))){
+      //   errors.push('Please enter a day and time after the current one');
+      // }
 
       setErrors(errors);
       return errors.length === 0;
@@ -123,11 +125,18 @@ export default function CreateClass() {
   };
 
   const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
         setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        setErrorToken(true);
+        setTimeout(() => {
+          setErrorToken(false);
+        }, 3000);
         throw error;
     }
   };
@@ -212,6 +221,21 @@ export default function CreateClass() {
               </Box>
           </div>
       </div>
+      ) : (
+          null
+      )}
+      { errorToken ? (
+          <div className='alert-container'>
+              <div className='alert-content'>
+                  <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                      <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                          Invalid Token!
+                      </Alert>
+                  </Slide>
+                  </Box>
+              </div>
+          </div>
       ) : (
           null
       )}
