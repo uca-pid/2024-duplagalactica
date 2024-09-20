@@ -11,12 +11,11 @@ import Typography from '@mui/material/Typography';
 import ExerciseCreation from './ExerciseCreation.jsx'
 import RoutineCreation from './RoutineCreation.jsx'
 import AssignRoutineToUser from './AssignRoutineToUser.jsx'
+import {jwtDecode} from "jwt-decode";
 
 export default function ManagingRoutines () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');
-  const userType = urlParams.get('type');
-  const step = parseInt(urlParams.get('step'))
+  const [userMail,setUserMail] = useState('')
+  const step = 0;
   const [activeStep, setActiveStep] = React.useState(step);
   const [skipped, setSkipped] = React.useState(new Set());
   const steps = ['Create exercise', 'Create routine', 'Assign routine'];
@@ -62,14 +61,33 @@ export default function ManagingRoutines () {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
     if (step >= 0 && step < steps.length) {
       setActiveStep(step);
     }
   }, [step]);
 
+
+  const verifyToken = async (token) => {
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        throw error;
+    }
+  };
+
+
   return (
     <div className='full-screen-image-3'>
-        <LeftBar email={userMail} type={userType} value={'add'}/>
+        <LeftBar/>
         <div className='stepper-container'>
             <Box sx={{ width: '100%' }}>
             <Stepper activeStep={activeStep}>

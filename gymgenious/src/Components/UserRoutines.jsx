@@ -14,6 +14,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import {useState, useEffect} from 'react';
 import { Box, useMediaQuery } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+import {jwtDecode} from "jwt-decode";
 
 function ColorToggleButton() {
   const [alignment, setAlignment] = React.useState('web');
@@ -61,23 +62,18 @@ function ColorToggleButton() {
 
 
 
+
 export default function StickyHeadTable() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');
-  const userType = urlParams.get('type');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [userMail, setUserMail] = useState('');
   const [orderBy, setOrderBy] = useState('name');
   const [order, setOrder] = useState('asc');
-  const [visibleRows,setRoutines] = React.useState([])
+  const [visibleRows, setVisibleRows] = useState([]);
   const isSmallScreen = useMediaQuery('(max-width:500px)');
-  const isSmallScreen250 = useMediaQuery('(max-width:250px)');
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-  };
-
-  const handleSelectEvent = (event) => {
-    setRoutines(event);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -98,86 +94,108 @@ export default function StickyHeadTable() {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      const filteredRoutines = data.filter(event => 
+      const filteredRoutines = data.filter(event =>
         event.user.some(user => user.Mail === userMail)
       );
-      setRoutines(filteredRoutines);
+      setVisibleRows(filteredRoutines);
     } catch (error) {
       console.error("Error fetching rutinas:", error);
     }
   };
 
+  const verifyToken = async (token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      setUserMail(decodedToken.email);
+    } catch (error) {
+      console.error('Error al verificar el token:', error);
+    }
+  };
+
   useEffect(() => {
-    fetchRoutines();
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      verifyToken(token);
+    } else {
+      console.error('No token found');
+    }
   }, []);
+
+  useEffect(() => {
+    if (userMail) {
+      fetchRoutines(); // Llama a fetchRoutines cuando userMail cambie
+    }
+  }, [userMail]);
 
   return (
     <div className="App">
-      <NewLeftBar email={userMail} type={userType}/>
+      <NewLeftBar/>
       <div className="Table-Container">
-            <ColorToggleButton/>
-            <Paper sx={{ width: '100%', overflow: 'hidden',border: '2px solid #BC6C25' }}>
-            <TableContainer sx={{ maxHeight: 440 }}>
-                <Table stickyHeader aria-label="sticky table">
-                <TableHead>
-                <TableRow sx={{height: '5vh',width:'5vh',color:'#54311a' }}>
-                        <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
-                        <TableSortLabel
-                            active={orderBy === 'name'}
-                            direction={orderBy === 'name' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'name')}
-                        >
-                            Name
-                            {orderBy === 'name' ? (
-                            <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                            </Box>
-                            ) : null}
-                        </TableSortLabel>
-                        </TableCell>
-                        {!isSmallScreen && (
-                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                            <TableSortLabel
-                            active={orderBy === 'hour'}
-                            direction={orderBy === 'hour' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'hour')}
-                            >
-                            Teacher
-                            {orderBy === 'hour' ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                            </TableSortLabel>
-                        </TableCell>
-                        )}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {visibleRows.map((row) => (
-                        <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                            {row.routine}
-                        </TableCell>
-                        {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{row.owner}</TableCell>
-                        )}
-                        </TableRow>
-                    ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[10, 25, 100]}
-                component="div"
-                count={visibleRows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-            </Paper>
-        </div>
+        <ColorToggleButton/>
+        <Paper sx={{ width: '100%', overflow: 'hidden', border: '2px solid #BC6C25' }}>
+          <TableContainer sx={{ maxHeight: 440 }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow sx={{ height: '5vh', color: '#54311a' }}>
+                  <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                    <TableSortLabel
+                      active={orderBy === 'name'}
+                      direction={orderBy === 'name' ? order : 'asc'}
+                      onClick={(event) => handleRequestSort(event, 'name')}
+                    >
+                      Name
+                      {orderBy === 'name' ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </TableCell>
+                  {!isSmallScreen && (
+                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                      <TableSortLabel
+                        active={orderBy === 'hour'}
+                        direction={orderBy === 'hour' ? order : 'asc'}
+                        onClick={(event) => handleRequestSort(event, 'hour')}
+                      >
+                        Teacher
+                        {orderBy === 'hour' ? (
+                          <Box component="span" sx={visuallyHidden}>
+                            {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                          </Box>
+                        ) : null}
+                      </TableSortLabel>
+                    </TableCell>
+                  )}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {visibleRows.map((row) => (
+                  <TableRow key={row.id} hover tabIndex={-1} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                    <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                      {row.routine}
+                    </TableCell>
+                    {!isSmallScreen && (
+                      <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                        {row.owner}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={visibleRows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </div>
     </div>
   );
 }

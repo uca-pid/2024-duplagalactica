@@ -7,7 +7,8 @@ import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import NewLeftBar from '../real_components/NewLeftBar.jsx'
+import NewLeftBar from '../real_components/NewLeftBar.jsx';
+import {jwtDecode} from "jwt-decode";
 
 const localizer = momentLocalizer(moment);
 
@@ -69,10 +70,7 @@ export default function Main_Page() {
   const isSmallScreen = useMediaQuery('(max-width:250px)');
   const location = useLocation();
   const [openCircularProgress, setOpenCircularProgress] = useState(true)
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');
-  const userType = urlParams.get('type');
+  const [userMail,setUserMail] = useState('')
 
 
   useEffect(() => {
@@ -184,9 +182,30 @@ export default function Main_Page() {
       console.error("Error fetching classes:", error);
     }
   };
+  
+  const verifyToken = async (token) => {
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        throw error;
+    }
+  };
+
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
     fetchClasses();
   }, []);
+
+
+
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);

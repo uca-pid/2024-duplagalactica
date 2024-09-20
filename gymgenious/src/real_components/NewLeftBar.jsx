@@ -30,7 +30,7 @@ export default function TemporaryDrawer() {
   const goToBookedClasses = () => navigate('/user-classes');
   const goToMyRoutines = () => navigate('/user-routines');
   const goToLogout = () => navigate('/logout');
-
+  const goToUserRoutines = () => navigate('/user-routines');
 
   const navigateTo = (index) => {
     const routes = [
@@ -47,11 +47,10 @@ export default function TemporaryDrawer() {
   const navigateFromUserTo = (index) => {
     const routes = [
       goToMainPage,
-      goToLogin,
+      goToUserProfile,
       goToBookedClasses,
-      goToManageRoutines,
-      goToManageRoutines,
-      goToMyRoutines,
+      goToUserRoutines,
+      goToLogout,
     ];
     routes[index]();
   };
@@ -107,7 +106,7 @@ export default function TemporaryDrawer() {
   const DrawerListClient = (
     <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout', 'MyRoutines'].map((text, index) => (
+        {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateFromUserTo(index)}>
               <ListItemIcon>
