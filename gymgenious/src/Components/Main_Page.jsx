@@ -76,12 +76,8 @@ export default function Main_Page() {
 
 
   useEffect(() => {
-    if (location.state?.message === 'block') {
-      setLeftBarOption('add');
-    } else {
-      setLeftBarOption('profile');
-    }
-  }, [location.state]);
+    console.log("hgola",localStorage.getItem('authToken'))
+  },);
 
   const changeShowCalendar = () => {
     setShowCalendar(prevState => !prevState);
@@ -199,10 +195,11 @@ export default function Main_Page() {
   const handleCloseModal = () => {
     setSelectedEvent(null);
   };
+  
 
   return (
     <div className="App">
-      <NewLeftBar email={userMail} type={userType}/>
+      <NewLeftBar/>
       {openCircularProgress ? (
               <Backdrop
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

@@ -18,7 +18,9 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
- 
+import {jwtDecode} from "jwt-decode";
+
+
 const day = (dateString) => {
   const date = new Date(dateString);
   const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -34,8 +36,7 @@ function CouchClasses() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editClass, setEditClass] = useState(false);
   const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');
-  const userType = urlParams.get('type');
+  const [userMail,setUserMail] = useState(null)
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
   const [visibleRows,setClasses]=useState([])
@@ -172,13 +173,34 @@ function CouchClasses() {
     }
   };
 
+
+    const verifyToken = async (token) => {
+        try {
+            const decodedToken = jwtDecode(token);
+            setUserMail(decodedToken.email);
+        } catch (error) {
+            console.error('Error al verificar el token:', error);
+            throw error;
+        }
+    };
+  
+
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
     fetchClasses();
   }, []);
 
+
+
+
   return (
     <div className="App">
-        <NewLeftBar email={userMail} type={userType}/>
+        <NewLeftBar/>
         {openCircularProgress ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

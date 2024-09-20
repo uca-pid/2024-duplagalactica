@@ -1,4 +1,5 @@
-import * as React from 'react';
+import {jwtDecode} from "jwt-decode";
+import React, {useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
@@ -8,144 +9,69 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
-import ExitToApp from '@mui/icons-material/ExitToApp'
+import ExitToApp from '@mui/icons-material/ExitToApp';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 
-export default function TemporaryDrawer({value, email=null,type=null}) {
-    const [open, setOpen] = React.useState(false);
-    const navigate = useNavigate();
-    
-    const goToMainPage = () => {
-        if (value === 'add') {
-            navigate('/', { state: { message: 'block' } });
-        } else {
-            if (email!=null) {
-              navigate(`/?mail=${email}`); 
-            } else {
-              navigate(`/`); 
-            }
-            
-        }
-    };
-    const goToLogin = () => {
-      if (email==null) {
-        navigate('/login');  /// X AHORA NO TE DEJA VOLVER AL LOGIN PERO SIGUE APARECIENDO EL ICONO
-      } else{
-        navigate(`/user-profile?mail=${email}`)  /// ESTO LO HIZO AGUS, FIJATE COMO HACES LA CONSULTA
-      }
-    };
-    const goToClassCreation = () => {
-      if (email!=null) {
-        navigate(`/class-creation?mail=${email}&type=${type}`); 
-      } else {
-        navigate(`/class-creation`); 
-      }
-    };
-    const goToManageRoutines = () => {
-      if (email!=null) {
-        navigate(`/managing-routines?mail=${email}&step=${0}&type=${type}`); 
-      } else {
-        navigate(`/managing-routines`); 
-      }
-    }
-    const goToCouchClasses = () => {
-      if (email!=null) {
-        navigate(`/couch-classes?mail=${email}&type=${type}`); 
-      } else {
-        navigate(`/couch-classes`); 
-      }
-    }
-    
-    const gotToBookedClasses = () => {
-      if (email!=null) {
-        navigate(`/user-classes?mail=${email}&type=${type}`); 
-      } else {
-        navigate(`/user-classes`); 
-      }
-    }
-
-    const goToMyRoutines = () => {
-      if (email!=null) {
-        navigate(`/user-routines?mail=${email}&type=${type}`); 
-      } else {
-        navigate(`/user-routines`); 
-      }
-    }
+export default function TemporaryDrawer() {
+  const [open, setOpen] = React.useState(false);
+  const [type, setType] = React.useState('')
+  const navigate = useNavigate();
+  const [userMail,setUserMail] = useState(null)
+  const goToMainPage = () => navigate('/');
+  const goToLogin = () => navigate('/login');
+  const goToUserProfile = () => navigate('/user-profile');
+  const goToClassCreation = () => navigate('/class-creation');
+  const goToManageRoutines = () => navigate('/managing-routines');
+  const goToCouchClasses = () => navigate('/couch-classes');
+  const goToBookedClasses = () => navigate('/user-classes');
+  const goToMyRoutines = () => navigate('/user-routines');
+  const goToLogout = () => navigate('/logout');
 
 
-    const navigateTo = (index) => {
-        if (index===0){
-            goToMainPage();
-        } else if (index===1){
-            goToLogin();
-        } else if (index===2){
-            goToClassCreation();
-        } else if (index===3){
-            goToManageRoutines()
-        }else if (index===4){
-          goToManageRoutines()
-        }else if (index===5){
-          goToCouchClasses()
-        }
-    }
+  const navigateTo = (index) => {
+    const routes = [
+      goToMainPage,
+      goToUserProfile,
+      goToClassCreation,
+      goToManageRoutines,
+      goToLogout,
+      goToCouchClasses,
+    ];
+    routes[index]();
+  };
 
-    const navigateFromUserTo = (index) => {
-      if (index===0){
-          goToMainPage();
-      } else if (index===1){
-          goToLogin();
-      } else if (index===2){
-          gotToBookedClasses();
-      } else if (index===3){
-          goToManageRoutines()
-      }else if (index===4){
-        goToManageRoutines()
-      }else if (index===5){
-        goToMyRoutines()
-      }
-  }
+  const navigateFromUserTo = (index) => {
+    const routes = [
+      goToMainPage,
+      goToLogin,
+      goToBookedClasses,
+      goToManageRoutines,
+      goToManageRoutines,
+      goToMyRoutines,
+    ];
+    routes[index]();
+  };
 
-    const toggleDrawer = (newOpen) => () => {
-        setOpen(newOpen);
-    };
+  const navigateToNotLogged = (index) => {
+    if (index === 0) goToMainPage();
+    else if (index === 1) goToLogin();
+  };
 
-  const DrawerList = (
-    <Box sx={{ width: 250 , background:'#FEFAE0'}} role="presentation" onClick={toggleDrawer(false)}>
+  const toggleDrawer = (newOpen) => () => setOpen(newOpen);
+
+  const DrawerListNotauthenticated = (
+    <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Home', 'Profile', 'Create class', 'Manage routines', 'Logout','MyClasses'].map((text, index) => (
+        {['Home', 'Login'].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton onClick={()=>navigateTo(index)}>
+            <ListItemButton onClick={() => navigateToNotLogged(index)}>
               <ListItemIcon>
-                {index === 0 && <HomeIcon  sx={{color:'#BC6C25'}}/> }
-                {index === 1 && <PersonIcon  sx={{color:'#BC6C25'}}/> }
-                {index === 2 && <AddIcon  sx={{color:'#BC6C25'}}/> }
-                {index === 3 && <HomeIcon  sx={{color:'#BC6C25'}}/>}
-                {index === 4 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
-                {index === 5 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
-              </ListItemIcon>
-              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout','MyRoutines'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton onClick={()=>navigateFromUserTo(index)}>
-              <ListItemIcon>
-                {index === 0 && <HomeIcon sx={{color:'#BC6C25'}}/> }
-                {index === 1 && <PersonIcon sx={{color:'#BC6C25'}}/> }
-                {index === 2 && <AddIcon  sx={{color:'#BC6C25'}}/> }
-                {index === 3 && <HomeIcon  sx={{color:'#BC6C25'}}/>}
-                {index === 4 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
-                {index === 5 && <ExitToApp  sx={{color:'#BC6C25'}}/>}
+                {index === 0 && <HomeIcon sx={{ color: '#BC6C25' }} />}
+                {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>
@@ -155,13 +81,120 @@ export default function TemporaryDrawer({value, email=null,type=null}) {
     </Box>
   );
 
+  const DrawerListCoach = (
+    <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
+      <List>
+        {['Home', 'Profile', 'Create class', 'Manage routines', 'Logout', 'MyClasses'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton onClick={() => navigateTo(index)}>
+              <ListItemIcon>
+                {index === 0 && <HomeIcon sx={{ color: '#BC6C25' }} />}
+                {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
+                {index === 2 && <AddIcon sx={{ color: '#BC6C25' }} />}
+                {index === 3 && <HomeIcon sx={{ color: '#BC6C25' }} />}
+                {index === 4 && <ExitToApp sx={{ color: '#BC6C25' }} />}
+                {index === 5 && <ExitToApp sx={{ color: '#BC6C25' }} />}
+              </ListItemIcon>
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
+
+  const DrawerListClient = (
+    <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
+      <List>
+        {['Home', 'Profile', 'Booked classes', 'My routines', 'Logout', 'MyRoutines'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton onClick={() => navigateFromUserTo(index)}>
+              <ListItemIcon>
+                {index === 0 && <HomeIcon sx={{ color: '#BC6C25' }} />}
+                {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
+                {index === 2 && <AddIcon sx={{ color: '#BC6C25' }} />}
+                {index === 3 && <HomeIcon sx={{ color: '#BC6C25' }} />}
+                {index === 4 && <ExitToApp sx={{ color: '#BC6C25' }} />}
+                {index === 5 && <ExitToApp sx={{ color: '#BC6C25' }} />}
+              </ListItemIcon>
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
+  const fetchUser = async () => {
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${userMail}`);
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        setType(data.type);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
+  };
+
+  const isAuthenticated = localStorage.getItem('authToken');
+  const verifyToken = async (token) => {
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        throw error;
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        verifyToken(token);
+        fetchUser()
+    } else {
+        console.error('No token found');
+    }
+  }, [type]);
+
+
+
   return (
     <div className='leftBar'>
-      <Button onClick={toggleDrawer(true)} style={{backgroundColor: '#432818',borderRadius: '50%',top:'0.5vh',left:'0.5vh ',width: '5vh', height: '5vh', minWidth: '0', minHeight: '0', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-        <MenuIcon sx={{color:'#FEFAE0'}}/>
+      <Button
+        onClick={toggleDrawer(true)}
+        style={{
+          backgroundColor: '#432818',
+          borderRadius: '50%',
+          top: '0.5vh',
+          left: '0.5vh ',
+          width: '5vh',
+          height: '5vh',
+          minWidth: '0',
+          minHeight: '0',
+          padding: '0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <MenuIcon sx={{ color: '#FEFAE0' }} />
       </Button>
-      <Drawer open={open}  PaperProps={{sx: {backgroundColor: '#FEFAE0'}}} onClose={toggleDrawer(false)}>
-        {DrawerList}
+      <Drawer open={open} PaperProps={{ sx: { backgroundColor: '#FEFAE0' } }} onClose={toggleDrawer(false)}>
+        {isAuthenticated ? (
+          <>
+          {(type=='client') ? (
+          DrawerListClient
+          ) : (
+            DrawerListCoach
+          )}
+          </>
+        ) : (
+          DrawerListNotauthenticated
+        )}
       </Drawer>
     </div>
   );
