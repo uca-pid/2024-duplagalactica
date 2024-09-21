@@ -219,10 +219,10 @@ export default function CreateAccount() {
             )}
             <div className='create-account-container'>
                 <div className='create-account-content'>
-                    <h2 style={{color:'#14213D'}}>Create account</h2>
+                    <h2 style={{color:'#5e2404'}}>Create account</h2>
                     <form onSubmit={handleSubmit} autoComplete='off'>
                         <div className="input-container">
-                            <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+                            <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
                             <input 
                                 type="text" 
                                 id="name" 
@@ -232,7 +232,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="lastName" style={{color:'#14213D'}}>Last name:</label>
+                            <label htmlFor="lastName" style={{color:'#5e2404'}}>Last name:</label>
                             <input 
                                 type="text" 
                                 id="lastname" 
@@ -242,7 +242,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="date" style={{color:'#14213D'}}>Birthdate:</label>
+                            <label htmlFor="date" style={{color:'#5e2404'}}>Birthdate:</label>
                             <input 
                                 type="date" 
                                 id="date" 
@@ -252,7 +252,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
+                            <label htmlFor="email" style={{color:'#5e2404'}}>Email:</label>
                             <input 
                                 type="email" 
                                 id="email" 
@@ -262,7 +262,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="password" style={{color:'#14213D'}}>Password:</label>
+                            <label htmlFor="password" style={{color:'#5e2404'}}>Password:</label>
                             <input
                                 onClick={handleOpenPasswordRequirements}
                                 type="password"
@@ -282,7 +282,7 @@ export default function CreateAccount() {
                             </Popper>
                         </div>
                         <div className="input-container">
-                            <label htmlFor="typeAccount" style={{color:'#14213D'}}>Type of account:</label>
+                            <label htmlFor="typeAccount" style={{color:'#5e2404'}}>Type of account:</label>
                             <select
                                 type="typeAccount" 
                                 id="typeAccount" 

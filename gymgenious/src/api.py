@@ -5,8 +5,8 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from Controllers.classesController import get_classes_route, create_class_route,book_class_route,unbook_class_route,delete_class_route,update_class_info_route
 from Controllers.usersController import get_unique_user_by_email_route, get_user_route, send_email_route, create_user_route,get_users_route,get_clients_users_route,get_client_users_no_match_routine_route,update_users_info_route
-from Controllers.excersicesController import create_exersice_route,get_excersice_by_owner_route
-from Controllers.routineController import create_routine_route,assign_routine_to_user_route,get_routines_by_owner_route,get_assigned_routines_route
+from Controllers.excersicesController import create_exersice_route,get_excersice_by_owner_route,get_excersices_route
+from Controllers.routineController import create_routine_route,assign_routine_to_user_route,get_routines_route,get_assigned_routines_route
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -97,6 +97,10 @@ def get_excersice_by_owner():
     owner = request.args.get('owner')
     return get_excersice_by_owner_route(owner)
 
+@app.route('/get_excersices', methods=['GET'])
+def get_excersices():
+    return get_excersices_route()
+
 
 @app.route('/create_exersice', methods=['POST'])
 def create_exersice():
@@ -109,10 +113,9 @@ def create_routine():
     return create_routine_route(newRoutine)
 
 
-@app.route('/get_routines_by_owner', methods=['GET'])
-def get_routines_by_owner():
-    owner = request.args.get('owner')
-    return get_routines_by_owner_route(owner)
+@app.route('/get_routines', methods=['GET'])
+def get_routines():
+    return get_routines_route()
 
 @app.route('/assign_routine_to_user', methods=['POST'])
 def assign_routine_to_user():

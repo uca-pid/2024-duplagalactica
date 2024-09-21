@@ -25,12 +25,12 @@ function UsserClasses() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [userMail,setUserMail] = useState('')
-  const [visibleRows,setClasses]=useState([])
+  const [userMail, setUserMail] = useState('');
+  const [visibleRows, setClasses] = useState([]);
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
-  const [errorToken,setErrorToken] = useState(false);
+  const [errorToken, setErrorToken] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -38,6 +38,7 @@ function UsserClasses() {
     setOrderBy(property);
   };
 
+  // Paginación
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -47,32 +48,12 @@ function UsserClasses() {
     setPage(0);
   };
 
+  // Selección de evento
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
   };
-  const handleCloseModal = () => {
-    setSelectedEvent(null);
-  };
 
-  const handleUnbookClass = async (event) => {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/unbook_class', {
-        method: 'PUT', 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ event: event,mail:userMail })
-      });
-      if (!response.ok) {
-        throw new Error('Error al actualizar la clase: ' + response.statusText);
-      }
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-    }
-    await fetchClasses();
-    handleCloseModal();
-  };
-
+  // Obtener clases desde el servidor
   const fetchClasses = async () => {
     try {
       const response = await fetch('http://127.0.0.1:5000/get_classes');
@@ -80,22 +61,23 @@ function UsserClasses() {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      console.log(data);
-      const filteredClasses = data.filter(event => event.BookedUsers.includes("j.lopez.s.252001@gmail.com"));
-
-      setClasses(filteredClasses);
-
+      const filteredClasses = data.filter(event => event.BookedUsers.includes(userMail));
+      
+      setClasses(filteredClasses);  // Actualizar el estado con las clases filtradas
+      console.log('Clases visibles:', filteredClasses);  // Log para verificar los datos
     } catch (error) {
       console.error("Error fetching classes:", error);
     }
   };
 
+  // Verificación del token y obtención del email del usuario
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
-        setUserMail(decodedToken.email);
+        setUserMail(decodedToken.email);  // Guardar el correo del usuario
         setOpenCircularProgress(false);
+        await fetchClasses();  // Obtener clases después de verificar el token
     } catch (error) {
         console.error('Error al verificar el token:', error);
         setOpenCircularProgress(false);
@@ -107,6 +89,7 @@ function UsserClasses() {
     }
   };
 
+  // Ejecutar cuando el componente se monta
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
@@ -115,183 +98,140 @@ function UsserClasses() {
     } else {
         console.error('No token found');
     }
-    fetchClasses();
-  }, []);
-
+  }, [userMail]);  // Añadimos userMail como dependencia para volver a ejecutar cuando cambia
 
   return (
     <div className="App">
         <NewLeftBar/>
-        {openCircularProgress ? (
-          <Backdrop
-          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-          open={openCircularProgress}
-          >
-          <CircularProgress color="inherit" />
+        {openCircularProgress && (
+          <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
+            <CircularProgress color="inherit" />
           </Backdrop>
-        ) : null}
-        { errorToken ? (
-            <div className='alert-container'>
-                <div className='alert-content'>
-                    <Box sx={{ position: 'relative', zIndex: 1 }}>
-                    <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
-                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
-                            Invalid Token!
-                        </Alert>
-                    </Slide>
-                    </Box>
-                </div>
+        )}
+        {errorToken && (
+          <div className='alert-container'>
+            <div className='alert-content'>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit>
+                  <Alert style={{ fontSize: '100%', fontWeight: 'bold' }} severity="error">
+                    Invalid Token!
+                  </Alert>
+                </Slide>
+              </Box>
             </div>
-        ) : (
-            null
+          </div>
         )}
         <div className="Table-Container">
-            <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
-            <Paper 
-                sx={{ 
-                width: '100%', 
-                mb: 2, 
-                backgroundColor: '#E5E5E5',
-                }}
-            >
+            <Box sx={{ width: '100%', flexWrap: 'wrap',background:'#ffe0b5',border: '2px solid #BC6C25',borderRadius:'10px'  }}>
+              <Paper sx={{ width: '100%',backgroundColor: '#ffe0b5',borderRadius:'10px' }}>
                 <TableContainer>
-                <Table 
-                    sx={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    }} 
-                    aria-labelledby="tableTitle" 
-                    size={dense ? 'small' : 'medium'}
-                >
+                  <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
                     <TableHead>
-                    <TableRow sx={{ borderBottom: '1px solid #ccc', height: '5vh',width:'5vh' }}>
-                        <TableCell sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
-                        <TableSortLabel
+                      <TableRow sx={{ height: '5vh', width: '5vh' }}>
+                        <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                          <TableSortLabel
                             active={orderBy === 'name'}
                             direction={orderBy === 'name' ? order : 'asc'}
                             onClick={(event) => handleRequestSort(event, 'name')}
-                        >
+                          >
                             Name
-                            {orderBy === 'name' ? (
-                            <Box component="span" sx={visuallyHidden}>
+                            {orderBy === 'name' && (
+                              <Box component="span" sx={visuallyHidden}>
                                 {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                            </Box>
-                            ) : null}
-                        </TableSortLabel>
+                              </Box>
+                            )}
+                          </TableSortLabel>
                         </TableCell>
                         {!isSmallScreen && (
-                        <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                          <TableCell align="right" sx={{  borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25' , fontWeight: 'bold',color:'#54311a'}}>
                             <TableSortLabel
-                            active={orderBy === 'hour'}
-                            direction={orderBy === 'hour' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'hour')}
+                              active={orderBy === 'hour'}
+                              direction={orderBy === 'hour' ? order : 'asc'}
+                              onClick={(event) => handleRequestSort(event, 'hour')}
                             >
-                            Start time
-                            {orderBy === 'hour' ? (
+                              Start time
+                              {orderBy === 'hour' && (
                                 <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </Box>
-                            ) : null}
+                              )}
                             </TableSortLabel>
-                        </TableCell>
+                          </TableCell>
                         )}
                         {!isSmallScreen250 && (
-                        <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                          <TableCell align="right" sx={{   borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25' , fontWeight: 'bold',color:'#54311a' }}>
                             <TableSortLabel
-                            active={orderBy === 'dateInicio'}
-                            direction={orderBy === 'dateInicio' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'dateInicio')}
+                              active={orderBy === 'dateInicio'}
+                              direction={orderBy === 'dateInicio' ? order : 'asc'}
+                              onClick={(event) => handleRequestSort(event, 'dateInicio')}
                             >
-                            Date
-                            {orderBy === 'dateInicio' ? (
+                              Date
+                              {orderBy === 'dateInicio' && (
                                 <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </Box>
-                            ) : null}
+                              )}
                             </TableSortLabel>
-                        </TableCell>
+                          </TableCell>
                         )}
                         {!isSmallScreen && (
-                        <TableCell align="right" sx={{ border: '1px solid #ccc', fontWeight: 'bold' }}>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
                             <TableSortLabel
-                            active={orderBy === 'permanent'}
-                            direction={orderBy === 'permanent' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'permanent')}
+                              active={orderBy === 'permanent'}
+                              direction={orderBy === 'permanent' ? order : 'asc'}
+                              onClick={(event) => handleRequestSort(event, 'permanent')}
                             >
-                            Recurrent
-                            {orderBy === 'permanent' ? (
+                              Recurrent
+                              {orderBy === 'permanent' && (
                                 <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </Box>
-                            ) : null}
+                              )}
                             </TableSortLabel>
-                        </TableCell>
+                          </TableCell>
                         )}
-                    </TableRow>
+                      </TableRow>
                     </TableHead>
                     <TableBody>
-                    {visibleRows.map((row) => (
-                        <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                        <TableCell component="th" scope="row" sx={{ border: '1px solid #ccc' }}>
+                      {visibleRows.map((row) => (
+                        <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                          <TableCell component="th" scope="row" sx={{   borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
                             {row.name}
-                        </TableCell>
-                        {!isSmallScreen && (
-                            <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.hour}</TableCell>
-                        )}
-                        {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
-                        )}
-                        {!isSmallScreen && (
-                            <TableCell align="right" sx={{ border: '1px solid #ccc' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
-                        )}
+                          </TableCell>
+                          {!isSmallScreen && (
+                            <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                              {row.hour}
+                            </TableCell>
+                          )}
+                          {!isSmallScreen250 && (
+                            <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                              {row.dateInicio}
+                            </TableCell>
+                          )}
+                          {!isSmallScreen && (
+                            <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',color:'#54311a'}}>
+                              {row.permanent}
+                            </TableCell>
+                          )}
                         </TableRow>
-                    ))}
+                      ))}
                     </TableBody>
-                </Table>
+                  </Table>
                 </TableContainer>
-                {isSmallScreen ? (
                 <TablePagination
-                rowsPerPageOptions={[10]}
-                component="div"
-                count={visibleRows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={visibleRows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-            ) : (
-                <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={visibleRows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            )}
-                
-            </Paper>
-            {selectedEvent && (
-                <div className="Modal" onClick={handleCloseModal}>
-                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                    <h2>Class details</h2>
-                    <p><strong>Name:</strong> {selectedEvent.name}</p>
-                    <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
-                    <p><strong>Start time:</strong> {selectedEvent.hour}</p>
-                    <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-                    <button style={{color:'red'}} onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook class</button>
-                    <button onClick={handleCloseModal}>Close</button>
-                    </div>
-                </div>
-                )}
+              </Paper>
             </Box>
         </div>
     </div>
   );
-  
-  
 }
-
 
 export default UsserClasses;

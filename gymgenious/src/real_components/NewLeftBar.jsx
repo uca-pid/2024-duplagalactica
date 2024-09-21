@@ -142,24 +142,27 @@ export default function TemporaryDrawer() {
   const verifyToken = async (token) => {
     try {
         const decodedToken = jwtDecode(token);
-        console.log("hola")
-        setUserMail(decodedToken.email);        
-        fetchUser()
-    } catch (error) {
+        setUserMail(decodedToken.email);
+      } catch (error) {
         console.error('Error al verificar el token:', error);
         throw error;
-    }
-  };
-
+      }
+    };
+    
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
       verifyToken(token)
     } else {
-        console.error('No token found');
+      console.error('No token found');
     }
   }, [userMail]);
 
+  useEffect(() => {
+    if (userMail) {
+      fetchUser(); 
+    }
+  }, [userMail]);
 
 
   return (

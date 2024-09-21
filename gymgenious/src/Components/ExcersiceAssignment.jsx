@@ -13,6 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
+import {jwtDecode} from "jwt-decode";
 
 function not(a, b) {
   return a.filter((value) => !b.includes(value));
@@ -22,10 +23,10 @@ function intersection(a, b) {
   return a.filter((value) => b.includes(value));
 }
 
-export default function UsserAssignment({ onUsersChange,owner}) {
-  const [users, setUsers] = useState([]);
+export default function UsserAssignment({onUsersChange}) {
   const [checked, setChecked] = useState([]);
   const [left, setLeft] = useState([]);
+  const [userMail,setUserMail] = useState(null);
   const [right, setRight] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
@@ -39,14 +40,17 @@ export default function UsserAssignment({ onUsersChange,owner}) {
   const fetchExercises = async () => {
     setOpenCircularProgress(true)
     try {
-      const response = await fetch(`http://127.0.0.1:5000/get_excersice_by_owner?owner=${owner}`);
+      const response = await fetch(`http://127.0.0.1:5000/get_excersices`);
       if (!response.ok) {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }
       const data = await response.json();
+      
+      const filteredExercises = data.filter(event => event.owner.includes(userMail));
+
+      console.log("ssss",userMail,data)
       setOpenCircularProgress(false);
-      setUsers(data);
-      setLeft(data);
+      setLeft(filteredExercises);
     } catch (error) {
       console.error("Error fetching users:", error);
       setOpenCircularProgress(false);
@@ -57,11 +61,6 @@ export default function UsserAssignment({ onUsersChange,owner}) {
     }
   };
 
-  useEffect(() => {
-    if (owner) {
-      fetchExercises(owner);
-    }
-  }, [owner]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -135,6 +134,31 @@ export default function UsserAssignment({ onUsersChange,owner}) {
       </List>
     </Paper>
   );
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
+    fetchExercises(userMail)
+  }, [userMail]);
+
+
+  const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        throw error;
+    }
+  };
 
   return (
     <Grid

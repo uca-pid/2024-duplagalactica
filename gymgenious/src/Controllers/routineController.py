@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from services.routineRoutes import create_routine, assign_routine_to_user,get_routines_by_owner,get_assigned_routines
+from services.routineRoutes import create_routine, assign_routine_to_user,get_routines,get_assigned_routines
 
 
 def create_routine_route(newRoutine):
@@ -23,9 +23,9 @@ def assign_routine_to_user_route(newAssignRoutine):
         return jsonify({"error": str(e)}), 500
 
 
-def get_routines_by_owner_route(owner):
+def get_routines_route():
     try:
-        routines_list = get_routines_by_owner(owner)
+        routines_list = get_routines()
         return jsonify(routines_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -36,3 +36,4 @@ def get_assigned_routines_route():
         return jsonify(routines_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+

@@ -500,7 +500,10 @@ iframe {
   margin-right: 5px;
 }
 .create-account-container {
-  background-color: #14213D;
+  background-color: #FEFAE0;
+  border-color: #BC6C25;
+  border-width: 1px;
+  border-style: solid;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 45%;
@@ -526,8 +529,9 @@ iframe {
 }
 
 .button_create_account {
-  background-color: #fca311;
-  color: #E5E5E5;
+  background-color: #b87d48 !important;
+  color: white !important; 
+  font-weight: bold;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
@@ -537,12 +541,15 @@ iframe {
 }
 
 .button_create_account:hover {
-  background-color: #E5E5E5;
-  color: white;
+  background-color:#5e2404 !important;
+  color: white !important;
 }
+
 .reset-password-container {
-  background-color: #14213D;
-  color:white;
+  background-color: #FEFAE0;
+  border-color: #BC6C25;
+  border-width: 1px;
+  border-style: solid;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 45%;

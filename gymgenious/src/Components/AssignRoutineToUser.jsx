@@ -8,9 +8,11 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
+import {jwtDecode} from "jwt-decode";
 
-export default function RoutineCreation({ email }) {
-    const [routineAssigned, setRoutine] = useState(''); //OJO ACA, LO TENGO QUE DEJAR '', SIN EL ESPACIO NO SE VEN LOS USERS AL PRINCIPIO
+export default function RoutineCreation() {
+    const [routineAssigned, setRoutine] = useState(''); 
+    const [userMail,setUserMail] = useState(null);
     const [users, setUsers] = useState([]);
     const [routines, setRoutines] = useState([]);
     const navigate = useNavigate();
@@ -24,13 +26,14 @@ export default function RoutineCreation({ email }) {
     const fetchRoutines = async () => {
         setOpenCircularProgress(true);
         try {
-            const response = await fetch(`http://127.0.0.1:5000/get_routines_by_owner?owner=${email}`);
+            const response = await fetch(`http://127.0.0.1:5000/get_routines`);
             if (!response.ok) {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
             }
             const data = await response.json();
+            const filteredRoutines = data.filter(event => event.owner.includes(userMail));
             setOpenCircularProgress(false);
-            setRoutines(data); 
+            setRoutines(filteredRoutines); 
         } catch (error) {
             console.error("Error fetching rutinas:", error);
             setOpenCircularProgress(false);
@@ -42,8 +45,31 @@ export default function RoutineCreation({ email }) {
     };
 
     useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        console.log('Token:', token);
+        if (token) {
+            verifyToken(token);
+        } else {
+            console.error('No token found');
+        }
+        
         fetchRoutines();
-    }, []);
+    }, [userMail]);
+
+
+    const verifyToken = async (token) => {
+        setOpenCircularProgress(true);
+        try {
+            const decodedToken = jwtDecode(token);
+            setUserMail(decodedToken.email);
+            setOpenCircularProgress(false);
+        } catch (error) {
+            console.error('Error al verificar el token:', error);
+            setOpenCircularProgress(false);
+            throw error;
+        }
+    };
+
 
     const validateForm = () => {
         let errors = [];
@@ -52,7 +78,6 @@ export default function RoutineCreation({ email }) {
             errors.push('Please select a routine to assign');
         }
 
-        //AGREGAR ERROR O WARNING SI NO SE MOVIO NINGUN USUARIO DE LA RUTINA
         setErrors(errors);
         return errors.length===0;
     }
@@ -64,7 +89,7 @@ export default function RoutineCreation({ email }) {
                 const newAsignRoutine = {
                     routine: routineAssigned,
                     user: users,
-                    owner: email
+                    owner: userMail
                 };
                 const response = await fetch('http://127.0.0.1:5000/assign_routine_to_user', {
                     method: 'POST',
@@ -81,7 +106,7 @@ export default function RoutineCreation({ email }) {
                 setSuccess(true);
                 setTimeout(() => {
                     setSuccess(false);
-                    navigate(`/?mail=${email}`);
+                    navigate(`/`);
                 }, 3000);
             } catch (error) {
                 console.error("Error al asignar la rutina:", error);
@@ -201,7 +226,7 @@ export default function RoutineCreation({ email }) {
                             >
                                 <option value="">Select</option>
                                 {routines.map((routine) => (
-                                    <option key={routine.id} value={routine.name}>
+                                    <option key={routine.id} value={routine.id}>
                                         {routine.name}
                                     </option>
                                 ))}
