@@ -32,8 +32,10 @@ export default function RoutineCreation() {
             }
             const data = await response.json();
             const filteredRoutines = data.filter(event => event.owner.includes(userMail));
-            setOpenCircularProgress(false);
             setRoutines(filteredRoutines); 
+            setTimeout(() => {
+                setOpenCircularProgress(false);
+              }, 2000);
         } catch (error) {
             console.error("Error fetching rutinas:", error);
             setOpenCircularProgress(false);

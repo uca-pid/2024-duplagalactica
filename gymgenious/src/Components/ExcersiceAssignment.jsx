@@ -38,19 +38,20 @@ export default function UsserAssignment({onUsersChange}) {
   }, [right, onUsersChange]);
 
   const fetchExercises = async () => {
-    setOpenCircularProgress(true)
+    setOpenCircularProgress(true);
     try {
       const response = await fetch(`http://127.0.0.1:5000/get_excersices`);
       if (!response.ok) {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }
       const data = await response.json();
-      
       const filteredExercises = data.filter(event => event.owner.includes(userMail));
 
       console.log("ssss",userMail,data)
-      setOpenCircularProgress(false);
       setLeft(filteredExercises);
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+      }, 2000);
     } catch (error) {
       console.error("Error fetching users:", error);
       setOpenCircularProgress(false);

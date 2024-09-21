@@ -291,8 +291,8 @@ export default function CreateAccount() {
                                 onChange={(e) => setTypeAccount(e.target.value)} 
                             >
                                 <option value="" >Select</option>
-                                <option value="client">Client</option>
-                                <option value="coach">Coach</option>
+                                <option value="client">client</option>
+                                <option value="coach">coach</option>
                             </select>
                         </div>
                         <button type="submit" className='button_create_account'>
