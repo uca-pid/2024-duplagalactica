@@ -132,7 +132,7 @@ function UsserClasses() {
                         <Box sx={{ position: 'relative', zIndex: 1 }}>
                         <Slide direction="up" in={warningFetchingClasses} mountOnEnter unmountOnExit >
                             <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error fetching routines. Try again!
+                                Error fetching classes. Try again!
                             </Alert>
                         </Slide>
                         </Box>

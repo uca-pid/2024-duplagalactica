@@ -63,10 +63,6 @@ function ColorToggleButton() {
   );
 }
 
-
-
-
-
 export default function StickyHeadTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -76,6 +72,7 @@ export default function StickyHeadTable() {
   const [visibleRows, setVisibleRows] = useState([]);
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
+  const [warningFetchingUserRoutines, setWarningFetchingUserRoutines] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
 
   const handleChangePage = (event, newPage) => {
@@ -94,6 +91,7 @@ export default function StickyHeadTable() {
   };
 
   const fetchRoutines = async () => {
+    setOpenCircularProgress(true);
     try {
       const response = await fetch('http://127.0.0.1:5000/get_assigned_routines');
       if (!response.ok) {
@@ -104,8 +102,14 @@ export default function StickyHeadTable() {
         event.user.some(user => user.Mail === userMail)
       );
       setVisibleRows(filteredRoutines);
+      setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching rutinas:", error);
+      setOpenCircularProgress(false);
+      setWarningFetchingUserRoutines(true);
+      setTimeout(() => {
+        setWarningFetchingUserRoutines(false);
+      }, 3000);
     }
   };
 
@@ -137,7 +141,7 @@ export default function StickyHeadTable() {
 
   useEffect(() => {
     if (userMail) {
-      fetchRoutines(); // Llama a fetchRoutines cuando userMail cambie
+      fetchRoutines();
     }
   }, [userMail]);
 
@@ -167,6 +171,21 @@ export default function StickyHeadTable() {
       ) : (
           null
       )}
+      { warningFetchingUserRoutines ? (
+          <div className='alert-container'>
+              <div className='alert-content'>
+                  <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  <Slide direction="up" in={warningFetchingUserRoutines} mountOnEnter unmountOnExit >
+                      <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                          Error fetching routines. Try again!
+                      </Alert>
+                  </Slide>
+                  </Box>
+              </div>
+          </div>
+        ) : (
+            null
+        )}
       <div className="Table-Container">
         <ColorToggleButton/>
         <Paper sx={{ width: '100%', overflow: 'hidden', border: '2px solid #BC6C25' }}>

@@ -26,25 +26,37 @@ export default function CreateAccount() {
     const [userMail, setUserMail] = useState('');
     const [errorToken,setErrorToken] = useState(false);
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
+    const [warningFetchingUserInformation, setWarningFetchingUserInformation] = useState(false);
+    const [warningModifyingData, setWarningModifyingData] = useState(false);
 
     const fetchUserInformation = async () => {
+        setOpenCircularProgress(true);
         try {
             const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${userMail}`);
             if (!response.ok) {
                 throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
             }
             const data = await response.json();
+            console.log(date);
             setNameFetch(data.Name);
             setLastNameFetch(data.Lastname);
             setEmailFetch(data.Mail);
             setDateFetch(data.Birthday);
             setUser(data);
+            setOpenCircularProgress(false);
         } catch (error) {
             console.error("Error fetching user:", error);
+            setOpenCircularProgress(false);
+            setWarningFetchingUserInformation(true);
+            setTimeout(() => {
+                setWarningFetchingUserInformation(false);
+            }, 3000);
         }
     };
 
     const fetchModifyUserInformation = async () => {
+        setOpenCircularProgress(true);
+        //AGREGAR UN VALIDATE POR SI NO CAMBIARON NINGUN DATO
         try {
             const updatedUser = {
                 ...user,
@@ -66,9 +78,15 @@ export default function CreateAccount() {
                 throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
             }
             const data = await response.json();
+            setOpenCircularProgress(false);
             console.log(data);
         } catch (error) {
             console.error("Error updating user:", error);
+            setOpenCircularProgress(false);
+            setWarningModifyingData(true);
+            setTimeout(() => {
+                setWarningModifyingData(false);
+            }, 3000);
         }
     };
 
@@ -90,6 +108,7 @@ export default function CreateAccount() {
         setOpenCircularProgress(true);
         try {
             const decodedToken = jwtDecode(token);
+            console.log(decodedToken);
             setUserMail(decodedToken.email);
             setOpenCircularProgress(false);
         } catch (error) {
@@ -114,10 +133,6 @@ export default function CreateAccount() {
         fetchUserInformation();
     }, [userMail]); 
 
-    
-  
-
-
     return (
         <div className='App'>
             <LeftBar/>
@@ -136,6 +151,36 @@ export default function CreateAccount() {
                         <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
                             <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
                                 Invalid Token!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+            { warningFetchingUserInformation ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={warningFetchingUserInformation} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                Error fetching user information. Try again!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+            { warningModifyingData ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={warningModifyingData} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                Error modifying user information. Try again!
                             </Alert>
                         </Slide>
                         </Box>
