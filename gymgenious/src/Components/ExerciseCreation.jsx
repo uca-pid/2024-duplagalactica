@@ -115,7 +115,7 @@ export default function ExerciseCreation({email}) {
                   <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
                   <div>
                       <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                      Error creating exercise.
+                      Error creating exercise!
                       </Alert>
                       {errors.length > 0 && errors.map((error, index) => (
                       <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>

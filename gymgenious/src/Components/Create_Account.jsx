@@ -157,9 +157,11 @@ export default function CreateAccount() {
                 <div className='alert-container'>
                     <div className='alert-content'>
                         <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
-                            Account created successfully 
-                        </Alert>
+                            <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                                    Account successfully created!
+                                </Alert>
+                            </Slide>
                         </Box>
                     </div>
                 </div>
@@ -173,7 +175,7 @@ export default function CreateAccount() {
                         <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
                         <div>
                             <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                            Error creating account.
+                            Error creating account!
                             </Alert>
                             {errors.length > 0 && errors.map((error, index) => (
                             <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
@@ -193,8 +195,8 @@ export default function CreateAccount() {
                 <div className='alert-container'>
                     <div className='alert-content'>
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
-                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>An account already exists with this email.</Alert>
+                        <Slide direction="up" in={failureEmailRepeated} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>An account already exists with this email!</Alert>
                         </Slide>
                     </Box>
                 </div>

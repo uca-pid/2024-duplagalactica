@@ -89,7 +89,7 @@ export default function Login() {
             <div className='alert-content'>
               <Box sx={{ position: 'relative', zIndex: 1 }}>
                 <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
-                  <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Credentials or server error</Alert>
+                  <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Credentials or server error. Try again!</Alert>
                 </Slide>
               </Box>
             </div>

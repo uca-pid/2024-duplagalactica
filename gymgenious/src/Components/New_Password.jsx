@@ -169,9 +169,11 @@ export default function ChangePassword() {
                 <div className='alert-container'>
                     <div className='alert-content'>
                         <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
-                          Password reset successfully 
-                        </Alert>
+                          <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                              Password reset successfully 
+                            </Alert>
+                          </Slide>
                         </Box>
                     </div>
                 </div>
