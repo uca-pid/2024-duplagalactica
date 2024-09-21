@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ExcersiceAssignment from './ExcersiceAssignment.jsx';
 import Backdrop from '@mui/material/Backdrop';
@@ -8,10 +8,12 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
+import {jwtDecode} from "jwt-decode";
 
-export default function RoutineCreation({email}) {
+export default function RoutineCreation() {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
+    const [userMail,setUserMail] = useState(null);
     const [exercises, setExercises] = useState('');
     const [day, setDay] = useState('');
     const navigate = useNavigate();
@@ -56,7 +58,8 @@ export default function RoutineCreation({email}) {
           name: name,
           description: desc,
           excercises: exercises,
-          owner: email,
+          day: day,
+          owner: userMail,
         };
         const response = await fetch('http://127.0.0.1:5000/create_routine', {
           method: 'POST',
@@ -73,7 +76,7 @@ export default function RoutineCreation({email}) {
         setSuccess(true);
         setTimeout(() => {
             setSuccess(false);
-            navigate(`/managing-routines?mail=${email}&step=${2}`);
+            navigate(`/`);
         }, 3000);
       } catch (error) {
         console.error("Error al crear la rutina:", error);
@@ -95,6 +98,30 @@ export default function RoutineCreation({email}) {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleCreateRoutine();
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
+  }, [userMail]);
+
+
+  const verifyToken = async (token) => {
+      setOpenCircularProgress(true);
+      try {
+          const decodedToken = jwtDecode(token);
+          setUserMail(decodedToken.email);
+          setOpenCircularProgress(false);
+      } catch (error) {
+          console.error('Error al verificar el token:', error);
+          setOpenCircularProgress(false);
+          throw error;
+      }
   };
 
   return (
@@ -226,7 +253,7 @@ export default function RoutineCreation({email}) {
           <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div className="input-small-container">
                   <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
-                  <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={email}/>
+                  <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={userMail}/>
               </div>
           </div>
           <button type="submit" className='button_login'>

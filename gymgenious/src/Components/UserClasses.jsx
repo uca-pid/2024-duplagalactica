@@ -32,7 +32,6 @@ function UsserClasses() {
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [errorToken, setErrorToken] = useState(false);
 
-  // Función para ordenar
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -52,30 +51,6 @@ function UsserClasses() {
   // Selección de evento
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedEvent(null);
-  };
-
-  // Cancelar clase
-  const handleUnbookClass = async (event) => {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/unbook_class', {
-        method: 'PUT', 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ event: event, mail: userMail })
-      });
-      if (!response.ok) {
-        throw new Error('Error al actualizar la clase: ' + response.statusText);
-      }
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-    }
-    await fetchClasses();  // Actualizar clases después de cancelar
-    handleCloseModal();
   };
 
   // Obtener clases desde el servidor

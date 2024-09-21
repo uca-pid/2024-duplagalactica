@@ -66,36 +66,8 @@ export default function ManagingRoutines () {
     setActiveStep(0);
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
-    if (token) {
-        verifyToken(token);
-    } else {
-        console.error('No token found');
-    }
-    if (step >= 0 && step < steps.length) {
-      setActiveStep(step);
-    }
-  }, [step]);
 
-
-  const verifyToken = async (token) => {
-    setOpenCircularProgress(true);
-    try {
-        const decodedToken = jwtDecode(token);
-        setUserMail(decodedToken.email);
-        setOpenCircularProgress(false);
-    } catch (error) {
-        console.error('Error al verificar el token:', error);
-        setOpenCircularProgress(false);
-        setErrorToken(true);
-        setTimeout(() => {
-          setErrorToken(false);
-        }, 3000);
-        throw error;
-    }
-  };
+  
 
 
   return (
@@ -182,13 +154,13 @@ export default function ManagingRoutines () {
             </Box>
         </div>
         {activeStep===0 && (
-            <ExerciseCreation  email={userMail}/>
+            <ExerciseCreation/>
         )}
         {activeStep===1 && (
-            <RoutineCreation  email={userMail}/>
+            <RoutineCreation/>
         )}
         {activeStep===2 && (
-            <AssignRoutineToUser  email={userMail}/>
+            <AssignRoutineToUser/>
         )}
     </div>
   );

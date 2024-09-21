@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -7,11 +7,13 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
+import {jwtDecode} from "jwt-decode";
 
-export default function ExerciseCreation({email}) {
+export default function ExerciseCreation() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const navigate = useNavigate();
+  const [userMail,setUserMail] = useState(null);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
@@ -35,13 +37,12 @@ export default function ExerciseCreation({email}) {
 
   const handleCreateExersice = async () => {
     setOpenCircularProgress(true);
-    console.log(email)
     if(validateForm()){
       try {  
         const newExersice = {
           name: name,
           description: desc,
-          owner: email
+          owner: userMail
         };
     
         const response = await fetch('http://127.0.0.1:5000/create_exersice', {
@@ -59,7 +60,7 @@ export default function ExerciseCreation({email}) {
         setSuccess(true);
         setTimeout(() => {
             setSuccess(false);
-            navigate(`/managing-routines?mail=${email}&step=${1}`);
+            navigate(`/managing-routines`);
         }, 3000);
       } catch (error) {
         console.error("Error al crear el ejercicio:", error);
@@ -82,6 +83,31 @@ export default function ExerciseCreation({email}) {
     e.preventDefault();
     handleCreateExersice();
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
+  }, [userMail]);
+
+
+  const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        throw error;
+    }
+  };
+
 
   return (
     <div className='class-creation-container'>
