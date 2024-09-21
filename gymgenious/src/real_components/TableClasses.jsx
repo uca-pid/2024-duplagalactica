@@ -63,11 +63,12 @@ function EnhancedTable({ rows, user }) {
   );
 
   return (
-    <Box sx={{ width: '100%', flexWrap: 'wrap',background:'#ffe0b5',border: '2px solid #BC6C25' }}>
+    <Box sx={{ width: '100%', flexWrap: 'wrap',background:'#ffe0b5',border: '2px solid #BC6C25',borderRadius:'10px' }}>
       <Paper 
         sx={{ 
           width: '100%', 
           backgroundColor: '#ffe0b5',
+          borderRadius:'10px'
         }}
       >
         <TableContainer>

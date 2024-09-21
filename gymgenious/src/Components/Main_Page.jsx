@@ -395,6 +395,7 @@ export default function Main_Page() {
               ) : (
                 <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
           )}
+          <button onClick={handleCloseModal}>Close</button>
           </>) : (
           <button onClick={handleCloseModal}>Close</button>
         )}

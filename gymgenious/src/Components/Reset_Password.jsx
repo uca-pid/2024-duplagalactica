@@ -69,10 +69,10 @@ export default function ResetPassword() {
             ) : null}
             <div className='reset-password-container'>
                 <div className='reset-password-content'>
-                    <h2 style={{color:'#14213D'}}>Reset password</h2>
+                    <h2 style={{color:'#5e2404'}}>Reset password</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="input-container">
-                            <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
+                            <label htmlFor="email" style={{color:'#5e2404'}}>Email:</label>
                             <input 
                                 type="email" 
                                 id="email" 
