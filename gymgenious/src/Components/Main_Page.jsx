@@ -70,21 +70,15 @@ export default function Main_Page() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showCalendar, setShowCalendar] = useState(true);
   const [leftBarOption, setLeftBarOption] = React.useState('');
-  const navigate = useNavigate();
   const isSmallScreen = useMediaQuery('(max-width:250px)');
-  const location = useLocation();
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
-  const [userMail,setUserMail] = useState('');
+  const [userMail,setUserMail] = useState(null);
   const [warningBookingClass,setWarningBookingClass] = useState(false);
   const [warningUnbookingClass,setWarningUnbookingClass] = useState(false);
   const [warningFetchingClass,setWarningFetchingClass] = useState(false); 
   const [errorToken,setErrorToken] = useState(false);
   const [successBook,setSuccessBook] = useState(false);
   const [successUnbook,setSuccessUnbook] = useState(false);
-
-  useEffect(() => {
-    console.log("hgola",localStorage.getItem('authToken'))
-  },);
 
   const changeShowCalendar = () => {
     setShowCalendar(prevState => !prevState);
@@ -394,12 +388,16 @@ export default function Main_Page() {
         <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-        {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail) ? (
-              <button onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook</button>
-            ) : (
-              <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
+        {userMail? (
+          <>
+          {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
+                <button onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook</button>
+              ) : (
+                <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
+          )}
+          </>) : (
+          <button onClick={handleCloseModal}>Close</button>
         )}
-        <button onClick={handleCloseModal}>Close</button>
       </div>
     </div>
   )}
