@@ -17,6 +17,7 @@ export default function ResetPassword() {
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [success, setSuccess] = useState(false);
     const [failure, setFailure] = useState(false);
+    const [warningResettingPassword, setWarningResettingPassword] = useState(false);
 
     const auth = getAuth();
     const handleSubmit = async (e) => {
@@ -33,16 +34,25 @@ export default function ResetPassword() {
             setSuccess(true);
             setTimeout(() => {
                 setSuccess(false);
+                console.log('pete')
                 navigate('/');
             }, 3000);
         } catch (error) {
             console.error("Error sending email:", error);
             setOpenCircularProgress(false);
-            setFailure(true);
-            setTimeout(() => {
-                setFailure(false);
-            }, 3000);
-
+            if (error.code === 'auth/invalid-email') {
+                console.log('pi')
+                setFailure(true);
+                setTimeout(() => {
+                    setFailure(false);
+                }, 3000);
+            } else {
+                console.log('pe')
+                setWarningResettingPassword(true);
+                setTimeout(() => {
+                    setWarningResettingPassword(false);
+                    }, 3000);
+            }
         }
     };
 
@@ -79,7 +89,7 @@ export default function ResetPassword() {
                             <div className='alert-container'>
                                 <div className='alert-content'>
                                     <Box sx={{ position: 'relative', zIndex: 1 }}>
-                                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                                        <Slide direction="up" in={success} mountOnEnter unmountOnExit >
                                             <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
                                                 Email sent successfully!
                                             </Alert>
@@ -96,7 +106,22 @@ export default function ResetPassword() {
                                 <Box sx={{ position: 'relative', zIndex: 1 }}>
                                     <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
                                         <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>
-                                            This account does not exist
+                                            This account does not exist!
+                                        </Alert>
+                                    </Slide>
+                                </Box>
+                                </div>
+                            </div>
+                        ) : (
+                            null
+                        )}
+                        { warningResettingPassword ? (
+                            <div className='alert-container'>
+                                <div className='alert-content'>
+                                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                                    <Slide direction="up" in={warningResettingPassword} mountOnEnter unmountOnExit >
+                                        <Alert severity="info" style={{fontSize:'100%', fontWeight:'bold'}}>
+                                            Error sending email. Try again!
                                         </Alert>
                                     </Slide>
                                 </Box>

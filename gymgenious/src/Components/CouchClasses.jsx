@@ -12,7 +12,6 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import NewLeftBar from '../real_components/NewLeftBar'
-import moment from 'moment'
 import { useNavigate } from 'react-router-dom';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -50,6 +49,7 @@ function CouchClasses() {
   const [warningFetchingModifiedClasses, setWarningFetchingModifiedClasses] = useState(false);
   const [warningDeletingClasses, setWarningDeletingClasses] = useState(false);
   const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
+  const [errorToken,setErrorToken] = useState(false);
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -174,15 +174,22 @@ function CouchClasses() {
   };
 
 
-    const verifyToken = async (token) => {
-        try {
-            const decodedToken = jwtDecode(token);
-            setUserMail(decodedToken.email);
-        } catch (error) {
-            console.error('Error al verificar el token:', error);
-            throw error;
-        }
-    };
+  const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        setErrorToken(true);
+        setTimeout(() => {
+          setErrorToken(false);
+        }, 3000);
+        throw error;
+    }
+  };
   
 
   useEffect(() => {
@@ -247,6 +254,21 @@ function CouchClasses() {
                         <Slide direction="up" in={warningFetchingModifiedClasses} mountOnEnter unmountOnExit >
                             <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
                                 Error fetching modified class. Try again!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+            { errorToken ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                                Invalid Token!
                             </Alert>
                         </Slide>
                         </Box>

@@ -12,12 +12,18 @@ import ExerciseCreation from './ExerciseCreation.jsx'
 import RoutineCreation from './RoutineCreation.jsx'
 import AssignRoutineToUser from './AssignRoutineToUser.jsx'
 import {jwtDecode} from "jwt-decode";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Slide from '@mui/material/Slide';
 
 export default function ManagingRoutines () {
   const [userMail,setUserMail] = useState('')
   const step = 0;
   const [activeStep, setActiveStep] = React.useState(step);
   const [skipped, setSkipped] = React.useState(new Set());
+  const [errorToken,setErrorToken] = useState(false);
+  const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const steps = ['Create exercise', 'Create routine', 'Assign routine'];
 
     const isStepOptional = () => {
@@ -75,11 +81,18 @@ export default function ManagingRoutines () {
 
 
   const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
         setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        setErrorToken(true);
+        setTimeout(() => {
+          setErrorToken(false);
+        }, 3000);
         throw error;
     }
   };
@@ -88,6 +101,29 @@ export default function ManagingRoutines () {
   return (
     <div className='full-screen-image-3'>
         <LeftBar/>
+        {openCircularProgress ? (
+          <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+          open={openCircularProgress}
+          >
+          <CircularProgress color="inherit" />
+          </Backdrop>
+      ) : null}
+        { errorToken ? (
+            <div className='alert-container'>
+                <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                            Invalid Token!
+                        </Alert>
+                    </Slide>
+                    </Box>
+                </div>
+            </div>
+        ) : (
+            null
+        )}
         <div className='stepper-container'>
             <Box sx={{ width: '100%' }}>
             <Stepper activeStep={activeStep}>

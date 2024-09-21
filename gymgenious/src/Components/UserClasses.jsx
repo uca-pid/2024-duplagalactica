@@ -12,6 +12,10 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import NewLeftBar from '../real_components/NewLeftBar';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
 
 function UsserClasses() {
@@ -25,6 +29,8 @@ function UsserClasses() {
   const [visibleRows,setClasses]=useState([])
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
+  const [openCircularProgress, setOpenCircularProgress] = useState(false);
+  const [errorToken,setErrorToken] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -85,11 +91,18 @@ function UsserClasses() {
   };
 
   const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
         setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        setErrorToken(true);
+        setTimeout(() => {
+          setErrorToken(false);
+        }, 3000);
         throw error;
     }
   };
@@ -109,6 +122,29 @@ function UsserClasses() {
   return (
     <div className="App">
         <NewLeftBar/>
+        {openCircularProgress ? (
+          <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+          open={openCircularProgress}
+          >
+          <CircularProgress color="inherit" />
+          </Backdrop>
+        ) : null}
+        { errorToken ? (
+            <div className='alert-container'>
+                <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                            Invalid Token!
+                        </Alert>
+                    </Slide>
+                    </Box>
+                </div>
+            </div>
+        ) : (
+            null
+        )}
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
             <Paper 

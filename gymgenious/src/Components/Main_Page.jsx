@@ -9,6 +9,10 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import NewLeftBar from '../real_components/NewLeftBar.jsx';
 import {jwtDecode} from "jwt-decode";
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Slide from '@mui/material/Slide';
+import CheckIcon from '@mui/icons-material/Check';
 
 const localizer = momentLocalizer(moment);
 
@@ -69,9 +73,14 @@ export default function Main_Page() {
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery('(max-width:250px)');
   const location = useLocation();
-  const [openCircularProgress, setOpenCircularProgress] = useState(true)
-  const [userMail,setUserMail] = useState('')
-
+  const [openCircularProgress, setOpenCircularProgress] = useState(false);
+  const [userMail,setUserMail] = useState('');
+  const [warningBookingClass,setWarningBookingClass] = useState(false);
+  const [warningUnbookingClass,setWarningUnbookingClass] = useState(false);
+  const [warningFetchingClass,setWarningFetchingClass] = useState(false); 
+  const [errorToken,setErrorToken] = useState(false);
+  const [successBook,setSuccessBook] = useState(false);
+  const [successUnbook,setSuccessUnbook] = useState(false);
 
   useEffect(() => {
     console.log("hgola",localStorage.getItem('authToken'))
@@ -84,6 +93,7 @@ export default function Main_Page() {
 
 
   const handleBookClass = async (event) => {
+    setOpenCircularProgress(true);
     try {
       const response = await fetch('http://127.0.0.1:5000/book_class', {
         method: 'PUT', 
@@ -95,15 +105,26 @@ export default function Main_Page() {
       if (!response.ok) {
         throw new Error('Error al actualizar la clase: ' + response.statusText);
       }
+      await fetchClasses();
+      setOpenCircularProgress(false);
+      handleCloseModal();
+      setSuccessBook(true)
+      setTimeout(() => {
+        setSuccessBook(false);
+      }, 3000);
     } catch (error) {
       console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningBookingClass(true);
+      setTimeout(() => {
+        setWarningBookingClass(false);
+      }, 3000);
     }
-    await fetchClasses();
-    handleCloseModal();
+    
   };
 
-
   const handleUnbookClass = async (event) => {
+    setOpenCircularProgress(true);
     try {
       const response = await fetch('http://127.0.0.1:5000/unbook_class', {
         method: 'PUT', 
@@ -115,14 +136,25 @@ export default function Main_Page() {
       if (!response.ok) {
         throw new Error('Error al actualizar la clase: ' + response.statusText);
       }
+      await fetchClasses();
+      setOpenCircularProgress(false);
+      handleCloseModal();
+      setSuccessUnbook(true);
+      setTimeout(() => {
+        setSuccessUnbook(false);
+      }, 3000);
     } catch (error) {
       console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningUnbookingClass(true);
+      setTimeout(() => {
+        setWarningUnbookingClass(false);
+      }, 3000);
     }
-    await fetchClasses();
-    handleCloseModal();
   };
 
   const fetchClasses = async () => {
+    setOpenCircularProgress(true);
     try {
       const response = await fetch('http://127.0.0.1:5000/get_classes');
       if (!response.ok) {
@@ -176,19 +208,31 @@ export default function Main_Page() {
           });
         }
       });
-      setOpenCircularProgress(false)
+      setOpenCircularProgress(false);
       setEvents(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningFetchingClass(true);
+      setTimeout(() => {
+        setWarningFetchingClass(false);
+      }, 3000);
     }
   };
   
   const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
         setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        setErrorToken(true);
+        setTimeout(() => {
+          setErrorToken(false);
+        }, 3000);
         throw error;
     }
   };
@@ -204,9 +248,6 @@ export default function Main_Page() {
     fetchClasses();
   }, []);
 
-
-
-
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
   };
@@ -215,7 +256,6 @@ export default function Main_Page() {
     setSelectedEvent(null);
   };
   
-
   return (
     <div className="App">
       <NewLeftBar/>
@@ -255,6 +295,96 @@ export default function Main_Page() {
     <div className="Table-Container">
           <EnhancedTable rows={classes} />
     </div>
+  )}
+  { successBook ? (
+      <div className='alert-container'>
+      <div className='alert-content'>
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <Slide direction="up" in={successBook} mountOnEnter unmountOnExit >
+              <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                  Successfully Booked!
+              </Alert>
+          </Slide>
+          </Box>
+      </div>
+      </div>
+  ) : (
+      null
+  )}
+  { successUnbook ? (
+      <div className='alert-container'>
+      <div className='alert-content'>
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <Slide direction="up" in={successUnbook} mountOnEnter unmountOnExit >
+              <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                  Successfully Unbooked!
+              </Alert>
+          </Slide>
+          </Box>
+      </div>
+      </div>
+  ) : (
+      null
+  )}
+  { warningFetchingClass ? (
+      <div className='alert-container'>
+          <div className='alert-content'>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Slide direction="up" in={warningFetchingClass} mountOnEnter unmountOnExit >
+                  <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                      Error fetching classes. Try again!
+                  </Alert>
+              </Slide>
+              </Box>
+          </div>
+      </div>
+  ) : (
+      null
+  )}
+    { warningBookingClass ? (
+      <div className='alert-container'>
+          <div className='alert-content'>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Slide direction="up" in={warningBookingClass} mountOnEnter unmountOnExit >
+                  <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                      Error booking class. Try again!
+                  </Alert>
+              </Slide>
+              </Box>
+          </div>
+      </div>
+  ) : (
+      null
+  )}
+    { warningUnbookingClass ? (
+      <div className='alert-container'>
+          <div className='alert-content'>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Slide direction="up" in={warningUnbookingClass} mountOnEnter unmountOnExit >
+                  <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                      Error unbooking class. Try again!
+                  </Alert>
+              </Slide>
+              </Box>
+          </div>
+      </div>
+  ) : (
+      null
+  )}
+  { errorToken ? (
+      <div className='alert-container'>
+          <div className='alert-content'>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                  <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                      Invalid Token!
+                  </Alert>
+              </Slide>
+              </Box>
+          </div>
+      </div>
+  ) : (
+      null
   )}
   {selectedEvent && (
     <div className="Modal" onClick={handleCloseModal}>

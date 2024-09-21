@@ -3,6 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/NewLeftBar.jsx';
 import {jwtDecode} from "jwt-decode";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Slide from '@mui/material/Slide';
+import Box from '@mui/material/Box';
 
 export default function CreateAccount() {
     const [name, setName] = useState('');
@@ -18,7 +23,9 @@ export default function CreateAccount() {
     const navigate = useNavigate();
     const [isDisabled, setIsDisabled] = useState(true);
     const [user, setUser] = useState({});
-    const [userMail, setUserMail] = useState('')
+    const [userMail, setUserMail] = useState('');
+    const [errorToken,setErrorToken] = useState(false);
+    const [openCircularProgress, setOpenCircularProgress] = useState(false);
 
     const fetchUserInformation = async () => {
         try {
@@ -80,14 +87,21 @@ export default function CreateAccount() {
         fetchUserInformation();
     };
     const verifyToken = async (token) => {
+        setOpenCircularProgress(true);
         try {
             const decodedToken = jwtDecode(token);
             setUserMail(decodedToken.email);
+            setOpenCircularProgress(false);
         } catch (error) {
             console.error('Error al verificar el token:', error);
+            setOpenCircularProgress(false);
+            setErrorToken(true);
+            setTimeout(() => {
+              setErrorToken(false);
+            }, 3000);
             throw error;
         }
-    };
+      };
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -107,6 +121,29 @@ export default function CreateAccount() {
     return (
         <div className='App'>
             <LeftBar/>
+            {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
+                >
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+            { errorToken ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                                Invalid Token!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
             <div className='create-account-container'>
                 <div className='create-account-content'>
                     <h2 style={{ color: '#14213D' }}>Profile</h2>
