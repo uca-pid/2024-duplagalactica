@@ -161,6 +161,9 @@ export default function CreateAccount() {
                                 <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
                                     Account successfully created!
                                 </Alert>
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Please, validate email before login!
+                                </Alert>
                             </Slide>
                         </Box>
                     </div>
@@ -291,8 +294,8 @@ export default function CreateAccount() {
                                 onChange={(e) => setTypeAccount(e.target.value)} 
                             >
                                 <option value="" >Select</option>
-                                <option value="client">Client</option>
-                                <option value="coach">Coach</option>
+                                <option value="client">client</option>
+                                <option value="coach">coach</option>
                             </select>
                         </div>
                         <button type="submit" className='button_create_account'>

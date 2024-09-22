@@ -31,6 +31,7 @@ function UsserClasses() {
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [errorToken, setErrorToken] = useState(false);
+  const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -38,7 +39,6 @@ function UsserClasses() {
     setOrderBy(property);
   };
 
-  // Paginación
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -48,13 +48,12 @@ function UsserClasses() {
     setPage(0);
   };
 
-  // Selección de evento
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
   };
 
-  // Obtener clases desde el servidor
   const fetchClasses = async () => {
+    setOpenCircularProgress(true);
     try {
       const response = await fetch('http://127.0.0.1:5000/get_classes');
       if (!response.ok) {
@@ -63,21 +62,28 @@ function UsserClasses() {
       const data = await response.json();
       const filteredClasses = data.filter(event => event.BookedUsers.includes(userMail));
       
-      setClasses(filteredClasses);  // Actualizar el estado con las clases filtradas
-      console.log('Clases visibles:', filteredClasses);  // Log para verificar los datos
+      setClasses(filteredClasses);
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+      }, 2000);
+      console.log('Clases visibles:', filteredClasses);
     } catch (error) {
       console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningFetchingClasses(true);
+      setTimeout(() => {
+        setWarningFetchingClasses(false);
+      }, 3000);
     }
   };
 
-  // Verificación del token y obtención del email del usuario
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
-        setUserMail(decodedToken.email);  // Guardar el correo del usuario
+        setUserMail(decodedToken.email);
         setOpenCircularProgress(false);
-        await fetchClasses();  // Obtener clases después de verificar el token
+        await fetchClasses();
     } catch (error) {
         console.error('Error al verificar el token:', error);
         setOpenCircularProgress(false);
@@ -89,7 +95,6 @@ function UsserClasses() {
     }
   };
 
-  // Ejecutar cuando el componente se monta
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
@@ -98,7 +103,7 @@ function UsserClasses() {
     } else {
         console.error('No token found');
     }
-  }, [userMail]);  // Añadimos userMail como dependencia para volver a ejecutar cuando cambia
+  }, [userMail]);
 
   return (
     <div className="App">
@@ -121,6 +126,21 @@ function UsserClasses() {
             </div>
           </div>
         )}
+          { warningFetchingClasses ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={warningFetchingClasses} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                Error fetching classes. Try again!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap',background:'#ffe0b5',border: '2px solid #BC6C25',borderRadius:'10px'  }}>
               <Paper sx={{ width: '100%',backgroundColor: '#ffe0b5',borderRadius:'10px' }}>

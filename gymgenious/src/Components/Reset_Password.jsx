@@ -34,20 +34,17 @@ export default function ResetPassword() {
             setSuccess(true);
             setTimeout(() => {
                 setSuccess(false);
-                console.log('pete')
                 navigate('/');
             }, 3000);
         } catch (error) {
             console.error("Error sending email:", error);
             setOpenCircularProgress(false);
             if (error.code === 'auth/invalid-email') {
-                console.log('pi')
                 setFailure(true);
                 setTimeout(() => {
                     setFailure(false);
                 }, 3000);
             } else {
-                console.log('pe')
                 setWarningResettingPassword(true);
                 setTimeout(() => {
                     setWarningResettingPassword(false);

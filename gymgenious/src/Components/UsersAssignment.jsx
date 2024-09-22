@@ -44,9 +44,9 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }
       const data = await response.json();
-      setOpenCircularProgress(false);
       setUsers(data);
       setLeft(data);
+      setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching users:", error);
       setOpenCircularProgress(false);

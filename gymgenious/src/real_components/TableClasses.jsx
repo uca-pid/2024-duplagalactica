@@ -191,19 +191,27 @@ function EnhancedTable({ rows, user }) {
         
       </Paper>
       {selectedEvent && (
-          <div className="Modal" onClick={handleCloseModal}>
-            <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-              <h2>Class details</h2>
-              <p><strong>Name:</strong> {selectedEvent.name}</p>
-              <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
-              <p><strong>Start time:</strong> {selectedEvent.hour}</p>
-              <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-              { user==='add' &&
-               ( <button onClick={handleCloseModal}>Booking</button> )}
+        <div className="Modal" onClick={handleCloseModal}>
+          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+            <h2>Classes details:</h2>
+            <p><strong>Name:</strong> {selectedEvent.name}</p>
+            <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
+            <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+            <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+            {1===1 ? ( //userMail
+              <>
+              { 1===1 ? ( //si esta inscripto o no
+                    <button>Unbook</button>
+                  ) : (
+                    <button>Book</button>
+              )}
               <button onClick={handleCloseModal}>Close</button>
-            </div>
+              </>) : (
+              <button onClick={handleCloseModal}>Close</button>
+            )}
           </div>
-        )}
+        </div>
+      )}
     </Box>
   );
   
