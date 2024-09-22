@@ -189,7 +189,7 @@ export default function TemporaryDrawer() {
       <Drawer open={open} PaperProps={{ sx: { backgroundColor: '#FEFAE0' } }} onClose={toggleDrawer(false)}>
         {isAuthenticated ? (
           <>
-          {(type!='client') ? (
+          {(type=='client') ? (
           DrawerListClient
           ) : (
             DrawerListCoach

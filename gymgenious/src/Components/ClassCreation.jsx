@@ -18,6 +18,7 @@ export default function CreateClass() {
   const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
+  const [maxNum,setMaxNum] = useState(0);
   const navigate = useNavigate();
   const [userMail,setUserMail] = useState('')
   const [errors, setErrors] = useState([]);
@@ -299,6 +300,19 @@ export default function CreateClass() {
                   <option value="Si">Yes</option>
                   <option value="No">No</option>
                 </select>
+              </div>
+              <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                <label htmlFor="maxNum" style={{color:'#5e2404'}}>Max participants:</label>
+                <input
+                  onClick={handleCloseHourRequirements}
+                  type="number" 
+                  id="maxNum" 
+                  name="maxNum"
+                  min={0}
+                  step={1}
+                  value={maxNum} 
+                  onChange={(e) => setMaxNum(e.target.value)} 
+                />
               </div>
               <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
                 <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
