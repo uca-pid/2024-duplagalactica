@@ -13,6 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
+import { useMediaQuery } from '@mui/material';
 
 function not(a, b) {
   return a.filter((value) => !b.includes(value));
@@ -29,6 +30,7 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
   const [right, setRight] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingUsers, setWarningFetchingUsers] = useState(false);
+  const isSmallScreen = useMediaQuery('(max-width:700px)');
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -60,6 +62,9 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
   useEffect(() => {
     if (routine) {
       fetchUsers(routine);
+    } else {
+      setLeft([]);
+      setRight([]);
     }
   }, [routine]);
 
@@ -107,7 +112,7 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
   };
 
   const customList = (items) => (
-    <Paper sx={{ width: 300, height: 400, overflow: 'auto' }}>
+    <Paper className='transfer-list'>
       <List dense component="div" role="list">
         {items.map((user) => {
           const labelId = `transfer-list-item-${user.Mail}-label`;
@@ -141,53 +146,64 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
       container
       spacing={2}
       sx={{ justifyContent: 'center', alignItems: 'center' }}
+      className='grid-transfer-container'
     >
-      <Grid item>{customList(left)}</Grid>
-      <Grid item>
-        <Grid container direction="column" sx={{ alignItems: 'center' }}>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleAllRight}
-            disabled={left.length === 0}
-            aria-label="move all right"
-          >
-            ≫
-          </Button>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleCheckedRight}
-            disabled={leftChecked.length === 0}
-            aria-label="move selected right"
-          >
-            &gt;
-          </Button>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleCheckedLeft}
-            disabled={rightChecked.length === 0}
-            aria-label="move selected left"
-          >
-            &lt;
-          </Button>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleAllLeft}
-            disabled={right.length === 0}
-            aria-label="move all left"
-          >
-            ≪
-          </Button>
+      {!isSmallScreen ? (
+        <>
+        <Grid className='grid-transfer-content' item>{customList(left)}</Grid>
+        <Grid item>
+          <Grid container direction="column" sx={{ alignItems: 'center' }}>
+            <Button
+              sx={{ my: 0.5 }}
+              variant="outlined"
+              size="small"
+              onClick={handleAllRight}
+              disabled={left.length === 0}
+              aria-label="move all right"
+            >
+              ≫
+            </Button>
+            <Button
+              sx={{ my: 0.5 }}
+              variant="outlined"
+              size="small"
+              onClick={handleCheckedRight}
+              disabled={leftChecked.length === 0}
+              aria-label="move selected right"
+            >
+              &gt;
+            </Button>
+            <Button
+              sx={{ my: 0.5 }}
+              variant="outlined"
+              size="small"
+              onClick={handleCheckedLeft}
+              disabled={rightChecked.length === 0}
+              aria-label="move selected left"
+            >
+              &lt;
+            </Button>
+            <Button
+              sx={{ my: 0.5 }}
+              variant="outlined"
+              size="small"
+              onClick={handleAllLeft}
+              disabled={right.length === 0}
+              aria-label="move all left"
+            >
+              ≪
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid item>{customList(right)}</Grid>
+        {right.length===0 ? (
+          <Grid className='grid-transfer-content' item>{customList([{'id':'1','Mail':'No users were chosen'}])}</Grid>
+        ) : (
+          <Grid className='grid-transfer-content' item>{customList(right)}</Grid>
+        )}
+        </>
+      ) : (
+        <Grid className='grid-transfer-content-small-screen' item>{customList(left)}</Grid>
+      )}
       {openCircularProgress ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

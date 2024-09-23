@@ -18,7 +18,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
-
+import ExcersiceAssignment from './ExcersiceAssignment.jsx';
 
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -32,6 +32,9 @@ function CouchClasses() {
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [desc, setDesc] = useState('');
+  const [exercises, setExercises] = useState('');
+  const [day, setDay] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editClass, setEditClass] = useState(false);
   const [userMail,setUserMail] = useState(null)
@@ -43,17 +46,23 @@ function CouchClasses() {
   const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
+  const [routines, setRoutines] = useState([]);
   const navigate = useNavigate();
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingModifiedClasses, setWarningFetchingModifiedClasses] = useState(false);
   const [warningDeletingClasses, setWarningDeletingClasses] = useState(false);
   const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
+  const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
 
-  const day = (dateString) => {
-    const date = new Date(dateString);
-    const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    return daysOfWeek[date.getDay()];
+//   const day = (dateString) => {
+//     const date = new Date(dateString);
+//     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+//     return daysOfWeek[date.getDay()];
+//   };
+
+  const handleExcersiceChange = (newExcersices) => {
+        setExercises(newExcersices);
   };
 
   const handleRequestSort = (event, property) => {
@@ -74,10 +83,12 @@ function CouchClasses() {
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
   };
+
   const handleCloseModal = () => {
     setSelectedEvent(null);
   };
-  const handleEditClass = () => {
+
+  const handleEditRoutine = () => {
     setEditClass(!editClass);
     setHour('');
     setHourFin('');
@@ -85,101 +96,100 @@ function CouchClasses() {
     setDate('');
     setName('');
   } 
-  const fetchModifyClassInformation = async () => {
+//   const fetchModifyClassInformation = async () => {
+//     setOpenCircularProgress(true);
+//     try {
+//         const isoDateStringInicio = `${date}T${hour}:00Z`;
+//         const isoDateStringFin = `${date}T${hourFin}:00Z`;
+//         const updatedUser = {
+//             NameOriginal: selectedEvent.name,
+//             DateFin: isoDateStringFin,
+//             DateInicio: isoDateStringInicio,
+//             Day: day(date),
+//             Name: name,
+//             Permanent: permanent
+//         };
+//         const response = await fetch('http://127.0.0.1:5000/update_class_info', {
+//             method: 'PUT', 
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify({ newUser: updatedUser })
+//         });
+
+//         if (!response.ok) {
+//             throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
+//         }
+//         const data = await response.json();
+//         await fetchRoutines();
+//         setOpenCircularProgress(false);
+//         handleCloseModal(); 
+//     } catch (error) {
+//         console.error("Error updating user:", error);
+//         setOpenCircularProgress(false);
+//         setWarningFetchingModifiedClasses(true);
+//         setTimeout(() => {
+//           setWarningFetchingModifiedClasses(false);
+//         }, 3000);
+//     }
+// };
+
+//   const handleDeleteClass = async (event) => {
+//     setOpenCircularProgress(true);
+//     try {
+//       const response = await fetch('http://127.0.0.1:5000/delete_class', {
+//         method: 'DELETE', 
+//         headers: {
+//           'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({ event: event,mail:userMail })
+//       });
+//       if (!response.ok) {
+//         throw new Error('Error al actualizar la clase: ' + response.statusText);
+//       }
+//       await fetchRoutines();
+//       setOpenCircularProgress(false);
+//       handleCloseModal();
+//     } catch (error) {
+//       console.error("Error fetching classes:", error);
+//       setOpenCircularProgress(false);
+//       setWarningDeletingClasses(true);
+//       setTimeout(() => {
+//         setWarningDeletingClasses(false);
+//       }, 3000);
+//     }
+//   };
+
+  const fetchRoutines = async () => {
     setOpenCircularProgress(true);
     try {
-        const isoDateStringInicio = `${date}T${hour}:00Z`;
-        const isoDateStringFin = `${date}T${hourFin}:00Z`;
-        const updatedUser = {
-            NameOriginal: selectedEvent.name,
-            DateFin: isoDateStringFin,
-            DateInicio: isoDateStringInicio,
-            Day: day(date),
-            Name: name,
-            Permanent: permanent
-        };
-        const response = await fetch('http://127.0.0.1:5000/update_class_info', {
-            method: 'PUT', 
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ newUser: updatedUser })
-        });
-
+        const response = await fetch(`http://127.0.0.1:5000/get_routines`);
         if (!response.ok) {
-            throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
+            throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
         const data = await response.json();
-        await fetchClasses();
-        setOpenCircularProgress(false);
-        handleCloseModal(); 
-    } catch (error) {
-        console.error("Error updating user:", error);
-        setOpenCircularProgress(false);
-        setWarningFetchingModifiedClasses(true);
+        const filteredRoutines = data.filter(event => event.owner.includes(userMail));
+        setRoutines(filteredRoutines);
+        console.log(routines);
         setTimeout(() => {
-          setWarningFetchingModifiedClasses(false);
+            setOpenCircularProgress(false);
+          }, 2000);
+    } catch (error) {
+        console.error("Error fetching rutinas:", error);
+        setOpenCircularProgress(false);
+        setWarningFetchingRoutines(true);
+        setTimeout(() => {
+            setWarningFetchingRoutines(false);
         }, 3000);
     }
-};
-
-  const handleDeleteClass = async (event) => {
-    setOpenCircularProgress(true);
-    try {
-      const response = await fetch('http://127.0.0.1:5000/delete_class', {
-        method: 'DELETE', 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ event: event,mail:userMail })
-      });
-      if (!response.ok) {
-        throw new Error('Error al actualizar la clase: ' + response.statusText);
-      }
-      await fetchClasses();
-      setOpenCircularProgress(false);
-      handleCloseModal();
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-      setOpenCircularProgress(false);
-      setWarningDeletingClasses(true);
-      setTimeout(() => {
-        setWarningDeletingClasses(false);
-      }, 3000);
-    }
-  };
-
-  const fetchClasses = async () => {
-    setOpenCircularProgress(true);
-    try {
-      const response = await fetch('http://127.0.0.1:5000/get_classes');
-      if (!response.ok) {
-        throw new Error('Error al obtener las clases: ' + response.statusText);
-      }
-      const data = await response.json();
-      console.log(data);
-      const filteredClasses = data.filter(event => event.owner == userMail);
-      setClasses(filteredClasses);
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-      }, 2000);
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-      setOpenCircularProgress(false);
-      setWarningFetchingClasses(true);
-      setTimeout(() => {
-        setWarningFetchingClasses(false);
-      }, 3000);
-    }
-  };
-
+}
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
-        setOpenCircularProgress(false);
         setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
         setOpenCircularProgress(false);
@@ -191,7 +201,6 @@ function CouchClasses() {
     }
   };
   
-
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
@@ -203,7 +212,7 @@ function CouchClasses() {
   }, []);
 
   useEffect(() => {
-    fetchClasses();
+    fetchRoutines();
   }, [userMail])
 
 
@@ -319,7 +328,7 @@ function CouchClasses() {
                             direction={orderBy === 'hour' ? order : 'asc'}
                             onClick={(event) => handleRequestSort(event, 'hour')}
                             >
-                            Start time
+                            Day
                             {orderBy === 'hour' ? (
                                 <Box component="span" sx={visuallyHidden}>
                                 {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -335,7 +344,7 @@ function CouchClasses() {
                             direction={orderBy === 'dateInicio' ? order : 'asc'}
                             onClick={(event) => handleRequestSort(event, 'dateInicio')}
                             >
-                            Date
+                            Exercises
                             {orderBy === 'dateInicio' ? (
                                 <Box component="span" sx={visuallyHidden}>
                                 {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -351,7 +360,7 @@ function CouchClasses() {
                             direction={orderBy === 'permanent' ? order : 'asc'}
                             onClick={(event) => handleRequestSort(event, 'permanent')}
                             >
-                            Recurrent
+                            Description
                             {orderBy === 'permanent' ? (
                                 <Box component="span" sx={visuallyHidden}>
                                 {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -363,19 +372,25 @@ function CouchClasses() {
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {visibleRows.map((row) => (
+                    {routines.map((row) => (
                         <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                            {row.name}
-                        </TableCell>
+                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                {row.name}
+                            </TableCell>
                         {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{row.hour}</TableCell>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                {row.day}
+                            </TableCell>
                         )}
                         {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                {row.excercises.length}
+                            </TableCell>
                         )}
                         {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>
+                                {row.description} 
+                            </TableCell>
                         )}
                         </TableRow>
                     ))}
@@ -403,96 +418,80 @@ function CouchClasses() {
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             )}
-                
+              
             </Paper>
             {selectedEvent && (
                 <div className="Modal" onClick={handleCloseModal}>
                     <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                    <h2>Class details</h2>
+                    <h2>Routine details</h2>
                     <p><strong>Name:</strong> {selectedEvent.name}</p>
-                    <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
-                    <p><strong>Start time:</strong> {selectedEvent.hour}</p>
-                    <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-                    <p><strong>Participants:</strong> {5}</p>
-                    <button onClick={handleEditClass}>Edit class</button>
+                    <p><strong>Description:</strong> {selectedEvent.description}</p>
+                    <p><strong>Day:</strong> {selectedEvent.day}</p>
+                    <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
+                    <p><strong>Users:</strong> {5}</p>
+                    <button onClick={handleEditRoutine}>Edit routine</button>
                     <button onClick={handleCloseModal}>Close</button>
-                    <button onClick={() => handleDeleteClass(selectedEvent.name)}>Delete class</button>
+                    <button onClick={handleCloseModal}>Delete routine</button>
                     </div>
                 </div>
                 )}
             {editClass && (
-                <div className="Modal" onClick={handleEditClass}>
-                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                    <h2>Class details</h2>
+                <div className="Modal-edit-routine" onClick={handleEditRoutine}>
+                    <div className="Modal-Content-edit-routine" onClick={(e) => e.stopPropagation()}>
+                    <h2>Routine details</h2>
                     <form>
                         <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                             <div className="input-small-container">
-                                <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
-                                <input 
-                                type={selectedEvent.hour ? 'text' : 'time'}
-                                id="hour" 
-                                name="hour" 
-                                value={hour} 
-                                onChange={(e) => setHour(e.target.value)}
-                                onFocus={(e) => (e.target.type = 'time')}
-                                onBlur={(e) => (e.target.type = 'text')}
-                                placeholder={selectedEvent.hour}
-                                />
-                            </div>
-                            <div className="input-small-container">
-                                <label htmlFor="hourFin" style={{color:'#14213D'}}>End time:</label>
-                                <input 
-                                    type="time" 
-                                    id="hourFin" 
-                                    name="hourFin" 
-                                    value={hourFin} 
-                                    onChange={(e) => setHourFin(e.target.value)} 
-                                />
-                            </div>
-                            <div className="input-small-container">
-                                <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
-                                <input 
+                            <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+                            <input
                                 type="text" 
                                 id="name" 
                                 name="name" 
                                 value={name} 
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder={selectedEvent.name}                                />
+                                onChange={(e) => setName(e.target.value)} 
+                            />
                             </div>
-                            </div>
-                            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                            <div className="input-small-container" style={{width:"100%"}}>
-                                <label htmlFor="permanent" style={{color:'#14213D'}}>Recurrent:</label>
-                                <select 
-                                id="permanent" 
-                                name="permanent" 
-                                value={permanent} 
-                                onChange={(e) => setPermanent(e.target.value)}
-                                placeholder={selectedEvent.permanent}
+                            <div className="input-small-container">
+                                <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
+                                <select
+                                id="day" 
+                                name="day" 
+                                value={day} 
+                                onChange={(e) => setDay(e.target.value)} 
                                 >
                                 <option value="" >Select</option>
-                                <option value="Si">Yes</option>
-                                <option value="No">No</option>
+                                <option value="monday">Monday</option>
+                                <option value="tuesday">Tuesday</option>
+                                <option value="wednesday">Wednesday</option>
+                                <option value="thursday">Thursday</option>
+                                <option value="friday">Friday</option>
+                                <option value="saturday">Saturday</option>
+                                <option value="sunday">Sunday</option>
                                 </select>
                             </div>
-                            <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                                <label htmlFor="date" style={{color:'#14213D'}}>Date:</label>
+                        </div>
+                        <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                            <div className="input-small-container">
+                                <label htmlFor="desc" style={{color:'#14213D'}}>Description:</label>
                                 <input 
-                                    type={date ? 'date' : 'text'}
-                                    id='date'
-                                    name='date'
-                                    value={date}
-                                    onChange={(e) => setDate(e.target.value)}
-                                    placeholder={new Date(selectedEvent.dateInicio).toLocaleDateString()}
-                                    onFocus={(e) => (e.target.type = 'date')}
-                                    onBlur={(e) => (e.target.type = 'text')}
+                                type="text" 
+                                id="desc" 
+                                name="desc" 
+                                value={desc} 
+                                onChange={(e) => setDesc(e.target.value)} 
                                 />
                             </div>
                         </div>
-                        <button onClick={handleEditClass} className='button_login'>
+                        <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div className="input-small-container">
+                                <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label> 
+                                <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={userMail}/>
+                            </div>
+                        </div>
+                        <button onClick={handleEditRoutine} className='button_login'>
                             Cancell
                         </button>
-                        <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>
+                        <button onClick={handleEditRoutine} type="submit" className='button_login'>
                             Save changes
                         </button>
                     </form>

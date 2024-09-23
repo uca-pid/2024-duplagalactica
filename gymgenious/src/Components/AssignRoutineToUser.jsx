@@ -54,7 +54,6 @@ export default function RoutineCreation() {
         } else {
             console.error('No token found');
         }
-        
         fetchRoutines();
     }, [userMail]);
 
@@ -137,7 +136,7 @@ export default function RoutineCreation() {
     };
 
     return (
-        <div className='class-creation-container'>
+        <div className='assign-routine-container'>
             {openCircularProgress ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

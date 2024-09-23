@@ -125,7 +125,7 @@ export default function RoutineCreation() {
   };
 
   return (
-    <div className='class-creation-container'>
+    <div className='routine-creation-container'>
       {openCircularProgress ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -187,10 +187,10 @@ export default function RoutineCreation() {
             ) : (
                 null
             )}
-      <div className='class-creation-content'>
+      <div className='routine-creation-content'>
         <h2 style={{color:'#14213D'}}>Create routine</h2>
         <form onSubmit={handleSubmit}>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+          <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between'}}>
             <div className="input-small-container">
               <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
               <input 
@@ -201,20 +201,6 @@ export default function RoutineCreation() {
                 onChange={(e) => setName(e.target.value)} 
               />
             </div>
-          </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container">
-                  <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
-                  <input 
-                  type="text" 
-                  id="desc" 
-                  name="desc" 
-                  value={desc} 
-                  onChange={(e) => setDesc(e.target.value)} 
-                  />
-              </div>
-          </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container">
                   <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
                   <select
@@ -234,6 +220,18 @@ export default function RoutineCreation() {
                 </select>
               </div>
           </div>
+          <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between'}}>
+          <div className="input-small-container">
+                  <label htmlFor="desc" style={{color:'#14213D'}}>Description:</label>
+                  <input 
+                  type="text" 
+                  id="desc" 
+                  name="desc" 
+                  value={desc} 
+                  onChange={(e) => setDesc(e.target.value)} 
+                  />
+              </div>
+          </div>
           {/* <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container">
                   <label htmlFor="exercises" style={{color:'#14213D'}}>Exercises:</label>
@@ -250,8 +248,8 @@ export default function RoutineCreation() {
                   </select>
               </div>
           </div> */}
-          <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div className="input-small-container">
+          <div className="grid-create-routine-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <div className="input-small-create-routine-container">
                   <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
                   <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={userMail}/>
               </div>
