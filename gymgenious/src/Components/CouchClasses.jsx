@@ -199,10 +199,11 @@ function CouchClasses() {
     } else {
         console.error('No token found');
     }
-    fetchClasses();
   }, []);
 
-
+  useEffect(() => {
+    fetchClasses();
+  }, [userMail])
 
 
   return (

@@ -149,12 +149,13 @@ export default function UsserAssignment({onUsersChange}) {
     fetchExercises(userMail)
   }, [userMail]);
 
-  useEffect(() => {
-    if(isSmallScreen){
-      const newLeft = left.concat(right);
-      
-    }
-  }, [isSmallScreen])
+  //LA IDEA ACA ES QUE LO QUE SELECCIONAS ES LO QUE VA A IR, Y LO QUE DESELECCIONAS ES LO QUE NO
+  // useEffect(() => {
+  //   if(isSmallScreen){
+  //     const newLeft = left.concat(right);
+
+  //   }
+  // }, [isSmallScreen])
 
 
   const verifyToken = async (token) => {
@@ -224,7 +225,11 @@ export default function UsserAssignment({onUsersChange}) {
           </Button>
         </Grid>
       </Grid>
-      <Grid className='grid-transfer-content' item>{customList(right)}</Grid>
+      {right.length===0 ? (
+        <Grid className='grid-transfer-content' item>{customList([{'id':'1','name':'No exercises were chosen'}])}</Grid>
+      ) : (
+        <Grid className='grid-transfer-content' item>{customList(right)}</Grid>
+      )}
       </>
       ) : (
         <Grid className='grid-transfer-content-small-screen' item>{customList(left)}</Grid>
