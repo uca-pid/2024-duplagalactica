@@ -13,6 +13,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useState, useEffect } from 'react';
 import { Box, useMediaQuery } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+import NewLeftBar from '../real_components/NewLeftBar';
 
 function ColorToggleButton({ selectedDay, setSelectedDay }) {
   const [hovered, setHovered] = useState(null);
@@ -59,6 +60,8 @@ export default function StickyHeadTable() {
   const [visibleRows, setVisibleRows] = useState([]);
   const [selectedDay, setSelectedDay] = useState('');
   const isSmallScreen = useMediaQuery('(max-width:500px)');
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [viewExercises, setViewExercises] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -74,9 +77,22 @@ export default function StickyHeadTable() {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+  
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
+
+  const handleViewExercises = () => {
+    setViewExercises(!viewExercises);
+  };
 
   const staticRows = [
     {
+      id: 1,
       routine: 'routine 1',
       description: 'akdalnfkwaklfaf',
       excercises: ['exercise 1', 'exercise 2', 'exercise 3'],
@@ -84,6 +100,7 @@ export default function StickyHeadTable() {
       owner: 'isoldi772@gmail.com',
     },
     {
+      id: 2,
       routine: 'routine 2',
       description: 'awaff',
       excercises: ['exercise 1', 'exercise 2', 'exercise 3', 'exercise 4'],
@@ -91,11 +108,33 @@ export default function StickyHeadTable() {
       owner: 'manolo@gmail.com',
     },
     {
+      id: 3,
       routine: 'routine 3',
       description: 'awaff',
       excercises: ['exercise 1', 'exercise 2'],
       day: 'Tuesday',
       owner: 'juanls@gmail.com',
+    },
+  ];
+
+  const staticExercises = [
+    {
+      id: 1,
+      exercise: 'exercise 1',
+      description: 'akdalnfkwaklfaf',
+      owner: 'isoldi772@gmail.com',
+      series: 4,
+      reps: [12,12,10,10],
+      timing: '90"'
+    },
+    {
+      id: 2,
+      exercise: 'exercise 2',
+      description: 'adaffa',
+      owner: 'isoldi772@gmail.com',
+      series: 4,
+      reps: [10,10,8,8],
+      timing: '90"'
     },
   ];
 
@@ -110,6 +149,7 @@ export default function StickyHeadTable() {
 
   return (
     <div className="App">
+      <NewLeftBar/>
       <div className="Table-Container">
         <ColorToggleButton selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
         <Paper sx={{ width: '100%', overflow: 'hidden', border: '2px solid #BC6C25' }}>
@@ -161,7 +201,7 @@ export default function StickyHeadTable() {
               </TableHead>
               <TableBody>
                 {visibleRows.map((row, index) => (
-                  <TableRow key={index} hover tabIndex={-1} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                  <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
                     <TableCell
                       component="th"
                       scope="row"
@@ -199,7 +239,7 @@ export default function StickyHeadTable() {
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
+            rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={visibleRows.length}
             rowsPerPage={rowsPerPage}
@@ -209,6 +249,54 @@ export default function StickyHeadTable() {
           />
         </Paper>
       </div>
+      {selectedEvent && (
+        <div className="Modal" onClick={handleCloseModal}>
+            <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+            <h2>Routine details</h2>
+            <p><strong>Name:</strong> {selectedEvent.routine}</p>
+            <p><strong>Description:</strong> {selectedEvent.description}</p>
+            <p><strong>Day:</strong> {selectedEvent.day}</p>
+            <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
+            <p><strong>Teacher:</strong> {selectedEvent.owner}</p>
+            <button onClick={handleViewExercises}>View exercises</button>
+            <button onClick={handleCloseModal}>Close</button>
+            </div>
+        </div>
+        )}
+        {viewExercises && (
+        <div className="Modal" onClick={handleViewExercises}>
+            <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+              <h2>Exercises from {selectedEvent.routine}</h2>
+              <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                <TableContainer sx={{ maxHeight: 440 }}>
+                  <Table stickyHeader aria-label="sticky table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Exercise</TableCell>
+                        <TableCell>Series</TableCell>
+                        <TableCell>Reps</TableCell>
+                        <TableCell>Timing</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {staticExercises
+                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .map((exercise) => (
+                          <TableRow key={exercise.id}>
+                            <TableCell>{exercise.exercise}</TableCell>
+                            <TableCell>{exercise.series} x</TableCell>
+                            <TableCell>{exercise.reps.join(', ')}</TableCell>
+                            <TableCell>{exercise.timing}</TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+              <button onClick={handleViewExercises}>Close</button>
+            </div>
+        </div>
+        )}
     </div>
   );
 }
