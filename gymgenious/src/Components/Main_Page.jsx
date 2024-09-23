@@ -69,7 +69,7 @@ export default function Main_Page() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showCalendar, setShowCalendar] = useState(true);
-  const [leftBarOption, setLeftBarOption] = React.useState('');
+  const [leftBarOption, setLeftBarOption] = useState('');
   const isSmallScreen = useMediaQuery('(max-width:250px)');
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [userMail,setUserMail] = useState(null);
@@ -281,7 +281,7 @@ export default function Main_Page() {
         </div>
         ) : (
         <div className="Table-Container">
-          <EnhancedTable rows={classes} user={leftBarOption} />
+          <EnhancedTable rows={classes} user={userMail} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
         </div>
       )}
       </>

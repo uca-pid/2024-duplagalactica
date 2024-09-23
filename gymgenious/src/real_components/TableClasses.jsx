@@ -12,7 +12,7 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 
-function EnhancedTable({ rows, user }) {
+function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
@@ -20,7 +20,6 @@ function EnhancedTable({ rows, user }) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const urlParams = new URLSearchParams(window.location.search);
-  const userMail = urlParams.get('mail');
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
 
@@ -45,6 +44,16 @@ function EnhancedTable({ rows, user }) {
   const handleCloseModal = () => {
     setSelectedEvent(null);
   };
+
+  const handleBookClassModal = (event) => {
+    handleBookClass(event);
+    handleCloseModal();
+  }
+
+  const handleUnbookClassModal = (event) => {
+    handleUnbookClass(event);
+    handleCloseModal();
+  }
 
   const visibleRows = React.useMemo(
     () =>
@@ -199,12 +208,12 @@ function EnhancedTable({ rows, user }) {
             <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
             <p><strong>Participants:</strong> {5}</p>
-            {1===1 ? ( //userMail
+            {user? (
               <>
-              { 1===1 ? ( //si esta inscripto o no
-                    <button>Unbook</button>
+              {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(user)  ? (
+                    <button onClick={() => handleUnbookClassModal(selectedEvent.name)}>Unbook</button>
                   ) : (
-                    <button>Book</button>
+                    <button onClick={() => handleBookClassModal(selectedEvent.name)}>Book</button>
               )}
               <button onClick={handleCloseModal}>Close</button>
               </>) : (
