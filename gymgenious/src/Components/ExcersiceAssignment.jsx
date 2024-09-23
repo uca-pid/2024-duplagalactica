@@ -14,6 +14,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
+import { useMediaQuery } from '@mui/material';
 
 function not(a, b) {
   return a.filter((value) => !b.includes(value));
@@ -30,6 +31,7 @@ export default function UsserAssignment({onUsersChange}) {
   const [right, setRight] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
+  const isSmallScreen = useMediaQuery('(max-width:700px)');
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -107,7 +109,7 @@ export default function UsserAssignment({onUsersChange}) {
   };
 
   const customList = (items) => (
-    <Paper sx={{ width: 300, height: 400, overflow: 'auto' }}>
+    <Paper className='transfer-list'>
       <List dense component="div" role="list">
         {items.map((user) => {
           const labelId = `transfer-list-item-${user.name}-label`;
@@ -147,6 +149,13 @@ export default function UsserAssignment({onUsersChange}) {
     fetchExercises(userMail)
   }, [userMail]);
 
+  useEffect(() => {
+    if(isSmallScreen){
+      const newLeft = left.concat(right);
+      
+    }
+  }, [isSmallScreen])
+
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
@@ -166,9 +175,12 @@ export default function UsserAssignment({onUsersChange}) {
       container
       spacing={2}
       sx={{ justifyContent: 'center', alignItems: 'center' }}
+      className='grid-transfer-container'
     >
-      <Grid item>{customList(left)}</Grid>
-      <Grid item>
+      {!isSmallScreen ? (
+        <>
+      <Grid className='grid-transfer-content' item>{customList(left)}</Grid>
+        <Grid item>
         <Grid container direction="column" sx={{ alignItems: 'center' }}>
           <Button
             sx={{ my: 0.5 }}
@@ -212,7 +224,11 @@ export default function UsserAssignment({onUsersChange}) {
           </Button>
         </Grid>
       </Grid>
-      <Grid item>{customList(right)}</Grid>
+      <Grid className='grid-transfer-content' item>{customList(right)}</Grid>
+      </>
+      ) : (
+        <Grid className='grid-transfer-content-small-screen' item>{customList(left)}</Grid>
+      )}
       {openCircularProgress ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

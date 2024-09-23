@@ -60,6 +60,9 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
   useEffect(() => {
     if (routine) {
       fetchUsers(routine);
+    } else {
+      setLeft([]);
+      setRight([]);
     }
   }, [routine]);
 

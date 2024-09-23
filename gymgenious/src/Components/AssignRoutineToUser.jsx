@@ -54,7 +54,6 @@ export default function RoutineCreation() {
         } else {
             console.error('No token found');
         }
-        
         fetchRoutines();
     }, [userMail]);
 
