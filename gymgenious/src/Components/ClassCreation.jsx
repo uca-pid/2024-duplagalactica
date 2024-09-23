@@ -310,6 +310,7 @@ export default function CreateClass() {
                   name="maxNum"
                   min={0}
                   step={1}
+                  max={500}
                   value={maxNum} 
                   onChange={(e) => setMaxNum(e.target.value)} 
                 />
