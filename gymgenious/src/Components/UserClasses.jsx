@@ -17,6 +17,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
+import CheckIcon from '@mui/icons-material/Check';
 
 function UsserClasses() {
   const [order, setOrder] = useState('asc');
@@ -162,6 +163,21 @@ function UsserClasses() {
             </div>
           </div>
         )}
+        { successUnbook ? (
+            <div className='alert-container'>
+            <div className='alert-content'>
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Slide direction="up" in={successUnbook} mountOnEnter unmountOnExit >
+                    <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                        Successfully Unbooked!
+                    </Alert>
+                </Slide>
+                </Box>
+            </div>
+            </div>
+        ) : (
+            null
+        )}
           { warningFetchingClasses ? (
                 <div className='alert-container'>
                     <div className='alert-content'>
@@ -177,6 +193,21 @@ function UsserClasses() {
             ) : (
                 null
             )}
+            { warningUnbookingClass ? (
+            <div className='alert-container'>
+                <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Slide direction="up" in={warningUnbookingClass} mountOnEnter unmountOnExit >
+                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                            Error unbooking class. Try again!
+                        </Alert>
+                    </Slide>
+                    </Box>
+                </div>
+            </div>
+          ) : (
+              null
+          )}
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap',background:'#ffe0b5',border: '2px solid #BC6C25',borderRadius:'10px'  }}>
               <Paper sx={{ width: '100%',backgroundColor: '#ffe0b5',borderRadius:'10px' }}>
@@ -296,6 +327,7 @@ function UsserClasses() {
               <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
               <p><strong>Participants:</strong> 5/20</p>
               <button onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook</button>
+              <button onClick={handleCloseModal}>Close</button>
             </div>
           </div>
         )}
