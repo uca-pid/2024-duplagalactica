@@ -19,6 +19,23 @@ export default function ExerciseCreation() {
   const [failure, setFailure] = useState(false);
   const [errors, setErrors] = useState([]);
   const [failureErrors, setFailureErrors] = useState(false);
+  const [series, setSeries] = useState(4);
+  const [reps, setReps] = useState(Array(series).fill(''));
+  const [timing, setTiming] = useState(0);
+
+  const handleSeriesChange = (e) => {
+    const newSeries = parseInt(e.target.value);
+    if(newSeries>=0 && newSeries<=8) {
+      setSeries(newSeries);
+      setReps(Array(newSeries).fill(''));
+    }
+  };
+
+  const handleRepsChange = (index, value) => {
+    const newReps = [...reps];
+    newReps[index] = value;
+    setReps(newReps);
+  };
 
   const validateForm = () => {
     let errors = [];
@@ -110,7 +127,7 @@ export default function ExerciseCreation() {
 
 
   return (
-    <div className='class-creation-container'>
+    <div className='exercise-creation-container'>
       {openCircularProgress ? (
         <Backdrop
         sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -198,6 +215,47 @@ export default function ExerciseCreation() {
                   onChange={(e) => setDesc(e.target.value)} 
                   />
               </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                  <label htmlFor="desc" style={{color:'#14213D'}}>Series:</label>
+                  <input 
+                  type="number" 
+                  id="series" 
+                  name="series" 
+                  value={series}
+                  min="1"
+                  max="8"
+                  onChange={handleSeriesChange}
+                  />
+              </div>
+              <div className="input-small-container">
+                  <label htmlFor="timing" style={{color:'#14213D'}}>Timing:</label>
+                  <input 
+                  type="number" 
+                  id="timing" 
+                  name="timing" 
+                  value={timing}
+                  min="1"
+                  max="500"
+                  onChange={(e) => setTiming(e.target.value)} 
+                  />
+              </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+            <div className="input-small-container" style={{ flex: 1, marginRight: '10px' }}>
+                <label htmlFor='reps' style={{ color: '#14213D' }}>Reps:</label>
+                {reps.map((rep, index) => (
+                  <input
+                    type="text"
+                    id={`reps-${index}`}
+                    name={`reps-${index}`}
+                    value={rep}
+                    onChange={(e) => handleRepsChange(index, e.target.value)}
+                    style={{ width: `${100 / series}%` }}
+                  />
+              ))}
+            </div>
           </div>
           <button type="submit" className='button_login'>
             Create exercise
