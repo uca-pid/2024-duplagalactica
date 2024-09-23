@@ -32,6 +32,8 @@ function UsserClasses() {
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [errorToken, setErrorToken] = useState(false);
   const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
+  const [successUnbook,setSuccessUnbook] = useState(false);
+  const [warningUnbookingClass,setWarningUnbookingClass] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -52,6 +54,40 @@ function UsserClasses() {
     setSelectedEvent(event);
   };
 
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
+
+  const handleUnbookClass = async (event) => {
+    setOpenCircularProgress(true);
+    try {
+      const response = await fetch('http://127.0.0.1:5000/unbook_class', {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+      await fetchClasses();
+      setOpenCircularProgress(false);
+      handleCloseModal();
+      setSuccessUnbook(true);
+      setTimeout(() => {
+        setSuccessUnbook(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningUnbookingClass(true);
+      setTimeout(() => {
+        setWarningUnbookingClass(false);
+      }, 3000);
+    }
+  };
+  
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
@@ -250,6 +286,19 @@ function UsserClasses() {
               </Paper>
             </Box>
         </div>
+        {selectedEvent && (
+          <div className="Modal" onClick={handleCloseModal}>
+            <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+              <h2>Classes details:</h2>
+              <p><strong>Name:</strong> {selectedEvent.name}</p>
+              <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
+              <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+              <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+              <p><strong>Participants:</strong> 5/20</p>
+              <button onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook</button>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
