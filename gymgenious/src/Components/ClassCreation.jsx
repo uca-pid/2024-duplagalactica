@@ -302,7 +302,7 @@ export default function CreateClass() {
                 </select>
               </div>
               <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                <label htmlFor="maxNum" style={{color:'#5e2404'}}>Max participants:</label>
+                <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
                 <input
                   onClick={handleCloseHourRequirements}
                   type="number" 
