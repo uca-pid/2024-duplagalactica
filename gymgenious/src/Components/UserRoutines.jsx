@@ -8,57 +8,45 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import NewLeftBar from '../real_components/NewLeftBar.jsx'
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { Box, useMediaQuery } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import {jwtDecode} from "jwt-decode";
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import Slide from '@mui/material/Slide';
 
-function ColorToggleButton() {
-  const [alignment, setAlignment] = React.useState('web');
+function ColorToggleButton({ selectedDay, setSelectedDay }) {
   const [hovered, setHovered] = useState(null);
-  const handleChange = (event, newAlignment) => {
-    setAlignment(newAlignment);
-  };
+
   const handleMouseEnter = (value) => {
-      setHovered(value);
+    setHovered(value);
   };
 
   const handleMouseLeave = () => {
-      setHovered(null);
+    setHovered(null);
   };
 
   return (
     <ToggleButtonGroup
-            color="primary"
-            value={alignment}
-            exclusive
-            onChange={handleChange}
-            aria-label="Platform"
+      color="primary"
+      value={selectedDay}
+      exclusive
+      onChange={(event, newDay) => setSelectedDay(newDay)}
+      aria-label="Platform"
+    >
+      {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+        <ToggleButton
+          key={day}
+          style={{
+            backgroundColor: selectedDay === day || hovered === day ? '#5e2404' : '#b87d48',
+            color: 'white',
+          }}
+          value={day}
+          onMouseEnter={() => handleMouseEnter(day)}
+          onMouseLeave={handleMouseLeave}
         >
-            {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
-                <ToggleButton 
-                    key={day}
-                    style={{ 
-                        backgroundColor: 
-                            alignment === day || hovered === day 
-                                ? '#5e2404' 
-                                : '#b87d48', 
-                        color: 'white' 
-                    }} 
-                    value={day}
-                    onMouseEnter={() => handleMouseEnter(day)}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    {day}
-                </ToggleButton>
-            ))}
+          {day}
+        </ToggleButton>
+      ))}
     </ToggleButtonGroup>
   );
 }
@@ -66,14 +54,11 @@ function ColorToggleButton() {
 export default function StickyHeadTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [userMail, setUserMail] = useState('');
   const [orderBy, setOrderBy] = useState('name');
   const [order, setOrder] = useState('asc');
   const [visibleRows, setVisibleRows] = useState([]);
+  const [selectedDay, setSelectedDay] = useState('');
   const isSmallScreen = useMediaQuery('(max-width:500px)');
-  const [openCircularProgress, setOpenCircularProgress] = useState(false);
-  const [warningFetchingUserRoutines, setWarningFetchingUserRoutines] = useState(false);
-  const [errorToken,setErrorToken] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -90,110 +75,51 @@ export default function StickyHeadTable() {
     setOrderBy(property);
   };
 
-  const fetchRoutines = async () => {
-    setOpenCircularProgress(true);
-    try {
-      const response = await fetch('http://127.0.0.1:5000/get_assigned_routines');
-      if (!response.ok) {
-        throw new Error('Error al obtener las clases: ' + response.statusText);
-      }
-      const data = await response.json();
-      const filteredRoutines = data.filter(event =>
-        event.user.some(user => user.Mail === userMail)
-      );
-      setVisibleRows(filteredRoutines);
-      setOpenCircularProgress(false);
-    } catch (error) {
-      console.error("Error fetching rutinas:", error);
-      setOpenCircularProgress(false);
-      setWarningFetchingUserRoutines(true);
-      setTimeout(() => {
-        setWarningFetchingUserRoutines(false);
-      }, 3000);
-    }
-  };
-
-  const verifyToken = async (token) => {
-    setOpenCircularProgress(true);
-    try {
-        const decodedToken = jwtDecode(token);
-        setUserMail(decodedToken.email);
-        setOpenCircularProgress(false);
-    } catch (error) {
-        console.error('Error al verificar el token:', error);
-        setOpenCircularProgress(false);
-        setErrorToken(true);
-        setTimeout(() => {
-          setErrorToken(false);
-        }, 3000);
-        throw error;
-    }
-  };
+  const staticRows = [
+    {
+      routine: 'routine 1',
+      description: 'akdalnfkwaklfaf',
+      excercises: ['exercise 1', 'exercise 2', 'exercise 3'],
+      day: 'Monday',
+      owner: 'isoldi772@gmail.com',
+    },
+    {
+      routine: 'routine 2',
+      description: 'awaff',
+      excercises: ['exercise 1', 'exercise 2', 'exercise 3', 'exercise 4'],
+      day: 'Tuesday',
+      owner: 'manolo@gmail.com',
+    },
+    {
+      routine: 'routine 3',
+      description: 'awaff',
+      excercises: ['exercise 1', 'exercise 2'],
+      day: 'Tuesday',
+      owner: 'juanls@gmail.com',
+    },
+  ];
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      verifyToken(token);
+    if (selectedDay) {
+      const filteredRows = staticRows.filter((row) => row.day === selectedDay);
+      setVisibleRows(filteredRows);
     } else {
-      console.error('No token found');
+      setVisibleRows(staticRows);
     }
-  }, []);
-
-  useEffect(() => {
-    if (userMail) {
-      fetchRoutines();
-    }
-  }, [userMail]);
+  }, [selectedDay]);
 
   return (
     <div className="App">
-      <NewLeftBar/>
-      {openCircularProgress ? (
-          <Backdrop
-          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-          open={openCircularProgress}
-          >
-          <CircularProgress color="inherit" />
-          </Backdrop>
-      ) : null}
-      { errorToken ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-                  <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
-                      <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
-                          Invalid Token!
-                      </Alert>
-                  </Slide>
-                  </Box>
-              </div>
-          </div>
-      ) : (
-          null
-      )}
-      { warningFetchingUserRoutines ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-                  <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={warningFetchingUserRoutines} mountOnEnter unmountOnExit >
-                      <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                          Error fetching routines. Try again!
-                      </Alert>
-                  </Slide>
-                  </Box>
-              </div>
-          </div>
-        ) : (
-            null
-        )}
       <div className="Table-Container">
-        <ColorToggleButton/>
+        <ColorToggleButton selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
         <Paper sx={{ width: '100%', overflow: 'hidden', border: '2px solid #BC6C25' }}>
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow sx={{ height: '5vh', color: '#54311a' }}>
-                  <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                  <TableCell
+                    sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}
+                  >
                     <TableSortLabel
                       active={orderBy === 'name'}
                       direction={orderBy === 'name' ? order : 'asc'}
@@ -208,31 +134,62 @@ export default function StickyHeadTable() {
                     </TableSortLabel>
                   </TableCell>
                   {!isSmallScreen && (
-                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
-                      <TableSortLabel
-                        active={orderBy === 'hour'}
-                        direction={orderBy === 'hour' ? order : 'asc'}
-                        onClick={(event) => handleRequestSort(event, 'hour')}
-                      >
-                        Teacher
-                        {orderBy === 'hour' ? (
-                          <Box component="span" sx={visuallyHidden}>
-                            {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                          </Box>
-                        ) : null}
-                      </TableSortLabel>
+                    <TableCell
+                      align="right"
+                      sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
+                    >
+                      Day
+                    </TableCell>
+                  )}
+                  {!isSmallScreen && (
+                    <TableCell
+                      align="right"
+                      sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
+                    >
+                      Exercises
+                    </TableCell>
+                  )}
+                  {!isSmallScreen && (
+                    <TableCell
+                      align="right"
+                      sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
+                    >
+                      Teacher
                     </TableCell>
                   )}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {visibleRows.map((row) => (
-                  <TableRow key={row.id} hover tabIndex={-1} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                    <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                {visibleRows.map((row, index) => (
+                  <TableRow key={index} hover tabIndex={-1} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
+                    >
                       {row.routine}
                     </TableCell>
                     {!isSmallScreen && (
-                      <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                      <TableCell
+                        align="right"
+                        sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
+                      >
+                        {row.day}
+                      </TableCell>
+                    )}
+                    {!isSmallScreen && (
+                      <TableCell
+                        align="right"
+                        sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
+                      >
+                        {row.excercises.length}
+                      </TableCell>
+                    )}
+                    {!isSmallScreen && (
+                      <TableCell
+                        align="right"
+                        sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
+                      >
                         {row.owner}
                       </TableCell>
                     )}
