@@ -428,6 +428,7 @@ function CouchClasses() {
                     <p><strong>Description:</strong> {selectedEvent.description}</p>
                     <p><strong>Day:</strong> {selectedEvent.day}</p>
                     <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
+                    <p><strong>Users:</strong> {5}</p>
                     <button onClick={handleEditRoutine}>Edit routine</button>
                     <button onClick={handleCloseModal}>Close</button>
                     <button onClick={handleCloseModal}>Delete routine</button>

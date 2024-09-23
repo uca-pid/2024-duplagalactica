@@ -159,9 +159,10 @@ function CouchClasses() {
       const data = await response.json();
       console.log(data);
       const filteredClasses = data.filter(event => event.owner == userMail);
-      setOpenCircularProgress(false);
       setClasses(filteredClasses);
-
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+      }, 2000);
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
@@ -177,8 +178,8 @@ function CouchClasses() {
     setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
-        setUserMail(decodedToken.email);
         setOpenCircularProgress(false);
+        setUserMail(decodedToken.email);
     } catch (error) {
         console.error('Error al verificar el token:', error);
         setOpenCircularProgress(false);
@@ -371,7 +372,7 @@ function CouchClasses() {
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{row.hour}</TableCell>
                         )}
                         {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
                         )}
                         {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
@@ -412,6 +413,7 @@ function CouchClasses() {
                     <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
                     <p><strong>Start time:</strong> {selectedEvent.hour}</p>
                     <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+                    <p><strong>Participants:</strong> {5}</p>
                     <button onClick={handleEditClass}>Edit class</button>
                     <button onClick={handleCloseModal}>Close</button>
                     <button onClick={() => handleDeleteClass(selectedEvent.name)}>Delete class</button>
