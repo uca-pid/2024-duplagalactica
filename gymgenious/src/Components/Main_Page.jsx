@@ -388,7 +388,7 @@ export default function Main_Page() {
         <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-        <p><strong>Participants:</strong> 5/20</p>
+        <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
         {userMail? (
           <>
           {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (

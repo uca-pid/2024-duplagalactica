@@ -59,7 +59,10 @@ export default function ExerciseCreation() {
         const newExersice = {
           name: name,
           description: desc,
-          owner: userMail
+          owner: userMail,
+          reps: reps,
+          series: series,
+          timing: timing,
         };
     
         const response = await fetch('http://127.0.0.1:5000/create_exersice', {

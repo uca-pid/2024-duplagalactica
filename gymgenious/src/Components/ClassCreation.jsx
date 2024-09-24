@@ -82,7 +82,9 @@ export default function CreateClass() {
           hour: hour,
           day: day(date),
           permanent: permanent,
-          owner: userMail
+          owner: userMail,
+          capacity: maxNum,
+          BookedUsers: []
         };
         const response = await fetch('http://127.0.0.1:5000/create_class', {
           method: 'POST',
