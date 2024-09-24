@@ -136,10 +136,10 @@
   width: 100%; 
   height: 95%;
   box-sizing: border-box;
-  margin-top: 3%;
+  margin-top: 3.3%;
 }
 
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .WebApp-Body {
     width: 98%;
     height: 93%;
@@ -201,7 +201,7 @@
   padding: 1rem;
   box-sizing: border-box;
   border-radius: 15px;
-  top: 10vh;
+  top: 12vh;
   height: 43vh;
   background-color: transparent !important;
 }
@@ -221,7 +221,6 @@
 
 @media (max-width: 768px) {
   .Calendar-Container {
-    margin-top: 3%;
     padding: 0;
     height: 100%;
   }
@@ -349,7 +348,7 @@ iframe {
   border-style: solid;
 }
 
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .login-container {
     left: 10%;
     width: 80%;
@@ -416,7 +415,7 @@ iframe {
   gap: 0;
   margin-top: 1%;
 }
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .login-options {
     height: 45%;
     left: 10%;
@@ -561,7 +560,7 @@ iframe {
   overflow-y: auto;
 }
 
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .reset-password-container {
     left: 10%;
     width: 80%;
@@ -645,13 +644,6 @@ iframe {
   position: absolute;
   top: 10px;
   right: 10px;
-}
-
-@media screen and (max-width: 765px) {
-  .Calendar-Button {
-    top: 7%;
-    position: absolute;
-  }
 }
 
 .Toggle-Button {
@@ -749,7 +741,7 @@ iframe {
   justify-content: center;
 }
  
- @media (max-width: 765px) {
+ @media (max-width: 768px) {
   .create-class-button {
     top:3%;
     left: 7%;
@@ -783,7 +775,7 @@ iframe {
   font-weight: bold;
 }
   
-@media (max-width: 765px) {
+@media (max-width: 768px) {
   .errorsCreateAccountContentModal {
     left: 5%;
     width: 90%;
@@ -808,7 +800,7 @@ iframe {
   overflow-y: auto;
 }
 
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .new-password-container {
     left: 10%;
     width: 80%;
@@ -844,7 +836,7 @@ iframe {
   overflow-y: auto;
 }
 
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .class-creation-container {
     left: 10%;
     width: 80%;
@@ -874,7 +866,7 @@ iframe {
   margin-top: 2%;
   border-radius: 8px;
 }
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .stepper-container {
     width: 80%;
   }
@@ -955,7 +947,7 @@ iframe {
   position:absolute;
 }
 
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .routine-creation-container {
     left: 10%;
     width: 80%;
@@ -1080,7 +1072,7 @@ iframe {
   overflow-y: auto;
 }
 
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
   .class-creation-container {
     left: 10%;
     width: 80%;
@@ -1114,4 +1106,27 @@ iframe {
   text-align: center;
   position:absolute;
   overflow-y: auto;
+}
+
+.user-profile-container {
+  background-color: #FEFAE0;
+  border-color: #BC6C25;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  width: 45%;
+  left: 30%;
+  top: 18%;
+  text-align: center;
+  position: fixed;
+  overflow-y: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .user-profile-container {
+    left: 10%;
+    width: 80%;
+    top: 10%;
+  }
 }

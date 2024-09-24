@@ -32,12 +32,13 @@ export default function CreateAccount() {
     const fetchUserInformation = async () => {
         setOpenCircularProgress(true);
         try {
+            console.log(userMail)
             const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${userMail}`);
             if (!response.ok) {
                 throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
             }
             const data = await response.json();
-            console.log(date);
+            console.log(data);
             setNameFetch(data.Name);
             setLastNameFetch(data.Lastname);
             setEmailFetch(data.Mail);
@@ -130,8 +131,13 @@ export default function CreateAccount() {
         } else {
             console.error('No token found');
         }
-        fetchUserInformation();
-    }, [userMail]); 
+    }, []);
+
+    useEffect(() => {
+        if(userMail){
+            fetchUserInformation();
+        }
+    }, [userMail]);
 
     return (
         <div className='App'>
@@ -189,7 +195,7 @@ export default function CreateAccount() {
             ) : (
                 null
             )}
-            <div className='create-account-container'>
+            <div className='user-profile-container'>
                 <div className='create-account-content'>
                     <h2 style={{ color: '#14213D' }}>Profile</h2>
                     <form autoComplete='off' onSubmit={handleSave}>
@@ -237,12 +243,9 @@ export default function CreateAccount() {
                                 id="email"
                                 name="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                type={isDisabled ? 'text' : (email ? 'email' : 'text')}
+                                type='text'
                                 placeholder={emailFetch}
-                                onFocus={(e) => !isDisabled && (e.target.type = 'email')}
-                                onBlur={(e) => !email && (e.target.type = 'text')}
-                                disabled={isDisabled}
+                                disabled={true}
                             />
                         </div>
                         {isDisabled ? (
