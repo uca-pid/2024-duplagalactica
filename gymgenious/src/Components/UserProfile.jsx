@@ -33,17 +33,18 @@ export default function CreateAccount() {
         setOpenCircularProgress(true);
         try {
             console.log(userMail)
-            const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${userMail}`);
+            const response = await fetch(`http://127.0.0.1:5000/get_users`)
             if (!response.ok) {
                 throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
             }
             const data = await response.json();
-            console.log(data);
-            setNameFetch(data.Name);
-            setLastNameFetch(data.Lastname);
-            setEmailFetch(data.Mail);
-            setDateFetch(data.Birthday);
-            setUser(data);
+            const filteredRows = data.filter((row) => row.Mail === userMail);
+            console.log(filteredRows[0]);
+            setNameFetch(filteredRows[0].Name);
+            setLastNameFetch(filteredRows[0].Lastname);
+            setEmailFetch(filteredRows[0].Mail);
+            setDateFetch(filteredRows[0].Birthday);
+            setUser(filteredRows[0]);
             setOpenCircularProgress(false);
         } catch (error) {
             console.error("Error fetching user:", error);
@@ -57,7 +58,6 @@ export default function CreateAccount() {
 
     const fetchModifyUserInformation = async () => {
         setOpenCircularProgress(true);
-        //AGREGAR UN VALIDATE POR SI NO CAMBIARON NINGUN DATO
         try {
             const updatedUser = {
                 ...user,

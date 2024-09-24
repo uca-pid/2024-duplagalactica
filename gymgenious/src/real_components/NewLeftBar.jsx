@@ -131,7 +131,7 @@ export default function TemporaryDrawer() {
   const fetchUser = async () => {
     try {
       const encodedUserMail = encodeURIComponent(userMail);
-      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${userMail}`);
         if (!response.ok) {
             throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
         }

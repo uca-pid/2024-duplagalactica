@@ -23,7 +23,7 @@ function intersection(a, b) {
   return a.filter((value) => b.includes(value));
 }
 
-export default function UsserAssignment({ onUsersChange ,routine}) {
+export default function UserAssignment({ onUsersChange, routine }) {
   const [users, setUsers] = useState([]);
   const [checked, setChecked] = useState([]);
   const [left, setLeft] = useState([]);
@@ -34,6 +34,7 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
+  
   useEffect(() => {
     onUsersChange(right); 
   }, [right, onUsersChange]);
@@ -41,13 +42,27 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
   const fetchUsers = async () => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch(`http://127.0.0.1:5000/get_client_users_no_match_routine?routine=${routine}`);
-      if (!response.ok) {
-        throw new Error('Error al obtener los usuarios: ' + response.statusText);
+      const assignedResponse = await fetch(`http://127.0.0.1:5000/get_assigned_routines`);
+      if (!assignedResponse.ok) {
+        throw new Error('Error al obtener las rutinas asignadas: ' + assignedResponse.statusText);
       }
-      const data = await response.json();
-      setUsers(data);
-      setLeft(data);
+      const assignedUsersData = await assignedResponse.json();
+
+      // Extraer todos los correos electrónicos asignados
+      const assignedUsers = assignedUsersData.flatMap(routine => 
+        routine.user.map(user => user.Mail)
+      );
+
+      const allUsersResponse = await fetch(`http://127.0.0.1:5000/get_users`);
+      if (!allUsersResponse.ok) {
+        throw new Error('Error al obtener los usuarios: ' + allUsersResponse.statusText);
+      }
+      const allUsers = await allUsersResponse.json();
+
+      // Filtrar usuarios no asignados
+      const filteredRows = allUsers.filter(user => !assignedUsers.includes(user.Mail));
+      setUsers(filteredRows);
+      setLeft(filteredRows);
       setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -61,7 +76,7 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
 
   useEffect(() => {
     if (routine) {
-      fetchUsers(routine);
+      fetchUsers();
     } else {
       setLeft([]);
       setRight([]);
@@ -119,7 +134,7 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
 
           return (
             <ListItemButton
-              key={user.id}
+              key={user.Mail} // Usar Mail como clave única
               role="listitem"
               onClick={handleToggle(user)}
             >
@@ -195,8 +210,8 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
             </Button>
           </Grid>
         </Grid>
-        {right.length===0 ? (
-          <Grid className='grid-transfer-content' item>{customList([{'id':'1','Mail':'No users were chosen'}])}</Grid>
+        {right.length === 0 ? (
+          <Grid className='grid-transfer-content' item>{customList([{'Mail': 'No users were chosen'}])}</Grid>
         ) : (
           <Grid className='grid-transfer-content' item>{customList(right)}</Grid>
         )}
@@ -205,28 +220,26 @@ export default function UsserAssignment({ onUsersChange ,routine}) {
         <Grid className='grid-transfer-content-small-screen' item>{customList(left)}</Grid>
       )}
       {openCircularProgress ? (
-                <Backdrop
-                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                open={openCircularProgress}
-                >
-                <CircularProgress color="inherit" />
-                </Backdrop>
-            ) : null}
-            { warningFetchingUsers ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningFetchingUsers} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error fetching users. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
+        <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+          open={openCircularProgress}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      ) : null}
+      {warningFetchingUsers ? (
+        <div className='alert-container'>
+          <div className='alert-content'>
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Slide direction="up" in={warningFetchingUsers} mountOnEnter unmountOnExit>
+                <Alert style={{ fontSize: '100%', fontWeight: 'bold' }} severity="info">
+                  Error fetching users. Try again!
+                </Alert>
+              </Slide>
+            </Box>
+          </div>
+        </div>
+      ) : null}
     </Grid>
   );
 }
