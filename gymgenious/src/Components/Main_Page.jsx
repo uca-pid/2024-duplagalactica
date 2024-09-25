@@ -1,9 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -13,56 +8,8 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import CheckIcon from '@mui/icons-material/Check';
-
-const localizer = momentLocalizer(moment);
-
-const Calendar = ({ events, onSelectEvent }) => {
-  const eventStyleGetter = (event) => {
-    const backgroundColor = '#fca311'; 
-    const style = {
-      backgroundColor: backgroundColor,
-      borderRadius: '0px',
-      opacity: 0.8,
-      color: 'white',
-      display: 'block',
-      padding: '5px',
-      border: 'none',
-    };
-    return {
-      style: style
-    };
-  };
-  return (
-    <div className="Calendar-Container">
-      <BigCalendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        className='calendar-content'
-        views={['month', 'day']}
-        onSelectEvent={onSelectEvent}
-        eventPropGetter={eventStyleGetter}
-        formats={{
-          timeGutterFormat: (date, culture, localizer) =>
-            localizer.format(date, 'HH:mm', culture),
-          eventTimeRangeFormat: (date, culture, localizer) => {
-            const startTime = new Date(date.start).toLocaleTimeString('es-ES', {
-              hour: '2-digit',
-              minute: '2-digit',
-            });
-            const endTime = new Date(date.end).toLocaleTimeString('es-ES', {
-              hour: '2-digit',
-              minute: '2-digit',
-            });
-            return `${startTime} - ${endTime}`;
-          },
-        }}
-      />
-    </div>
-  );
-};
-
+import Calendar from '../real_components/Calendar.jsx';
+import EnhancedTable from '../real_components/TableClasses.jsx';
 
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
@@ -70,7 +17,6 @@ export default function Main_Page() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showCalendar, setShowCalendar] = useState(true);
   const [leftBarOption, setLeftBarOption] = useState('');
-  const isSmallScreen = useMediaQuery('(max-width:250px)');
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [userMail,setUserMail] = useState(null);
   const [warningBookingClass,setWarningBookingClass] = useState(false);
@@ -79,72 +25,19 @@ export default function Main_Page() {
   const [errorToken,setErrorToken] = useState(false);
   const [successBook,setSuccessBook] = useState(false);
   const [successUnbook,setSuccessUnbook] = useState(false);
+  const isSmallScreen = useMediaQuery('(max-width:250px)');
 
   const changeShowCalendar = () => {
     setShowCalendar(prevState => !prevState);
     handleCloseModal()
   };
 
-
-  const handleBookClass = async (event) => {
-    setOpenCircularProgress(true);
-    try {
-      const response = await fetch('http://127.0.0.1:5000/book_class', {
-        method: 'PUT', 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ event: event,mail:userMail })
-      });
-      if (!response.ok) {
-        throw new Error('Error al actualizar la clase: ' + response.statusText);
-      }
-      await fetchClasses();
-      setOpenCircularProgress(false);
-      handleCloseModal();
-      setSuccessBook(true)
-      setTimeout(() => {
-        setSuccessBook(false);
-      }, 3000);
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-      setOpenCircularProgress(false);
-      setWarningBookingClass(true);
-      setTimeout(() => {
-        setWarningBookingClass(false);
-      }, 3000);
-    }
-    
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
   };
 
-  const handleUnbookClass = async (event) => {
-    setOpenCircularProgress(true);
-    try {
-      const response = await fetch('http://127.0.0.1:5000/unbook_class', {
-        method: 'PUT', 
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ event: event,mail:userMail })
-      });
-      if (!response.ok) {
-        throw new Error('Error al actualizar la clase: ' + response.statusText);
-      }
-      await fetchClasses();
-      setOpenCircularProgress(false);
-      handleCloseModal();
-      setSuccessUnbook(true);
-      setTimeout(() => {
-        setSuccessUnbook(false);
-      }, 3000);
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-      setOpenCircularProgress(false);
-      setWarningUnbookingClass(true);
-      setTimeout(() => {
-        setWarningUnbookingClass(false);
-      }, 3000);
-    }
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
   };
 
   const fetchClasses = async () => {
@@ -213,7 +106,68 @@ export default function Main_Page() {
       }, 3000);
     }
   };
-  
+
+  const handleBookClass = async (event) => {
+    setOpenCircularProgress(true);
+    try {
+      const response = await fetch('http://127.0.0.1:5000/book_class', {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+      await fetchClasses();
+      setOpenCircularProgress(false);
+      handleCloseModal();
+      setSuccessBook(true)
+      setTimeout(() => {
+        setSuccessBook(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningBookingClass(true);
+      setTimeout(() => {
+        setWarningBookingClass(false);
+      }, 3000);
+    }
+    
+  };
+
+  const handleUnbookClass = async (event) => {
+    setOpenCircularProgress(true);
+    try {
+      const response = await fetch('http://127.0.0.1:5000/unbook_class', {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+      await fetchClasses();
+      setOpenCircularProgress(false);
+      handleCloseModal();
+      setSuccessUnbook(true);
+      setTimeout(() => {
+        setSuccessUnbook(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningUnbookingClass(true);
+      setTimeout(() => {
+        setWarningUnbookingClass(false);
+      }, 3000);
+    }
+  };
+
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
     try {
@@ -241,14 +195,6 @@ export default function Main_Page() {
     }
     fetchClasses();
   }, []);
-
-  const handleSelectEvent = (event) => {
-    setSelectedEvent(event);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedEvent(null);
-  };
   
   return (
     <div className="App">
