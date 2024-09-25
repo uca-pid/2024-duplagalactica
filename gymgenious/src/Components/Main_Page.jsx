@@ -394,7 +394,15 @@ export default function Main_Page() {
           {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
                 <button onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook</button>
               ) : (
+                <>
+                {selectedEvent.BookedUsers.length!=selectedEvent.capacity ? (
                 <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
+                ) :
+                (<>
+                <button style={{background:'red'}}>Full</button>
+                </>)
+                }
+                </>
           )}
           <button onClick={handleCloseModal}>Close</button>
           </>) : (
