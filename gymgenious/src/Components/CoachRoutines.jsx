@@ -18,7 +18,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
-import ExcersiceAssignment from './ExcersiceAssignment.jsx';
+import ExcersiceAssignment from './ExerciseAssignmentEdition.jsx';
 
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -33,6 +33,7 @@ function CouchClasses() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [desc, setDesc] = useState('');
+  const [fetchDay,setFetchDay] = useState('')
   const [exercises, setExercises] = useState('');
   const [day, setDay] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -44,10 +45,8 @@ function CouchClasses() {
   const [hour, setHour] = useState('');
   const [hourFin, setHourFin] = useState('');
   const [permanent, setPermanent] = useState('');
-  const [date, setDate] = useState('');
   const [name, setName] = useState('');
   const [routines, setRoutines] = useState([]);
-  const navigate = useNavigate();
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingModifiedClasses, setWarningFetchingModifiedClasses] = useState(false);
   const [warningDeletingClasses, setWarningDeletingClasses] = useState(false);
@@ -55,11 +54,6 @@ function CouchClasses() {
   const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
 
-//   const day = (dateString) => {
-//     const date = new Date(dateString);
-//     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-//     return daysOfWeek[date.getDay()];
-//   };
 
   const handleExcersiceChange = (newExcersices) => {
         setExercises(newExcersices);
@@ -88,77 +82,49 @@ function CouchClasses() {
     setSelectedEvent(null);
   };
 
-  const handleEditRoutine = () => {
+
+  const handleSaveEditRoutine = async () => {
+    try {
+        const updatedRoutines = {
+            day: day || fetchDay,
+            description: desc,
+            excers: exercises,
+            name: name,
+        };
+        const response = await fetch('http://127.0.0.1:5000/update_routine_info', {
+            method: 'PUT', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ newRoutine: updatedRoutines })
+        });
+        if (!response.ok) {
+            throw new Error('Error al actualizar la rutina: ' + response.statusText);
+        }
+        setTimeout(() => {
+            setOpenCircularProgress(false);
+          }, 2000);
+    } catch (error) {
+        console.error("Error actualizarndo la rutina:", error);
+        setOpenCircularProgress(false);
+        setWarningFetchingRoutines(true);
+        setTimeout(() => {
+            setWarningFetchingRoutines(false);
+        }, 3000);
+    }
+    setEditClass(!editClass);
+  }
+
+  const handleEditRoutine = (event) => {
     setEditClass(!editClass);
     setHour('');
     setHourFin('');
     setPermanent('');
-    setDate('');
-    setName('');
+    setFetchDay(event.day);
+    setName(event.name);
+    setDesc(event.description)
   } 
-//   const fetchModifyClassInformation = async () => {
-//     setOpenCircularProgress(true);
-//     try {
-//         const isoDateStringInicio = `${date}T${hour}:00Z`;
-//         const isoDateStringFin = `${date}T${hourFin}:00Z`;
-//         const updatedUser = {
-//             NameOriginal: selectedEvent.name,
-//             DateFin: isoDateStringFin,
-//             DateInicio: isoDateStringInicio,
-//             Day: day(date),
-//             Name: name,
-//             Permanent: permanent
-//         };
-//         const response = await fetch('http://127.0.0.1:5000/update_class_info', {
-//             method: 'PUT', 
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({ newUser: updatedUser })
-//         });
 
-//         if (!response.ok) {
-//             throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
-//         }
-//         const data = await response.json();
-//         await fetchRoutines();
-//         setOpenCircularProgress(false);
-//         handleCloseModal(); 
-//     } catch (error) {
-//         console.error("Error updating user:", error);
-//         setOpenCircularProgress(false);
-//         setWarningFetchingModifiedClasses(true);
-//         setTimeout(() => {
-//           setWarningFetchingModifiedClasses(false);
-//         }, 3000);
-//     }
-// };
-
-//   const handleDeleteClass = async (event) => {
-//     setOpenCircularProgress(true);
-//     try {
-//       const response = await fetch('http://127.0.0.1:5000/delete_class', {
-//         method: 'DELETE', 
-//         headers: {
-//           'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({ event: event,mail:userMail })
-//       });
-//       if (!response.ok) {
-//         throw new Error('Error al actualizar la clase: ' + response.statusText);
-//       }
-//       await fetchRoutines();
-//       setOpenCircularProgress(false);
-//       handleCloseModal();
-//     } catch (error) {
-//       console.error("Error fetching classes:", error);
-//       setOpenCircularProgress(false);
-//       setWarningDeletingClasses(true);
-//       setTimeout(() => {
-//         setWarningDeletingClasses(false);
-//       }, 3000);
-//     }
-//   };
 
   const fetchRoutines = async () => {
     setOpenCircularProgress(true);
@@ -429,7 +395,7 @@ function CouchClasses() {
                     <p><strong>Day:</strong> {selectedEvent.day}</p>
                     <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                     <p><strong>Users:</strong> {5}</p>
-                    <button onClick={handleEditRoutine}>Edit routine</button>
+                    <button onClick={()=> handleEditRoutine(selectedEvent)}>Edit routine</button>
                     <button onClick={handleCloseModal}>Close</button>
                     <button onClick={handleCloseModal}>Delete routine</button>
                     </div>
@@ -485,13 +451,13 @@ function CouchClasses() {
                         <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div className="input-small-container">
                                 <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label> 
-                                <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={userMail}/>
+                                <ExcersiceAssignment onUsersChange={handleExcersiceChange} routine={selectedEvent.name}/>
                             </div>
                         </div>
                         <button onClick={handleEditRoutine} className='button_login'>
                             Cancell
                         </button>
-                        <button onClick={handleEditRoutine} type="submit" className='button_login'>
+                        <button onClick={handleSaveEditRoutine} type="submit" className='button_login'>
                             Save changes
                         </button>
                     </form>
@@ -505,9 +471,5 @@ function CouchClasses() {
   
   
 }
-
-// CouchClasses.propTypes = {
-//   rows: PropTypes.array.isRequired,
-// };
 
 export default CouchClasses;
