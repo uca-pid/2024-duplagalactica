@@ -44,3 +44,27 @@ def get_assigned_routines():
     except Exception as e:
         print(f"Error al obtener las rutinas: {e}")
         raise RuntimeError("No se pudo obtener las rutinas")
+
+
+def update_routine_info(newRoutine):
+    try:
+        print(newRoutine)
+        users_ref = db.collection('routines')
+        docs = users_ref.where('name', '==', newRoutine['name']).stream()
+        updated = False
+
+        for doc in docs:
+            doc_ref = users_ref.document(doc.id)
+            doc_ref.update({
+                'day': newRoutine['day'],
+                'description': newRoutine['description'],
+                'excercises': newRoutine['excers']
+            })
+            updated = True
+
+        if not updated:
+            print(f"No se encontró una rutina con el nombre: {newRoutine.name}")
+        return {"message": "Actualización realizada"} 
+    except Exception as e:
+        print(f"Error actualizando la rutina: {e}")
+        raise RuntimeError("No se pudo actualizar la rutina")
