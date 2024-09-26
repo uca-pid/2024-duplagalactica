@@ -22,6 +22,7 @@ export default function ExerciseCreation() {
   const [series, setSeries] = useState(4);
   const [reps, setReps] = useState(Array(series).fill(''));
   const [timing, setTiming] = useState(0);
+  const [type, setType] = useState(null);
 
   const handleSeriesChange = (e) => {
     const newSeries = parseInt(e.target.value);
@@ -105,15 +106,37 @@ export default function ExerciseCreation() {
   };
 
   useEffect(() => {
+    setOpenCircularProgress(true);
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
+        navigate('/');
         console.error('No token found');
     }
+    if (userMail){
+      fetchUser();
+    }
+    if(type!='coach'){
+      navigate('/');
+    }
+    setOpenCircularProgress(false);
   }, [userMail]);
 
+  const fetchUser = async () => {
+    try {
+      const encodedUserMail = encodeURIComponent(userMail);
+      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        setType(data.type);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
+  };
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
@@ -128,70 +151,8 @@ export default function ExerciseCreation() {
     }
   };
 
-
   return (
     <div className='exercise-creation-container'>
-      {openCircularProgress ? (
-        <Backdrop
-        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-        open={openCircularProgress}
-        >
-        <CircularProgress color="inherit" />
-        </Backdrop>
-      ) : null}
-      { success ? (
-          <div className='alert-container'>
-          <div className='alert-content'>
-              <Box sx={{ position: 'relative', zIndex: 1 }}>
-              <Slide direction="up" in={success} mountOnEnter unmountOnExit >
-                  <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
-                      Exercise successfully created!
-                  </Alert>
-              </Slide>
-              </Box>
-          </div>
-          </div>
-      ) : (
-          null
-      )}
-      { failureErrors ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-              <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
-                  <div>
-                      <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                      Error creating exercise!
-                      </Alert>
-                      {errors.length > 0 && errors.map((error, index) => (
-                      <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                          <li>{error}</li>
-                      </Alert>
-                      ))}
-                  </div>
-                  </Slide>
-              </Box>
-              </div>
-          </div>
-        
-      ) : (
-          null
-      )}
-      { failure ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-                  <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
-                      <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                          Error creating exercise. Try again!
-                      </Alert>
-                  </Slide>
-                  </Box>
-              </div>
-          </div>
-      ) : (
-          null
-      )}
       <div className='class-creation-content'>
         <h2 style={{color:'#14213D'}}>Create exercise</h2>
         <form onSubmit={handleSubmit}>
@@ -265,6 +226,67 @@ export default function ExerciseCreation() {
           </button>
         </form>
       </div>
+      {openCircularProgress ? (
+        <Backdrop
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+        open={openCircularProgress}
+        >
+        <CircularProgress color="inherit" />
+        </Backdrop>
+      ) : null}
+      { success ? (
+          <div className='alert-container'>
+          <div className='alert-content'>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                  <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                      Exercise successfully created!
+                  </Alert>
+              </Slide>
+              </Box>
+          </div>
+          </div>
+      ) : (
+          null
+      )}
+      { failureErrors ? (
+          <div className='alert-container'>
+              <div className='alert-content'>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
+                  <div>
+                      <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                      Error creating exercise!
+                      </Alert>
+                      {errors.length > 0 && errors.map((error, index) => (
+                      <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                          <li>{error}</li>
+                      </Alert>
+                      ))}
+                  </div>
+                  </Slide>
+              </Box>
+              </div>
+          </div>
+        
+      ) : (
+          null
+      )}
+      { failure ? (
+          <div className='alert-container'>
+              <div className='alert-content'>
+                  <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                      <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                          Error creating exercise. Try again!
+                      </Alert>
+                  </Slide>
+                  </Box>
+              </div>
+          </div>
+      ) : (
+          null
+      )}
     </div>
   );
 }

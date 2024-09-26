@@ -29,6 +29,7 @@ export default function CreateClass() {
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:768px)');
+  const [type, setType] = useState(null);
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -148,14 +149,37 @@ export default function CreateClass() {
 
 
   useEffect(() => {
+    setOpenCircularProgress(true);
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
+        navigate('/');
         console.error('No token found');
     }
-  }, []);
+    if (userMail){
+      fetchUser();
+    }
+    if(type!='coach'){
+      navigate('/');
+    }
+    setOpenCircularProgress(false);
+  }, [userMail]);
+
+  const fetchUser = async () => {
+    try {
+      const encodedUserMail = encodeURIComponent(userMail);
+      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        setType(data.type);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
+  };
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [openHourRequirements, setOpenHourRequirements] = useState(false);

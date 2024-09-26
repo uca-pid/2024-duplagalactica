@@ -22,6 +22,7 @@ export default function RoutineCreation() {
     const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
     const [errors, setErrors] = useState([]);
     const [failureErrors, setFailureErrors] = useState(false);
+    const [type, setType] = useState(null);
 
     const fetchRoutines = async () => {
         setOpenCircularProgress(true);
@@ -47,15 +48,38 @@ export default function RoutineCreation() {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
-        if (token) {
-            verifyToken(token);
-        } else {
-            console.error('No token found');
-        }
-        fetchRoutines();
+      setOpenCircularProgress(true);
+      const token = localStorage.getItem('authToken');
+      console.log('Token:', token);
+      if (token) {
+          verifyToken(token);
+      } else {
+          navigate('/');
+          console.error('No token found');
+      }
+      if (userMail){
+        fetchUser();
+      }
+      if(type!='coach'){
+        navigate('/');
+      }
+      setOpenCircularProgress(false);
+      fetchRoutines();
     }, [userMail]);
+  
+    const fetchUser = async () => {
+      try {
+        const encodedUserMail = encodeURIComponent(userMail);
+        const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+          if (!response.ok) {
+              throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+          }
+          const data = await response.json();
+          setType(data.type);
+      } catch (error) {
+          console.error("Error fetching user:", error);
+      }
+    };
 
 
     const verifyToken = async (token) => {

@@ -53,7 +53,8 @@ function CouchClasses() {
   const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
   const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
-
+  const [type, setType] = useState(null);
+  const navigate = useNavigate();
 
   const handleExcersiceChange = (newExcersices) => {
         setExercises(newExcersices);
@@ -168,14 +169,37 @@ function CouchClasses() {
   };
   
   useEffect(() => {
+    setOpenCircularProgress(true);
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
+        navigate('/');
         console.error('No token found');
     }
-  }, []);
+    if (userMail){
+      fetchUser();
+    }
+    if(type!='coach'){
+      navigate('/');
+    }
+    setOpenCircularProgress(false);
+  }, [userMail]);
+
+  const fetchUser = async () => {
+    try {
+      const encodedUserMail = encodeURIComponent(userMail);
+      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        setType(data.type);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
+  };
 
   useEffect(() => {
     fetchRoutines();
