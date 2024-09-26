@@ -13,6 +13,8 @@
     "date-fns": "^3.6.0",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.4.0",
+    "flask": "^0.2.10",
+    "flask-cors": "^0.0.1",
     "jwt-decode": "^4.0.0",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
