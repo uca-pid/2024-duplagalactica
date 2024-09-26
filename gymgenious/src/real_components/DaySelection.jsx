@@ -7,6 +7,7 @@ import Select from '@mui/material/Select';
 
 export default function BasicSelect({ selectedDay, setSelectedDay }) {
   const [hovered, setHovered] = React.useState(null);
+  const [daySelection, setDaySelection] = React.useState('');
 
   const handleMouseEnter = (value) => {
     setHovered(value);
@@ -17,8 +18,7 @@ export default function BasicSelect({ selectedDay, setSelectedDay }) {
   };
 
   const handleChangeDay = (event) => {
-    console.log(selectedDay)
-    console.log(event.target.value)
+    setDaySelection(event.target.value);
     if(event.target.value==='all'){
         setSelectedDay(null);
     } else {
@@ -33,7 +33,7 @@ export default function BasicSelect({ selectedDay, setSelectedDay }) {
         <Select
           sx={{ width: '100%', backgroundColor: '#ffe0b5', borderRadius: '10px' }}
           color="primary"
-          value={selectedDay}
+          value={daySelection}
           onChange={(event) => handleChangeDay(event)}
           aria-label="Platform"
         >
