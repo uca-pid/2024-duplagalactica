@@ -93,6 +93,9 @@ export default function CreateAccount() {
 
     const handleChangeModify = () => {
         setIsDisabled(!isDisabled);
+        setName('');
+        setLastName('');
+        setDate('')
     };
 
     const goToChangePassword = () => {

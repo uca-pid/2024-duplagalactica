@@ -11,6 +11,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import Slide from '@mui/material/Slide';
 import Popper from '@mui/material/Popper';
 import {jwtDecode} from "jwt-decode";
+import { useMediaQuery } from '@mui/material';
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
@@ -27,6 +28,7 @@ export default function CreateClass() {
   const [failureErrors, setFailureErrors] = useState(false);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
+  const isSmallScreen = useMediaQuery('(max-width:768px)');
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -170,6 +172,188 @@ export default function CreateClass() {
   return (
     <div className='full-screen-image-2'>
       <LeftBar/>
+      <div className='class-creation-container'>
+        <div className='class-creation-content'>
+          <h2 style={{color:'#5e2404'}}>Create class</h2>
+          <form onSubmit={handleSubmit}>
+            {!isSmallScreen ? (
+              <>
+                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                  <div className="input-small-container">
+                    <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
+                    <input
+                      onClick={handleCloseHourRequirements}
+                      type="time" 
+                      id="hour" 
+                      name="hour" 
+                      value={hour} 
+                      onChange={(e) => setHour(e.target.value)} 
+                    />
+                  </div>
+                  <div className="input-small-container">
+                    <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
+                    <input
+                      onClick={handleOpenHourRequirements}
+                      type="time" 
+                      id="hourFin" 
+                      name="hourFin" 
+                      value={hourFin} 
+                      onChange={(e) => setHourFin(e.target.value)} 
+                    />
+                    <Popper id={id} open={openHourRequirements} anchorEl={anchorEl}>
+                      <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenHourRequirements}>
+                          <p>Class must last at least 30 minutes</p>
+                      </Box>
+                    </Popper>
+                  </div>
+                  <div className="input-small-container">
+                    <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                    <input
+                      onClick={handleCloseHourRequirements}
+                      type="text" 
+                      id="name" 
+                      name="name" 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                    />
+                  </div>
+                </div>
+                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                  <div className="input-small-container" style={{width:"100%"}}>
+                    <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                    <select
+                      onClick={handleCloseHourRequirements}
+                      id="permanent" 
+                      name="permanent" 
+                      value={permanent} 
+                      onChange={(e) => setPermanent(e.target.value)} 
+                    >
+                      <option value="" >Select</option>
+                      <option value="Si">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                    <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                    <input
+                      onClick={handleCloseHourRequirements}
+                      type="number" 
+                      id="maxNum" 
+                      name="maxNum"
+                      min={0}
+                      step={1}
+                      max={500}
+                      value={maxNum} 
+                      onChange={(e) => setMaxNum(e.target.value)} 
+                    />
+                  </div>
+                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                    <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
+                    <input
+                      onClick={handleCloseHourRequirements}
+                      type="date" 
+                      id="date" 
+                      name="date" 
+                      value={date} 
+                      onChange={(e) => setDate(e.target.value)} 
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                  <div className="input-small-container">
+                    <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
+                    <input
+                      onClick={handleCloseHourRequirements}
+                      type="time" 
+                      id="hour" 
+                      name="hour" 
+                      value={hour} 
+                      onChange={(e) => setHour(e.target.value)} 
+                    />
+                  </div>
+                  <div className="input-small-container">
+                    <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
+                    <input
+                      onClick={handleOpenHourRequirements}
+                      type="time" 
+                      id="hourFin" 
+                      name="hourFin" 
+                      value={hourFin} 
+                      onChange={(e) => setHourFin(e.target.value)} 
+                    />
+                    <Popper id={id} open={openHourRequirements} anchorEl={anchorEl}>
+                      <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenHourRequirements}>
+                          <p>Class must last at least 30 minutes</p>
+                      </Box>
+                    </Popper>
+                  </div>
+                </div>
+                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                  <div className="input-small-container">
+                      <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                      <input
+                        onClick={handleCloseHourRequirements}
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        value={name} 
+                        onChange={(e) => setName(e.target.value)} 
+                      />
+                    </div>
+                  <div className="input-small-container" style={{width:"100%"}}>
+                    <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                    <select
+                      onClick={handleCloseHourRequirements}
+                      id="permanent" 
+                      name="permanent" 
+                      value={permanent} 
+                      onChange={(e) => setPermanent(e.target.value)} 
+                    >
+                      <option value="" >Select</option>
+                      <option value="Si">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                    <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                    <input
+                      onClick={handleCloseHourRequirements}
+                      type="number" 
+                      id="maxNum" 
+                      name="maxNum"
+                      min={0}
+                      step={1}
+                      max={500}
+                      value={maxNum} 
+                      onChange={(e) => setMaxNum(e.target.value)} 
+                    />
+                  </div>
+                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                    <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
+                    <input
+                      onClick={handleCloseHourRequirements}
+                      type="date" 
+                      id="date" 
+                      name="date" 
+                      value={date} 
+                      onChange={(e) => setDate(e.target.value)} 
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+            
+            <button type="submit" className='button_login'>
+              Create class
+            </button>
+          </form>
+        </div>
+      </div>
       {openCircularProgress ? (
           <Backdrop
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -244,97 +428,6 @@ export default function CreateClass() {
       ) : (
           null
       )}
-      <div className='class-creation-container'>
-        <div className='class-creation-content'>
-          <h2 style={{color:'#5e2404'}}>Create class</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
-                <input
-                  onClick={handleCloseHourRequirements}
-                  type="time" 
-                  id="hour" 
-                  name="hour" 
-                  value={hour} 
-                  onChange={(e) => setHour(e.target.value)} 
-                />
-              </div>
-              <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
-                <input
-                  onClick={handleOpenHourRequirements}
-                  type="time" 
-                  id="hourFin" 
-                  name="hourFin" 
-                  value={hourFin} 
-                  onChange={(e) => setHourFin(e.target.value)} 
-                />
-                <Popper id={id} open={openHourRequirements} anchorEl={anchorEl}>
-                  <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenHourRequirements}>
-                      <p>Class must last at least 30 minutes</p>
-                  </Box>
-                </Popper>
-              </div>
-              <div className="input-small-container">
-                <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
-                <input
-                  onClick={handleCloseHourRequirements}
-                  type="text" 
-                  id="name" 
-                  name="name" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                />
-              </div>
-            </div>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container" style={{width:"100%"}}>
-                <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
-                <select
-                  onClick={handleCloseHourRequirements}
-                  id="permanent" 
-                  name="permanent" 
-                  value={permanent} 
-                  onChange={(e) => setPermanent(e.target.value)} 
-                >
-                  <option value="" >Select</option>
-                  <option value="Si">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
-                <input
-                  onClick={handleCloseHourRequirements}
-                  type="number" 
-                  id="maxNum" 
-                  name="maxNum"
-                  min={0}
-                  step={1}
-                  max={500}
-                  value={maxNum} 
-                  onChange={(e) => setMaxNum(e.target.value)} 
-                />
-              </div>
-              <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
-                <input
-                  onClick={handleCloseHourRequirements}
-                  type="date" 
-                  id="date" 
-                  name="date" 
-                  value={date} 
-                  onChange={(e) => setDate(e.target.value)} 
-                />
-              </div>
-            </div>
-            <button type="submit" className='button_login'>
-              Create class
-            </button>
-          </form>
-        </div>
-      </div>
     </div>
   );
 }

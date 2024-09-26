@@ -87,10 +87,18 @@ export default function RoutineCreation() {
         setOpenCircularProgress(true);
         if(validateForm()){
             try {
+                const response2 = await fetch('http://127.0.0.1:5000/get_routines');
+                if (!response2.ok) {
+                    throw new Error('Error al obtener las rutinas: ' + response2.statusText);
+                }
+                const data2 = await response2.json();
+                const filteredRoutines = data2.filter(event => event.name==routineAssigned);
+                
                 const newAsignRoutine = {
                     routine: routineAssigned,
                     user: users,
-                    owner: userMail
+                    owner: userMail,
+                    day: filteredRoutines[0].day
                 };
                 const response = await fetch('http://127.0.0.1:5000/assign_routine_to_user', {
                     method: 'POST',
