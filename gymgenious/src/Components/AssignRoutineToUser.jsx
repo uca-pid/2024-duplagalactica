@@ -22,7 +22,6 @@ export default function RoutineCreation() {
     const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
     const [errors, setErrors] = useState([]);
     const [failureErrors, setFailureErrors] = useState(false);
-    const [type, setType] = useState(null);
 
     const fetchRoutines = async () => {
         setOpenCircularProgress(true);
@@ -48,39 +47,15 @@ export default function RoutineCreation() {
     };
 
     useEffect(() => {
-      setOpenCircularProgress(true);
       const token = localStorage.getItem('authToken');
       console.log('Token:', token);
       if (token) {
           verifyToken(token);
       } else {
-          navigate('/');
           console.error('No token found');
       }
-      if (userMail){
-        fetchUser();
-      }
-      if(type!='coach'){
-        navigate('/');
-      }
-      setOpenCircularProgress(false);
       fetchRoutines();
     }, [userMail]);
-  
-    const fetchUser = async () => {
-      try {
-        const encodedUserMail = encodeURIComponent(userMail);
-        const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
-          if (!response.ok) {
-              throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
-          }
-          const data = await response.json();
-          setType(data.type);
-      } catch (error) {
-          console.error("Error fetching user:", error);
-      }
-    };
-
 
     const verifyToken = async (token) => {
         setOpenCircularProgress(true);
@@ -94,7 +69,6 @@ export default function RoutineCreation() {
             throw error;
         }
     };
-
 
     const validateForm = () => {
         let errors = [];
@@ -169,6 +143,38 @@ export default function RoutineCreation() {
 
     return (
         <div className='assign-routine-container'>
+            <div className='class-creation-content'>
+                <h2 style={{ color: '#14213D' }}>Assign users</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div className="input-small-container">
+                            <label htmlFor="routineAssigned" style={{ color: '#14213D' }}>Routine:</label>
+                            <select 
+                                id="routineAssigned" 
+                                name="routineAssigned" 
+                                value={routineAssigned} 
+                                onChange={(e) => setRoutine(e.target.value)}
+                            >
+                                <option value="">Select</option>
+                                {routines.map((routine) => (
+                                    <option key={routine.id} value={routine.id}>
+                                        {routine.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div className="input-small-container">
+                            <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
+                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned}/>
+                        </div>
+                    </div>
+                    <button type="submit" className='button_login'>
+                        Assign users
+                    </button>
+                </form>
+            </div>
             {openCircularProgress ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -245,38 +251,6 @@ export default function RoutineCreation() {
             ) : (
                 null
             )}
-            <div className='class-creation-content'>
-                <h2 style={{ color: '#14213D' }}>Assign users</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div className="input-small-container">
-                            <label htmlFor="routineAssigned" style={{ color: '#14213D' }}>Routine:</label>
-                            <select 
-                                id="routineAssigned" 
-                                name="routineAssigned" 
-                                value={routineAssigned} 
-                                onChange={(e) => setRoutine(e.target.value)}
-                            >
-                                <option value="">Select</option>
-                                {routines.map((routine) => (
-                                    <option key={routine.id} value={routine.id}>
-                                        {routine.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div className="input-small-container">
-                            <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
-                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned}/>
-                        </div>
-                    </div>
-                    <button type="submit" className='button_login'>
-                        Assign users
-                    </button>
-                </form>
-            </div>
         </div>
     );
 }

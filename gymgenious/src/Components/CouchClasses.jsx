@@ -174,43 +174,36 @@ function CouchClasses() {
     }
   };
 
+    const verifyToken = async (token) => {
+        try {
+            const decodedToken = jwtDecode(token);
+            setUserMail(decodedToken.email);
+        } catch (error) {
+            console.error('Error al verificar el token:', error);
+            setErrorToken(true);
+            setTimeout(() => {
+            setErrorToken(false);
+            }, 3000);
+            throw error;
+        }
+    };
 
-  const verifyToken = async (token) => {
-    setOpenCircularProgress(true);
-    try {
-        const decodedToken = jwtDecode(token);
-        setOpenCircularProgress(false);
-        setUserMail(decodedToken.email);
-    } catch (error) {
-        console.error('Error al verificar el token:', error);
-        setOpenCircularProgress(false);
-        setErrorToken(true);
-        setTimeout(() => {
-          setErrorToken(false);
-        }, 3000);
-        throw error;
-    }
-  };
-  
-
-  useEffect(() => {
-    setOpenCircularProgress(true);
-    const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
-    if (token) {
-        verifyToken(token);
-    } else {
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        console.log('Token:', token);
+        if (token) {
+            verifyToken(token);
+        } else {
+            navigate('/');
+            console.error('No token found');
+        }
+        if (userMail){
+        fetchUser();
+        }
+        if(type!='coach'){
         navigate('/');
-        console.error('No token found');
-    }
-    if (userMail){
-      fetchUser();
-    }
-    if(type!='coach'){
-      navigate('/');
-    }
-    setOpenCircularProgress(false);
-  }, [userMail]);
+        }
+    }, [userMail]);
 
   const fetchUser = async () => {
     try {
@@ -233,298 +226,309 @@ function CouchClasses() {
 
   return (
     <div className="App">
-        <NewLeftBar/>
-        {openCircularProgress ? (
-                <Backdrop
-                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                open={openCircularProgress}
-                >
-                <CircularProgress color="inherit" />
-                </Backdrop>
-            ) : null}
-      { warningFetchingClasses ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningFetchingClasses} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error fetching classes. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-            { warningDeletingClasses ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningDeletingClasses} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error deleting class. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-            { warningFetchingModifiedClasses ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningFetchingModifiedClasses} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error fetching modified class. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-            { errorToken ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
-                                Invalid Token!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-        <div className="Table-Container">
-            <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
-            <Paper 
-                sx={{ 
-                width: '100%',
-                backgroundColor: '#ffe0b5',
-                border: '2px solid #BC6C25'
-                }}
+        {type!='coach' ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
             >
-                <TableContainer>
-                <Table 
-                    sx={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    }} 
-                    aria-labelledby="tableTitle" 
-                    size={dense ? 'small' : 'medium'}
-                >
-                    <TableHead>
-                    <TableRow sx={{height: '5vh',width:'5vh',color:'#54311a' }}>
-                        <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
-                        <TableSortLabel
-                            active={orderBy === 'name'}
-                            direction={orderBy === 'name' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'name')}
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+            <>
+            <NewLeftBar/>
+            <div className="Table-Container">
+                <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
+                    <Paper 
+                        sx={{ 
+                        width: '100%',
+                        backgroundColor: '#ffe0b5',
+                        border: '2px solid #BC6C25'
+                        }}
+                    >
+                        <TableContainer>
+                        <Table 
+                            sx={{
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            }} 
+                            aria-labelledby="tableTitle" 
+                            size={dense ? 'small' : 'medium'}
                         >
-                            Name
-                            {orderBy === 'name' ? (
-                            <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                            </Box>
-                            ) : null}
-                        </TableSortLabel>
-                        </TableCell>
-                        {!isSmallScreen && (
-                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                            <TableSortLabel
-                            active={orderBy === 'hour'}
-                            direction={orderBy === 'hour' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'hour')}
-                            >
-                            Start time
-                            {orderBy === 'hour' ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                            </TableSortLabel>
-                        </TableCell>
-                        )}
-                        {!isSmallScreen250 && (
-                        <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                            <TableSortLabel
-                            active={orderBy === 'dateInicio'}
-                            direction={orderBy === 'dateInicio' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'dateInicio')}
-                            >
-                            Date
-                            {orderBy === 'dateInicio' ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                            </TableSortLabel>
-                        </TableCell>
-                        )}
-                        {!isSmallScreen && (
-                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                            <TableSortLabel
-                            active={orderBy === 'permanent'}
-                            direction={orderBy === 'permanent' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'permanent')}
-                            >
-                            Recurrent
-                            {orderBy === 'permanent' ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                            </TableSortLabel>
-                        </TableCell>
-                        )}
-                    </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {visibleRows.map((row) => (
-                        <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                            {row.name}
-                        </TableCell>
-                        {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{row.hour}</TableCell>
-                        )}
-                        {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
-                        )}
-                        {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
-                        )}
-                        </TableRow>
-                    ))}
-                    </TableBody>
-                </Table>
-                </TableContainer>
-                {isSmallScreen ? (
-                <TablePagination
-                rowsPerPageOptions={[10]}
-                component="div"
-                count={visibleRows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            ) : (
-                <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={visibleRows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            )}
-                
-            </Paper>
-            {selectedEvent && (
-                <div className="Modal" onClick={handleCloseModal}>
-                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                    <h2>Class details</h2>
-                    <p><strong>Name:</strong> {selectedEvent.name}</p>
-                    <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
-                    <p><strong>Start time:</strong> {selectedEvent.hour}</p>
-                    <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-                    <p><strong>Participants:</strong> {5}</p>
-                    <button onClick={handleEditClass}>Edit class</button>
-                    <button onClick={handleCloseModal}>Close</button>
-                    <button onClick={() => handleDeleteClass(selectedEvent.name)}>Delete class</button>
-                    </div>
-                </div>
-                )}
-            {editClass && (
-                <div className="Modal" onClick={handleEditClass}>
-                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                    <h2>Class details</h2>
-                    <form>
-                        <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                            <div className="input-small-container">
-                                <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
-                                <input 
-                                type={selectedEvent.hour ? 'text' : 'time'}
-                                id="hour" 
-                                name="hour" 
-                                value={hour} 
-                                onChange={(e) => setHour(e.target.value)}
-                                onFocus={(e) => (e.target.type = 'time')}
-                                onBlur={(e) => (e.target.type = 'text')}
-                                placeholder={selectedEvent.hour}
-                                />
-                            </div>
-                            <div className="input-small-container">
-                                <label htmlFor="hourFin" style={{color:'#14213D'}}>End time:</label>
-                                <input 
-                                    type="time" 
-                                    id="hourFin" 
-                                    name="hourFin" 
-                                    value={hourFin} 
-                                    onChange={(e) => setHourFin(e.target.value)} 
-                                />
-                            </div>
-                            <div className="input-small-container">
-                                <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
-                                <input 
-                                type="text" 
-                                id="name" 
-                                name="name" 
-                                value={name} 
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder={selectedEvent.name}                                />
-                            </div>
-                            </div>
-                            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                            <div className="input-small-container" style={{width:"100%"}}>
-                                <label htmlFor="permanent" style={{color:'#14213D'}}>Recurrent:</label>
-                                <select 
-                                id="permanent" 
-                                name="permanent" 
-                                value={permanent} 
-                                onChange={(e) => setPermanent(e.target.value)}
-                                placeholder={selectedEvent.permanent}
+                            <TableHead>
+                            <TableRow sx={{height: '5vh',width:'5vh',color:'#54311a' }}>
+                                <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                <TableSortLabel
+                                    active={orderBy === 'name'}
+                                    direction={orderBy === 'name' ? order : 'asc'}
+                                    onClick={(event) => handleRequestSort(event, 'name')}
                                 >
-                                <option value="" >Select</option>
-                                <option value="Si">Yes</option>
-                                <option value="No">No</option>
-                                </select>
-                            </div>
-                            <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                                <label htmlFor="date" style={{color:'#14213D'}}>Date:</label>
-                                <input 
-                                    type={date ? 'date' : 'text'}
-                                    id='date'
-                                    name='date'
-                                    value={date}
-                                    onChange={(e) => setDate(e.target.value)}
-                                    placeholder={new Date(selectedEvent.dateInicio).toLocaleDateString()}
-                                    onFocus={(e) => (e.target.type = 'date')}
-                                    onBlur={(e) => (e.target.type = 'text')}
-                                />
+                                    Name
+                                    {orderBy === 'name' ? (
+                                    <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                    </Box>
+                                    ) : null}
+                                </TableSortLabel>
+                                </TableCell>
+                                {!isSmallScreen && (
+                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                                    <TableSortLabel
+                                    active={orderBy === 'hour'}
+                                    direction={orderBy === 'hour' ? order : 'asc'}
+                                    onClick={(event) => handleRequestSort(event, 'hour')}
+                                    >
+                                    Start time
+                                    {orderBy === 'hour' ? (
+                                        <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                        </Box>
+                                    ) : null}
+                                    </TableSortLabel>
+                                </TableCell>
+                                )}
+                                {!isSmallScreen250 && (
+                                <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                                    <TableSortLabel
+                                    active={orderBy === 'dateInicio'}
+                                    direction={orderBy === 'dateInicio' ? order : 'asc'}
+                                    onClick={(event) => handleRequestSort(event, 'dateInicio')}
+                                    >
+                                    Date
+                                    {orderBy === 'dateInicio' ? (
+                                        <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                        </Box>
+                                    ) : null}
+                                    </TableSortLabel>
+                                </TableCell>
+                                )}
+                                {!isSmallScreen && (
+                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                                    <TableSortLabel
+                                    active={orderBy === 'permanent'}
+                                    direction={orderBy === 'permanent' ? order : 'asc'}
+                                    onClick={(event) => handleRequestSort(event, 'permanent')}
+                                    >
+                                    Recurrent
+                                    {orderBy === 'permanent' ? (
+                                        <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                        </Box>
+                                    ) : null}
+                                    </TableSortLabel>
+                                </TableCell>
+                                )}
+                            </TableRow>
+                            </TableHead>
+                            <TableBody>
+                            {visibleRows.map((row) => (
+                                <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                    {row.name}
+                                </TableCell>
+                                {!isSmallScreen && (
+                                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{row.hour}</TableCell>
+                                )}
+                                {!isSmallScreen250 && (
+                                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                                )}
+                                {!isSmallScreen && (
+                                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                                )}
+                                </TableRow>
+                            ))}
+                            </TableBody>
+                        </Table>
+                        </TableContainer>
+                        {isSmallScreen ? (
+                        <TablePagination
+                        rowsPerPageOptions={[10]}
+                        component="div"
+                        count={visibleRows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    ) : (
+                        <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={visibleRows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    )}
+                        
+                    </Paper>
+                    {selectedEvent && (
+                        <div className="Modal" onClick={handleCloseModal}>
+                            <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                            <h2>Class details</h2>
+                            <p><strong>Name:</strong> {selectedEvent.name}</p>
+                            <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
+                            <p><strong>Start time:</strong> {selectedEvent.hour}</p>
+                            <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+                            <p><strong>Participants:</strong> {5}</p>
+                            <button onClick={handleEditClass}>Edit class</button>
+                            <button onClick={handleCloseModal}>Close</button>
+                            <button onClick={() => handleDeleteClass(selectedEvent.name)}>Delete class</button>
                             </div>
                         </div>
-                        <button onClick={handleEditClass} className='button_login'>
-                            Cancell
-                        </button>
-                        <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>
-                            Save changes
-                        </button>
-                    </form>
-                    </div>
+                        )}
+                    {editClass && (
+                        <div className="Modal" onClick={handleEditClass}>
+                            <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                            <h2>Class details</h2>
+                            <form>
+                                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                    <div className="input-small-container">
+                                        <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
+                                        <input 
+                                        type={selectedEvent.hour ? 'text' : 'time'}
+                                        id="hour" 
+                                        name="hour" 
+                                        value={hour} 
+                                        onChange={(e) => setHour(e.target.value)}
+                                        onFocus={(e) => (e.target.type = 'time')}
+                                        onBlur={(e) => (e.target.type = 'text')}
+                                        placeholder={selectedEvent.hour}
+                                        />
+                                    </div>
+                                    <div className="input-small-container">
+                                        <label htmlFor="hourFin" style={{color:'#14213D'}}>End time:</label>
+                                        <input 
+                                            type="time" 
+                                            id="hourFin" 
+                                            name="hourFin" 
+                                            value={hourFin} 
+                                            onChange={(e) => setHourFin(e.target.value)} 
+                                        />
+                                    </div>
+                                    <div className="input-small-container">
+                                        <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+                                        <input 
+                                        type="text" 
+                                        id="name" 
+                                        name="name" 
+                                        value={name} 
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder={selectedEvent.name}                                />
+                                    </div>
+                                    </div>
+                                    <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                    <div className="input-small-container" style={{width:"100%"}}>
+                                        <label htmlFor="permanent" style={{color:'#14213D'}}>Recurrent:</label>
+                                        <select 
+                                        id="permanent" 
+                                        name="permanent" 
+                                        value={permanent} 
+                                        onChange={(e) => setPermanent(e.target.value)}
+                                        placeholder={selectedEvent.permanent}
+                                        >
+                                        <option value="" >Select</option>
+                                        <option value="Si">Yes</option>
+                                        <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                                        <label htmlFor="date" style={{color:'#14213D'}}>Date:</label>
+                                        <input 
+                                            type={date ? 'date' : 'text'}
+                                            id='date'
+                                            name='date'
+                                            value={date}
+                                            onChange={(e) => setDate(e.target.value)}
+                                            placeholder={new Date(selectedEvent.dateInicio).toLocaleDateString()}
+                                            onFocus={(e) => (e.target.type = 'date')}
+                                            onBlur={(e) => (e.target.type = 'text')}
+                                        />
+                                    </div>
+                                </div>
+                                <button onClick={handleEditClass} className='button_login'>
+                                    Cancell
+                                </button>
+                                <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>
+                                    Save changes
+                                </button>
+                            </form>
+                            </div>
+                        </div>
+                        )}
+                    </Box>
                 </div>
+                {openCircularProgress ? (
+                    <Backdrop
+                    sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                    open={openCircularProgress}
+                    >
+                    <CircularProgress color="inherit" />
+                    </Backdrop>
+                ) : null}
+                { warningFetchingClasses ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningFetchingClasses} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Error fetching classes. Try again!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
                 )}
-            </Box>
-        </div>
+                { warningDeletingClasses ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningDeletingClasses} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Error deleting class. Try again!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                { warningFetchingModifiedClasses ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningFetchingModifiedClasses} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Error fetching modified class. Try again!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                { errorToken ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                                    Invalid Token!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+            </>
+        )}
     </div>
   );
   

@@ -22,7 +22,6 @@ export default function RoutineCreation() {
     const [failure, setFailure] = useState(false);
     const [errors, setErrors] = useState([]);
     const [failureErrors, setFailureErrors] = useState(false);
-    const [type, setType] = useState(null);
 
     const handleExcersiceChange = (newExcersices) => {
       setExercises(newExcersices);
@@ -102,115 +101,27 @@ export default function RoutineCreation() {
   };
 
   useEffect(() => {
-    setOpenCircularProgress(true);
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
-        navigate('/');
         console.error('No token found');
     }
-    if (userMail){
-      fetchUser();
-    }
-    if(type!='coach'){
-      navigate('/');
-    }
-    setOpenCircularProgress(false);
   }, [userMail]);
 
-  const fetchUser = async () => {
-    try {
-      const encodedUserMail = encodeURIComponent(userMail);
-      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
-        if (!response.ok) {
-            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
-        }
-        const data = await response.json();
-        setType(data.type);
-    } catch (error) {
-        console.error("Error fetching user:", error);
-    }
-  };
-
-
   const verifyToken = async (token) => {
-      setOpenCircularProgress(true);
       try {
           const decodedToken = jwtDecode(token);
           setUserMail(decodedToken.email);
-          setOpenCircularProgress(false);
       } catch (error) {
           console.error('Error al verificar el token:', error);
-          setOpenCircularProgress(false);
           throw error;
       }
   };
 
   return (
     <div className='routine-creation-container'>
-      {openCircularProgress ? (
-                <Backdrop
-                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                open={openCircularProgress}
-                >
-                <CircularProgress color="inherit" />
-                </Backdrop>
-            ) : null}
-            { success ? (
-                <div className='alert-container'>
-                <div className='alert-content'>
-                    <Box sx={{ position: 'relative', zIndex: 1 }}>
-                    <Slide direction="up" in={success} mountOnEnter unmountOnExit >
-                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
-                            Routine successfully created!
-                        </Alert>
-                    </Slide>
-                    </Box>
-                </div>
-                </div>
-            ) : (
-                null
-            )}
-            { failureErrors ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                    <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
-                        <div>
-                            <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                            Error creating routine.
-                            </Alert>
-                            {errors.length > 0 && errors.map((error, index) => (
-                            <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                                <li>{error}</li>
-                            </Alert>
-                            ))}
-                        </div>
-                        </Slide>
-                    </Box>
-                    </div>
-                </div>
-              
-            ) : (
-                null
-            )}
-            { failure ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error creating routine. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
       <div className='routine-creation-content'>
         <h2 style={{color:'#14213D'}}>Create routine</h2>
         <form onSubmit={handleSubmit}>
@@ -283,6 +194,67 @@ export default function RoutineCreation() {
           </button>
         </form>
       </div>
+      {openCircularProgress ? (
+          <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+          open={openCircularProgress}
+          >
+          <CircularProgress color="inherit" />
+          </Backdrop>
+        ) : null}
+        { success ? (
+            <div className='alert-container'>
+              <div className='alert-content'>
+                  <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                      <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                          Routine successfully created!
+                      </Alert>
+                  </Slide>
+                  </Box>
+              </div>
+            </div>
+        ) : (
+            null
+        )}
+        { failureErrors ? (
+            <div className='alert-container'>
+                <div className='alert-content'>
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
+                    <div>
+                        <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                        Error creating routine.
+                        </Alert>
+                        {errors.length > 0 && errors.map((error, index) => (
+                        <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                            <li>{error}</li>
+                        </Alert>
+                        ))}
+                    </div>
+                    </Slide>
+                </Box>
+                </div>
+            </div>
+          
+        ) : (
+            null
+        )}
+        { failure ? (
+            <div className='alert-container'>
+                <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                        <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                            Error creating routine. Try again!
+                        </Alert>
+                    </Slide>
+                    </Box>
+                </div>
+            </div>
+        ) : (
+            null
+        )}
     </div>
   );
 }

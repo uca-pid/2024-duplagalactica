@@ -22,7 +22,6 @@ export default function ExerciseCreation() {
   const [series, setSeries] = useState(4);
   const [reps, setReps] = useState(Array(series).fill(''));
   const [timing, setTiming] = useState(0);
-  const [type, setType] = useState(null);
 
   const handleSeriesChange = (e) => {
     const newSeries = parseInt(e.target.value);
@@ -106,47 +105,21 @@ export default function ExerciseCreation() {
   };
 
   useEffect(() => {
-    setOpenCircularProgress(true);
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
-        navigate('/');
         console.error('No token found');
     }
-    if (userMail){
-      fetchUser();
-    }
-    if(type!='coach'){
-      navigate('/');
-    }
-    setOpenCircularProgress(false);
   }, [userMail]);
 
-  const fetchUser = async () => {
-    try {
-      const encodedUserMail = encodeURIComponent(userMail);
-      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
-        if (!response.ok) {
-            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
-        }
-        const data = await response.json();
-        setType(data.type);
-    } catch (error) {
-        console.error("Error fetching user:", error);
-    }
-  };
-
   const verifyToken = async (token) => {
-    setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
         setUserMail(decodedToken.email);
-        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
-        setOpenCircularProgress(false);
         throw error;
     }
   };
