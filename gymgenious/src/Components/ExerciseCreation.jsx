@@ -162,6 +162,7 @@ export default function ExerciseCreation() {
                   name="series" 
                   value={series}
                   min="1"
+                  step='1'
                   max="8"
                   onChange={handleSeriesChange}
                   />
@@ -175,7 +176,8 @@ export default function ExerciseCreation() {
                   value={timing}
                   min="1"
                   max="500"
-                  onChange={(e) => setTiming(e.target.value)} 
+                  step='1'
+                  onChange={(e) => setTiming(e.target.value)}
                   />
               </div>
           </div>

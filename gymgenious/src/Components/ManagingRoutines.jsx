@@ -80,9 +80,6 @@ export default function ManagingRoutines () {
     if (userMail){
       fetchUser();
     }
-    if(type!='coach'){
-        navigate('/');
-    }
   }, [userMail]);
 
   const fetchUser = async () => {
@@ -94,11 +91,13 @@ export default function ManagingRoutines () {
         }
         const data = await response.json();
         setType(data.type);
+        if(data.type!='coach'){
+          navigate('/');
+        }
     } catch (error) {
         console.error("Error fetching user:", error);
     }
   };
-
 
   const verifyToken = async (token) => {
       try {

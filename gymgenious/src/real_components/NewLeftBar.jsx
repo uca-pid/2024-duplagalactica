@@ -14,6 +14,9 @@ import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
 import ExitToApp from '@mui/icons-material/ExitToApp';
 import MenuIcon from '@mui/icons-material/Menu';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import SportsGymnasticsIcon from '@mui/icons-material/SportsGymnastics';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import { useNavigate } from 'react-router-dom';
 
 export default function TemporaryDrawer() {
@@ -38,10 +41,10 @@ export default function TemporaryDrawer() {
       goToMainPage,
       goToUserProfile,
       goToClassCreation,
-      goToManageRoutines,
-      goToLogout,
       goToCouchClasses,
-      goToCouchRoutines
+      goToManageRoutines,
+      goToCouchRoutines,
+      goToLogout,
     ];
     routes[index]();
   };
@@ -85,16 +88,16 @@ export default function TemporaryDrawer() {
   const DrawerListCoach = (
     <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Home', 'Profile', 'Create class', 'Manage routines', 'Logout', 'MyClasses', 'MyRoutines'].map((text, index) => (
+        {['Home', 'Profile', 'Create class', 'MyClasses', 'Manage routines', 'MyRoutines', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateTo(index)}>
               <ListItemIcon>
                 {index === 0 && <HomeIcon sx={{ color: '#BC6C25' }} />}
                 {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
                 {index === 2 && <AddIcon sx={{ color: '#BC6C25' }} />}
-                {index === 3 && <HomeIcon sx={{ color: '#BC6C25' }} />}
-                {index === 4 && <ExitToApp sx={{ color: '#BC6C25' }} />}
-                {index === 5 && <ExitToApp sx={{ color: '#BC6C25' }} />}
+                {index === 3 && <SportsGymnasticsIcon sx={{ color: '#BC6C25' }} />}
+                {index === 4 && <FitnessCenterIcon sx={{ color: '#BC6C25' }} />}
+                {index === 5 && <DirectionsRunIcon sx={{ color: '#BC6C25' }} />}
                 {index === 6 && <ExitToApp sx={{ color: '#BC6C25' }} />}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />

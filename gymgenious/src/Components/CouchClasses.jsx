@@ -198,26 +198,26 @@ function CouchClasses() {
             console.error('No token found');
         }
         if (userMail){
-        fetchUser();
+          fetchUser();
         }
-        if(type!='coach'){
-        navigate('/');
+      }, [userMail]);
+    
+      const fetchUser = async () => {
+        try {
+          const encodedUserMail = encodeURIComponent(userMail);
+          const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+            }
+            const data = await response.json();
+            setType(data.type);
+            if(data.type!='coach'){
+              navigate('/');
+            }
+        } catch (error) {
+            console.error("Error fetching user:", error);
         }
-    }, [userMail]);
-
-  const fetchUser = async () => {
-    try {
-      const encodedUserMail = encodeURIComponent(userMail);
-      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
-        if (!response.ok) {
-            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
-        }
-        const data = await response.json();
-        setType(data.type);
-    } catch (error) {
-        console.error("Error fetching user:", error);
-    }
-  };
+      };
 
   useEffect(() => {
     fetchClasses();

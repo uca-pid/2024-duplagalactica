@@ -19,7 +19,7 @@ export default function CreateClass() {
   const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
-  const [maxNum,setMaxNum] = useState(0);
+  const [maxNum,setMaxNum] = useState(1);
   const navigate = useNavigate();
   const [userMail,setUserMail] = useState('')
   const [errors, setErrors] = useState([]);
@@ -155,9 +155,6 @@ export default function CreateClass() {
     if (userMail){
       fetchUser();
     }
-    if(type!='coach'){
-      navigate('/');
-    }
   }, [userMail]);
 
   const fetchUser = async () => {
@@ -169,6 +166,9 @@ export default function CreateClass() {
         }
         const data = await response.json();
         setType(data.type);
+        if(data.type!='coach'){
+          navigate('/');
+        }
     } catch (error) {
         console.error("Error fetching user:", error);
     }
@@ -266,9 +266,9 @@ export default function CreateClass() {
                             type="number" 
                             id="maxNum" 
                             name="maxNum"
-                            min={0}
-                            step={1}
-                            max={500}
+                            min='1'
+                            max='500'
+                            step='1'
                             value={maxNum} 
                             onChange={(e) => setMaxNum(e.target.value)} 
                           />
@@ -352,9 +352,9 @@ export default function CreateClass() {
                             type="number" 
                             id="maxNum" 
                             name="maxNum"
-                            min={0}
-                            step={1}
-                            max={500}
+                            min='1'
+                            max='500'
+                            step='1'
                             value={maxNum} 
                             onChange={(e) => setMaxNum(e.target.value)} 
                           />
