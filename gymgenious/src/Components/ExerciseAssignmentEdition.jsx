@@ -47,24 +47,23 @@ export default function UsserAssignment({onUsersChange,routine}) {
         throw new Error('Error al obtener las rutinas: ' + response.statusText);
       }
       const routinesData = await response.json();
-      const filteredRoutines = routinesData.filter(event => event.name === routine);
+      const filteredRoutines = routinesData.filter(event => event.id === routine);
       const response2 = await fetch(`http://127.0.0.1:5000/get_excersices`);
       if (!response2.ok) {
           throw new Error('Error al obtener los ejercicios: ' + response2.statusText);
         }
         const exercisesData = await response2.json();
         const filteredExercises = exercisesData.filter(exercise => exercise.owner === userMail);
-        console.log("aaaa",filteredExercises)
   
       const exercisesInRoutines = new Set();
       filteredRoutines.forEach(routine => {
         routine.excercises.forEach(exercise => {
-          exercisesInRoutines.add(exercise.name);  
+          exercisesInRoutines.add(exercise.id);  
         });
       });
   
-      const right = filteredExercises.filter(exercise => exercisesInRoutines.has(exercise.name)); 
-      const left = filteredExercises.filter(exercise => !exercisesInRoutines.has(exercise.name)); 
+      const right = filteredExercises.filter(exercise => exercisesInRoutines.has(exercise.id)); 
+      const left = filteredExercises.filter(exercise => !exercisesInRoutines.has(exercise.id)); 
       console.log(right)
       setRight(right); 
       setLeft(left);    

@@ -91,11 +91,13 @@ function CouchClasses() {
         const isoDateStringInicio = `${date}T${hour}:00Z`;
         const isoDateStringFin = `${date}T${hourFin}:00Z`;
         const updatedUser = {
+            cid: selectedEvent.id,
             NameOriginal: selectedEvent.name,
             DateFin: isoDateStringFin,
             DateInicio: isoDateStringInicio,
             Day: day(date),
             Name: name,
+            Hour:hour,
             Permanent: permanent
         };
         const response = await fetch('http://127.0.0.1:5000/update_class_info', {
@@ -157,7 +159,6 @@ function CouchClasses() {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      console.log(data);
       const filteredClasses = data.filter(event => event.owner == userMail);
       setClasses(filteredClasses);
       setTimeout(() => {
@@ -416,7 +417,7 @@ function CouchClasses() {
                     <p><strong>Participants:</strong> {5}</p>
                     <button onClick={handleEditClass}>Edit class</button>
                     <button onClick={handleCloseModal}>Close</button>
-                    <button onClick={() => handleDeleteClass(selectedEvent.name)}>Delete class</button>
+                    <button onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
                     </div>
                 </div>
                 )}

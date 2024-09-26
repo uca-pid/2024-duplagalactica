@@ -28,6 +28,7 @@ const day = (dateString) => {
 
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
+  const [id,setId] = useState()
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
@@ -86,6 +87,7 @@ function CouchClasses() {
   const handleSaveEditRoutine = async () => {
     try {
         const updatedRoutines = {
+            rid: id,
             day: day || fetchDay,
             description: desc,
             excers: exercises,
@@ -120,11 +122,37 @@ function CouchClasses() {
     setHour('');
     setHourFin('');
     setPermanent('');
+    setId(event.id)
     setFetchDay(event.day);
     setName(event.name);
     setDesc(event.description)
   } 
 
+  const handeDeleteRoutine = async (event) => {
+    setOpenCircularProgress(true);
+    try {
+      const response = await fetch('http://127.0.0.1:5000/delete_routine', {
+        method: 'DELETE', 
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({event: event})
+      });
+      if (!response.ok) {
+        throw new Error('Error al eliminar la rutina: ' + response.statusText);
+      }
+      await fetchRoutines();
+      setOpenCircularProgress(false);
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error fetching rutinas:", error);
+      setOpenCircularProgress(false);
+      setWarningDeletingClasses(true);
+      setTimeout(() => {
+        setWarningDeletingClasses(false);
+      }, 3000);
+    }
+  }
 
   const fetchRoutines = async () => {
     setOpenCircularProgress(true);
@@ -136,7 +164,6 @@ function CouchClasses() {
         const data = await response.json();
         const filteredRoutines = data.filter(event => event.owner.includes(userMail));
         setRoutines(filteredRoutines);
-        console.log(routines);
         setTimeout(() => {
             setOpenCircularProgress(false);
           }, 2000);
@@ -166,20 +193,18 @@ function CouchClasses() {
         throw error;
     }
   };
-  
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
-    } else {
-        console.error('No token found');
     }
-  }, []);
+    }, []);
 
-  useEffect(() => {
-    fetchRoutines();
-  }, [userMail])
+    useEffect(() => {
+        if (userMail) { 
+            fetchRoutines();
+        }
+    }, [userMail]);
 
 
   return (
@@ -397,7 +422,7 @@ function CouchClasses() {
                     <p><strong>Users:</strong> {5}</p>
                     <button onClick={()=> handleEditRoutine(selectedEvent)}>Edit routine</button>
                     <button onClick={handleCloseModal}>Close</button>
-                    <button onClick={handleCloseModal}>Delete routine</button>
+                    <button onClick={()=>handeDeleteRoutine(selectedEvent)}>Delete routine</button>
                     </div>
                 </div>
                 )}
@@ -451,7 +476,7 @@ function CouchClasses() {
                         <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div className="input-small-container">
                                 <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label> 
-                                <ExcersiceAssignment onUsersChange={handleExcersiceChange} routine={selectedEvent.name}/>
+                                <ExcersiceAssignment onUsersChange={handleExcersiceChange} routine={selectedEvent.id}/>
                             </div>
                         </div>
                         <button onClick={handleEditRoutine} className='button_login'>

@@ -29,7 +29,7 @@ def get_routines():
     try:
         routines_ref = db.collection('routines')
         docs = routines_ref.stream()
-        routines = [{**doc.to_dict()} for doc in docs]
+        routines = [{**doc.to_dict(), 'id': doc.id} for doc in docs]
         return routines
     except Exception as e:
         print(f"Error al obtener las rutinas: {e}")
@@ -48,23 +48,45 @@ def get_assigned_routines():
 
 def update_routine_info(newRoutine):
     try:
-        print(newRoutine)
         users_ref = db.collection('routines')
-        docs = users_ref.where('name', '==', newRoutine['name']).stream()
-        updated = False
-
-        for doc in docs:
-            doc_ref = users_ref.document(doc.id)
+        doc_ref = users_ref.document(newRoutine['rid'])
+        doc = doc_ref.get()
+        print("rutina nueva",newRoutine['excers'])
+        if doc.exists:        
             doc_ref.update({
                 'day': newRoutine['day'],
                 'description': newRoutine['description'],
+                'name': newRoutine['name'],
                 'excercises': newRoutine['excers']
             })
-            updated = True
+            
+            return {"message": "Actualización realizada"}
+        else:
+            print(f"No se encontró una rutina con el id: {newRoutine['rid']}")
+            return {"message": "No se encontró la rutina"}
 
-        if not updated:
-            print(f"No se encontró una rutina con el nombre: {newRoutine.name}")
-        return {"message": "Actualización realizada"} 
     except Exception as e:
         print(f"Error actualizando la rutina: {e}")
         raise RuntimeError("No se pudo actualizar la rutina")
+
+def delete_routine(event):
+    try:
+        print("uionbviusunhisfujn")
+        users_ref = db.collection('routines')
+        print("aaaaa",event)
+        doc_ref = users_ref.document(event['id'])
+        doc = doc_ref.get()
+        if doc.exists:
+            assigned_routines = db.collection('assigned_routines')
+            assigned_ref = assigned_routines.where('id', '==', doc.id).stream()
+            for assigned_doc in assigned_ref:
+                assigned_doc.reference.delete()
+            doc_ref.delete()
+            return {"message": "Rutina eliminada correctamente"}
+        else:
+            print(f"No se encontró una rutina con el ID: {event}")
+            return {"message": "No se encontró la rutina"}
+            
+    except Exception as e:
+        print(f"Error eliminando la rutina: {e}")
+        raise RuntimeError("No se pudo eliminar la rutina")

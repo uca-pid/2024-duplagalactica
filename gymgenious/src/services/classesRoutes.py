@@ -27,25 +27,17 @@ def create_class(new_class):
 
 def book_class(event, mail):
     try:
-        print("hgola")
-        print(event, mail)
+        print("id:",event)
         users_ref = db.collection('classes')
-        docs = users_ref.where('name', '==', event).stream()
-        updated = False
-
-        for doc in docs:
-            doc_ref = users_ref.document(doc.id)
-            current_data = doc_ref.get().to_dict()
-            booked_users = current_data.get('BookedUsers', [])
-            if mail not in booked_users:
-                booked_users.append(mail)
-            doc_ref.update({
-                'BookedUsers': booked_users
-            })
-            updated = True
-
-        if not updated:
-            print(f"No se encontró una clase con el nombre: {event}")
+        doc_ref = users_ref.document(event)
+        doc = doc_ref.get()
+        current_data = doc.to_dict()
+        booked_users = current_data.get('BookedUsers', [])
+        if mail not in booked_users:
+            booked_users.append(mail)
+        doc_ref.update({
+            'BookedUsers': booked_users
+        })
         return {"message": "Actualización realizada"} 
     except Exception as e:
         print(f"Error actualizando el usuario: {e}")
@@ -54,22 +46,15 @@ def book_class(event, mail):
 def unbook_class(event, mail):
     try:
         users_ref = db.collection('classes')
-        docs = users_ref.where('name', '==', event).stream()
-        updated = False
-
-        for doc in docs:
-            doc_ref = users_ref.document(doc.id)
-            current_data = doc_ref.get().to_dict()
-            booked_users = current_data.get('BookedUsers', [])
-            if mail in booked_users:
-                booked_users.remove(mail)
-                doc_ref.update({
-                    'BookedUsers': booked_users
-                })
-                updated = True
-
-        if not updated:
-            print(f"No se encontró una clase con el nombre: {event}")
+        doc_ref = users_ref.document(event)
+        doc = doc_ref.get()
+        current_data = doc.to_dict()
+        booked_users = current_data.get('BookedUsers', [])
+        if mail in booked_users:
+            booked_users.remove(mail)
+            doc_ref.update({
+                'BookedUsers': booked_users
+            })
         return {"message": "Actualización realizada"} 
     except Exception as e:
         print(f"Error actualizando el usuario: {e}")
@@ -78,15 +63,9 @@ def unbook_class(event, mail):
 def delete_class(event,mail):
     try:
         users_ref = db.collection('classes')
-        docs = users_ref.where('name', '==', event).where('owner','==',mail).stream()
-        deleted_count = 0
-        for doc in docs:
-            doc.reference.delete()
-            deleted_count += 1
-        if deleted_count > 0:
-            return {"message": f"Se eliminaron {deleted_count} clase(s)"}
-        else:
-            return {"message": "No se encontraron clases para eliminar"}
+        doc_ref = users_ref.document(event)
+        doc = doc_ref.get()
+        doc.reference.delete()
     except Exception as e:
         print(f"Error actualizando el usuario: {e}")
         raise RuntimeError("No se pudo actualizar el usuario")
@@ -95,22 +74,17 @@ def delete_class(event,mail):
 def update_class_info(newClass):
     try:
         users_ref = db.collection('classes')
-        docs = users_ref.where('name', '==', newClass['NameOriginal']).stream()
-        updated = False
-
-        for doc in docs:
-            doc_ref = users_ref.document(doc.id)
+        doc_ref = users_ref.document(newClass['cid'])
+        doc = doc_ref.get()
+        if doc.exists: 
             doc_ref.update({
                 'dateFin': newClass['DateFin'],
                 'dateInicio': newClass['DateInicio'],
                 'day': newClass['Day'],
+                'hour':newClass['Hour'],
                 'name': newClass['Name'],
                 'permanent': newClass['Permanent']
             })
-            updated = True
-
-        if not updated:
-            print(f"No se encontró una clase con el nombre: {newClass['NameOriginal']}")
         return {"message": "Actualización realizada"} 
     except Exception as e:
         print(f"Error actualizando la clase: {e}")

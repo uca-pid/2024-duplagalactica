@@ -28,7 +28,7 @@ def get_excersices():
     try:
         routines_ref = db.collection('exersices')
         docs = routines_ref.stream()
-        datitos = [{**doc.to_dict()} for doc in docs] 
+        datitos = [{'id': doc.id,**doc.to_dict()} for doc in docs] 
         return datitos
     except Exception as e:
         print(f"Error al obtener los ejercicios: {e}")

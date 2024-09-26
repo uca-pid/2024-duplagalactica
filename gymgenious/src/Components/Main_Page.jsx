@@ -338,11 +338,11 @@ export default function Main_Page() {
         {userMail? (
           <>
           {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
-                <button onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook</button>
+                <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
               ) : (
                 <>
                 {selectedEvent.BookedUsers.length!=selectedEvent.capacity ? (
-                <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
+                <button onClick={() => handleBookClass(selectedEvent.id)}>Book</button>
                 ) :
                 (<>
                 <button style={{background:'red'}}>Full</button>

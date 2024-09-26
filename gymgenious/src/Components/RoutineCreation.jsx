@@ -232,22 +232,6 @@ export default function RoutineCreation() {
                   />
               </div>
           </div>
-          {/* <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container">
-                  <label htmlFor="exercises" style={{color:'#14213D'}}>Exercises:</label>
-                  <select 
-                      id="exercises" 
-                      name="exercises" 
-                      value={exercises} 
-                      onChange={(e) => setExercises(e.target.value)} 
-                      >
-                      <option value="" >Select</option>
-                      <option value="Bench press">Bench press</option>
-                      <option value="Barbell curl">Barbell curl</option>
-                      <option value="Bar Push Downs">Bar Push Downs</option>
-                  </select>
-              </div>
-          </div> */}
           <div className="grid-create-routine-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
               <div className="input-small-create-routine-container">
                   <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
