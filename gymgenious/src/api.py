@@ -6,7 +6,7 @@ from firebase_admin import credentials, firestore
 from Controllers.classesController import get_classes_route, create_class_route,book_class_route,unbook_class_route,delete_class_route,update_class_info_route
 from Controllers.usersController import get_unique_user_by_email_route ,get_user_route, send_email_route, create_user_route,get_users_route,get_clients_users_route,get_client_users_no_match_routine_route,update_users_info_route
 from Controllers.excersicesController import create_exersice_route,get_excersice_by_owner_route,get_excersices_route
-from Controllers.routineController import create_routine_route,assign_routine_to_user_route,get_routines_route,get_assigned_routines_route,update_routine_info_route
+from Controllers.routineController import create_routine_route,assign_routine_to_user_route,get_routines_route,get_assigned_routines_route,update_routine_info_route,delete_routine_route
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -46,6 +46,11 @@ def delete_class():
     event = request.json.get('event')
     mail = request.json.get('mail')
     return delete_class_route(event,mail)
+
+@app.route('/delete_routine', methods=['DELETE'])
+def delete_routine():
+    event = request.json.get('event')
+    return delete_routine_route(event)
 
 @app.route('/get_unique_user_by_email', methods=['GET'])
 def get_unique_user_by_email():

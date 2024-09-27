@@ -95,11 +95,13 @@ function CouchClasses() {
         const isoDateStringInicio = `${date}T${hour}:00Z`;
         const isoDateStringFin = `${date}T${hourFin}:00Z`;
         const updatedUser = {
+            cid: selectedEvent.id,
             NameOriginal: selectedEvent.name,
             DateFin: isoDateStringFin,
             DateInicio: isoDateStringInicio,
             Day: day(date),
             Name: name,
+            Hour:hour,
             Permanent: permanent
         };
         const response = await fetch('http://127.0.0.1:5000/update_class_info', {
@@ -169,7 +171,6 @@ function CouchClasses() {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      console.log(data);
       const filteredClasses = data.filter(event => event.owner == userMail);
       setClasses(filteredClasses);
       setTimeout(() => {
@@ -564,7 +565,150 @@ function CouchClasses() {
                         </Slide>
                         </Box>
                     </div>
-                    </div>
+                </div>
+            ) : (
+                null
+            )}
+        <div className="Table-Container">
+            <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
+            <Paper 
+                sx={{ 
+                width: '100%',
+                backgroundColor: '#ffe0b5',
+                border: '2px solid #BC6C25'
+                }}
+            >
+                <TableContainer>
+                <Table 
+                    sx={{
+                    width: '100%',
+                    borderCollapse: 'collapse',
+                    }} 
+                    aria-labelledby="tableTitle" 
+                    size={dense ? 'small' : 'medium'}
+                >
+                    <TableHead>
+                    <TableRow sx={{height: '5vh',width:'5vh',color:'#54311a' }}>
+                        <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                        <TableSortLabel
+                            active={orderBy === 'name'}
+                            direction={orderBy === 'name' ? order : 'asc'}
+                            onClick={(event) => handleRequestSort(event, 'name')}
+                        >
+                            Name
+                            {orderBy === 'name' ? (
+                            <Box component="span" sx={visuallyHidden}>
+                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                            </Box>
+                            ) : null}
+                        </TableSortLabel>
+                        </TableCell>
+                        {!isSmallScreen && (
+                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableSortLabel
+                            active={orderBy === 'hour'}
+                            direction={orderBy === 'hour' ? order : 'asc'}
+                            onClick={(event) => handleRequestSort(event, 'hour')}
+                            >
+                            Start time
+                            {orderBy === 'hour' ? (
+                                <Box component="span" sx={visuallyHidden}>
+                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                </Box>
+                            ) : null}
+                            </TableSortLabel>
+                        </TableCell>
+                        )}
+                        {!isSmallScreen250 && (
+                        <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableSortLabel
+                            active={orderBy === 'dateInicio'}
+                            direction={orderBy === 'dateInicio' ? order : 'asc'}
+                            onClick={(event) => handleRequestSort(event, 'dateInicio')}
+                            >
+                            Date
+                            {orderBy === 'dateInicio' ? (
+                                <Box component="span" sx={visuallyHidden}>
+                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                </Box>
+                            ) : null}
+                            </TableSortLabel>
+                        </TableCell>
+                        )}
+                        {!isSmallScreen && (
+                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableSortLabel
+                            active={orderBy === 'permanent'}
+                            direction={orderBy === 'permanent' ? order : 'asc'}
+                            onClick={(event) => handleRequestSort(event, 'permanent')}
+                            >
+                            Recurrent
+                            {orderBy === 'permanent' ? (
+                                <Box component="span" sx={visuallyHidden}>
+                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                </Box>
+                            ) : null}
+                            </TableSortLabel>
+                        </TableCell>
+                        )}
+                    </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {visibleRows.map((row) => (
+                        <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                            {row.name}
+                        </TableCell>
+                        {!isSmallScreen && (
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{row.hour}</TableCell>
+                        )}
+                        {!isSmallScreen250 && (
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                        )}
+                        {!isSmallScreen && (
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                        )}
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                </Table>
+                </TableContainer>
+                {isSmallScreen ? (
+                <TablePagination
+                rowsPerPageOptions={[10]}
+                component="div"
+                count={visibleRows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            ) : (
+                <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={visibleRows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            )}
+                
+            </Paper>
+            {selectedEvent && (
+                <div className="Modal" onClick={handleCloseModal}>
+                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                    <h2>Class details</h2>
+                    <p><strong>Name:</strong> {selectedEvent.name}</p>
+                    <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
+                    <p><strong>Start time:</strong> {selectedEvent.hour}</p>
+                    <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+                    <p><strong>Participants:</strong> {5}</p>
+                    <button onClick={handleEditClass}>Edit class</button>
+                    <button onClick={handleCloseModal}>Close</button>
+                    <button onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
+                 </div>
                 ) : (
                     null
                 )}
@@ -575,9 +719,5 @@ function CouchClasses() {
   
   
 }
-
-// CouchClasses.propTypes = {
-//   rows: PropTypes.array.isRequired,
-// };
 
 export default CouchClasses;
