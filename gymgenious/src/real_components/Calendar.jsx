@@ -10,15 +10,20 @@ export default function Calendar ({ events, onSelectEvent }) {
   
 
   const eventStyleGetter = (event) => {
-    const backgroundColor = '#fca311'; 
+    let backgroundColor = '';
+    if(event.BookedUsers.length<event.capacity){
+      backgroundColor = '#5e2407 !important';
+    } else {
+      backgroundColor = '#dda581 !important';
+    }
     const style = {
-      backgroundColor: backgroundColor,
       borderRadius: '0px',
       opacity: 0.8,
       color: 'white',
       display: 'block',
       padding: '5px',
       border: 'none',
+      '.rbc-event.custom-event': { backgroundColor: {backgroundColor} } 
     };
     return {
       style: style
@@ -26,7 +31,7 @@ export default function Calendar ({ events, onSelectEvent }) {
   };
   return (
     <div className="Calendar-Container">
-      <GlobalStyles styles={{ '.rbc-event': { backgroundColor: '#a1897d !important' } }} />
+      
       <BigCalendar
         localizer={localizer}
         events={events}
