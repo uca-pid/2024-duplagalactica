@@ -1,5 +1,5 @@
 import firebase_admin
-from gymgenious.src.backend.firebase_config import db
+from firebase_config import db
 from firebase_admin import credentials, firestore
 import logging
 
