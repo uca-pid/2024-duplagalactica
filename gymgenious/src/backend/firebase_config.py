@@ -9,7 +9,7 @@ load_dotenv()
 firebase_cred_json = os.getenv('FIREBASECREDENTIALS')
 def initialize_firebase():
     if not firebase_admin._apps:
-        firebase_creds_dict = json.loads(direbase_cred_json)
+        firebase_creds_dict = json.loads(firebase_cred_json)
         cred = credentials.Certificate(firebase_creds_dict)
         firebase_admin.initialize_app(cred)
     return firestore.client()
