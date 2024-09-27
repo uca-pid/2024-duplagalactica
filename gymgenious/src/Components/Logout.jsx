@@ -11,22 +11,39 @@ const Logout = () => {
   const navigate = useNavigate();
   const [openCircularProgress, setOpenCircularProgress] = useState(true);
   const [success, setSuccess] = useState(false);
+  const [failure, setFailure] = useState(false);
+
+  const handleLogout = () => {
+    setTimeout(() => {
+      setOpenCircularProgress(false);
+      setSuccess(true);
+    }, 1000);
+    setTimeout(() => {
+      setSuccess(false);
+      localStorage.removeItem('authToken');
+      navigate('/'); 
+    }, 3000); 
+  };
+
+  const handleError = () => {
+    setFailure(true);
+    setOpenCircularProgress(false);
+    setTimeout(() => {
+      setFailure(false);
+      navigate('/');
+    }, 3000);
+    
+  };
 
   useEffect(() => {
-    const handleLogout = () => {
-      localStorage.removeItem('authToken');
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-        setSuccess(true);
-      }, 1000);
-      setTimeout(() => {
-        setSuccess(false)
-        navigate('/'); 
-      }, 3000); 
-    };
-
-    handleLogout();
-  }, [navigate]);
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
+    if (token) {
+      return () => {handleLogout();}
+    } else {
+      return () => {handleError();}
+    }
+  }, []);
 
   return (
     <div className='App'>
@@ -45,6 +62,21 @@ const Logout = () => {
               <Slide direction="up" in={success} mountOnEnter unmountOnExit >
                   <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
                     Successful logout!
+                  </Alert>
+              </Slide>
+            </Box>
+          </div>
+        </div>
+      ) : (
+        null
+      )}
+      { failure ? (
+        <div className='alert-container'>
+          <div className='alert-content'>
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                    You are not logged in!
                   </Alert>
               </Slide>
             </Box>

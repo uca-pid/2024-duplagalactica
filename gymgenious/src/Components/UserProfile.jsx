@@ -132,6 +132,7 @@ export default function CreateAccount() {
         if (token) {
             verifyToken(token);
         } else {
+            navigate('/');
             console.error('No token found');
         }
     }, []);
@@ -144,138 +145,149 @@ export default function CreateAccount() {
 
     return (
         <div className='App'>
-            <LeftBar/>
-            {openCircularProgress ? (
+            {!userMail ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                open={openCircularProgress}
+                open={true}
                 >
-                <CircularProgress color="inherit" />
+                    <CircularProgress color="inherit" />
                 </Backdrop>
-            ) : null}
-            { errorToken ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
-                                Invalid Token!
-                            </Alert>
-                        </Slide>
-                        </Box>
+            ) : (
+            <>
+                <LeftBar/>
+                {openCircularProgress ? (
+                    <Backdrop
+                    sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                    open={openCircularProgress}
+                    >
+                    <CircularProgress color="inherit" />
+                    </Backdrop>
+                ) : null}
+                { errorToken ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                                    Invalid Token!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                { warningFetchingUserInformation ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningFetchingUserInformation} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Error fetching user information. Try again!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                { warningModifyingData ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningModifyingData} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Error modifying user information. Try again!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                <div className='user-profile-container'>
+                    <div className='create-account-content'>
+                        <h2 style={{ color: '#14213D' }}>Profile</h2>
+                        <form autoComplete='off' onSubmit={handleSave}>
+                            <div className="input-container">
+                                <label htmlFor="name" style={{ color: '#14213D' }}>Name:</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    disabled={isDisabled}
+                                    placeholder={nameFetch}
+                                />
+                            </div>
+                            <div className="input-container">
+                                <label htmlFor="lastName" style={{ color: '#14213D' }}>Last name:</label>
+                                <input
+                                    type="text"
+                                    id="lastname"
+                                    name="lastname"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    disabled={isDisabled}
+                                    placeholder={lastNameFetch}
+                                />
+                            </div>
+                            <div className="input-container">
+                                <label htmlFor="date" style={{ color: '#14213D' }}>Birthdate:</label>
+                                <input
+                                    type={isDisabled ? 'text' : (date ? 'date' : 'text')}
+                                    id='date'
+                                    name='date'
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    placeholder={dateFetch}
+                                    onFocus={(e) => !isDisabled && (e.target.type = 'date')}
+                                    onBlur={(e) => !date && (e.target.type = 'text')}
+                                    disabled={isDisabled}
+                                />
+                            </div>
+                            <div className="input-container">
+                                <label htmlFor="email" style={{ color: '#14213D' }}>Email:</label>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    value={email}
+                                    type='text'
+                                    placeholder={emailFetch}
+                                    disabled={true}
+                                />
+                            </div>
+                            {isDisabled ? (
+                                <>
+                                    <button className='button_create_account' type="button" onClick={handleChangeModify}>
+                                        Modify data
+                                    </button>
+                                    <button className='button_create_account' type="button" onClick={handleChangeModify} style={{ color: 'red' }}>
+                                        Delete account
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button className='button_create_account' type="button" onClick={goToChangePassword}>
+                                        Change password
+                                    </button>
+                                    <button type="submit" className='button_create_account'>
+                                        Save
+                                    </button>
+                                    <button className='button_create_account' type="button" onClick={handleChangeModify}>
+                                        Cancel
+                                    </button>
+                                </>
+                            )}
+                        </form>
                     </div>
                 </div>
-            ) : (
-                null
+            </>
             )}
-            { warningFetchingUserInformation ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningFetchingUserInformation} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error fetching user information. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-            { warningModifyingData ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningModifyingData} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error modifying user information. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-            <div className='user-profile-container'>
-                <div className='create-account-content'>
-                    <h2 style={{ color: '#14213D' }}>Profile</h2>
-                    <form autoComplete='off' onSubmit={handleSave}>
-                        <div className="input-container">
-                            <label htmlFor="name" style={{ color: '#14213D' }}>Name:</label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                disabled={isDisabled}
-                                placeholder={nameFetch}
-                            />
-                        </div>
-                        <div className="input-container">
-                            <label htmlFor="lastName" style={{ color: '#14213D' }}>Last name:</label>
-                            <input
-                                type="text"
-                                id="lastname"
-                                name="lastname"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                disabled={isDisabled}
-                                placeholder={lastNameFetch}
-                            />
-                        </div>
-                        <div className="input-container">
-                            <label htmlFor="date" style={{ color: '#14213D' }}>Birthdate:</label>
-                            <input
-                                type={isDisabled ? 'text' : (date ? 'date' : 'text')}
-                                id='date'
-                                name='date'
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                                placeholder={dateFetch}
-                                onFocus={(e) => !isDisabled && (e.target.type = 'date')}
-                                onBlur={(e) => !date && (e.target.type = 'text')}
-                                disabled={isDisabled}
-                            />
-                        </div>
-                        <div className="input-container">
-                            <label htmlFor="email" style={{ color: '#14213D' }}>Email:</label>
-                            <input
-                                id="email"
-                                name="email"
-                                value={email}
-                                type='text'
-                                placeholder={emailFetch}
-                                disabled={true}
-                            />
-                        </div>
-                        {isDisabled ? (
-                            <>
-                                <button className='button_create_account' type="button" onClick={handleChangeModify}>
-                                    Modify data
-                                </button>
-                                <button className='button_create_account' type="button" onClick={handleChangeModify} style={{ color: 'red' }}>
-                                    Delete account
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <button className='button_create_account' type="button" onClick={goToChangePassword}>
-                                    Change password
-                                </button>
-                                <button type="submit" className='button_create_account'>
-                                    Save
-                                </button>
-                                <button className='button_create_account' type="button" onClick={handleChangeModify}>
-                                    Cancel
-                                </button>
-                            </>
-                        )}
-                    </form>
-                </div>
-            </div>
         </div>
     );
 }

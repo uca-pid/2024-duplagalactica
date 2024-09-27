@@ -47,16 +47,15 @@ export default function RoutineCreation() {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
-        if (token) {
-            verifyToken(token);
-        } else {
-            console.error('No token found');
-        }
-        fetchRoutines();
+      const token = localStorage.getItem('authToken');
+      console.log('Token:', token);
+      if (token) {
+          verifyToken(token);
+      } else {
+          console.error('No token found');
+      }
+      fetchRoutines();
     }, [userMail]);
-
 
     const verifyToken = async (token) => {
         setOpenCircularProgress(true);
@@ -70,7 +69,6 @@ export default function RoutineCreation() {
             throw error;
         }
     };
-
 
     const validateForm = () => {
         let errors = [];
@@ -145,6 +143,38 @@ export default function RoutineCreation() {
 
     return (
         <div className='assign-routine-container'>
+            <div className='class-creation-content'>
+                <h2 style={{ color: '#14213D' }}>Assign users</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div className="input-small-container">
+                            <label htmlFor="routineAssigned" style={{ color: '#14213D' }}>Routine:</label>
+                            <select 
+                                id="routineAssigned" 
+                                name="routineAssigned" 
+                                value={routineAssigned} 
+                                onChange={(e) => setRoutine(e.target.value)}
+                            >
+                                <option value="">Select</option>
+                                {routines.map((routine) => (
+                                    <option key={routine.id} value={routine.id}>
+                                        {routine.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div className="input-small-container">
+                            <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
+                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned}/>
+                        </div>
+                    </div>
+                    <button type="submit" className='button_login'>
+                        Assign users
+                    </button>
+                </form>
+            </div>
             {openCircularProgress ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -221,38 +251,6 @@ export default function RoutineCreation() {
             ) : (
                 null
             )}
-            <div className='class-creation-content'>
-                <h2 style={{ color: '#14213D' }}>Assign users</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div className="input-small-container">
-                            <label htmlFor="routineAssigned" style={{ color: '#14213D' }}>Routine:</label>
-                            <select 
-                                id="routineAssigned" 
-                                name="routineAssigned" 
-                                value={routineAssigned} 
-                                onChange={(e) => setRoutine(e.target.value)}
-                            >
-                                <option value="">Select</option>
-                                {routines.map((routine) => (
-                                    <option key={routine.id} value={routine.id}>
-                                        {routine.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <div className="input-small-container">
-                            <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
-                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned}/>
-                        </div>
-                    </div>
-                    <button type="submit" className='button_login'>
-                        Assign users
-                    </button>
-                </form>
-            </div>
         </div>
     );
 }
