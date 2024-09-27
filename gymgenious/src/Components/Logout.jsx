@@ -13,37 +13,39 @@ const Logout = () => {
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
 
-  const handleLogout = () => {
-    setTimeout(() => {
-      setOpenCircularProgress(false);
-      setSuccess(true);
-    }, 1000);
-    setTimeout(() => {
-      setSuccess(false);
-      localStorage.removeItem('authToken');
-      navigate('/'); 
-    }, 3000); 
-  };
-
-  const handleError = () => {
-    setFailure(true);
-    setOpenCircularProgress(false);
-    setTimeout(() => {
-      setFailure(false);
-      navigate('/');
-    }, 3000);
-    
-  };
-
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
-    if (token) {
-      return () => {handleLogout();}
-    } else {
-      return () => {handleError();}
-    }
-  }, []);
+    const handleLogout = () => {
+      localStorage.removeItem('authToken');
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+        setSuccess(true);
+      }, 1000);
+      setTimeout(() => {
+        setSuccess(false)
+        navigate('/'); 
+      }, 3000); 
+    };
+    const handleError = () => {
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+        setFailure(true);
+      }, 1000);
+      setTimeout(() => {
+        setFailure(false);
+        navigate('/'); 
+      }, 3000); 
+    };
+    setTimeout(() => {
+      if (token) {
+        handleLogout();
+      } else {
+        handleError();
+      }
+    }, 500);
+    
+  }, [navigate]);
 
   return (
     <div className='App'>

@@ -18,6 +18,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
+import CheckIcon from '@mui/icons-material/Check';
 
 
 const day = (dateString) => {
@@ -50,6 +51,8 @@ function CouchClasses() {
   const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
   const [type, setType] = useState(null);
+  const [successModified,setSuccessModified] = useState(false);
+  const [successDeleted,setSuccessDeleted] = useState(false);
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -112,8 +115,12 @@ function CouchClasses() {
         }
         const data = await response.json();
         await fetchClasses();
-        setOpenCircularProgress(false);
         handleCloseModal(); 
+        setOpenCircularProgress(false);
+        setSuccessModified(true);
+        setTimeout(() => {
+            setSuccessModified(false);
+        }, 3000);
     } catch (error) {
         console.error("Error updating user:", error);
         setOpenCircularProgress(false);
@@ -138,8 +145,12 @@ function CouchClasses() {
         throw new Error('Error al actualizar la clase: ' + response.statusText);
       }
       await fetchClasses();
-      setOpenCircularProgress(false);
       handleCloseModal();
+      setOpenCircularProgress(false);
+      setSuccessDeleted(true);
+      setTimeout(() => {
+        setSuccessDeleted(false);
+      }, 3000);
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
@@ -523,6 +534,36 @@ function CouchClasses() {
                             </Slide>
                             </Box>
                         </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                { successModified ? (
+                    <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={successModified} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                                Class successfully modified!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                { successDeleted ? (
+                    <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={successDeleted} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                                Class successfully deleted!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
                     </div>
                 ) : (
                     null
