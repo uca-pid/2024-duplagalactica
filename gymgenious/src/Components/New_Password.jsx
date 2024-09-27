@@ -110,6 +110,15 @@ export default function ChangePassword() {
 
     return (
     <div className='App'>
+      {!oobCode ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+          <>
         <LeftBar value={'profile'}/>
         <div className='new-password-container'>
           <div className='new-password-content'>
@@ -216,6 +225,8 @@ export default function ChangePassword() {
             ) : (
                 null
             )}
+            </>
+        )}
     </div>
     );
 }

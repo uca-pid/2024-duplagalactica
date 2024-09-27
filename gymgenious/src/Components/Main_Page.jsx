@@ -48,7 +48,6 @@ export default function Main_Page() {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      console.log(data);
       setClasses(data);
       const calendarEvents = [];
       const today = new Date();

@@ -114,23 +114,93 @@ export default function ExerciseCreation() {
     }
   }, [userMail]);
 
-
   const verifyToken = async (token) => {
-    setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
         setUserMail(decodedToken.email);
-        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
-        setOpenCircularProgress(false);
         throw error;
     }
   };
 
-
   return (
     <div className='exercise-creation-container'>
+      <div className='class-creation-content'>
+        <h2 style={{color:'#14213D'}}>Create exercise</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+            <div className="input-small-container">
+              <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+              />
+            </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                  <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
+                  <input 
+                  type="text" 
+                  id="desc" 
+                  name="desc" 
+                  value={desc} 
+                  onChange={(e) => setDesc(e.target.value)} 
+                  />
+              </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container">
+                  <label htmlFor="desc" style={{color:'#14213D'}}>Series:</label>
+                  <input 
+                  type="number" 
+                  id="series" 
+                  name="series" 
+                  value={series}
+                  min="1"
+                  step='1'
+                  max="8"
+                  onChange={handleSeriesChange}
+                  />
+              </div>
+              <div className="input-small-container">
+                  <label htmlFor="timing" style={{color:'#14213D'}}>Timing:</label>
+                  <input 
+                  type="number" 
+                  id="timing" 
+                  name="timing" 
+                  value={timing}
+                  min="1"
+                  max="500"
+                  step='1'
+                  onChange={(e) => setTiming(e.target.value)}
+                  />
+              </div>
+          </div>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+            <div className="input-small-container" style={{ flex: 1, marginRight: '10px' }}>
+                <label htmlFor='reps' style={{ color: '#14213D' }}>Reps:</label>
+                {reps.map((rep, index) => (
+                  <input
+                    type="text"
+                    id={`reps-${index}`}
+                    name={`reps-${index}`}
+                    value={rep}
+                    onChange={(e) => handleRepsChange(index, e.target.value)}
+                    style={{ width: `${100 / series}%` }}
+                  />
+              ))}
+            </div>
+          </div>
+          <button type="submit" className='button_login'>
+            Create exercise
+          </button>
+        </form>
+      </div>
       {openCircularProgress ? (
         <Backdrop
         sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -192,79 +262,6 @@ export default function ExerciseCreation() {
       ) : (
           null
       )}
-      <div className='class-creation-content'>
-        <h2 style={{color:'#14213D'}}>Create exercise</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-            <div className="input-small-container">
-              <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
-              />
-            </div>
-          </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container">
-                  <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
-                  <input 
-                  type="text" 
-                  id="desc" 
-                  name="desc" 
-                  value={desc} 
-                  onChange={(e) => setDesc(e.target.value)} 
-                  />
-              </div>
-          </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container">
-                  <label htmlFor="desc" style={{color:'#14213D'}}>Series:</label>
-                  <input 
-                  type="number" 
-                  id="series" 
-                  name="series" 
-                  value={series}
-                  min="1"
-                  max="8"
-                  onChange={handleSeriesChange}
-                  />
-              </div>
-              <div className="input-small-container">
-                  <label htmlFor="timing" style={{color:'#14213D'}}>Timing:</label>
-                  <input 
-                  type="number" 
-                  id="timing" 
-                  name="timing" 
-                  value={timing}
-                  min="1"
-                  max="500"
-                  onChange={(e) => setTiming(e.target.value)} 
-                  />
-              </div>
-          </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-            <div className="input-small-container" style={{ flex: 1, marginRight: '10px' }}>
-                <label htmlFor='reps' style={{ color: '#14213D' }}>Reps:</label>
-                {reps.map((rep, index) => (
-                  <input
-                    type="text"
-                    id={`reps-${index}`}
-                    name={`reps-${index}`}
-                    value={rep}
-                    onChange={(e) => handleRepsChange(index, e.target.value)}
-                    style={{ width: `${100 / series}%` }}
-                  />
-              ))}
-            </div>
-          </div>
-          <button type="submit" className='button_login'>
-            Create exercise
-          </button>
-        </form>
-      </div>
     </div>
   );
 }

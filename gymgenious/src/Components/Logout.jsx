@@ -11,8 +11,11 @@ const Logout = () => {
   const navigate = useNavigate();
   const [openCircularProgress, setOpenCircularProgress] = useState(true);
   const [success, setSuccess] = useState(false);
+  const [failure, setFailure] = useState(false);
 
   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
     const handleLogout = () => {
       localStorage.removeItem('authToken');
       setTimeout(() => {
@@ -24,8 +27,24 @@ const Logout = () => {
         navigate('/'); 
       }, 3000); 
     };
-
-    handleLogout();
+    const handleError = () => {
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+        setFailure(true);
+      }, 1000);
+      setTimeout(() => {
+        setFailure(false);
+        navigate('/'); 
+      }, 3000); 
+    };
+    setTimeout(() => {
+      if (token) {
+        handleLogout();
+      } else {
+        handleError();
+      }
+    }, 500);
+    
   }, [navigate]);
 
   return (
@@ -45,6 +64,21 @@ const Logout = () => {
               <Slide direction="up" in={success} mountOnEnter unmountOnExit >
                   <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
                     Successful logout!
+                  </Alert>
+              </Slide>
+            </Box>
+          </div>
+        </div>
+      ) : (
+        null
+      )}
+      { failure ? (
+        <div className='alert-container'>
+          <div className='alert-content'>
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                    You are not logged in!
                   </Alert>
               </Slide>
             </Box>
