@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from services.routineRoutes import create_routine, assign_routine_to_user,get_routines,get_assigned_routines,update_routine_info
+from services.routineRoutes import create_routine, assign_routine_to_user,get_routines,get_assigned_routines,update_routine_info,delete_routine
 
 
 def create_routine_route(newRoutine):
@@ -44,3 +44,9 @@ def update_routine_info_route(newRoutine):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+def delete_routine_route(event):
+    try:
+        deleted_routine = delete_routine(event)
+        return jsonify({"message": "Rutina eliminada exitosamente"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

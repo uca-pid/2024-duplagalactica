@@ -61,13 +61,6 @@ export default function CreateClass() {
         errors.push('Please enter a date.')
       }
 
-      ////@@@@@@@@@@@@@@@ REVISAR ESTO @@@@@@@@@@@@@@@@@@
-      // const today = new Date();
-      // const inputDate = Date(date);
-      // if (inputDate < today || (inputDate == today && moment(hour, format).isBefore(moment()))){
-      //   errors.push('Please enter a day and time after the current one');
-      // }
-
       setErrors(errors);
       return errors.length === 0;
   }

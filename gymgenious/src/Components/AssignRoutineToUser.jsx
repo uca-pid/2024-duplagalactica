@@ -11,7 +11,7 @@ import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
 
 export default function RoutineCreation() {
-    const [routineAssigned, setRoutine] = useState(''); 
+    const [routineAssigned, setRoutine] = useState(); 
     const [userMail,setUserMail] = useState(null);
     const [users, setUsers] = useState([]);
     const [routines, setRoutines] = useState([]);
@@ -90,10 +90,9 @@ export default function RoutineCreation() {
                     throw new Error('Error al obtener las rutinas: ' + response2.statusText);
                 }
                 const data2 = await response2.json();
-                const filteredRoutines = data2.filter(event => event.name==routineAssigned);
-                
+                const filteredRoutines = data2.filter(event => event.id==routineAssigned);
                 const newAsignRoutine = {
-                    routine: routineAssigned,
+                    id: routineAssigned,
                     user: users,
                     owner: userMail,
                     day: filteredRoutines[0].day

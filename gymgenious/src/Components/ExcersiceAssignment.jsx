@@ -149,13 +149,6 @@ export default function UsserAssignment({onUsersChange}) {
     fetchExercises(userMail)
   }, [userMail]);
 
-  //LA IDEA ACA ES QUE LO QUE SELECCIONAS ES LO QUE VA A IR, Y LO QUE DESELECCIONAS ES LO QUE NO
-  // useEffect(() => {
-  //   if(isSmallScreen){
-  //     const newLeft = left.concat(right);
-
-  //   }
-  // }, [isSmallScreen])
 
 
   const verifyToken = async (token) => {
