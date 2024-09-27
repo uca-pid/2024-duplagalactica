@@ -96,6 +96,7 @@ export default function Main_Page() {
       });
       setOpenCircularProgress(false);
       setEvents(calendarEvents);
+      console.log(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
@@ -340,7 +341,7 @@ export default function Main_Page() {
                 <button onClick={() => handleUnbookClass(selectedEvent.name)}>Unbook</button>
               ) : (
                 <>
-                {selectedEvent.BookedUsers.length!=selectedEvent.capacity ? (
+                {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
                 <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
                 ) :
                 (<>
