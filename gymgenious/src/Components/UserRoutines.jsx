@@ -18,6 +18,8 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import DaySelection from '../real_components/DaySelection.jsx';
 import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import Slide from '@mui/material/Slide';
 
 export default function StickyHeadTable() {
     const [page, setPage] = useState(0);
@@ -37,6 +39,7 @@ export default function StickyHeadTable() {
     const [dense, setDense] = useState(false);
     const navigate = useNavigate();
     const [type, setType] = useState(null);
+    const [warningFetchingUserRoutines, setWarningFetchingUserRoutines] = useState(false);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -85,6 +88,10 @@ export default function StickyHeadTable() {
         } catch (error) {
             setOpenCircularProgress(false);
             console.error("Error fetching classes:", error);
+            setWarningFetchingUserRoutines(true);
+            setTimeout(() => {
+                setWarningFetchingUserRoutines(false);
+            }, 3000);
         }
     };
 
@@ -102,6 +109,10 @@ export default function StickyHeadTable() {
         } catch (error) {
             setOpenCircularProgress(false);
             console.error("Error fetching exercises:", error);
+            setWarningFetchingUserRoutines(true);
+            setTimeout(() => {
+                setWarningFetchingUserRoutines(false);
+            }, 3000);
         }
     };
 
@@ -127,6 +138,7 @@ export default function StickyHeadTable() {
         } else {
             navigate('/');
             console.error('No token found');
+            return;
         }
         if (userMail){
           fetchUser();
@@ -135,7 +147,7 @@ export default function StickyHeadTable() {
 
       useEffect(() => {
         if(type==='client'){
-            fetchRoutines()
+            fetchRoutines();
         }
       }, [type])
     
@@ -311,6 +323,21 @@ export default function StickyHeadTable() {
                     <CircularProgress color="inherit" />
                 </Backdrop>
             )}
+            { warningFetchingUserRoutines ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningFetchingUserRoutines} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Connection error. Try again later!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
             </>
         )}
         </div>

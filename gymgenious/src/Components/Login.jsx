@@ -62,11 +62,13 @@ export default function Login() {
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
-    if (token) {
-      navigate('/');
-    } else {
-      setIsAuthenticated(false);
-    }
+      if (token) {
+        navigate('/');
+        return;
+      } else {
+        setIsAuthenticated(false);
+        return;
+      }
   }, []);
 
   return (

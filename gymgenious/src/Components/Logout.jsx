@@ -14,13 +14,13 @@ const Logout = () => {
   const [failure, setFailure] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
     setTimeout(() => {
       setOpenCircularProgress(false);
       setSuccess(true);
     }, 1000);
     setTimeout(() => {
-      setSuccess(false)
+      setSuccess(false);
+      localStorage.removeItem('authToken');
       navigate('/'); 
     }, 3000); 
   };

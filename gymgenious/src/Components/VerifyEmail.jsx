@@ -29,6 +29,7 @@ export default function VerifyEmail() {
       }, 1500);
       setTimeout(() => {
         navigate('/');
+        return;
       }, 3000);
     } catch (error) {
       console.error("Error al verificar el correo electrónico:", error);
