@@ -1,11 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { GlobalStyles } from '@mui/material';
 
 const localizer = momentLocalizer(moment);
 
 export default function Calendar ({ events, onSelectEvent }) {
+  
+
   const eventStyleGetter = (event) => {
     const backgroundColor = '#fca311'; 
     const style = {
@@ -23,6 +26,7 @@ export default function Calendar ({ events, onSelectEvent }) {
   };
   return (
     <div className="Calendar-Container">
+      <GlobalStyles styles={{ '.rbc-event': { backgroundColor: '#a1897d !important' } }} />
       <BigCalendar
         localizer={localizer}
         events={events}
