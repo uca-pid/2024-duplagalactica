@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftBar from '../real_components/NewLeftBar.jsx';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
@@ -25,6 +25,7 @@ export default function CreateAccount() {
     const [failureEmailRepeated, setFailureEmailRepeated] = useState(false);
     const [failure, setFailure] = useState(false);
     const [failureErrors, setFailureErrors] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(true)
     const auth = getAuth();
 
     const validateForm = () => {
@@ -130,6 +131,16 @@ export default function CreateAccount() {
         }
     };
 
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        console.log('Token:', token);
+        if (token) {
+          navigate('/');
+        } else {
+          setIsAuthenticated(false);
+        }
+      }, []);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         handleCreateAccount();
@@ -144,82 +155,16 @@ export default function CreateAccount() {
     const id = openPasswordRequirements ? 'simple-popper' : undefined;
     return (
         <div className='App'>
-            <LeftBar value={'profile'}/>
-            {openCircularProgress ? (
-                <Backdrop
-                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                open={openCircularProgress}
-                >
+            {isAuthenticated ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
                 <CircularProgress color="inherit" />
-                </Backdrop>
-            ) : null}
-            { success ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                            <Slide direction="up" in={success} mountOnEnter unmountOnExit >
-                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
-                                    Account successfully created!
-                                </Alert>
-                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                    Please, validate email before login!
-                                </Alert>
-                            </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-            { failureErrors ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                    <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
-                        <div>
-                            <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                            Error creating account!
-                            </Alert>
-                            {errors.length > 0 && errors.map((error, index) => (
-                            <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                                <li>{error}</li>
-                            </Alert>
-                            ))}
-                        </div>
-                        </Slide>
-                    </Box>
-                    </div>
-                </div>
-              
-            ) : (
-                null
-            )}
-            { failureEmailRepeated ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                    <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={failureEmailRepeated} mountOnEnter unmountOnExit >
-                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>An account already exists with this email!</Alert>
-                        </Slide>
-                    </Box>
-                </div>
-            </div>
-            ) : (
-                null
-            )}
-            { failure ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                    <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
-                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Error creating account. Try again!</Alert>
-                        </Slide>
-                    </Box>
-                </div>
-            </div>
-            ) : (
-                null
-            )}
+            </Backdrop>
+        ) : (
+          <>
+            <LeftBar value={'profile'}/>
             <div className='create-account-container'>
                 <div className='create-account-content'>
                     <h2 style={{color:'#5e2404'}}>Create account</h2>
@@ -304,6 +249,80 @@ export default function CreateAccount() {
                     </form>
                 </div>
             </div>
+            {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
+                >
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+            { success ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                                    Account successfully created!
+                                </Alert>
+                            </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+            { failureErrors ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
+                        <div>
+                            <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                            Error creating account!
+                            </Alert>
+                            {errors.length > 0 && errors.map((error, index) => (
+                            <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                                <li>{error}</li>
+                            </Alert>
+                            ))}
+                        </div>
+                        </Slide>
+                    </Box>
+                    </div>
+                </div>
+              
+            ) : (
+                null
+            )}
+            { failureEmailRepeated ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failureEmailRepeated} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>An account already exists with this email!</Alert>
+                        </Slide>
+                    </Box>
+                </div>
+            </div>
+            ) : (
+                null
+            )}
+            { failure ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Error creating account. Try again!</Alert>
+                        </Slide>
+                    </Box>
+                </div>
+            </div>
+            ) : (
+                null
+            )}
+            </>
+        )}
         </div>
     );
 }

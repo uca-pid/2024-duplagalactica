@@ -11,6 +11,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import Slide from '@mui/material/Slide';
 import Popper from '@mui/material/Popper';
 import {jwtDecode} from "jwt-decode";
+import { useMediaQuery } from '@mui/material';
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
@@ -18,7 +19,7 @@ export default function CreateClass() {
   const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [name, setName] = useState('');
-  const [maxNum,setMaxNum] = useState(0);
+  const [maxNum,setMaxNum] = useState(1);
   const navigate = useNavigate();
   const [userMail,setUserMail] = useState('')
   const [errors, setErrors] = useState([]);
@@ -27,6 +28,8 @@ export default function CreateClass() {
   const [failureErrors, setFailureErrors] = useState(false);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
+  const isSmallScreen = useMediaQuery('(max-width:768px)');
+  const [type, setType] = useState(null);
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -57,13 +60,6 @@ export default function CreateClass() {
       if(date===''){
         errors.push('Please enter a date.')
       }
-
-      ////@@@@@@@@@@@@@@@ REVISAR ESTO @@@@@@@@@@@@@@@@@@
-      // const today = new Date();
-      // const inputDate = Date(date);
-      // if (inputDate < today || (inputDate == today && moment(hour, format).isBefore(moment()))){
-      //   errors.push('Please enter a day and time after the current one');
-      // }
 
       setErrors(errors);
       return errors.length === 0;
@@ -121,21 +117,17 @@ export default function CreateClass() {
     }
   };
   
-
   const handleSubmit = (e) => {
     e.preventDefault();
     handleCreateClass();
   };
 
   const verifyToken = async (token) => {
-    setOpenCircularProgress(true);
     try {
         const decodedToken = jwtDecode(token);
         setUserMail(decodedToken.email);
-        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
-        setOpenCircularProgress(false);
         setErrorToken(true);
         setTimeout(() => {
           setErrorToken(false);
@@ -144,16 +136,36 @@ export default function CreateClass() {
     }
   };
 
-
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
+        navigate('/');
         console.error('No token found');
     }
-  }, []);
+    if (userMail){
+      fetchUser();
+    }
+  }, [userMail]);
+
+  const fetchUser = async () => {
+    try {
+      const encodedUserMail = encodeURIComponent(userMail);
+      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        setType(data.type);
+        if(data.type!='coach'){
+          navigate('/');
+        }
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
+  };
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [openHourRequirements, setOpenHourRequirements] = useState(false);
@@ -169,172 +181,274 @@ export default function CreateClass() {
 
   return (
     <div className='full-screen-image-2'>
-      <LeftBar/>
-      {openCircularProgress ? (
-          <Backdrop
-          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-          open={openCircularProgress}
-          >
-          <CircularProgress color="inherit" />
-          </Backdrop>
-      ) : null}
-      { success ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-                  <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={success} mountOnEnter unmountOnExit >
-                    <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
-                        Class successfully created!
-                    </Alert>
-                    </Slide>
-                  </Box>
-              </div>
-          </div>
-      ) : (
-          null
-      )}
-      { failureErrors ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-              <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
-                  <div>
-                      <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                      Error creating class!
-                      </Alert>
-                      {errors.length > 0 && errors.map((error, index) => (
-                      <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                          <li>{error}</li>
-                      </Alert>
-                      ))}
-                  </div>
-                  </Slide>
-              </Box>
-              </div>
-          </div>
-        
-      ) : (
-          null
-      )}
-      { failure ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-              <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
-                  <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Error creating class. Try again!</Alert>
-                  </Slide>
-              </Box>
-          </div>
-      </div>
-      ) : (
-          null
-      )}
-      { errorToken ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-                  <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
-                      <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
-                          Invalid Token!
-                      </Alert>
-                  </Slide>
-                  </Box>
-              </div>
-          </div>
-      ) : (
-          null
-      )}
-      <div className='class-creation-container'>
-        <div className='class-creation-content'>
-          <h2 style={{color:'#5e2404'}}>Create class</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
-                <input
-                  onClick={handleCloseHourRequirements}
-                  type="time" 
-                  id="hour" 
-                  name="hour" 
-                  value={hour} 
-                  onChange={(e) => setHour(e.target.value)} 
-                />
-              </div>
-              <div className="input-small-container">
-                <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
-                <input
-                  onClick={handleOpenHourRequirements}
-                  type="time" 
-                  id="hourFin" 
-                  name="hourFin" 
-                  value={hourFin} 
-                  onChange={(e) => setHourFin(e.target.value)} 
-                />
-                <Popper id={id} open={openHourRequirements} anchorEl={anchorEl}>
-                  <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenHourRequirements}>
-                      <p>Class must last at least 30 minutes</p>
-                  </Box>
-                </Popper>
-              </div>
-              <div className="input-small-container">
-                <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
-                <input
-                  onClick={handleCloseHourRequirements}
-                  type="text" 
-                  id="name" 
-                  name="name" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                />
+      {type!='coach' ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+          <>
+            <LeftBar/>
+            <div className='class-creation-container'>
+              <div className='class-creation-content'>
+                <h2 style={{color:'#5e2404'}}>Create class</h2>
+                <form onSubmit={handleSubmit}>
+                  {!isSmallScreen ? (
+                    <>
+                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        <div className="input-small-container">
+                          <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
+                          <input
+                            onClick={handleCloseHourRequirements}
+                            type="time" 
+                            id="hour" 
+                            name="hour" 
+                            value={hour} 
+                            onChange={(e) => setHour(e.target.value)} 
+                          />
+                        </div>
+                        <div className="input-small-container">
+                          <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
+                          <input
+                            onClick={handleOpenHourRequirements}
+                            type="time" 
+                            id="hourFin" 
+                            name="hourFin" 
+                            value={hourFin} 
+                            onChange={(e) => setHourFin(e.target.value)} 
+                          />
+                          <Popper id={id} open={openHourRequirements} anchorEl={anchorEl}>
+                            <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenHourRequirements}>
+                                <p>Class must last at least 30 minutes</p>
+                            </Box>
+                          </Popper>
+                        </div>
+                        <div className="input-small-container">
+                          <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                          <input
+                            onClick={handleCloseHourRequirements}
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            value={name} 
+                            onChange={(e) => setName(e.target.value)} 
+                          />
+                        </div>
+                      </div>
+                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        <div className="input-small-container" style={{width:"100%"}}>
+                          <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                          <select
+                            onClick={handleCloseHourRequirements}
+                            id="permanent" 
+                            name="permanent" 
+                            value={permanent} 
+                            onChange={(e) => setPermanent(e.target.value)} 
+                          >
+                            <option value="" >Select</option>
+                            <option value="Si">Yes</option>
+                            <option value="No">No</option>
+                          </select>
+                        </div>
+                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                          <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                          <input
+                            onClick={handleCloseHourRequirements}
+                            type="number" 
+                            id="maxNum" 
+                            name="maxNum"
+                            min='1'
+                            max='500'
+                            step='1'
+                            value={maxNum} 
+                            onChange={(e) => setMaxNum(e.target.value)} 
+                          />
+                        </div>
+                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                          <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
+                          <input
+                            onClick={handleCloseHourRequirements}
+                            type="date" 
+                            id="date" 
+                            name="date" 
+                            value={date} 
+                            onChange={(e) => setDate(e.target.value)} 
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        <div className="input-small-container">
+                          <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
+                          <input
+                            onClick={handleCloseHourRequirements}
+                            type="time" 
+                            id="hour" 
+                            name="hour" 
+                            value={hour} 
+                            onChange={(e) => setHour(e.target.value)} 
+                          />
+                        </div>
+                        <div className="input-small-container">
+                          <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
+                          <input
+                            onClick={handleOpenHourRequirements}
+                            type="time" 
+                            id="hourFin" 
+                            name="hourFin" 
+                            value={hourFin} 
+                            onChange={(e) => setHourFin(e.target.value)} 
+                          />
+                          <Popper id={id} open={openHourRequirements} anchorEl={anchorEl}>
+                            <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenHourRequirements}>
+                                <p>Class must last at least 30 minutes</p>
+                            </Box>
+                          </Popper>
+                        </div>
+                      </div>
+                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        <div className="input-small-container">
+                            <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                            <input
+                              onClick={handleCloseHourRequirements}
+                              type="text" 
+                              id="name" 
+                              name="name" 
+                              value={name} 
+                              onChange={(e) => setName(e.target.value)} 
+                            />
+                          </div>
+                        <div className="input-small-container" style={{width:"100%"}}>
+                          <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                          <select
+                            onClick={handleCloseHourRequirements}
+                            id="permanent" 
+                            name="permanent" 
+                            value={permanent} 
+                            onChange={(e) => setPermanent(e.target.value)} 
+                          >
+                            <option value="" >Select</option>
+                            <option value="Si">Yes</option>
+                            <option value="No">No</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                          <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                          <input
+                            onClick={handleCloseHourRequirements}
+                            type="number" 
+                            id="maxNum" 
+                            name="maxNum"
+                            min='1'
+                            max='500'
+                            step='1'
+                            value={maxNum} 
+                            onChange={(e) => setMaxNum(e.target.value)} 
+                          />
+                        </div>
+                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                          <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
+                          <input
+                            onClick={handleCloseHourRequirements}
+                            type="date" 
+                            id="date" 
+                            name="date" 
+                            value={date} 
+                            onChange={(e) => setDate(e.target.value)} 
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  <button type="submit" className='button_login'>
+                    Create class
+                  </button>
+                </form>
               </div>
             </div>
-            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container" style={{width:"100%"}}>
-                <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
-                <select
-                  onClick={handleCloseHourRequirements}
-                  id="permanent" 
-                  name="permanent" 
-                  value={permanent} 
-                  onChange={(e) => setPermanent(e.target.value)} 
+            {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
                 >
-                  <option value="" >Select</option>
-                  <option value="Si">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
-                <input
-                  onClick={handleCloseHourRequirements}
-                  type="number" 
-                  id="maxNum" 
-                  name="maxNum"
-                  min={0}
-                  step={1}
-                  max={500}
-                  value={maxNum} 
-                  onChange={(e) => setMaxNum(e.target.value)} 
-                />
-              </div>
-              <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
-                <input
-                  onClick={handleCloseHourRequirements}
-                  type="date" 
-                  id="date" 
-                  name="date" 
-                  value={date} 
-                  onChange={(e) => setDate(e.target.value)} 
-                />
-              </div>
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+            { success ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                          <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                              Class successfully created!
+                          </Alert>
+                          </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+            { failureErrors ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
+                        <div>
+                            <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                            Error creating class!
+                            </Alert>
+                            {errors.length > 0 && errors.map((error, index) => (
+                            <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                                <li>{error}</li>
+                            </Alert>
+                            ))}
+                        </div>
+                        </Slide>
+                    </Box>
+                    </div>
+                </div>
+              
+            ) : (
+                null
+            )}
+            { failure ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Error creating class. Try again!</Alert>
+                        </Slide>
+                    </Box>
+                </div>
             </div>
-            <button type="submit" className='button_login'>
-              Create class
-            </button>
-          </form>
-        </div>
-      </div>
+            ) : (
+                null
+            )}
+            { errorToken ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                                Invalid Token!
+                            </Alert>
+                        </Slide>
+                        </Box>
+                    </div>
+                </div>
+            ) : (
+                null
+            )}
+          </>
+      )}
     </div>
   );
 }

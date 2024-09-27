@@ -210,11 +210,11 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
             {user ? (
               <>
                 {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(user) ? (
-                  <button onClick={() => handleUnbookClassModal(selectedEvent.name)}>Unbook</button>
+                  <button onClick={() => handleUnbookClassModal(selectedEvent.id)}>Unbook</button>
                 ) : (
                   <>
                   {selectedEvent.BookedUsers.length!=selectedEvent.capacity ? (
-                  <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
+                  <button onClick={() => handleBookClassModal(selectedEvent.id)}>Book</button>
                   ) :
                   (<>
                   <button style={{background:'red'}}>Full</button>

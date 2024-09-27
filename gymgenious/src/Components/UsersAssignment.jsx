@@ -47,22 +47,24 @@ export default function UserAssignment({ onUsersChange, routine }) {
         throw new Error('Error al obtener las rutinas asignadas: ' + assignedResponse.statusText);
       }
       const assignedUsersData = await assignedResponse.json();
-
-      // Extraer todos los correos electrónicos asignados
-      const assignedUsers = assignedUsersData.flatMap(routine => 
+      const assignedUsersData2 = assignedUsersData.filter(routi => routi.id==routine)
+      console.log("2",assignedUsersData2)
+      const assignedUsers = assignedUsersData2.flatMap(routine => 
         routine.user.map(user => user.Mail)
       );
-
+      console.log("3",assignedUsers)
       const allUsersResponse = await fetch(`http://127.0.0.1:5000/get_users`);
       if (!allUsersResponse.ok) {
         throw new Error('Error al obtener los usuarios: ' + allUsersResponse.statusText);
       }
       const allUsers = await allUsersResponse.json();
-
-      // Filtrar usuarios no asignados
       const filteredRows = allUsers.filter(user => !assignedUsers.includes(user.Mail));
+      console.log("4",filteredRows)
+      const filteredRowsRight = allUsers.filter(user => assignedUsers.includes(user.Mail));
+      console.log("5",filteredRowsRight)
       setUsers(filteredRows);
       setLeft(filteredRows);
+      setRight(filteredRowsRight)
       setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching users:", error);

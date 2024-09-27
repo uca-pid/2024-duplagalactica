@@ -8,50 +8,18 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useState, useEffect } from 'react';
 import { Box, useMediaQuery } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { jwtDecode } from "jwt-decode";
 import NewLeftBar from '../real_components/NewLeftBar';
-
-function ColorToggleButton({ selectedDay, setSelectedDay }) {
-    const [hovered, setHovered] = useState(null);
-
-    const handleMouseEnter = (value) => {
-        setHovered(value);
-    };
-
-    const handleMouseLeave = () => {
-        setHovered(null);
-    };
-
-    return (
-        <ToggleButtonGroup
-            color="primary"
-            value={selectedDay}
-            exclusive
-            onChange={(event, newDay) => setSelectedDay(newDay)}
-            aria-label="Platform"
-        >
-            {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
-                <ToggleButton
-                    key={day}
-                    style={{
-                        backgroundColor: selectedDay === day || hovered === day ? '#5e2404' : '#b87d48',
-                        color: 'white',
-                    }}
-                    value={day}
-                    onMouseEnter={() => handleMouseEnter(day)}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    {day}
-                </ToggleButton>
-            ))}
-        </ToggleButtonGroup>
-    );
-}
+import ColorToggleButton from '../real_components/ColorToggleButton.jsx';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import DaySelection from '../real_components/DaySelection.jsx';
+import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import Slide from '@mui/material/Slide';
 
 export default function StickyHeadTable() {
     const [page, setPage] = useState(0);
@@ -62,12 +30,16 @@ export default function StickyHeadTable() {
     const [visibleRows, setVisibleRows] = useState([]);
     const [routine, setRoutines] = useState([]);
     const [selectedDay, setSelectedDay] = useState('');
-    const isSmallScreen = useMediaQuery('(max-width:500px)');
+    const isSmallScreen = useMediaQuery('(max-width:700px)');
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [viewExercises, setViewExercises] = useState(false);
     const [rows, setRows] = useState([]);
     const [errorToken, setErrorToken] = useState(false);
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
+    const [dense, setDense] = useState(false);
+    const navigate = useNavigate();
+    const [type, setType] = useState(null);
+    const [warningFetchingUserRoutines, setWarningFetchingUserRoutines] = useState(false);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -100,7 +72,7 @@ export default function StickyHeadTable() {
 
     const fetchRoutines = async () => {
         setOpenCircularProgress(true);
-        try {
+        try {            
             const response = await fetch('http://127.0.0.1:5000/get_assigned_routines');
             if (!response.ok) {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
@@ -110,11 +82,16 @@ export default function StickyHeadTable() {
                 row.user.some((u) => u.Mail === userMail)
             );
             setRows(filteredRows);
-            setVisibleRows(filteredRows);
-        } catch (error) {
-            console.error("Error fetching classes:", error);
-        } finally {
+            console.log(data);
+            console.log(filteredRows);
             setOpenCircularProgress(false);
+        } catch (error) {
+            setOpenCircularProgress(false);
+            console.error("Error fetching classes:", error);
+            setWarningFetchingUserRoutines(true);
+            setTimeout(() => {
+                setWarningFetchingUserRoutines(false);
+            }, 3000);
         }
     };
 
@@ -127,16 +104,19 @@ export default function StickyHeadTable() {
             }
             const data = await response.json();
             const filteredRows = data.filter((row) => row.name === routineName);
-            setRoutines(filteredRows);
-        } catch (error) {
-            console.error("Error fetching exercises:", error);
-        } finally {
+            setRoutines(filteredRows[0]);
             setOpenCircularProgress(false);
+        } catch (error) {
+            setOpenCircularProgress(false);
+            console.error("Error fetching exercises:", error);
+            setWarningFetchingUserRoutines(true);
+            setTimeout(() => {
+                setWarningFetchingUserRoutines(false);
+            }, 3000);
         }
     };
 
     const verifyToken = async (token) => {
-        setOpenCircularProgress(true);
         try {
             const decodedToken = jwtDecode(token);
             setUserMail(decodedToken.email);
@@ -144,22 +124,49 @@ export default function StickyHeadTable() {
             console.error('Error al verificar el token:', error);
             setErrorToken(true);
             setTimeout(() => {
-                setErrorToken(false);
+              setErrorToken(false);
             }, 3000);
-        } finally {
-            setOpenCircularProgress(false);
+            throw error;
         }
-    };
+      };
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
+        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {
+            navigate('/');
             console.error('No token found');
+            return;
         }
-        fetchRoutines();
-    }, [userMail]);
+        if (userMail){
+          fetchUser();
+        }
+      }, [userMail]);
+
+      useEffect(() => {
+        if(type==='client'){
+            fetchRoutines();
+        }
+      }, [type])
+    
+      const fetchUser = async () => {
+        try {
+          const encodedUserMail = encodeURIComponent(userMail);
+          const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+            }
+            const data = await response.json();
+            setType(data.type);
+            if(data.type!='client'){
+              navigate('/');
+            }
+        } catch (error) {
+            console.error("Error fetching user:", error);
+        }
+      };
 
     useEffect(() => {
         if (selectedDay) {
@@ -172,115 +179,108 @@ export default function StickyHeadTable() {
 
     return (
         <div className="App">
+            {type!='client' ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+          <>
             <NewLeftBar />
             <div className="Table-Container">
-                <ColorToggleButton selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
-                <Paper sx={{ width: '100%', overflow: 'hidden', border: '2px solid #BC6C25' }}>
-                    <TableContainer sx={{ maxHeight: 440 }}>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead>
-                                <TableRow sx={{ height: '5vh', color: '#54311a' }}>
-                                    <TableCell
-                                        sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}
-                                    >
-                                        <TableSortLabel
-                                            active={orderBy === 'name'}
-                                            direction={orderBy === 'name' ? order : 'asc'}
-                                            onClick={(event) => handleRequestSort(event, 'name')}
-                                        >
-                                            Name
-                                            {orderBy === 'name' ? (
-                                                <Box component="span" sx={visuallyHidden}>
-                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                                </Box>
-                                            ) : null}
-                                        </TableSortLabel>
-                                    </TableCell>
-                                    {!isSmallScreen && (
+                {!isSmallScreen ? (
+                    <ColorToggleButton selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+                ) : (
+                    <DaySelection selectedDay={selectedDay} setSelectedDay={setSelectedDay}/>
+                )}
+                <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+                    <Paper sx={{ width: '100%', backgroundColor: '#ffe0b5', borderRadius: '10px' }}>
+                        <TableContainer>
+                            <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
+                                <TableHead>
+                                    <TableRow sx={{ height: '5vh', width: '5vh' }}>
+                                        <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                            <TableSortLabel
+                                                active={orderBy === 'name'}
+                                                direction={orderBy === 'name' ? order : 'asc'}
+                                                onClick={(event) => handleRequestSort(event, 'name')}
+                                            >
+                                                Name
+                                                {orderBy === 'name' ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : null}
+                                            </TableSortLabel>
+                                        </TableCell>
                                         <TableCell
                                             align="right"
                                             sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
                                         >
                                             Day
                                         </TableCell>
-                                    )}
-                                    {!isSmallScreen && (
-                                        <TableCell
-                                            align="right"
-                                            sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
-                                        >
-                                            Exercises
-                                        </TableCell>
-                                    )}
-                                    {!isSmallScreen && (
-                                        <TableCell
-                                            align="right"
-                                            sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
-                                        >
-                                            Teacher
-                                        </TableCell>
-                                    )}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {visibleRows.map((row) => (
-                                    <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                        <TableCell
-                                            component="th"
-                                            scope="row"
-                                            sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
-                                        >
-                                            {row.routine}
-                                        </TableCell>
                                         {!isSmallScreen && (
+                                            <TableCell
+                                                align="right"
+                                                sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
+                                            >
+                                                Teacher
+                                            </TableCell>
+                                        )}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {visibleRows.map((row) => (
+                                        <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                                            <TableCell
+                                                component="th"
+                                                scope="row"
+                                                sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
+                                            >
+                                                {row.routine}
+                                            </TableCell>
                                             <TableCell
                                                 align="right"
                                                 sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
                                             >
                                                 {row.day}
                                             </TableCell>
-                                        )}
-                                        {!isSmallScreen && (
-                                            <TableCell
-                                                align="right"
-                                                sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
-                                            >
-                                                {row.excercises ? row.excercises.length : 0}
-                                            </TableCell>
-                                        )}
-                                        {!isSmallScreen && (
-                                            <TableCell
-                                                align="right"
-                                                sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
-                                            >
-                                                {row.owner}
-                                            </TableCell>
-                                        )}
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={visibleRows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Paper>
+                                            {!isSmallScreen && (
+                                                <TableCell
+                                                    align="right"
+                                                    sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
+                                                >
+                                                    {row.owner}
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={visibleRows.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    </Paper>
+                </Box>
             </div>
             {selectedEvent && (
                 <div className="Modal" onClick={handleCloseModal}>
                     <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                         <h2>Routine details</h2>
-                        <p><strong>Name:</strong> {selectedEvent.routine}</p>
-                        <p><strong>Description:</strong> {selectedEvent.description}</p>
-                        <p><strong>Day:</strong> {selectedEvent.day}</p>
-                        <p><strong>Exercises:</strong> {selectedEvent.excercises ? selectedEvent.excercises.length : 0}</p>
-                        <p><strong>Teacher:</strong> {selectedEvent.owner}</p>
+                        <p><strong>Name:</strong> {routine.name}</p>
+                        <p><strong>Description:</strong> {routine.description}</p>
+                        <p><strong>Day:</strong> {routine.day}</p>
+                        <p><strong>Exercises:</strong> {routine.excercises ? routine.excercises.length : 0}</p>
+                        <p><strong>Teacher:</strong> {routine.owner}</p>
                         <button onClick={handleViewExercises}>View exercises</button>
                         <button onClick={handleCloseModal}>Close</button>
                     </div>
@@ -302,7 +302,7 @@ export default function StickyHeadTable() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {routine[0]?.excercises?.map((exercise) => (
+                                        {routine?.excercises?.map((exercise) => (
                                             <TableRow key={exercise.id}>
                                                 <TableCell>{exercise.name}</TableCell>
                                                 <TableCell>{exercise.series} x</TableCell>
@@ -318,6 +318,28 @@ export default function StickyHeadTable() {
                     </div>
                 </div>
             )}
+            {openCircularProgress && (
+                <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            )}
+            { warningFetchingUserRoutines ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningFetchingUserRoutines} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Connection error. Try again later!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+            </>
+        )}
         </div>
     );
 }
