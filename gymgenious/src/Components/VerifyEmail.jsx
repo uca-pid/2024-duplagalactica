@@ -17,48 +17,42 @@ export default function VerifyEmail() {
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
   const [openCircularProgress, setOpenCircularProgress] = useState(true);
+  const auth = getAuth();
+
+  const verifyUser = async () => {
+    try {
+      await checkActionCode(auth, actionCode);
+      await applyActionCode(auth, actionCode);
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+        setSuccess(true);
+      }, 1500);
+      setTimeout(() => {
+        navigate('/');
+      }, 3000);
+    } catch (error) {
+      console.error("Error al verificar el correo electrónico:", error);
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+        setFailure(true);
+      }, 2000);
+      setTimeout(() => {
+        setFailure(false);
+        navigate('/');
+      }, 5000);
+    }
+  };
 
   useEffect(() => {
     if (!actionCode) {
       navigate('/error');
       return;
-    }
-    let verified = false;
-    const verifyUser = async () => {
-      if (verified) return;
-
-      const auth = getAuth();
-
-      try {
-        verified=true;
-        await checkActionCode(auth, actionCode);
-        await applyActionCode(auth, actionCode);
-        setVerification(true);
-        setTimeout(() => {
-          setOpenCircularProgress(false);
-          setSuccess(true);
-        }, 1500);
-        setTimeout(() => {
-          setSuccess(false);
-          navigate('/');
-        }, 3000);
-      } catch (error) {
-        console.error("Error al verificar el correo electrónico:", error);
-        setTimeout(() => {
-          setOpenCircularProgress(false);
-          setFailure(true);
-        }, 2000);
-        setTimeout(() => {
-          setFailure(false);
-          navigate('/login');
-        }, 5000);
+    } else {
+      return () => {
+        verifyUser()
       }
-    };
-    
-    if (!verification) {
-      verifyUser();
     }
-  }, [actionCode, navigate, verification]);
+  }, []);
 
   return (
     <div className='full-screen-image-login'>

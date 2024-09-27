@@ -18,6 +18,10 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import SportsGymnasticsIcon from '@mui/icons-material/SportsGymnastics';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import { useNavigate } from 'react-router-dom';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import CheckIcon from '@mui/icons-material/Check';
+import SportsIcon from '@mui/icons-material/Sports';
 
 export default function TemporaryDrawer() {
   const [open, setOpen] = React.useState(false);
@@ -88,7 +92,7 @@ export default function TemporaryDrawer() {
   const DrawerListCoach = (
     <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Home', 'Profile', 'Create class', 'MyClasses', 'Manage routines', 'MyRoutines', 'Logout'].map((text, index) => (
+        {['Home', 'Profile', 'Create class', 'My classes', 'Manage routines', 'My routines', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateTo(index)}>
               <ListItemIcon>
@@ -118,10 +122,9 @@ export default function TemporaryDrawer() {
               <ListItemIcon>
                 {index === 0 && <HomeIcon sx={{ color: '#BC6C25' }} />}
                 {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
-                {index === 2 && <AddIcon sx={{ color: '#BC6C25' }} />}
-                {index === 3 && <HomeIcon sx={{ color: '#BC6C25' }} />}
+                {index === 2 && <CheckIcon sx={{ color: '#BC6C25' }} />}
+                {index === 3 && <SportsIcon sx={{ color: '#BC6C25' }} />}
                 {index === 4 && <ExitToApp sx={{ color: '#BC6C25' }} />}
-                {index === 5 && <ExitToApp sx={{ color: '#BC6C25' }} />}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>
@@ -134,7 +137,7 @@ export default function TemporaryDrawer() {
   const fetchUser = async () => {
     try {
       const encodedUserMail = encodeURIComponent(userMail);
-      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${userMail}`);
+      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
         if (!response.ok) {
             throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
         }
@@ -166,6 +169,7 @@ export default function TemporaryDrawer() {
   }, [userMail]);
 
   useEffect(() => {
+    console.log(userMail)
     if (userMail) {
       fetchUser(); 
     }
@@ -196,11 +200,23 @@ export default function TemporaryDrawer() {
       <Drawer open={open} PaperProps={{ sx: { backgroundColor: '#FEFAE0' } }} onClose={toggleDrawer(false)}>
         {isAuthenticated ? (
           <>
-          {(type=='client') ? (
-          DrawerListClient
+          {type ? (
+            <>
+              {(type=='client') ? (
+                DrawerListClient
+              ) : (
+                DrawerListCoach
+              )}
+            </>
           ) : (
-            DrawerListCoach
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
           )}
+          
           </>
         ) : (
           DrawerListNotauthenticated

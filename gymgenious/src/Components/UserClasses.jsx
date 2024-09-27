@@ -18,6 +18,7 @@ import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
 import CheckIcon from '@mui/icons-material/Check';
+import { useNavigate } from 'react-router-dom';
 
 function UsserClasses() {
   const [order, setOrder] = useState('asc');
@@ -35,6 +36,8 @@ function UsserClasses() {
   const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
   const [successUnbook, setSuccessUnbook] = useState(false);
   const [warningUnbookingClass, setWarningUnbookingClass] = useState(false);
+  const navigate = useNavigate();
+  const [type, setType] = useState(null);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -113,34 +116,67 @@ function UsserClasses() {
   };
 
   const verifyToken = async (token) => {
-    setOpenCircularProgress(true);
     try {
-      const decodedToken = jwtDecode(token);
-      setUserMail(decodedToken.email);
-      setOpenCircularProgress(false);
-      await fetchClasses();
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
     } catch (error) {
-      console.error('Error al verificar el token:', error);
-      setOpenCircularProgress(false);
-      setErrorToken(true);
-      setTimeout(() => {
-        setErrorToken(false);
-      }, 3000);
-      throw error;
+        console.error('Error al verificar el token:', error);
+        setErrorToken(true);
+        setTimeout(() => {
+          setErrorToken(false);
+        }, 3000);
+        throw error;
     }
   };
 
-  useEffect(() => {
+useEffect(() => {
     const token = localStorage.getItem('authToken');
+    console.log('Token:', token);
     if (token) {
-      verifyToken(token);
+        verifyToken(token);
     } else {
-      console.error('No token found');
+        navigate('/');
+        console.error('No token found');
+    }
+    if (userMail){
+      fetchUser();
     }
   }, [userMail]);
 
+  useEffect(() => {
+    if(type==='client'){
+        fetchClasses()
+    }
+  }, [type])
+
+  const fetchUser = async () => {
+    try {
+      const encodedUserMail = encodeURIComponent(userMail);
+      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        setType(data.type);
+        if(data.type!='client'){
+          navigate('/');
+        }
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
+  };
+
   return (
     <div className="App">
+      {type!='client' ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+          <>
       <NewLeftBar />
       {openCircularProgress && (
         <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
@@ -335,6 +371,8 @@ function UsserClasses() {
             <button onClick={handleCloseModal}>Close</button>
           </div>
         </div>
+      )}
+      </>
       )}
     </div>
   );

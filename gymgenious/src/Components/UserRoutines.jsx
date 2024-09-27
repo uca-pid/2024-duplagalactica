@@ -17,6 +17,7 @@ import ColorToggleButton from '../real_components/ColorToggleButton.jsx';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import DaySelection from '../real_components/DaySelection.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function StickyHeadTable() {
     const [page, setPage] = useState(0);
@@ -34,6 +35,8 @@ export default function StickyHeadTable() {
     const [errorToken, setErrorToken] = useState(false);
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [dense, setDense] = useState(false);
+    const navigate = useNavigate();
+    const [type, setType] = useState(null);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -103,7 +106,6 @@ export default function StickyHeadTable() {
     };
 
     const verifyToken = async (token) => {
-        setOpenCircularProgress(true);
         try {
             const decodedToken = jwtDecode(token);
             setUserMail(decodedToken.email);
@@ -111,24 +113,48 @@ export default function StickyHeadTable() {
             console.error('Error al verificar el token:', error);
             setErrorToken(true);
             setTimeout(() => {
-                setErrorToken(false);
+              setErrorToken(false);
             }, 3000);
-        } finally {
-            setOpenCircularProgress(false);
+            throw error;
         }
-    };
+      };
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
+        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {
+            navigate('/');
             console.error('No token found');
         }
-        if(userMail){
-            fetchRoutines();
+        if (userMail){
+          fetchUser();
         }
-    }, [userMail]);
+      }, [userMail]);
+
+      useEffect(() => {
+        if(type==='client'){
+            fetchRoutines()
+        }
+      }, [type])
+    
+      const fetchUser = async () => {
+        try {
+          const encodedUserMail = encodeURIComponent(userMail);
+          const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+            }
+            const data = await response.json();
+            setType(data.type);
+            if(data.type!='client'){
+              navigate('/');
+            }
+        } catch (error) {
+            console.error("Error fetching user:", error);
+        }
+      };
 
     useEffect(() => {
         if (selectedDay) {
@@ -141,6 +167,15 @@ export default function StickyHeadTable() {
 
     return (
         <div className="App">
+            {type!='client' ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+          <>
             <NewLeftBar />
             <div className="Table-Container">
                 {!isSmallScreen ? (
@@ -276,6 +311,8 @@ export default function StickyHeadTable() {
                     <CircularProgress color="inherit" />
                 </Backdrop>
             )}
+            </>
+        )}
         </div>
     );
 }
