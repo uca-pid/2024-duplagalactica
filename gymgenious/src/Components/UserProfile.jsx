@@ -32,11 +32,16 @@ export default function CreateAccount() {
     const fetchUserInformation = async () => {
         setOpenCircularProgress(true);
         try {
-            console.log(userMail)
+            
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+              console.error('Token no disponible en localStorage');
+              return;
+            }
             const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_users`, {
                 method: 'GET', 
                 headers: {
-                  'Authorization': localStorage.getItem('authToken')
+                  'Authorization': `Bearer ${authToken}`
                 }
             })
             if (!response.ok) {
@@ -72,11 +77,16 @@ export default function CreateAccount() {
                 Mail: email || emailFetch
             };
 
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+              console.error('Token no disponible en localStorage');
+              return;
+            }
             const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_users_info', {
                 method: 'PUT', 
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': localStorage.getItem('authToken')
+                    'Authorization': `Bearer ${authToken}`
                 },
                 body: JSON.stringify({ newUser: updatedUser })
             });

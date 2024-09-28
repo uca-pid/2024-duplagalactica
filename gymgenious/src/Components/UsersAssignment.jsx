@@ -42,10 +42,15 @@ export default function UserAssignment({ onUsersChange, routine }) {
   const fetchUsers = async () => {
     setOpenCircularProgress(true);
     try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
       const assignedResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines`, {
         method: 'GET', 
         headers: {
-          'Authorization': localStorage.getItem('authToken')
+          'Authorization': `Bearer ${authToken}`
         }
     });
       if (!assignedResponse.ok) {
@@ -57,11 +62,10 @@ export default function UserAssignment({ onUsersChange, routine }) {
       const assignedUsers = assignedUsersData2.flatMap(routine => 
         routine.user.map(user => user.Mail)
       );
-      console.log("3",assignedUsers)
       const allUsersResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_users`, {
         method: 'GET', 
         headers: {
-          'Authorization': localStorage.getItem('authToken')
+          'Authorization': `Bearer ${authToken}`
         }
     });
       if (!allUsersResponse.ok) {
