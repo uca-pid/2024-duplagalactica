@@ -82,7 +82,7 @@ export default function CreateClass() {
           capacity: maxNum,
           BookedUsers: []
         };
-        const response = await fetch('http://127.0.0.1:5000/create_class', {
+        const response = await fetch('http://127.0.0.1:8000/create_class', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ export default function CreateClass() {
   const fetchUser = async () => {
     try {
       const encodedUserMail = encodeURIComponent(userMail);
-      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+      const response = await fetch(`http://127.0.0.1:8000/get_unique_user_by_email?mail=${encodedUserMail}`);
         if (!response.ok) {
             throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
         }
