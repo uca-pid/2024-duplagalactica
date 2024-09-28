@@ -26,7 +26,12 @@ export default function RoutineCreation() {
     const fetchRoutines = async () => {
         setOpenCircularProgress(true);
         try {
-            const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`);
+            const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
+                method: 'GET', 
+                headers: {
+                  'Authorization': localStorage.getItem('authToken')
+                }
+            });
             if (!response.ok) {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
             }
@@ -85,7 +90,12 @@ export default function RoutineCreation() {
         setOpenCircularProgress(true);
         if(validateForm()){
             try {
-                const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines');
+                const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines', {
+                    method: 'GET', 
+                    headers: {
+                      'Authorization': localStorage.getItem('authToken')
+                    }
+                });
                 if (!response2.ok) {
                     throw new Error('Error al obtener las rutinas: ' + response2.statusText);
                 }
@@ -101,6 +111,7 @@ export default function RoutineCreation() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': localStorage.getItem('authToken')
                     },
                     body: JSON.stringify(newAsignRoutine),
                 });

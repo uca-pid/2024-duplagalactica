@@ -16,6 +16,7 @@ import CouchClasses from './Components/CouchClasses.jsx';
 import UserRoutines from './Components/UserRoutines.jsx';
 import Logout from './Components/Logout.jsx';
 import CoachRoutines from './Components/CoachRoutines.jsx';
+import CoachExercises from './Components/CoachExercises.jsx';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/couch-classes" element={<CouchClasses/>}/>
         <Route path="/user-routines" element={<UserRoutines/>}/>
         <Route path="/coach-routines" element={<CoachRoutines/>}/>
+        <Route path="/coach-exercises" element={<CoachExercises/>}/>
         <Route path="/logout" element={<Logout/>}/>
       </Routes>
     </Router>
