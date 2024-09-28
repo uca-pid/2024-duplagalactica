@@ -84,12 +84,17 @@ export default function ManagingRoutines () {
 
   const fetchUser = async () => {
     try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
+        }
       const encodedUserMail = encodeURIComponent(userMail);
       const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`
         , {
           method: 'GET', 
           headers: {
-            'Authorization': localStorage.getItem('authToken')
+            'Authorization': `Bearer ${authToken}`
           }
       });
         if (!response.ok) {

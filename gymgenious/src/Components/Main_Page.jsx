@@ -43,13 +43,7 @@ export default function Main_Page() {
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes', {
-        method: 'GET', 
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('authToken')
-        }
-      });
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
@@ -116,11 +110,16 @@ export default function Main_Page() {
   const handleBookClass = async (event) => {
     setOpenCircularProgress(true);
     try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/book_class', {
         method: 'PUT', 
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('authToken')
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ event: event,mail:userMail })
       });
@@ -148,11 +147,16 @@ export default function Main_Page() {
   const handleUnbookClass = async (event) => {
     setOpenCircularProgress(true);
     try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/unbook_class', {
         method: 'PUT', 
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('authToken')
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ event: event,mail:userMail })
       });
@@ -194,12 +198,8 @@ export default function Main_Page() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      token = Math.random().toString(36).substring(7);
-      localStorage.setItem('authToken', token);
-    }
-    if (token) {
+    let token = localStorage.getItem('authToken');
+    if (token && token.split('.').length === 3) {
         verifyToken(token);
     } else {
         console.error('No token found');

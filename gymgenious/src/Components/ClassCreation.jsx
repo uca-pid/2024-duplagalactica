@@ -69,6 +69,11 @@ export default function CreateClass() {
     setOpenCircularProgress(true);
     if(validateForm()){
       try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
+        }
         const isoDateStringInicio = `${date}T${hour}:00Z`;
         const isoDateStringFin = `${date}T${hourFin}:00Z`;
         const newClass = {
@@ -86,7 +91,7 @@ export default function CreateClass() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('authToken')
+            'Authorization': `Bearer ${authToken}`
           },
           body: JSON.stringify(newClass),
         });
@@ -153,11 +158,16 @@ export default function CreateClass() {
 
   const fetchUser = async () => {
     try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
       const encodedUserMail = encodeURIComponent(userMail);
       const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
             method: 'GET', 
             headers: {
-              'Authorization': localStorage.getItem('authToken')
+              'Authorization': `Bearer ${authToken}`
             }
         });
         if (!response.ok) {
