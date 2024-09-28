@@ -43,7 +43,7 @@ export default function Main_Page() {
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/get_classes');
+      const response = await fetch('http://two024-duplagalactica-li8t.onrender.com/get_classes');
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
@@ -110,7 +110,7 @@ export default function Main_Page() {
   const handleBookClass = async (event) => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/book_class', {
+      const response = await fetch('http://two024-duplagalactica-li8t.onrender.com/book_class', {
         method: 'PUT', 
         headers: {
           'Content-Type': 'application/json'
@@ -141,7 +141,7 @@ export default function Main_Page() {
   const handleUnbookClass = async (event) => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/unbook_class', {
+      const response = await fetch('http://two024-duplagalactica-li8t.onrender.com/unbook_class', {
         method: 'PUT', 
         headers: {
           'Content-Type': 'application/json'
