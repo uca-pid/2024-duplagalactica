@@ -23,7 +23,6 @@ export default function Calendar ({ events, onSelectEvent }) {
       display: 'block',
       padding: '5px',
       border: 'none',
-      '.rbc-event.custom-event': { backgroundColor: {backgroundColor} } 
     };
     return {
       style: style
