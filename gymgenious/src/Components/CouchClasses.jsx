@@ -45,9 +45,7 @@ function CouchClasses() {
   const [name, setName] = useState('');
   const navigate = useNavigate();
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
-  const [warningFetchingModifiedClasses, setWarningFetchingModifiedClasses] = useState(false);
-  const [warningDeletingClasses, setWarningDeletingClasses] = useState(false);
-  const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
+  const [warningConnection, setWarningConnection] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
 
   const day = (dateString) => {
@@ -118,9 +116,9 @@ function CouchClasses() {
     } catch (error) {
         console.error("Error updating user:", error);
         setOpenCircularProgress(false);
-        setWarningFetchingModifiedClasses(true);
+        setWarningConnection(true);
         setTimeout(() => {
-          setWarningFetchingModifiedClasses(false);
+            setWarningConnection(false);
         }, 3000);
     }
 };
@@ -144,9 +142,9 @@ function CouchClasses() {
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
-      setWarningDeletingClasses(true);
+      setWarningConnection(true);
       setTimeout(() => {
-        setWarningDeletingClasses(false);
+        setWarningConnection(false);
       }, 3000);
     }
   };
@@ -167,9 +165,9 @@ function CouchClasses() {
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
-      setWarningFetchingClasses(true);
+      setWarningConnection(true);
       setTimeout(() => {
-        setWarningFetchingClasses(false);
+        setWarningConnection(false);
       }, 3000);
     }
   };
@@ -212,203 +210,158 @@ function CouchClasses() {
     <div className="App">
         <NewLeftBar/>
         {openCircularProgress ? (
-                <Backdrop
-                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                open={openCircularProgress}
-                >
+            <Backdrop open={openCircularProgress} sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}>
                 <CircularProgress color="inherit" />
-                </Backdrop>
-            ) : null}
-      { warningFetchingClasses ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningFetchingClasses} mountOnEnter unmountOnExit >
+            </Backdrop>
+        ) : (
+            null
+        )}
+        {warningConnection ? (
+            <div className='alert-container'>
+                <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={warningConnection} mountOnEnter unmountOnExit >
                             <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error fetching classes. Try again!
+                                Connection Error. Try again later!
                             </Alert>
                         </Slide>
-                        </Box>
-                    </div>
+                    </Box>
                 </div>
-            ) : (
-                null
-            )}
-            { warningDeletingClasses ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningDeletingClasses} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error deleting class. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-            { warningFetchingModifiedClasses ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
-                        <Slide direction="up" in={warningFetchingModifiedClasses} mountOnEnter unmountOnExit >
-                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                Error fetching modified class. Try again!
-                            </Alert>
-                        </Slide>
-                        </Box>
-                    </div>
-                </div>
-            ) : (
-                null
-            )}
-            { errorToken ? (
-                <div className='alert-container'>
-                    <div className='alert-content'>
-                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+            </div>
+        ) : (
+            null
+        )}
+        {errorToken ? (
+            <div className='alert-container'>
+                <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
                         <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
                             <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
                                 Invalid Token!
                             </Alert>
                         </Slide>
-                        </Box>
-                    </div>
+                    </Box>
                 </div>
-            ) : (
-                null
-            )}
+            </div>
+        ) : (
+            null
+        )}
         <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
-            <Paper 
-                sx={{ 
-                width: '100%',
-                backgroundColor: '#ffe0b5',
-                border: '2px solid #BC6C25'
-                }}
-            >
-                <TableContainer>
-                <Table 
-                    sx={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    }} 
-                    aria-labelledby="tableTitle" 
-                    size={dense ? 'small' : 'medium'}
-                >
-                    <TableHead>
-                    <TableRow sx={{height: '5vh',width:'5vh',color:'#54311a' }}>
-                        <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
-                        <TableSortLabel
-                            active={orderBy === 'name'}
-                            direction={orderBy === 'name' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'name')}
-                        >
-                            Name
-                            {orderBy === 'name' ? (
-                            <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                            </Box>
-                            ) : null}
-                        </TableSortLabel>
-                        </TableCell>
-                        {!isSmallScreen && (
-                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                            <TableSortLabel
-                            active={orderBy === 'hour'}
-                            direction={orderBy === 'hour' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'hour')}
-                            >
-                            Start time
-                            {orderBy === 'hour' ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                            </TableSortLabel>
-                        </TableCell>
-                        )}
-                        {!isSmallScreen250 && (
-                        <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                            <TableSortLabel
-                            active={orderBy === 'dateInicio'}
-                            direction={orderBy === 'dateInicio' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'dateInicio')}
-                            >
-                            Date
-                            {orderBy === 'dateInicio' ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                            </TableSortLabel>
-                        </TableCell>
-                        )}
-                        {!isSmallScreen && (
-                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                            <TableSortLabel
-                            active={orderBy === 'permanent'}
-                            direction={orderBy === 'permanent' ? order : 'asc'}
-                            onClick={(event) => handleRequestSort(event, 'permanent')}
-                            >
-                            Recurrent
-                            {orderBy === 'permanent' ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                            </TableSortLabel>
-                        </TableCell>
-                        )}
-                    </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {visibleRows.map((row) => (
-                        <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                            {row.name}
-                        </TableCell>
-                        {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{row.hour}</TableCell>
-                        )}
-                        {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
-                        )}
-                        {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
-                        )}
-                        </TableRow>
-                    ))}
-                    </TableBody>
-                </Table>
-                </TableContainer>
-                {isSmallScreen ? (
-                <TablePagination
-                rowsPerPageOptions={[10]}
-                component="div"
-                count={visibleRows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            ) : (
-                <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={visibleRows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            )}
-                
-            </Paper>
-            {selectedEvent && (
-                <div className="Modal" onClick={handleCloseModal}>
-                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                <Paper sx={{ width: '100%', backgroundColor: '#ffe0b5', border: '2px solid #BC6C25' }}>
+                    <TableContainer>
+                        <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
+                            <TableHead>
+                                <TableRow sx={{height: '5vh',width:'5vh',color:'#54311a' }}>
+                                    <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                        <TableSortLabel active={orderBy === 'name'} direction={orderBy === 'name' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'name')}>
+                                            Name
+                                            {orderBy === 'name' ? (
+                                                <Box component="span" sx={visuallyHidden}>
+                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                </Box>
+                                            ) : (
+                                                null
+                                            )}
+                                        </TableSortLabel>
+                                    </TableCell>
+                                    {!isSmallScreen && (
+                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                                            <TableSortLabel active={orderBy === 'hour'} direction={orderBy === 'hour' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'hour')}>
+                                                Start time
+                                                {orderBy === 'hour' ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : (
+                                                    null
+                                                )}
+                                            </TableSortLabel>
+                                        </TableCell>
+                                    )}
+                                    {!isSmallScreen250 && (
+                                        <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                                            <TableSortLabel active={orderBy === 'dateInicio'} direction={orderBy === 'dateInicio' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'dateInicio')}>
+                                                Date
+                                                {orderBy === 'dateInicio' ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : (
+                                                    null
+                                                )}
+                                            </TableSortLabel>
+                                        </TableCell>
+                                    )}
+                                    {!isSmallScreen && (
+                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                                            <TableSortLabel active={orderBy === 'permanent'} direction={orderBy === 'permanent' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'permanent')}>
+                                                Recurrent
+                                                {orderBy === 'permanent' ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : (
+                                                    null
+                                                )}
+                                            </TableSortLabel>
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {visibleRows.map((row) => (
+                                    <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                            {row.name}
+                                        </TableCell>
+                                        {!isSmallScreen && (
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                                {row.hour}
+                                            </TableCell>
+                                        )}
+                                        {!isSmallScreen250 && (
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                                {new Date(row.dateInicio).toLocaleDateString()}
+                                            </TableCell>
+                                        )}
+                                        {!isSmallScreen && (
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>
+                                                {row.permanent === 'Si' ? 'Sí' : 'No'}
+                                            </TableCell>
+                                        )}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    {isSmallScreen ? (
+                        <TablePagination
+                        rowsPerPageOptions={[10]}
+                        component="div"
+                        count={visibleRows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    ) : (
+                        <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={visibleRows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    )}
+                </Paper>
+            </Box>
+        </div>
+        {selectedEvent && (
+            <div className="Modal" onClick={handleCloseModal}>
+                <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                     <h2>Class details</h2>
                     <p><strong>Name:</strong> {selectedEvent.name}</p>
                     <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
@@ -418,12 +371,12 @@ function CouchClasses() {
                     <button onClick={handleEditClass}>Edit class</button>
                     <button onClick={handleCloseModal}>Close</button>
                     <button onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
-                    </div>
                 </div>
-                )}
-            {editClass && (
-                <div className="Modal" onClick={handleEditClass}>
-                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+            </div>
+        )}
+        {editClass && (
+            <div className="Modal" onClick={handleEditClass}>
+                <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                     <h2>Class details</h2>
                     <form>
                         <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
@@ -460,8 +413,8 @@ function CouchClasses() {
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder={selectedEvent.name}                                />
                             </div>
-                            </div>
-                            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        </div>
+                        <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                             <div className="input-small-container" style={{width:"100%"}}>
                                 <label htmlFor="permanent" style={{color:'#14213D'}}>Recurrent:</label>
                                 <select 
@@ -471,9 +424,9 @@ function CouchClasses() {
                                 onChange={(e) => setPermanent(e.target.value)}
                                 placeholder={selectedEvent.permanent}
                                 >
-                                <option value="" >Select</option>
-                                <option value="Si">Yes</option>
-                                <option value="No">No</option>
+                                    <option value="" >Select</option>
+                                    <option value="Si">Yes</option>
+                                    <option value="No">No</option>
                                 </select>
                             </div>
                             <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
@@ -490,22 +443,14 @@ function CouchClasses() {
                                 />
                             </div>
                         </div>
-                        <button onClick={handleEditClass} className='button_login'>
-                            Cancell
-                        </button>
-                        <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>
-                            Save changes
-                        </button>
+                        <button onClick={handleEditClass} className='button_login'>Cancell</button>
+                        <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>Save changes</button>
                     </form>
-                    </div>
                 </div>
-                )}
-            </Box>
-        </div>
+            </div>
+        )}
     </div>
   );
-  
-  
 }
 
 // CouchClasses.propTypes = {
