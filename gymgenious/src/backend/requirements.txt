@@ -148,6 +148,7 @@ ujson==5.10.0
 uritemplate==4.1.1
 urllib3==2.2.1
 virtualenv==20.26.3
+waitress==3.0.0
 wcwidth==0.2.13
 websocket-client==1.8.0
 Werkzeug==3.0.4
