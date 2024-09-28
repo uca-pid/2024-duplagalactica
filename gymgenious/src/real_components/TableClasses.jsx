@@ -203,7 +203,6 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
             <h2>Classes details:</h2>
             <p><strong>Name:</strong> {selectedEvent.name}</p>
             <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
-            {/* Sumar 3 horas al tiempo */}
             <p><strong>Start time:</strong> {new Date(new Date(selectedEvent.dateInicio).getTime() + 3 * 60 * 60 * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>

@@ -78,10 +78,8 @@ export default function CoachExercises() {
                 throw new Error('Error al obtener los ejercicios: ' + response.statusText);
             }
             const exercisesData = await response.json();
-            const filteredExercises = exercisesData.filter(exercise => exercise.owner === userMail);
             
-            setExercises(filteredExercises);
-
+            setExercises(exercisesData);
             setTimeout(() => {
             setOpenCircularProgress(false);
             }, 2000);
@@ -125,9 +123,25 @@ export default function CoachExercises() {
 
     useEffect(() => {
     if(type==='coach'){
-        fetchExercises()
+        fetchExercises();
     }
-    }, [type])
+    }, [type]);
+
+    const visibleRows = React.useMemo(
+        () =>
+          [...exercises]
+            .sort((a, b) =>
+              order === 'asc'
+                ? a[orderBy] < b[orderBy]
+                  ? -1
+                  : 1
+                : a[orderBy] > b[orderBy]
+                ? -1
+                : 1
+            )
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+        [order, orderBy, page, rowsPerPage, exercises]
+      );
 
     const fetchUser = async () => {
         try {
@@ -255,7 +269,7 @@ export default function CoachExercises() {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {exercises.map((row) => (
+                                            {visibleRows.map((row) => (
                                                 <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
                                                         <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
                                                             {row.name}

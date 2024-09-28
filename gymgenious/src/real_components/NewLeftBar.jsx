@@ -101,7 +101,7 @@ export default function TemporaryDrawer() {
                 {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
                 {index === 2 && <AddIcon sx={{ color: '#BC6C25' }} />}
                 {index === 3 && <SportsGymnasticsIcon sx={{ color: '#BC6C25' }} />}
-                {index === 4 && <FitnessCenterIcon sx={{ color: '#BC6C25' }} />}
+                {index === 4 && <SportsIcon sx={{ color: '#BC6C25' }} />}
                 {index === 5 && <FitnessCenterIcon sx={{ color: '#BC6C25' }} />}
                 {index === 6 && <DirectionsRunIcon sx={{ color: '#BC6C25' }} />}
                 {index === 7 && <ExitToApp sx={{ color: '#BC6C25' }} />}
