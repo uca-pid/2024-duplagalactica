@@ -42,13 +42,23 @@ export default function UsserAssignment({onUsersChange,routine}) {
   const fetchExercises = async () => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`);
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
+        method: 'GET', 
+        headers: {
+          'Authorization': localStorage.getItem('authToken')
+        }
+    });
       if (!response.ok) {
         throw new Error('Error al obtener las rutinas: ' + response.statusText);
       }
       const routinesData = await response.json();
       const filteredRoutines = routinesData.filter(event => event.id === routine);
-      const response2 = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_excersices`);
+      const response2 = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_excersices`, {
+        method: 'GET', 
+        headers: {
+          'Authorization': localStorage.getItem('authToken')
+        }
+    });
       if (!response2.ok) {
           throw new Error('Error al obtener los ejercicios: ' + response2.statusText);
         }

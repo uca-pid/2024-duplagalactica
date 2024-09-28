@@ -42,7 +42,12 @@ export default function UserAssignment({ onUsersChange, routine }) {
   const fetchUsers = async () => {
     setOpenCircularProgress(true);
     try {
-      const assignedResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines`);
+      const assignedResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines`, {
+        method: 'GET', 
+        headers: {
+          'Authorization': localStorage.getItem('authToken')
+        }
+    });
       if (!assignedResponse.ok) {
         throw new Error('Error al obtener las rutinas asignadas: ' + assignedResponse.statusText);
       }
@@ -53,7 +58,12 @@ export default function UserAssignment({ onUsersChange, routine }) {
         routine.user.map(user => user.Mail)
       );
       console.log("3",assignedUsers)
-      const allUsersResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_users`);
+      const allUsersResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_users`, {
+        method: 'GET', 
+        headers: {
+          'Authorization': localStorage.getItem('authToken')
+        }
+    });
       if (!allUsersResponse.ok) {
         throw new Error('Error al obtener los usuarios: ' + allUsersResponse.statusText);
       }

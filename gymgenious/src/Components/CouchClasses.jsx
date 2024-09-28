@@ -101,7 +101,8 @@ function CouchClasses() {
         const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_class_info', {
             method: 'PUT', 
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('authToken')
             },
             body: JSON.stringify({ newUser: updatedUser })
         });
@@ -129,7 +130,8 @@ function CouchClasses() {
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/delete_class', {
         method: 'DELETE', 
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('authToken')
         },
         body: JSON.stringify({ event: event,mail:userMail })
       });
@@ -152,7 +154,12 @@ function CouchClasses() {
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes', {
+        method: 'GET', 
+        headers: {
+          'Authorization': localStorage.getItem('authToken')
+        }
+    });
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }

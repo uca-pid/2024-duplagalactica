@@ -81,6 +81,16 @@ def get_clients_users():
         print(f"Error al obtener los usuarios: {e}")
         raise RuntimeError("No se pudo obtener las usuarios")
 
+def get_coach_users():
+    try:
+        users_ref = db.collection('users')
+        docs = users_ref.where('type', '==', 'coach').stream()
+        users = [{**doc.to_dict()} for doc in docs]
+        return users
+    except Exception as e:
+        print(f"Error al obtener los usuarios: {e}")
+        raise RuntimeError("No se pudo obtener las usuarios")
+
 
 def get_client_users_no_match_routine(routine):
     try:

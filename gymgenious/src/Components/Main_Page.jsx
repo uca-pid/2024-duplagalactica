@@ -144,7 +144,8 @@ export default function Main_Page() {
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/unbook_class', {
         method: 'PUT', 
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('authToken')
         },
         body: JSON.stringify({ event: event,mail:userMail })
       });
