@@ -40,7 +40,7 @@ function App() {
     </Router>
   );
 }
-/////ESTO PUEDE SERVIR PARA EL WEB PAGE APP, NO RECARGA TODA LA PAGINA CUANDO CAMBIAS PAGINA/////
+/////ESTO PUEDE SERVIR PARA EL WEB PAGE APP, NO RECARGA TODA LA PAGINA CUANDO CAMBIAS PAGINA////
 
 // import { Link } from 'react-router-dom';
 
