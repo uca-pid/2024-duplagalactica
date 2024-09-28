@@ -64,11 +64,11 @@ export default function ExerciseCreation() {
           series: series,
           timing: timing,
         };
-    
         const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/create_exersice', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('authToken')
           },
           body: JSON.stringify(newExersice),
         });

@@ -61,14 +61,15 @@ function UsserClasses() {
   const handleCloseModal = () => {
     setSelectedEvent(null);
   };
-
+  
   const handleUnbookClass = async (event) => {
     setOpenCircularProgress(true);
     try {
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/unbook_class', {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('authToken')
         },
         body: JSON.stringify({ event: event, mail: userMail })
       });
@@ -95,7 +96,12 @@ function UsserClasses() {
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes', {
+        method: 'GET', 
+        headers: {
+          'Authorization': localStorage.getItem('authToken')
+        }
+    });
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
@@ -152,7 +158,12 @@ useEffect(() => {
   const fetchUser = async () => {
     try {
       const encodedUserMail = encodeURIComponent(userMail);
-      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`);
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
+        method: 'GET', 
+        headers: {
+          'Authorization': localStorage.getItem('authToken')
+        }
+    });
         if (!response.ok) {
             throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
         }
