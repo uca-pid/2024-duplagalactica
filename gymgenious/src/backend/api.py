@@ -13,6 +13,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 
+
 @app.route('/get_classes', methods=['GET'])
 def get_classes():
     return get_classes_route()
