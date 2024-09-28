@@ -73,7 +73,7 @@ export default function StickyHeadTable() {
     const fetchRoutines = async () => {
         setOpenCircularProgress(true);
         try {            
-            const response = await fetch('http://127.0.0.1:5000/get_assigned_routines');
+            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines');
             if (!response.ok) {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
             }
@@ -98,7 +98,7 @@ export default function StickyHeadTable() {
     const fetchRoutineWithExercises = async (routineName) => {
         setOpenCircularProgress(true);
         try {
-            const response = await fetch('http://127.0.0.1:5000/get_routines');
+            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines');
             if (!response.ok) {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
             }
@@ -154,7 +154,7 @@ export default function StickyHeadTable() {
       const fetchUser = async () => {
         try {
           const encodedUserMail = encodeURIComponent(userMail);
-          const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+          const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`);
             if (!response.ok) {
                 throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
             }

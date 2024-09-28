@@ -42,7 +42,7 @@ export default function UsserAssignment({onUsersChange}) {
   const fetchExercises = async () => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch(`http://127.0.0.1:5000/get_excersices`);
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_excersices`);
       if (!response.ok) {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }

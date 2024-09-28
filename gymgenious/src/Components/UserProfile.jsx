@@ -33,7 +33,7 @@ export default function CreateAccount() {
         setOpenCircularProgress(true);
         try {
             console.log(userMail)
-            const response = await fetch(`http://127.0.0.1:5000/get_users`)
+            const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_users`)
             if (!response.ok) {
                 throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
             }
@@ -67,7 +67,7 @@ export default function CreateAccount() {
                 Mail: email || emailFetch
             };
 
-            const response = await fetch('http://127.0.0.1:5000/update_users_info', {
+            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_users_info', {
                 method: 'PUT', 
                 headers: {
                     'Content-Type': 'application/json'

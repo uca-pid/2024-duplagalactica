@@ -90,7 +90,7 @@ export default function CreateAccount() {
                     Birthday: date,
                     type: typeAccount
                 };
-                await fetch('http://127.0.0.1:5000/create_user', {
+                await fetch('https://two024-duplagalactica-li8t.onrender.com/create_user', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
