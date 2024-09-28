@@ -35,10 +35,10 @@ export default function TemporaryDrawer() {
   const goToManageRoutines = () => navigate('/managing-routines');
   const goToCouchClasses = () => navigate('/couch-classes');
   const goToBookedClasses = () => navigate('/user-classes');
-  const goToMyRoutines = () => navigate('/user-routines');
   const goToLogout = () => navigate('/logout');
   const goToUserRoutines = () => navigate('/user-routines');
-  const goToCouchRoutines = () => navigate('/coach-routines');
+  const goToCoachRoutines = () => navigate('/coach-routines');
+  const goToCoachClasses = () => navigate('/coach-exercises');
 
   const navigateTo = (index) => {
     const routes = [
@@ -47,7 +47,8 @@ export default function TemporaryDrawer() {
       goToClassCreation,
       goToCouchClasses,
       goToManageRoutines,
-      goToCouchRoutines,
+      goToCoachClasses,
+      goToCoachRoutines,
       goToLogout,
     ];
     routes[index]();
@@ -92,7 +93,7 @@ export default function TemporaryDrawer() {
   const DrawerListCoach = (
     <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Home', 'Profile', 'Create class', 'My classes', 'Manage routines', 'My routines', 'Logout'].map((text, index) => (
+        {['Home', 'Profile', 'Create class', 'My classes', 'Managing', 'My exercises', 'My routines', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateTo(index)}>
               <ListItemIcon>
@@ -101,8 +102,9 @@ export default function TemporaryDrawer() {
                 {index === 2 && <AddIcon sx={{ color: '#BC6C25' }} />}
                 {index === 3 && <SportsGymnasticsIcon sx={{ color: '#BC6C25' }} />}
                 {index === 4 && <FitnessCenterIcon sx={{ color: '#BC6C25' }} />}
-                {index === 5 && <DirectionsRunIcon sx={{ color: '#BC6C25' }} />}
-                {index === 6 && <ExitToApp sx={{ color: '#BC6C25' }} />}
+                {index === 5 && <FitnessCenterIcon sx={{ color: '#BC6C25' }} />}
+                {index === 6 && <DirectionsRunIcon sx={{ color: '#BC6C25' }} />}
+                {index === 7 && <ExitToApp sx={{ color: '#BC6C25' }} />}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
             </ListItemButton>
