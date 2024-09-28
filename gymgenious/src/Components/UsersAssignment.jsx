@@ -42,7 +42,7 @@ export default function UserAssignment({ onUsersChange, routine }) {
   const fetchUsers = async () => {
     setOpenCircularProgress(true);
     try {
-      const assignedResponse = await fetch(`http://127.0.0.1:5000/get_assigned_routines`);
+      const assignedResponse = await fetch(`http://127.0.0.1:8000/get_assigned_routines`);
       if (!assignedResponse.ok) {
         throw new Error('Error al obtener las rutinas asignadas: ' + assignedResponse.statusText);
       }
@@ -53,7 +53,7 @@ export default function UserAssignment({ onUsersChange, routine }) {
         routine.user.map(user => user.Mail)
       );
       console.log("3",assignedUsers)
-      const allUsersResponse = await fetch(`http://127.0.0.1:5000/get_users`);
+      const allUsersResponse = await fetch(`http://127.0.0.1:8000/get_users`);
       if (!allUsersResponse.ok) {
         throw new Error('Error al obtener los usuarios: ' + allUsersResponse.statusText);
       }

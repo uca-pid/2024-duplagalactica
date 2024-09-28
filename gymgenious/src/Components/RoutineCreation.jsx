@@ -61,7 +61,7 @@ export default function RoutineCreation() {
           day: day,
           owner: userMail,
         };
-        const response = await fetch('http://127.0.0.1:5000/create_routine', {
+        const response = await fetch('http://127.0.0.1:8000/create_routine', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

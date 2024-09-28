@@ -94,7 +94,7 @@ function CouchClasses() {
             excers: exercises,
             name: name,
         };
-        const response = await fetch('http://127.0.0.1:5000/update_routine_info', {
+        const response = await fetch('http://127.0.0.1:8000/update_routine_info', {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json'
@@ -132,7 +132,7 @@ function CouchClasses() {
   const handeDeleteRoutine = async (event) => {
     setOpenCircularProgress(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/delete_routine', {
+      const response = await fetch('http://127.0.0.1:8000/delete_routine', {
         method: 'DELETE', 
         headers: {
           'Content-Type': 'application/json'
@@ -158,7 +158,7 @@ function CouchClasses() {
   const fetchRoutines = async () => {
     setOpenCircularProgress(true);
     try {
-        const response = await fetch(`http://127.0.0.1:5000/get_routines`);
+        const response = await fetch(`http://127.0.0.1:8000/get_routines`);
         if (!response.ok) {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
@@ -209,7 +209,7 @@ function CouchClasses() {
       const fetchUser = async () => {
         try {
           const encodedUserMail = encodeURIComponent(userMail);
-          const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`);
+          const response = await fetch(`http://127.0.0.1:8000/get_unique_user_by_email?mail=${encodedUserMail}`);
             if (!response.ok) {
                 throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
             }
