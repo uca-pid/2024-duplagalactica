@@ -80,6 +80,11 @@ export default function CreateAccount() {
         setOpenCircularProgress(true);
         if(validateForm()){
             try {
+                const authToken = localStorage.getItem('authToken');
+                if (!authToken) {
+                  console.error('Token no disponible en localStorage');
+                  return;
+                }
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const firebaseUser = userCredential.user;
                 const newUser = {
@@ -94,6 +99,7 @@ export default function CreateAccount() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
                     },
                     body: JSON.stringify(newUser),
                 });

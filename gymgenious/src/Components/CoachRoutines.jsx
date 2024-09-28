@@ -91,11 +91,16 @@ function CouchClasses() {
             excers: exercises,
             name: name,
         };
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
+        }
         const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_routine_info', {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': localStorage.getItem('authToken')
+                'Authorization': `Bearer ${authToken}`
             },
             body: JSON.stringify({ newRoutine: updatedRoutines })
         });
@@ -130,11 +135,16 @@ function CouchClasses() {
   const handeDeleteRoutine = async (event) => {
     setOpenCircularProgress(true);
     try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/delete_routine', {
         method: 'DELETE', 
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('authToken')
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({event: event})
       });
@@ -157,10 +167,15 @@ function CouchClasses() {
   const fetchRoutines = async () => {
     setOpenCircularProgress(true);
     try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
         const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
           method: 'GET', 
           headers: {
-            'Authorization': localStorage.getItem('authToken')
+            'Authorization': `Bearer ${authToken}`
           }
       });
         if (!response.ok) {
@@ -212,11 +227,16 @@ function CouchClasses() {
     
       const fetchUser = async () => {
         try {
+          const authToken = localStorage.getItem('authToken');
+          if (!authToken) {
+            console.error('Token no disponible en localStorage');
+            return;
+          }
           const encodedUserMail = encodeURIComponent(userMail);
           const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
             method: 'GET', 
             headers: {
-              'Authorization': localStorage.getItem('authToken')
+              'Authorization': `Bearer ${authToken}`
             }
         });
             if (!response.ok) {

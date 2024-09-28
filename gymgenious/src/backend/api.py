@@ -15,14 +15,8 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/get_classes', methods=['GET'])
 def get_classes():
-    try :
-        token = request.headers.get('Authorization')
-        if not token or 'Bearer' not in token:
-            return jsonify({'error':'Missing token'})
-        return get_classes_route()
-    except Exception as e:
-        print("Error")
-        return jsonify({'error':'Something went wrong'})
+    return get_classes_route()
+
 
 @app.route('/create_class', methods=['POST'])
 def create_class():
@@ -101,15 +95,8 @@ def delete_routine():
 
 @app.route('/get_unique_user_by_email', methods=['GET'])
 def get_unique_user_by_email():
-    try :
-        token = request.headers.get('Authorization')
-        if not token or 'Bearer' not in token:
-            return jsonify({'error':'Missing token'})
-        username = request.args.get('mail')
-        return get_unique_user_by_email_route(username)
-    except Exception as e:
-        print("Error")
-        return jsonify({'error':'Something went wrong'})
+    username = request.args.get('mail')
+    return get_unique_user_by_email_route(username)
 
 @app.route('/get_user', methods=['GET'])
 def get_user():

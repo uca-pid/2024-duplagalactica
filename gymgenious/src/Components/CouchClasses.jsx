@@ -86,6 +86,11 @@ function CouchClasses() {
   const fetchModifyClassInformation = async () => {
     setOpenCircularProgress(true);
     try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
+        }
         const isoDateStringInicio = `${date}T${hour}:00Z`;
         const isoDateStringFin = `${date}T${hourFin}:00Z`;
         const updatedUser = {
@@ -102,7 +107,7 @@ function CouchClasses() {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': localStorage.getItem('authToken')
+                'Authorization': `Bearer ${authToken}`
             },
             body: JSON.stringify({ newUser: updatedUser })
         });
@@ -127,11 +132,16 @@ function CouchClasses() {
   const handleDeleteClass = async (event) => {
     setOpenCircularProgress(true);
     try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
+        }
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/delete_class', {
         method: 'DELETE', 
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('authToken')
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ event: event,mail:userMail })
       });
@@ -154,10 +164,15 @@ function CouchClasses() {
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
+        }
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes', {
         method: 'GET', 
         headers: {
-          'Authorization': localStorage.getItem('authToken')
+          'Authorization': `Bearer ${authToken}`
         }
     });
       if (!response.ok) {

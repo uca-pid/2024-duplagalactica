@@ -139,12 +139,7 @@ export default function TemporaryDrawer() {
   const fetchUser = async () => {
     try {
       const encodedUserMail = encodeURIComponent(userMail);
-      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
-        method: 'GET', 
-        headers: {
-          'Authorization': localStorage.getItem('authToken')
-        }
-    });
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`);
         if (!response.ok) {
             throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
         }
@@ -167,8 +162,8 @@ export default function TemporaryDrawer() {
     };
     
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
+    let token = localStorage.getItem('authToken');
+    if (token && token.split('.').length === 3) {
       verifyToken(token)
     } else {
       console.error('No token found');
