@@ -199,7 +199,7 @@ export default function Main_Page() {
 
   useEffect(() => {
     let token = localStorage.getItem('authToken');
-    if (token && token.split('.').length === 3) {
+    if (token) {
         verifyToken(token);
     } else {
         console.error('No token found');
