@@ -150,15 +150,18 @@ export default function UsserAssignment({onUsersChange}) {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
-        verifyToken(token);
+      verifyToken(token);
     } else {
-        console.error('No token found');
+      console.error('No token found');
     }
-    fetchExercises(userMail)
+  }, []);
+  
+  useEffect(() => {
+    if (userMail) {
+      fetchExercises();
+    }
   }, [userMail]);
-
 
 
   const verifyToken = async (token) => {
