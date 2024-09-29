@@ -115,7 +115,8 @@ export default function RoutineCreation() {
                     id: routineAssigned,
                     user: users,
                     owner: userMail,
-                    day: filteredRoutines[0].day
+                    day: filteredRoutines[0].day,
+                    routine: filteredRoutines[0].name
                 };
                 const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/assign_routine_to_user', {
                     method: 'POST',
