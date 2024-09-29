@@ -184,6 +184,10 @@ def get_client_users():
         print("Error")
         return jsonify({'error':'Something went wrong'})
     
+@app.route('/', methods=['GET'])
+def get_client_users():
+        return jsonify({'Todo','okey'})
+    
 @app.route('/get_coach_users', methods=['GET'])
 def get_coach_users():
     try :
