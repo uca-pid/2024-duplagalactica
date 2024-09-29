@@ -220,9 +220,12 @@ function CouchClasses() {
     }
   }, []);
 
+
   useEffect(() => {
-    fetchClasses();
-  }, [userMail])
+    if (userMail) {
+        fetchClasses();
+    }
+  }, [userMail]);
 
 
   return (
