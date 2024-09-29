@@ -124,9 +124,9 @@ export default function CoachExercises() {
     }, [userMail]);
 
     useEffect(() => {
-    if(type==='coach'){
-        fetchExercises()
-    }
+        if(type==='coach'){
+            fetchExercises()
+        }
     }, [type])
 
     const fetchUser = async () => {
