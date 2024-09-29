@@ -83,9 +83,11 @@ function CouchClasses() {
     setDate('');
     setName('');
   } 
-  const fetchModifyClassInformation = async () => {
+  const fetchModifyClassInformation = async (selectedEvent) => {
+    console.log("toy aca")
     setOpenCircularProgress(true);
     try {
+        console.log("ssss",selectedEvent)
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
           console.error('Token no disponible en localStorage');
@@ -96,12 +98,12 @@ function CouchClasses() {
         const updatedUser = {
             cid: selectedEvent.id,
             NameOriginal: selectedEvent.name,
-            DateFin: isoDateStringFin,
-            DateInicio: isoDateStringInicio,
-            Day: day(date),
-            Name: name,
-            Hour:hour,
-            Permanent: permanent
+            DateFin: isoDateStringFin || selectedEvent.dateFin,
+            DateInicio: isoDateStringInicio || selectedEvent.dateInicio,
+            Day: day(date) || selectedEvent.day,
+            Name: name || selectedEvent.name,
+            Hour:hour || selectedEvent.hour,
+            Permanent: permanent || selectedEvent.permanent
         };
         const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_class_info', {
             method: 'PUT', 
@@ -169,12 +171,7 @@ function CouchClasses() {
           console.error('Token no disponible en localStorage');
           return;
         }
-      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes', {
-        method: 'GET', 
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-    });
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
@@ -466,7 +463,7 @@ function CouchClasses() {
                             </div>
                         </div>
                         <button onClick={handleEditClass} className='button_login'>Cancell</button>
-                        <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>Save changes</button>
+                        <button onClick={()=>fetchModifyClassInformation(selectedEvent)} type="submit" className='button_login'>Save changes</button>
                     </form>
                 </div>
             </div>
