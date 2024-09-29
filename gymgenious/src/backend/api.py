@@ -186,7 +186,7 @@ def get_client_users():
     
 @app.route('/', methods=['GET'])
 def default_route():
-        return jsonify({'Todo','okey'})
+    return jsonify({'status': 'OK'})
     
 @app.route('/get_coach_users', methods=['GET'])
 def get_coach_users():
