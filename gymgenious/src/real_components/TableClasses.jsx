@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, useMediaQuery } from '@mui/material';
 import Table from '@mui/material/Table';
@@ -21,6 +21,8 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const isSmallScreen = useMediaQuery('(max-width:500px)');
   const isSmallScreen250 = useMediaQuery('(max-width:250px)');
+  const isMobileScreen = useMediaQuery('(min-height:750px)');
+  const [maxHeight, setMaxHeight] = useState('600px');
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -55,6 +57,19 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
     handleCloseModal();
   };
 
+  useEffect(() => {
+    if(isSmallScreen) {
+      setRowsPerPage(10);
+    } else {
+      setRowsPerPage(5)
+    }
+    if(isMobileScreen) {
+      setMaxHeight('700px');
+    } else {
+      setMaxHeight('600px')
+    }
+  }, [isSmallScreen, isMobileScreen])
+
   const visibleRows = React.useMemo(
     () =>
       [...rows]
@@ -80,7 +95,7 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
           borderRadius: '10px'
         }}
       >
-        <TableContainer>
+        <TableContainer sx={{maxHeight: {maxHeight}, overflow: 'auto'}}>
           <Table
             sx={{
               width: '100%',
@@ -183,7 +198,6 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
           />
         ) : (
           <TablePagination

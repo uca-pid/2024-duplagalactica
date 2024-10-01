@@ -25,17 +25,19 @@ export default function CoachExercises() {
     const [orderBy, setOrderBy] = useState('name');
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [userMail, setUserMail] = useState('');
     const isSmallScreen = useMediaQuery('(max-width:500px)');
-    const isSmallScreen250 = useMediaQuery('(max-width:250px)');
+    const isSmallScreen250 = useMediaQuery('(max-width:400px)');
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [errorToken, setErrorToken] = useState(false);
     const [warningConnection, setWarningConnection] = useState(false);
     const [exercises, setExercises] = useState([]);
     const navigate = useNavigate();
     const [type, setType] = useState(null);
+    const isMobileScreen = useMediaQuery('(min-height:750px)');
+    const [maxHeight, setMaxHeight] = useState('600px');
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -60,6 +62,23 @@ export default function CoachExercises() {
         setSelectedEvent(null);
     };
 
+    const correctExercisesData = async (exercisesData) => {
+        return exercisesData.map(element => {
+            if (!element.series) {
+                return {
+                    name: element.name,
+                    series: 4,
+                    reps: [12, 12, 10, 10],
+                    timing: '60',
+                    description: 'aaaa',
+                    owner: 'Train-Mate'
+                };
+            }
+            return element;
+        });
+    };
+    
+
     const fetchExercises = async () => {
         setOpenCircularProgress(true);
         try {
@@ -78,11 +97,18 @@ export default function CoachExercises() {
                 throw new Error('Error al obtener los ejercicios: ' + response.statusText);
             }
             const exercisesData = await response.json();
-            
-            setExercises(exercisesData);
-            setTimeout(() => {
+
+            const response2 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            const exercisesDataFromTrainMate = await response2.json();
+            const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
+            const totalExercisesCorrected = await correctExercisesData(totalExercises);
+            setExercises(totalExercisesCorrected);
             setOpenCircularProgress(false);
-            }, 2000);
         } catch (error) {
             console.error("Error fetching users:", error);
             setOpenCircularProgress(false);
@@ -126,6 +152,14 @@ export default function CoachExercises() {
         fetchExercises();
     }
     }, [type]);
+
+    useEffect(() => {
+        if(isMobileScreen) {
+          setMaxHeight('700px');
+        } else {
+          setMaxHeight('600px')
+        }
+      }, [isMobileScreen])
 
     const visibleRows = React.useMemo(
         () =>
@@ -214,12 +248,25 @@ export default function CoachExercises() {
                         </div>
                     )}
                     <div className="Table-Container">
-                        <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
-                            <Paper sx={{ width: '100%', backgroundColor: '#ffe0b5', borderRadius: '10px' }}>
-                                <TableContainer>
-                                    <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
-                                        <TableHead>
-                                            <TableRow sx={{ height: '5vh', width: '5vh' }}>
+                    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+                        <Paper
+                            sx={{
+                            width: '100%',
+                            backgroundColor: '#ffe0b5',
+                            borderRadius: '10px'
+                            }}
+                        >
+                            <TableContainer sx={{maxHeight: {maxHeight}, overflow: 'auto'}}>
+                                <Table
+                                    sx={{
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    }}
+                                    aria-labelledby="tableTitle"
+                                    size={dense ? 'small' : 'medium'}
+                                >
+                                    <TableHead>
+                                        <TableRow sx={{ height: '5vh', width: '5vh' }}>
                                             <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
                                                 <TableSortLabel
                                                 active={orderBy === 'name'}
@@ -237,12 +284,12 @@ export default function CoachExercises() {
                                             {!isSmallScreen && (
                                                 <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                                                 <TableSortLabel
-                                                    active={orderBy === 'hour'}
-                                                    direction={orderBy === 'hour' ? order : 'asc'}
-                                                    onClick={(event) => handleRequestSort(event, 'hour')}
+                                                    active={orderBy === 'description'}
+                                                    direction={orderBy === 'description' ? order : 'asc'}
+                                                    onClick={(event) => handleRequestSort(event, 'description')}
                                                 >
                                                     Description
-                                                    {orderBy === 'hour' && (
+                                                    {orderBy === 'description' && (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                                     </Box>
@@ -253,12 +300,12 @@ export default function CoachExercises() {
                                             {!isSmallScreen250 && (
                                                 <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                                                 <TableSortLabel
-                                                    active={orderBy === 'dateInicio'}
-                                                    direction={orderBy === 'dateInicio' ? order : 'asc'}
-                                                    onClick={(event) => handleRequestSort(event, 'dateInicio')}
+                                                    active={orderBy === 'owner'}
+                                                    direction={orderBy === 'owner' ? order : 'asc'}
+                                                    onClick={(event) => handleRequestSort(event, 'owner')}
                                                 >
                                                     Teacher
-                                                    {orderBy === 'dateInicio' && (
+                                                    {orderBy === 'owner' && (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                                     </Box>
@@ -280,7 +327,7 @@ export default function CoachExercises() {
                                                         </TableCell>
                                                     )}
                                                     {!isSmallScreen250 && (
-                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a',whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                             {row.owner}
                                                         </TableCell>
                                                     )}
@@ -289,15 +336,26 @@ export default function CoachExercises() {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25]}
-                                    component="div"
-                                    count={exercises.length}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onPageChange={handleChangePage}
-                                    onRowsPerPageChange={handleChangeRowsPerPage}
-                                />
+                                {isSmallScreen ? (
+                                    <TablePagination
+                                        rowsPerPageOptions={[10]}
+                                        component="div"
+                                        count={exercises.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                    />
+                                    ) : (
+                                    <TablePagination
+                                        rowsPerPageOptions={[10, 25, 50]}
+                                        component="div"
+                                        count={exercises.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                    />
+                                )}
                             </Paper>
                         </Box>
                     </div>

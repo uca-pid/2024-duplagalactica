@@ -166,6 +166,7 @@ useEffect(() => {
   }, [type])
 
   const fetchUser = async () => {
+    setOpenCircularProgress(true);
     try {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) {
@@ -187,6 +188,7 @@ useEffect(() => {
         if(data.type!='client'){
           navigate('/');
         }
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching user:", error);
     }
