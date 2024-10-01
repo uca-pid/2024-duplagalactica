@@ -236,6 +236,7 @@ function CouchClasses() {
       }, [userMail]);
     
       const fetchUser = async () => {
+        setOpenCircularProgress(true);
         try {
           const authToken = localStorage.getItem('authToken');
           if (!authToken) {
