@@ -110,16 +110,26 @@ function CouchClasses() {
         setTimeout(() => {
             setOpenCircularProgress(false);
           }, 2000);
-    } catch (error) {
+        
+      } catch (error) {
         console.error("Error actualizarndo la rutina:", error);
         setOpenCircularProgress(false);
         setWarningConnection(true);
         setTimeout(() => {
           setWarningConnection(false);
         }, 3000);
-    }
-    setEditClass(!editClass);
+        setEditClass(!editClass);
+      }
   }
+
+  const saveRoutine = async () => {
+    try {
+      await handleSaveEditRoutine(); 
+      window.location.reload();;
+    } catch (error) {
+      console.error("Error al guardar la rutina:", error);
+    }
+  };
 
   const handleEditRoutine = (event) => {
     setEditClass(!editClass);
@@ -392,7 +402,7 @@ function CouchClasses() {
                   <p><strong>Users:</strong> {5}</p>
                   <button onClick={()=> handleEditRoutine(selectedEvent)}>Edit routine</button>
                   <button onClick={handleCloseModal}>Close</button>
-                  <button onClick={handleCloseModal}>Delete routine</button>
+                  <button onClick={()=> handeDeleteRoutine(selectedEvent)}>Delete routine</button>
                 </div>
               </div>
             )}
@@ -450,7 +460,7 @@ function CouchClasses() {
                       </div>
                     </div>
                     <button onClick={handleEditRoutine} className='button_login'>Cancell</button>
-                    <button onClick={handleSaveEditRoutine} type="submit" className='button_login'>Save changes</button>
+                    <button onClick={saveRoutine} type="submit" className='button_login'>Save changes</button>
                   </form>
                 </div>
               </div>

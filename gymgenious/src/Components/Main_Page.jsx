@@ -269,7 +269,7 @@ export default function Main_Page() {
               ) : (
                 <>
                 {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
-                <button onClick={() => handleBookClass(selectedEvent.name)}>Book</button>
+                <button onClick={() => handleBookClass(selectedEvent.id)}>Book</button>
                 ) :
                 (<>
                 <button style={{background:'red'}}>Full</button>

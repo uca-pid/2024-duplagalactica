@@ -394,7 +394,7 @@ useEffect(() => {
               })()}
             </p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
-            <p><strong>Participants:</strong> 5/20</p>
+            <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
             <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
             <button onClick={handleCloseModal}>Close</button>
           </div>

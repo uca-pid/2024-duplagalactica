@@ -51,7 +51,7 @@ def update_routine_info(newRoutine):
         users_ref = db.collection('routines')
         doc_ref = users_ref.document(newRoutine['rid'])
         doc = doc_ref.get()
-        print("rutina nueva",newRoutine['excers'])
+        print("rutina nueva",newRoutine)
         if doc.exists:        
             doc_ref.update({
                 'day': newRoutine['day'],

@@ -179,7 +179,12 @@ export default function UsserAssignment({onUsersChange,routine}) {
     } else {
         console.error('No token found');
     }
-    fetchExercises(userMail)
+  }, [userMail]);
+
+  useEffect(() => {
+    if (userMail) {
+      fetchExercises();
+    }
   }, [userMail]);
 
 

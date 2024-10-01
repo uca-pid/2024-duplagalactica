@@ -37,6 +37,7 @@ def update_class_info():
         if not token or 'Bearer' not in token:
             return jsonify({'error':'Missing token'})
         newUser = request.json.get('newUser')
+        print(newUser)
         return update_class_info_route(newUser)
     except Exception as e:
         print("Error")
@@ -182,6 +183,10 @@ def get_client_users():
     except Exception as e:
         print("Error")
         return jsonify({'error':'Something went wrong'})
+    
+@app.route('/', methods=['GET'])
+def default_route():
+    return jsonify({'status': 'OK'})
     
 @app.route('/get_coach_users', methods=['GET'])
 def get_coach_users():

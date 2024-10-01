@@ -22,6 +22,7 @@ export default function RoutineCreation() {
     const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
     const [errors, setErrors] = useState([]);
     const [failureErrors, setFailureErrors] = useState(false);
+    const [fetchAttempt, setFetchAttempt] = useState(0);
 
     const fetchRoutines = async () => {
         setOpenCircularProgress(true);
@@ -42,10 +43,8 @@ export default function RoutineCreation() {
             }
             const data = await response.json();
             const filteredRoutines = data.filter(event => event.owner.includes(userMail));
-            setRoutines(filteredRoutines); 
-            setTimeout(() => {
-                setOpenCircularProgress(false);
-              }, 2000);
+            setRoutines(filteredRoutines);
+            setOpenCircularProgress(false);
         } catch (error) {
             console.error("Error fetching rutinas:", error);
             setOpenCircularProgress(false);
@@ -64,8 +63,13 @@ export default function RoutineCreation() {
       } else {
           console.error('No token found');
       }
-      fetchRoutines();
-    }, [userMail]);
+    }, []);
+
+    useEffect(() => {
+        if (userMail) {
+            fetchRoutines();
+        }
+      }, [userMail]);
 
     const verifyToken = async (token) => {
         setOpenCircularProgress(true);
@@ -115,7 +119,8 @@ export default function RoutineCreation() {
                     id: routineAssigned,
                     user: users,
                     owner: userMail,
-                    day: filteredRoutines[0].day
+                    day: filteredRoutines[0].day,
+                    routine: filteredRoutines[0].name
                 };
                 const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/assign_routine_to_user', {
                     method: 'POST',
