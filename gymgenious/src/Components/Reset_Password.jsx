@@ -24,10 +24,10 @@ export default function ResetPassword() {
         setOpenCircularProgress(true);
         e.preventDefault();
         try {
-            const url = new URL('http://localhost:3000/get_unique_user_by_email');
+            const url = new URL('https://2024-duplagalactica.vercel.app/get_unique_user_by_email');
             url.searchParams.append('mail', email); 
             await sendPasswordResetEmail(auth, email, {
-                url: 'http://localhost:3000/redirections?mode=resetPassword', 
+                url: 'https://2024-duplagalactica.vercel.app/redirections?mode=resetPassword', 
                 handleCodeInApp: true
             });
             setOpenCircularProgress(false);
