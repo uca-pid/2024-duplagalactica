@@ -39,6 +39,25 @@ export default function UsserAssignment({onUsersChange,routine}) {
     onUsersChange(right); 
   }, [right, onUsersChange]);
 
+  const correctExercisesData = async (exercisesData) => {
+    let autoIncrementId=0;
+    return exercisesData.map(element => {
+        if (!element.series) {
+            autoIncrementId++;
+            return {
+                id: autoIncrementId,
+                name: element.name,
+                series: 4,
+                reps: [12, 12, 10, 10],
+                timing: '60',
+                description: 'aaaa',
+                owner: 'Train-Mate'
+            };
+        }
+        return element;
+    });
+};
+
   const fetchExercises = async () => {
     setOpenCircularProgress(true);
     try {
@@ -69,15 +88,29 @@ export default function UsserAssignment({onUsersChange,routine}) {
         }
         const exercisesData = await response2.json();
   
+      const response3 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authToken}`
+        }
+      });
+      const exercisesDataFromTrainMate = await response3.json();
+      const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises);
+      const totalExercisesCorrected = await correctExercisesData(totalExercises);
+
       const exercisesInRoutines = new Set();
-      filteredRoutines.forEach(routine => {
+      await filteredRoutines.forEach(routine => {
         routine.excercises.forEach(exercise => {
-          exercisesInRoutines.add(exercise.id);  
+          exercisesInRoutines.add(exercise.id);
         });
       });
-  
-      const right = exercisesData.filter(exercise => exercisesInRoutines.has(exercise.id)); 
-      const left = exercisesData.filter(exercise => !exercisesInRoutines.has(exercise.id)); 
+      console.log(exercisesInRoutines.has(100000))
+      const right = totalExercisesCorrected.filter(exercise => 
+        exercisesInRoutines.has(exercise.id)
+      );
+      const left = totalExercisesCorrected.filter(exercise => 
+        !exercisesInRoutines.has(exercise.id)
+      ); 
       console.log(right)
       setRight(right); 
       setLeft(left);    

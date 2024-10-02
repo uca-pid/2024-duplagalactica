@@ -39,6 +39,25 @@ export default function UsserAssignment({onUsersChange}) {
     onUsersChange(right); 
   }, [right, onUsersChange]);
 
+  const correctExercisesData = async (exercisesData) => {
+    let autoIncrementId=0;
+    return exercisesData.map(element => {
+        if (!element.series) {
+            autoIncrementId++;
+            return {
+                id: autoIncrementId,
+                name: element.name,
+                series: 4,
+                reps: [12, 12, 10, 10],
+                timing: '60',
+                description: 'aaaa',
+                owner: 'Train-Mate'
+            };
+        }
+        return element;
+    });
+};
+
   const fetchExercises = async () => {
     setOpenCircularProgress(true);
     try {
@@ -57,8 +76,18 @@ export default function UsserAssignment({onUsersChange}) {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }
       const exercisesData = await response.json();
-      console.log("ssss",userMail,exercisesData)
-      setLeft(exercisesData);
+
+      const response2 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authToken}`
+        }
+      });
+      const exercisesDataFromTrainMate = await response2.json();
+      const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
+      const totalExercisesCorrected = await correctExercisesData(totalExercises);
+      console.log("ssss",userMail,totalExercisesCorrected)
+      setLeft(totalExercisesCorrected);
       setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching users:", error);
