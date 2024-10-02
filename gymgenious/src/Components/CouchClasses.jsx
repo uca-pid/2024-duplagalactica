@@ -538,7 +538,6 @@ function CouchClasses() {
                                             name='date'
                                             value={date}
                                             onChange={(e) => setDate(e.target.value)}
-                                            placeholder={new Date(selectedEvent.dateInicio).toLocaleDateString()}
                                             onFocus={(e) => (e.target.type = 'date')}
                                             onBlur={(e) => (e.target.type = 'text')}
                                         />
