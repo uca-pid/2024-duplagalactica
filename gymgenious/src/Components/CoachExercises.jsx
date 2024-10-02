@@ -25,17 +25,19 @@ export default function CoachExercises() {
     const [orderBy, setOrderBy] = useState('name');
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [userMail, setUserMail] = useState('');
-    const isSmallScreen = useMediaQuery('(max-width:500px)');
-    const isSmallScreen250 = useMediaQuery('(max-width:250px)');
+    const isSmallScreen = useMediaQuery('(max-width:400px)');
+    const isSmallScreen650 = useMediaQuery('(max-width:650px)');
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [errorToken, setErrorToken] = useState(false);
     const [warningConnection, setWarningConnection] = useState(false);
     const [exercises, setExercises] = useState([]);
     const navigate = useNavigate();
     const [type, setType] = useState(null);
+    const isMobileScreen = useMediaQuery('(min-height:750px)');
+    const [maxHeight, setMaxHeight] = useState('600px');
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -60,6 +62,23 @@ export default function CoachExercises() {
         setSelectedEvent(null);
     };
 
+    const correctExercisesData = async (exercisesData) => {
+        return exercisesData.map(element => {
+            if (!element.series) {
+                return {
+                    name: element.name,
+                    series: 4,
+                    reps: [12, 12, 10, 10],
+                    timing: '60',
+                    description: 'aaaa',
+                    owner: 'Train-Mate'
+                };
+            }
+            return element;
+        });
+    };
+    
+
     const fetchExercises = async () => {
         setOpenCircularProgress(true);
         try {
@@ -78,13 +97,18 @@ export default function CoachExercises() {
                 throw new Error('Error al obtener los ejercicios: ' + response.statusText);
             }
             const exercisesData = await response.json();
-            const filteredExercises = exercisesData.filter(exercise => exercise.owner === userMail);
-            
-            setExercises(filteredExercises);
 
-            setTimeout(() => {
+            const response2 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            const exercisesDataFromTrainMate = await response2.json();
+            const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
+            const totalExercisesCorrected = await correctExercisesData(totalExercises);
+            setExercises(totalExercisesCorrected);
             setOpenCircularProgress(false);
-            }, 2000);
         } catch (error) {
             console.error("Error fetching users:", error);
             setOpenCircularProgress(false);
@@ -124,10 +148,34 @@ export default function CoachExercises() {
     }, [userMail]);
 
     useEffect(() => {
-        if(type==='coach'){
-            fetchExercises()
+    if(type==='coach'){
+        fetchExercises();
+    }
+    }, [type]);
+
+    useEffect(() => {
+        if(isMobileScreen) {
+          setMaxHeight('700px');
+        } else {
+          setMaxHeight('600px')
         }
-    }, [type])
+      }, [isSmallScreen, isMobileScreen])
+
+    const visibleRows = React.useMemo(
+        () =>
+          [...exercises]
+            .sort((a, b) =>
+              order === 'asc'
+                ? a[orderBy] < b[orderBy]
+                  ? -1
+                  : 1
+                : a[orderBy] > b[orderBy]
+                ? -1
+                : 1
+            )
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+        [order, orderBy, page, rowsPerPage, exercises]
+      );
 
     const fetchUser = async () => {
         try {
@@ -200,12 +248,25 @@ export default function CoachExercises() {
                         </div>
                     )}
                     <div className="Table-Container">
-                        <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
-                            <Paper sx={{ width: '100%', backgroundColor: '#ffe0b5', borderRadius: '10px' }}>
-                                <TableContainer>
-                                    <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
-                                        <TableHead>
-                                            <TableRow sx={{ height: '5vh', width: '5vh' }}>
+                    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+                        <Paper
+                            sx={{
+                            width: '100%',
+                            backgroundColor: '#ffe0b5',
+                            borderRadius: '10px'
+                            }}
+                        >
+                            <TableContainer sx={{maxHeight: {maxHeight}, overflow: 'auto'}}>
+                                <Table
+                                    sx={{
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    }}
+                                    aria-labelledby="tableTitle"
+                                    size={dense ? 'small' : 'medium'}
+                                >
+                                    <TableHead>
+                                        <TableRow sx={{ height: '5vh', width: '5vh' }}>
                                             <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
                                                 <TableSortLabel
                                                 active={orderBy === 'name'}
@@ -220,15 +281,15 @@ export default function CoachExercises() {
                                                 )}
                                                 </TableSortLabel>
                                             </TableCell>
-                                            {!isSmallScreen && (
+                                            {!isSmallScreen650 && (
                                                 <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                                                 <TableSortLabel
-                                                    active={orderBy === 'hour'}
-                                                    direction={orderBy === 'hour' ? order : 'asc'}
-                                                    onClick={(event) => handleRequestSort(event, 'hour')}
+                                                    active={orderBy === 'description'}
+                                                    direction={orderBy === 'description' ? order : 'asc'}
+                                                    onClick={(event) => handleRequestSort(event, 'description')}
                                                 >
                                                     Description
-                                                    {orderBy === 'hour' && (
+                                                    {orderBy === 'description' && (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                                     </Box>
@@ -236,15 +297,15 @@ export default function CoachExercises() {
                                                 </TableSortLabel>
                                                 </TableCell>
                                             )}
-                                            {!isSmallScreen250 && (
+                                            {!isSmallScreen && (
                                                 <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                                                 <TableSortLabel
-                                                    active={orderBy === 'dateInicio'}
-                                                    direction={orderBy === 'dateInicio' ? order : 'asc'}
-                                                    onClick={(event) => handleRequestSort(event, 'dateInicio')}
+                                                    active={orderBy === 'owner'}
+                                                    direction={orderBy === 'owner' ? order : 'asc'}
+                                                    onClick={(event) => handleRequestSort(event, 'owner')}
                                                 >
                                                     Teacher
-                                                    {orderBy === 'dateInicio' && (
+                                                    {orderBy === 'owner' && (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                                     </Box>
@@ -255,18 +316,18 @@ export default function CoachExercises() {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {exercises.map((row) => (
+                                            {visibleRows.map((row) => (
                                                 <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                             {row.name}
                                                         </TableCell>
-                                                    {!isSmallScreen && (
-                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                                    {!isSmallScreen650 && (
+                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                             {row.description}
                                                         </TableCell>
                                                     )}
-                                                    {!isSmallScreen250 && (
-                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                                    {!isSmallScreen && (
+                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
                                                             {row.owner}
                                                         </TableCell>
                                                     )}
@@ -275,28 +336,38 @@ export default function CoachExercises() {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25]}
-                                    component="div"
-                                    count={exercises.length}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onPageChange={handleChangePage}
-                                    onRowsPerPageChange={handleChangeRowsPerPage}
-                                />
+                                {isSmallScreen650 ? (
+                                    <TablePagination
+                                        rowsPerPageOptions={[10]}
+                                        component="div"
+                                        count={exercises.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                    />
+                                    ) : (
+                                    <TablePagination
+                                        rowsPerPageOptions={[10, 25, 50]}
+                                        component="div"
+                                        count={exercises.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                    />
+                                )}
                             </Paper>
                         </Box>
                     </div>
                     {selectedEvent && (
                         <div className="Modal" onClick={handleCloseModal}>
                             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                                <h2>Exercise {selectedEvent.name}</h2>
+                                <h2>Exercise <p style={{ marginTop: '0px',whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '300px' }}>{selectedEvent.name}</p></h2>
                                 <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                                     <TableContainer sx={{ maxHeight: 440 }}>
                                         <Table stickyHeader aria-label="sticky table">
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell>Exercise</TableCell>
                                                     <TableCell>Series</TableCell>
                                                     <TableCell>Reps</TableCell>
                                                     <TableCell>Timing</TableCell>
@@ -304,7 +375,6 @@ export default function CoachExercises() {
                                             </TableHead>
                                             <TableBody>
                                                 <TableRow key={selectedEvent.id}>
-                                                    <TableCell>{selectedEvent.name}</TableCell>
                                                     <TableCell>{selectedEvent.series} x</TableCell>
                                                     <TableCell>{selectedEvent.reps.join(', ')}</TableCell>
                                                     <TableCell>{selectedEvent.timing}</TableCell>

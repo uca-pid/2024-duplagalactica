@@ -26,7 +26,7 @@ const day = (dateString) => {
   return daysOfWeek[date.getDay()];
 };
 
-function CouchClasses() {
+function CoachRoutines() {
   const [order, setOrder] = useState('asc');
   const [id,setId] = useState()
   const [orderBy, setOrderBy] = useState('name');
@@ -40,9 +40,8 @@ function CouchClasses() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editClass, setEditClass] = useState(false);
   const [userMail,setUserMail] = useState(null)
-  const isSmallScreen = useMediaQuery('(max-width:500px)');
-  const isSmallScreen250 = useMediaQuery('(max-width:250px)');
-  const [visibleRows,setClasses]=useState([])
+  const isSmallScreen = useMediaQuery('(max-width:700px)');
+  const isSmallScreen250 = useMediaQuery('(max-width:400px)');
   const [hour, setHour] = useState('');
   const [hourFin, setHourFin] = useState('');
   const [permanent, setPermanent] = useState('');
@@ -53,6 +52,8 @@ function CouchClasses() {
   const [errorToken,setErrorToken] = useState(false);
   const [type, setType] = useState(null);
   const navigate = useNavigate();
+  const isMobileScreen = useMediaQuery('(min-height:750px)');
+  const [maxHeight, setMaxHeight] = useState('600px');
 
   const handleExcersiceChange = (newExcersices) => {
         setExercises(newExcersices);
@@ -192,11 +193,9 @@ function CouchClasses() {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
         const data = await response.json();
-        const filteredRoutines = data.filter(event => event.owner.includes(userMail));
+        const filteredRoutines = await data.filter(event => event.owner.includes(userMail));
         setRoutines(filteredRoutines);
-        setTimeout(() => {
-            setOpenCircularProgress(false);
-          }, 2000);
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching rutinas:", error);
         setOpenCircularProgress(false);
@@ -207,19 +206,22 @@ function CouchClasses() {
     }
 }
 
-    const verifyToken = async (token) => {
-        try {
-            const decodedToken = jwtDecode(token);
-            setUserMail(decodedToken.email);
-        } catch (error) {
-            console.error('Error al verificar el token:', error);
-            setErrorToken(true);
-            setTimeout(() => {
-            setErrorToken(false);
-            }, 3000);
-            throw error;
-        }
-    };
+  const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        setErrorToken(true);
+        setTimeout(() => {
+          setErrorToken(false);
+        }, 3000);
+        throw error;
+    }
+  };
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -234,8 +236,22 @@ function CouchClasses() {
           fetchUser();
         }
       }, [userMail]);
+
+      useEffect(() => {
+        if(isSmallScreen) {
+          setRowsPerPage(10);
+        } else {
+          setRowsPerPage(5)
+        }
+        if(isMobileScreen) {
+          setMaxHeight('700px');
+        } else {
+          setMaxHeight('600px')
+        }
+      }, [isSmallScreen, isMobileScreen])
     
       const fetchUser = async () => {
+        setOpenCircularProgress(true);
         try {
           const authToken = localStorage.getItem('authToken');
           if (!authToken) {
@@ -268,6 +284,22 @@ function CouchClasses() {
         }
     }, [userMail]);
 
+    const visibleRows = React.useMemo(
+      () =>
+        [...routines]
+          .sort((a, b) =>
+            order === 'asc'
+              ? a[orderBy] < b[orderBy]
+                ? -1
+                : 1
+              : a[orderBy] > b[orderBy]
+              ? -1
+              : 1
+          )
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+      [order, orderBy, page, rowsPerPage, routines]
+    );
+
     return (
       <div className="App">
         {type!='coach' ? (
@@ -278,13 +310,26 @@ function CouchClasses() {
           <>
             <NewLeftBar/>
             <div className="Table-Container">
-              <Box sx={{ width: '100%', flexWrap: 'wrap' }}>
-                <Paper sx={{ width: '100%', backgroundColor: '#ffe0b5', border: '2px solid #BC6C25' }}>
-                  <TableContainer>
-                    <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
-                      <TableHead>
-                        <TableRow sx={{height: '5vh',width:'5vh',color:'#54311a' }}>
-                          <TableCell sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+            <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+              <Paper
+                  sx={{
+                  width: '100%',
+                  backgroundColor: '#ffe0b5',
+                  borderRadius: '10px'
+                  }}
+              >
+                  <TableContainer sx={{maxHeight: {maxHeight}, overflow: 'auto'}}>
+                      <Table
+                          sx={{
+                          width: '100%',
+                          borderCollapse: 'collapse',
+                          }}
+                          aria-labelledby="tableTitle"
+                          size={dense ? 'small' : 'medium'}
+                      >
+                          <TableHead>
+                              <TableRow sx={{ height: '5vh', width: '5vh' }}>
+                                  <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
                             <TableSortLabel active={orderBy === 'name'} direction={orderBy === 'name' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'name')}>
                               Name
                               {orderBy === 'name' ? (
@@ -341,9 +386,9 @@ function CouchClasses() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {routines.map((row) => (
+                        {visibleRows.map((row) => (
                           <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                               {row.name}
                             </TableCell>
                             {!isSmallScreen && (
@@ -357,7 +402,7 @@ function CouchClasses() {
                               </TableCell>
                             )}
                             {!isSmallScreen && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>
+                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                 {row.description} 
                               </TableCell>
                             )}
@@ -368,25 +413,24 @@ function CouchClasses() {
                   </TableContainer>
                   {isSmallScreen ? (
                     <TablePagination
-                    rowsPerPageOptions={[10]}
-                    component="div"
-                    count={visibleRows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
+                        rowsPerPageOptions={[10]}
+                        component="div"
+                        count={routines.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
                     />
-                  ) : (
+                    ) : (
                     <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={visibleRows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={routines.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
                     />
-                  )}
+                    )}
                 </Paper>
               </Box>
             </div>
@@ -394,8 +438,8 @@ function CouchClasses() {
               <div className="Modal" onClick={handleCloseModal}>
                 <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                   <h2>Routine details</h2>
-                  <p><strong>Name:</strong> {selectedEvent.name}</p>
-                  <p><strong>Description:</strong> {selectedEvent.description}</p>
+                  <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
+                  <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
                   <p><strong>Day:</strong> {selectedEvent.day}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                   <p><strong>Users:</strong> {5}</p>
@@ -510,4 +554,4 @@ function CouchClasses() {
     );
 }
 
-export default CouchClasses;
+export default CoachRoutines;

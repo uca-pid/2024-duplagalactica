@@ -1,42 +1,50 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { GlobalStyles } from '@mui/material';
 
 const localizer = momentLocalizer(moment);
 
-export default function Calendar ({ events, onSelectEvent }) {
-  
-
+export default function Calendar({ events, onSelectEvent }) {
   const eventStyleGetter = (event) => {
+    const percentageFilled = (event.BookedUsers.length / event.capacity) * 100;
+
     let backgroundColor = '';
-    if(event.BookedUsers.length<event.capacity){
-      backgroundColor = '#5e2407 !important';
-    } else {
-      backgroundColor = '#dda581 !important';
+    if (percentageFilled < 20) {
+      backgroundColor = '#00FF00'; 
+    } else if (percentageFilled >= 20 && percentageFilled < 50) {
+      backgroundColor = '#FFFF00'; 
+    } else if (percentageFilled >= 50 && percentageFilled < 70) {
+      backgroundColor = '#FFA500'; 
+    } else if (percentageFilled >= 70 && percentageFilled < 100) {
+      backgroundColor = '#FF4500'; 
+    } else if (percentageFilled === 100) {
+      backgroundColor = '#FF0000';
     }
+
     const style = {
+      backgroundColor: backgroundColor,
       borderRadius: '0px',
       opacity: 0.8,
-      color: 'white',
+      color: 'black',
       display: 'block',
       padding: '5px',
       border: 'none',
+      fontWeight: 'bold',
     };
     return {
-      style: style
+      style: style,
     };
   };
+
   return (
     <div className="Calendar-Container">
-      
       <BigCalendar
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
-        className='calendar-content'
+        className="calendar-content"
         views={['month', 'day']}
         onSelectEvent={onSelectEvent}
         eventPropGetter={eventStyleGetter}
@@ -58,4 +66,4 @@ export default function Calendar ({ events, onSelectEvent }) {
       />
     </div>
   );
-};
+}

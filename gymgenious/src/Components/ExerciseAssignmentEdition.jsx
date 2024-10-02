@@ -31,13 +31,32 @@ export default function UsserAssignment({onUsersChange,routine}) {
   const [right, setRight] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
-  const isSmallScreen = useMediaQuery('(max-width:700px)');
+  const isSmallScreen = useMediaQuery('(max-width:950px)');
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
   useEffect(() => {
     onUsersChange(right); 
   }, [right, onUsersChange]);
+
+  const correctExercisesData = async (exercisesData) => {
+    let autoIncrementId=0;
+    return exercisesData.map(element => {
+        if (!element.series) {
+            autoIncrementId++;
+            return {
+                id: autoIncrementId,
+                name: element.name,
+                series: 4,
+                reps: [12, 12, 10, 10],
+                timing: '60',
+                description: 'aaaa',
+                owner: 'Train-Mate'
+            };
+        }
+        return element;
+    });
+};
 
   const fetchExercises = async () => {
     setOpenCircularProgress(true);
@@ -68,17 +87,30 @@ export default function UsserAssignment({onUsersChange,routine}) {
           throw new Error('Error al obtener los ejercicios: ' + response2.statusText);
         }
         const exercisesData = await response2.json();
-        const filteredExercises = exercisesData.filter(exercise => exercise.owner === userMail);
   
+      const response3 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authToken}`
+        }
+      });
+      const exercisesDataFromTrainMate = await response3.json();
+      const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises);
+      const totalExercisesCorrected = await correctExercisesData(totalExercises);
+
       const exercisesInRoutines = new Set();
-      filteredRoutines.forEach(routine => {
+      await filteredRoutines.forEach(routine => {
         routine.excercises.forEach(exercise => {
-          exercisesInRoutines.add(exercise.id);  
+          exercisesInRoutines.add(exercise.id);
         });
       });
-  
-      const right = filteredExercises.filter(exercise => exercisesInRoutines.has(exercise.id)); 
-      const left = filteredExercises.filter(exercise => !exercisesInRoutines.has(exercise.id)); 
+      console.log(exercisesInRoutines.has(100000))
+      const right = totalExercisesCorrected.filter(exercise => 
+        exercisesInRoutines.has(exercise.id)
+      );
+      const left = totalExercisesCorrected.filter(exercise => 
+        !exercisesInRoutines.has(exercise.id)
+      ); 
       console.log(right)
       setRight(right); 
       setLeft(left);    
@@ -96,8 +128,6 @@ export default function UsserAssignment({onUsersChange,routine}) {
     }
   };
   
-
-
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
@@ -142,20 +172,20 @@ export default function UsserAssignment({onUsersChange,routine}) {
   };
 
   const customList = (items) => (
-    <Paper className='transfer-list'>
+    <Paper className='transfer-list-modal'>
       <List dense component="div" role="list">
-        {items.map((user) => {
-          const labelId = `transfer-list-item-${user.name}-label`;
+        {items.map((exercise) => {
+          const labelId = `transfer-list-item-${exercise.name}-label`;
 
           return (
             <ListItemButton
-              key={user.id}
+              key={exercise.id}
               role="listitem"
-              onClick={handleToggle(user)}
+              onClick={handleToggle(exercise)}
             >
               <ListItemIcon>
                 <Checkbox
-                  checked={checked.includes(user)}
+                  checked={checked.includes(exercise)}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{
@@ -163,7 +193,11 @@ export default function UsserAssignment({onUsersChange,routine}) {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={user.name} />
+              {isSmallScreen ? (
+                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{exercise.name}</p></ListItemText>
+              ) : (
+                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px'}}>{exercise.name}</p></ListItemText>
+              )}
             </ListItemButton>
           );
         })}
@@ -262,7 +296,7 @@ export default function UsserAssignment({onUsersChange,routine}) {
       )}
       </>
       ) : (
-        <Grid className='grid-transfer-content-small-screen' item>{customList(left)}</Grid>
+        <Grid className='grid-transfer-content-small-screen-modal' item>{customList(left)}</Grid>
       )}
       {openCircularProgress ? (
                 <Backdrop
