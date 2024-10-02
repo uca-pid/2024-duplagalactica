@@ -220,27 +220,28 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
             <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
             <p><strong>Start time:</strong> {new Date(new Date(selectedEvent.dateInicio).getTime() + 3 * 60 * 60 * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
-            <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>
-            {user ? (
-              <>
-                {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(user) ? (
-                  <button onClick={() => handleUnbookClassModal(selectedEvent.id)}>Unbook</button>
+            <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
+            {user==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+            (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
+            ? (
+            <>
+            {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(user)  ? (
+                  <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
                 ) : (
                   <>
-                  {selectedEvent.BookedUsers.length!=selectedEvent.capacity ? (
-                  <button onClick={() => handleBookClassModal(selectedEvent.id)}>Book</button>
+                  {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
+                  <button onClick={() => handleBookClass(selectedEvent.id)}>Book</button>
                   ) :
                   (<>
                   <button style={{background:'red'}}>Full</button>
                   </>)
                   }
                   </>
-                )}
-                <button onClick={handleCloseModal}>Close</button>
-              </>
-            ) : (
-              <button onClick={handleCloseModal}>Close</button>
             )}
+            <button onClick={handleCloseModal}>Close</button>
+            </>) : (
+            <button onClick={handleCloseModal}>Close</button>
+          )}
           </div>
         </div>
       )}

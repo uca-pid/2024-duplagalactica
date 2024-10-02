@@ -12,7 +12,7 @@ import Calendar from '../real_components/Calendar.jsx';
 import EnhancedTable from '../real_components/TableClasses.jsx';
 import WarningConnectionAlert from '../real_components/WarningConnectionAlert.jsx';
 import ErrorTokenAlert from '../real_components/ErrorTokenAlert.jsx';
-import SuccessAlert from '../real_components/ErrorTokenAlert.jsx';
+import SuccessAlert from '../real_components/SuccessAlert.jsx';
 
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
@@ -250,7 +250,7 @@ export default function Main_Page() {
       </>
   ) : (
     <div className="Table-Container">
-          <EnhancedTable rows={classes} />
+          <EnhancedTable rows={classes} user={userMail} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
     </div>
   )}
   {selectedEvent && (
@@ -262,7 +262,7 @@ export default function Main_Page() {
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
         <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-        {userMail && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+        {userMail.type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
 (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
  ? (
           <>
