@@ -12,7 +12,7 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 
-function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
+function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClass }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
@@ -42,6 +42,10 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+    console.log(user)
+    console.log(event)
+    console.log((new Date(event.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+    (new Date(event.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0)))
   };
 
   const handleCloseModal = () => {
@@ -172,9 +176,24 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {visibleRows.map((row) => (
-                <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #BC6C25' }}>
-                  <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+            {visibleRows.map((row) => {
+              const isTransparent = user && userType === 'client' &&
+                (new Date(row.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+                (new Date(row.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0));
+
+              return (
+                <TableRow
+                  onClick={() => handleSelectEvent(row)}
+                  hover
+                  tabIndex={-1}
+                  key={row.id}
+                  sx={{
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #BC6C25',
+                    opacity: !isTransparent ? 0.5 : 1,  // Aplica opacidad cuando la condición es verdadera
+                  }}
+                >
+                  <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                     {row.name}
                   </TableCell>
                   {!isSmallScreen500 && (
@@ -187,7 +206,9 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
                     <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
                   )}
                 </TableRow>
-              ))}
+              );
+            })}
+
             </TableBody>
           </Table>
         </TableContainer>
@@ -221,8 +242,8 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
             <p><strong>Start time:</strong> {new Date(new Date(selectedEvent.dateInicio).getTime() + 3 * 60 * 60 * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-            {user==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-            (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
+            {user && userType==='client' && (new Date(selectedEvent.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+            (new Date(selectedEvent.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0))
             ? (
             <>
             {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(user)  ? (

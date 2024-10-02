@@ -27,6 +27,7 @@ export default function Main_Page() {
   const [successBook,setSuccessBook] = useState(false);
   const [successUnbook,setSuccessUnbook] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:250px)');
+  const [type, setType] = useState(null);
 
   const changeShowCalendar = () => {
     setShowCalendar(prevState => !prevState);
@@ -35,6 +36,7 @@ export default function Main_Page() {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+    console.log(event)
   };
 
   const handleCloseModal = () => {
@@ -208,6 +210,38 @@ export default function Main_Page() {
     fetchClasses();
     setClasses([{name:'class1',start:'28/09/2024'}])
   }, []);
+
+  useEffect(() => {
+    if (userMail) {
+      fetchUser();
+    }
+  }, [userMail, showCalendar]);
+
+  const fetchUser = async () => {
+    setOpenCircularProgress(true);
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
+      const encodedUserMail = encodeURIComponent(userMail);
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
+            method: 'GET', 
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        setType(data.type);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
+  };
   
   return (
     <div className="App">
@@ -244,13 +278,13 @@ export default function Main_Page() {
         </div>
         ) : (
         <div className="Table-Container">
-          <EnhancedTable rows={classes} user={userMail} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
+          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
         </div>
       )}
       </>
   ) : (
     <div className="Table-Container">
-          <EnhancedTable rows={classes} user={userMail} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
+          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
     </div>
   )}
   {selectedEvent && (
@@ -262,7 +296,7 @@ export default function Main_Page() {
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
         <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-        {userMail.type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+        {userMail && type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
 (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
  ? (
           <>
