@@ -79,7 +79,7 @@ function CouchClasses() {
   const handleCloseModal = () => {
     setSelectedEvent(null);
   };
-  const handleEditClass = () => {
+  const handleEditClass = (selectedEvent) => {
     setEditClass(!editClass);
     setHour(selectedEvent.hour);
     setHourFin('');
@@ -469,7 +469,7 @@ function CouchClasses() {
                             <p><strong>Start time:</strong> {selectedEvent.hour}</p>
                             <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
                             <p><strong>Participants:</strong> {5}</p>
-                            <button onClick={handleEditClass}>Edit class</button>
+                            <button onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
                             <button onClick={handleCloseModal}>Close</button>
                             <button onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
                         </div>
@@ -545,7 +545,7 @@ function CouchClasses() {
                                     </div>
                                 </div>
                                 <button onClick={handleEditClass} className='button_login'>Cancell</button>
-                                <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>Save changes</button>
+                                <button onClick={()=>fetchModifyClassInformation(selectedEvent)} type="submit" className='button_login'>Save changes</button>
                             </form>
                         </div>
                     </div>
