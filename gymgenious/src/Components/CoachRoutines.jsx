@@ -442,7 +442,6 @@ function CoachRoutines() {
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
                   <p><strong>Day:</strong> {selectedEvent.day}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
-                  <p><strong>Users:</strong> {5}</p>
                   <button onClick={()=> handleEditRoutine(selectedEvent)}>Edit routine</button>
                   <button onClick={handleCloseModal}>Close</button>
                   <button onClick={()=> handeDeleteRoutine(selectedEvent)}>Delete routine</button>
