@@ -79,7 +79,7 @@ function CouchClasses() {
   const handleCloseModal = () => {
     setSelectedEvent(null);
   };
-  const handleEditClass = () => {
+  const handleEditClass = (selectedEvent) => {
     setEditClass(!editClass);
     setHour(selectedEvent.hour);
     setHourFin('');
@@ -97,16 +97,17 @@ function CouchClasses() {
           console.error('Token no disponible en localStorage');
           return;
         }
-        const isoDateStringInicio = `${date}T${hour}:00Z`;
-        const isoDateStringFin = `${date}T${hourFin}:00Z`;
+        const isoDateStringInicio = date && hour ? `${date}T${hour}:00Z` : selectedEvent.dateInicio;
+        const isoDateStringFin = date && hourFin ? `${date}T${hourFin}:00Z` : selectedEvent.dateFin;
+
         const updatedUser = {
             cid: selectedEvent.id,
             NameOriginal: selectedEvent.name,
-            DateFin: isoDateStringFin || selectedEvent.dateFin,
-            DateInicio: isoDateStringInicio || selectedEvent.dateInicio,
+            DateFin: isoDateStringFin,
+            DateInicio: isoDateStringInicio,
             Day: day(date) || selectedEvent.day,
             Name: name || selectedEvent.name,
-            Hour:hour || selectedEvent.hour,
+            Hour: hour || selectedEvent.hour,
             Permanent: permanent || selectedEvent.permanent
         };
         const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_class_info', {
@@ -134,6 +135,15 @@ function CouchClasses() {
         }, 3000);
     }
 };
+
+  const saveClass = async (selectedEvent) => {
+    try {
+      await fetchModifyClassInformation(selectedEvent); 
+      window.location.reload();;
+    } catch (error) {
+      console.error("Error al guardar la rutina:", error);
+    }
+  };
 
   const handleDeleteClass = async (event) => {
     setOpenCircularProgress(true);
@@ -468,8 +478,8 @@ function CouchClasses() {
                             <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
                             <p><strong>Start time:</strong> {selectedEvent.hour}</p>
                             <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-                            <p><strong>Participants:</strong> {5}</p>
-                            <button onClick={handleEditClass}>Edit class</button>
+                            <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>
+                            <button onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
                             <button onClick={handleCloseModal}>Close</button>
                             <button onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
                         </div>
@@ -538,14 +548,13 @@ function CouchClasses() {
                                             name='date'
                                             value={date}
                                             onChange={(e) => setDate(e.target.value)}
-                                            placeholder={new Date(selectedEvent.dateInicio).toLocaleDateString()}
                                             onFocus={(e) => (e.target.type = 'date')}
                                             onBlur={(e) => (e.target.type = 'text')}
                                         />
                                     </div>
                                 </div>
                                 <button onClick={handleEditClass} className='button_login'>Cancell</button>
-                                <button onClick={fetchModifyClassInformation} type="submit" className='button_login'>Save changes</button>
+                                <button onClick={()=>saveClass(selectedEvent)} type="submit" className='button_login'>Save changes</button>
                             </form>
                         </div>
                     </div>
