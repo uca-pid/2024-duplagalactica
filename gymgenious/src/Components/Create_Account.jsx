@@ -104,7 +104,7 @@ export default function CreateAccount() {
                     body: JSON.stringify(newUser),
                 });
                 await sendEmailVerification(firebaseUser, {
-                    url: 'http://localhost:3000/redirections?mode=verifyEmail', 
+                    url: 'https://2024-duplagalactica.vercel.app/redirections?mode=verifyEmail', 
                     handleCodeInApp: true
                 });
                 setOpenCircularProgress(false);
