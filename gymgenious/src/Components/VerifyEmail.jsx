@@ -49,11 +49,9 @@ export default function VerifyEmail() {
       navigate('/error');
       return;
     } else {
-      return () => {
         verifyUser()
       }
-    }
-  }, []);
+    }, []);
 
   return (
     <div className='full-screen-image-login'>
