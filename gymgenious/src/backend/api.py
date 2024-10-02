@@ -114,15 +114,9 @@ def get_user():
 
 @app.route('/create_user', methods=['POST'])
 def create_user():
-    try :
-        token = request.headers.get('Authorization')
-        if not token or 'Bearer' not in token:
-            return jsonify({'error':'Missing token'})
-        user = request.json
-        return create_user_route(user)
-    except Exception as e:
-        print("Error")
-        return jsonify({'error':'Something went wrong'})
+    user = request.json
+    return create_user_route(user)
+    
 
 @app.route('/send_email', methods=['POST'])
 def send_email():
