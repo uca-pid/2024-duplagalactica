@@ -282,9 +282,6 @@ export default function CreateAccount() {
                                     <button className='button_create_account' type="button" onClick={handleChangeModify}>
                                         Modify data
                                     </button>
-                                    <button className='button_create_account' type="button" onClick={handleChangeModify} style={{ color: 'red' }}>
-                                        Delete account
-                                    </button>
                                 </>
                             ) : (
                                 <>
