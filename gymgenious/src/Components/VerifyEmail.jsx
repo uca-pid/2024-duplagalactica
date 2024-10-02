@@ -49,9 +49,7 @@ export default function VerifyEmail() {
       navigate('/error');
       return;
     } else {
-      return () => {
         verifyUser()
-      }
     }
   }, []);
 
