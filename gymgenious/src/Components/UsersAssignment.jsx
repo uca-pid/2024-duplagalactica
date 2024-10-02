@@ -30,7 +30,7 @@ export default function UserAssignment({ onUsersChange, routine }) {
   const [right, setRight] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingUsers, setWarningFetchingUsers] = useState(false);
-  const isSmallScreen = useMediaQuery('(max-width:700px)');
+  const isSmallScreen = useMediaQuery('(max-width:950px)');
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -150,7 +150,7 @@ export default function UserAssignment({ onUsersChange, routine }) {
 
           return (
             <ListItemButton
-              key={user.Mail} // Usar Mail como clave única
+              key={user.Mail}
               role="listitem"
               onClick={handleToggle(user)}
             >
@@ -164,7 +164,11 @@ export default function UserAssignment({ onUsersChange, routine }) {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={user.Mail} />
+              {isSmallScreen ? (
+                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{user.Mail}</p></ListItemText>
+              ) : (
+                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.Mail}</p></ListItemText>
+              )}
             </ListItemButton>
           );
         })}
@@ -233,7 +237,7 @@ export default function UserAssignment({ onUsersChange, routine }) {
         )}
         </>
       ) : (
-        <Grid className='grid-transfer-content-small-screen' item>{customList(left)}</Grid>
+        <Grid sx={{width:'90%', marginRight:'5%'}} className='grid-transfer-content-small-screen' item>{customList(left)}</Grid>
       )}
       {openCircularProgress ? (
         <Backdrop

@@ -31,13 +31,32 @@ export default function UsserAssignment({onUsersChange}) {
   const [right, setRight] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
-  const isSmallScreen = useMediaQuery('(max-width:700px)');
+  const isSmallScreen = useMediaQuery('(max-width:950px)');
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
   useEffect(() => {
     onUsersChange(right); 
   }, [right, onUsersChange]);
+
+  const correctExercisesData = async (exercisesData) => {
+    let autoIncrementId=0;
+    return exercisesData.map(element => {
+        if (!element.series) {
+            autoIncrementId++;
+            return {
+                id: autoIncrementId,
+                name: element.name,
+                series: 4,
+                reps: [12, 12, 10, 10],
+                timing: '60',
+                description: 'aaaa',
+                owner: 'Train-Mate'
+            };
+        }
+        return element;
+    });
+};
 
   const fetchExercises = async () => {
     setOpenCircularProgress(true);
@@ -56,14 +75,20 @@ export default function UsserAssignment({onUsersChange}) {
       if (!response.ok) {
         throw new Error('Error al obtener los usuarios: ' + response.statusText);
       }
-      const data = await response.json();
-      const filteredExercises = data.filter(event => event.owner.includes(userMail));
+      const exercisesData = await response.json();
 
-      console.log("ssss",userMail,data)
-      setLeft(filteredExercises);
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-      }, 2000);
+      const response2 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authToken}`
+        }
+      });
+      const exercisesDataFromTrainMate = await response2.json();
+      const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
+      const totalExercisesCorrected = await correctExercisesData(totalExercises);
+      console.log("ssss",userMail,totalExercisesCorrected)
+      setLeft(totalExercisesCorrected);
+      setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching users:", error);
       setOpenCircularProgress(false);
@@ -73,7 +98,6 @@ export default function UsserAssignment({onUsersChange}) {
       }, 3000);
     }
   };
-
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -121,18 +145,18 @@ export default function UsserAssignment({onUsersChange}) {
   const customList = (items) => (
     <Paper className='transfer-list'>
       <List dense component="div" role="list">
-        {items.map((user) => {
-          const labelId = `transfer-list-item-${user.name}-label`;
+        {items.map((exercise) => {
+          const labelId = `transfer-list-item-${exercise.name}-label`;
 
           return (
             <ListItemButton
-              key={user.id}
+              key={exercise.id}
               role="listitem"
-              onClick={handleToggle(user)}
+              onClick={handleToggle(exercise)}
             >
               <ListItemIcon>
                 <Checkbox
-                  checked={checked.includes(user)}
+                  checked={checked.includes(exercise)}
                   tabIndex={-1}
                   disableRipple
                   inputProps={{
@@ -140,7 +164,11 @@ export default function UsserAssignment({onUsersChange}) {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={user.name} />
+              {isSmallScreen ? (
+                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{exercise.name}</p></ListItemText>
+              ) : (
+                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{exercise.name}</p></ListItemText>
+              )}
             </ListItemButton>
           );
         })}

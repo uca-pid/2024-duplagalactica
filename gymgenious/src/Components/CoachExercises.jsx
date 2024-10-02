@@ -28,8 +28,8 @@ export default function CoachExercises() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [userMail, setUserMail] = useState('');
-    const isSmallScreen = useMediaQuery('(max-width:500px)');
-    const isSmallScreen250 = useMediaQuery('(max-width:400px)');
+    const isSmallScreen = useMediaQuery('(max-width:400px)');
+    const isSmallScreen650 = useMediaQuery('(max-width:650px)');
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [errorToken, setErrorToken] = useState(false);
     const [warningConnection, setWarningConnection] = useState(false);
@@ -159,7 +159,7 @@ export default function CoachExercises() {
         } else {
           setMaxHeight('600px')
         }
-      }, [isMobileScreen])
+      }, [isSmallScreen, isMobileScreen])
 
     const visibleRows = React.useMemo(
         () =>
@@ -281,7 +281,7 @@ export default function CoachExercises() {
                                                 )}
                                                 </TableSortLabel>
                                             </TableCell>
-                                            {!isSmallScreen && (
+                                            {!isSmallScreen650 && (
                                                 <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                                                 <TableSortLabel
                                                     active={orderBy === 'description'}
@@ -297,7 +297,7 @@ export default function CoachExercises() {
                                                 </TableSortLabel>
                                                 </TableCell>
                                             )}
-                                            {!isSmallScreen250 && (
+                                            {!isSmallScreen && (
                                                 <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                                                 <TableSortLabel
                                                     active={orderBy === 'owner'}
@@ -318,16 +318,16 @@ export default function CoachExercises() {
                                         <TableBody>
                                             {visibleRows.map((row) => (
                                                 <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                             {row.name}
                                                         </TableCell>
-                                                    {!isSmallScreen && (
-                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                                    {!isSmallScreen650 && (
+                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                             {row.description}
                                                         </TableCell>
                                                     )}
-                                                    {!isSmallScreen250 && (
-                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a',whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                    {!isSmallScreen && (
+                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
                                                             {row.owner}
                                                         </TableCell>
                                                     )}
@@ -336,7 +336,7 @@ export default function CoachExercises() {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                {isSmallScreen ? (
+                                {isSmallScreen650 ? (
                                     <TablePagination
                                         rowsPerPageOptions={[10]}
                                         component="div"
@@ -362,13 +362,12 @@ export default function CoachExercises() {
                     {selectedEvent && (
                         <div className="Modal" onClick={handleCloseModal}>
                             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                                <h2>Exercise {selectedEvent.name}</h2>
+                                <h2>Exercise <p style={{ marginTop: '0px',whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '300px' }}>{selectedEvent.name}</p></h2>
                                 <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                                     <TableContainer sx={{ maxHeight: 440 }}>
                                         <Table stickyHeader aria-label="sticky table">
                                             <TableHead>
                                                 <TableRow>
-                                                    <TableCell>Exercise</TableCell>
                                                     <TableCell>Series</TableCell>
                                                     <TableCell>Reps</TableCell>
                                                     <TableCell>Timing</TableCell>
@@ -376,7 +375,6 @@ export default function CoachExercises() {
                                             </TableHead>
                                             <TableBody>
                                                 <TableRow key={selectedEvent.id}>
-                                                    <TableCell>{selectedEvent.name}</TableCell>
                                                     <TableCell>{selectedEvent.series} x</TableCell>
                                                     <TableCell>{selectedEvent.reps.join(', ')}</TableCell>
                                                     <TableCell>{selectedEvent.timing}</TableCell>
