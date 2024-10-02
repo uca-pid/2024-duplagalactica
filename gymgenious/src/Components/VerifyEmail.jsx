@@ -50,8 +50,8 @@ export default function VerifyEmail() {
       return;
     } else {
         verifyUser()
-    }
-  }, []);
+      }
+    }, []);
 
   return (
     <div className='full-screen-image-login'>

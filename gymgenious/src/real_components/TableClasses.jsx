@@ -42,10 +42,6 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
-    console.log(user)
-    console.log(event)
-    console.log((new Date(event.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-    (new Date(event.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0)))
   };
 
   const handleCloseModal = () => {
@@ -179,7 +175,8 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
             {visibleRows.map((row) => {
               const isTransparent = user && userType === 'client' &&
                 (new Date(row.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-                (new Date(row.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0));
+                (new Date(row.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0)) &&
+                (row.BookedUsers.length<row.capacity);
 
               return (
                 <TableRow
