@@ -262,7 +262,9 @@ export default function Main_Page() {
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
         <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-        {userMail? (
+        {userMail && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+(new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
+ ? (
           <>
           {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
                 <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
