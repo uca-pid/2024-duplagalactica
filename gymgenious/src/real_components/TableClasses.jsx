@@ -19,8 +19,9 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const isSmallScreen = useMediaQuery('(max-width:500px)');
-  const isSmallScreen250 = useMediaQuery('(max-width:250px)');
+  const isSmallScreen400 = useMediaQuery('(max-width:400px)');
+  const isSmallScreen500 = useMediaQuery('(max-width:500px)');
+  const isSmallScreen600 = useMediaQuery('(max-width:600px)');
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
 
@@ -58,7 +59,7 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
   };
 
   useEffect(() => {
-    if(isSmallScreen) {
+    if(isSmallScreen400 || isSmallScreen500) {
       setRowsPerPage(10);
     } else {
       setRowsPerPage(5)
@@ -68,7 +69,7 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
     } else {
       setMaxHeight('600px')
     }
-  }, [isSmallScreen, isMobileScreen])
+  }, [isSmallScreen400, isSmallScreen500, isMobileScreen])
 
   const visibleRows = React.useMemo(
     () =>
@@ -120,7 +121,7 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
                     ) : null}
                   </TableSortLabel>
                 </TableCell>
-                {!isSmallScreen && (
+                {!isSmallScreen500 && (
                   <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                     <TableSortLabel
                       active={orderBy === 'hour'}
@@ -136,7 +137,7 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
                     </TableSortLabel>
                   </TableCell>
                 )}
-                {!isSmallScreen250 && (
+                {!isSmallScreen400 && (
                   <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                     <TableSortLabel
                       active={orderBy === 'dateInicio'}
@@ -152,7 +153,7 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
                     </TableSortLabel>
                   </TableCell>
                 )}
-                {!isSmallScreen && (
+                {!isSmallScreen600 && (
                   <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
                     <TableSortLabel
                       active={orderBy === 'permanent'}
@@ -173,16 +174,16 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
             <TableBody>
               {visibleRows.map((row) => (
                 <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #BC6C25' }}>
-                  <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                  <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                     {row.name}
                   </TableCell>
-                  {!isSmallScreen && (
+                  {!isSmallScreen500 && (
                     <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
                   )}
-                  {!isSmallScreen250 && (
+                  {!isSmallScreen400 && (
                     <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
                   )}
-                  {!isSmallScreen && (
+                  {!isSmallScreen600 && (
                     <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
                   )}
                 </TableRow>
@@ -190,7 +191,7 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
             </TableBody>
           </Table>
         </TableContainer>
-        {isSmallScreen ? (
+        {isSmallScreen500 ? (
           <TablePagination
             rowsPerPageOptions={[10]}
             component="div"
@@ -215,7 +216,7 @@ function EnhancedTable({ rows, user, handleBookClass, handleUnbookClass }) {
         <div className="Modal" onClick={handleCloseModal}>
           <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
             <h2>Classes details:</h2>
-            <p><strong>Name:</strong> {selectedEvent.name}</p>
+            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
             <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
             <p><strong>Start time:</strong> {new Date(new Date(selectedEvent.dateInicio).getTime() + 3 * 60 * 60 * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
