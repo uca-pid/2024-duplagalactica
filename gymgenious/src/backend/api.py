@@ -116,7 +116,6 @@ def get_user():
 def create_user():
     user = request.json
     return create_user_route(user)
-    
 
 @app.route('/send_email', methods=['POST'])
 def send_email():
