@@ -20,11 +20,6 @@ import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
 
 
-const day = (dateString) => {
-  const date = new Date(dateString);
-  const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-  return daysOfWeek[date.getDay()];
-};
 
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
@@ -51,6 +46,16 @@ function CouchClasses() {
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
   const [type, setType] = useState(null);
+
+
+  const [fetchId,setFetchId] = useState('');
+  const [fetchDateFin,setFetchDateFin]= useState('¿');
+  const [fetchDateInicio,setFetchDateInicio]=useState('');
+  const [fetchDay,setFetchDay]=useState('');
+  const [fetchName,setFetchName]=useState('');
+  const [fetchHour,setFetchHour]=useState('');
+  const [fetchPermanent,setFetchPermanent]=useState('');
+  const [fetchClass,setFetchClass]=useState({});
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -81,13 +86,16 @@ function CouchClasses() {
   };
   const handleEditClass = (selectedEvent) => {
     setEditClass(!editClass);
-    setHour(selectedEvent.hour);
-    setHourFin('');
-    setPermanent('');
-    setDate('');
-    setName('');
+    setFetchId(selectedEvent.id)
+    setFetchDateFin(selectedEvent.dateFin)
+    setFetchDateInicio(selectedEvent.dateInicio)
+    setFetchDay(selectedEvent.day)
+    setFetchName(selectedEvent.name)
+    setFetchHour(selectedEvent.hour)
+    setFetchPermanent(selectedEvent.permanent)
+    setFetchClass(selectedEvent)
   } 
-  const fetchModifyClassInformation = async (selectedEvent) => {
+  const fetchModifyClassInformation = async () => {
     console.log("toy aca")
     setOpenCircularProgress(true);
     try {
@@ -97,18 +105,18 @@ function CouchClasses() {
           console.error('Token no disponible en localStorage');
           return;
         }
-        const isoDateStringInicio = date && hour ? `${date}T${hour}:00Z` : selectedEvent.dateInicio;
-        const isoDateStringFin = date && hourFin ? `${date}T${hourFin}:00Z` : selectedEvent.dateFin;
+        const isoDateStringInicio = date && hour ? `${date}T${hour}:00Z` : fetchDateInicio;
+        const isoDateStringFin = date && hourFin ? `${date}T${hourFin}:00Z` : fetchDateFin;
 
         const updatedUser = {
-            cid: selectedEvent.id,
-            NameOriginal: selectedEvent.name,
+            ...fetchClass,
+            cid: fetchId,
             DateFin: isoDateStringFin,
             DateInicio: isoDateStringInicio,
-            Day: day(date) || selectedEvent.day,
-            Name: name || selectedEvent.name,
-            Hour: hour || selectedEvent.hour,
-            Permanent: permanent || selectedEvent.permanent
+            Day: day(date) || fetchDay,
+            Name: name || fetchName,
+            Hour: hour || fetchHour,
+            Permanent: permanent || fetchPermanent
         };
         const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_class_info', {
             method: 'PUT', 
@@ -136,13 +144,15 @@ function CouchClasses() {
     }
 };
 
-  const saveClass = async (selectedEvent) => {
-    try {
-      await fetchModifyClassInformation(selectedEvent); 
-      window.location.reload();;
-    } catch (error) {
-      console.error("Error al guardar la rutina:", error);
-    }
+  const saveClass = async (event) => {
+    event.preventDefault(); 
+    fetchModifyClassInformation();
+    setEditClass(!editClass);
+    setTimeout(() => {
+      setOpenCircularProgress(false);
+    }, 7000);
+    await fetchClasses();
+    window.location.reload()
   };
 
   const handleDeleteClass = async (event) => {
@@ -489,7 +499,7 @@ function CouchClasses() {
                     <div className="Modal" onClick={handleEditClass}>
                         <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                             <h2>Class details</h2>
-                            <form>
+                            <form autoComplete='off' onSubmit={saveClass}>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                     <div className="input-small-container">
                                         <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
@@ -554,7 +564,7 @@ function CouchClasses() {
                                     </div>
                                 </div>
                                 <button onClick={handleEditClass} className='button_login'>Cancell</button>
-                                <button onClick={()=>saveClass(selectedEvent)} type="submit" className='button_login'>Save changes</button>
+                                <button  type="submit" className='button_login'>Save changes</button>
                             </form>
                         </div>
                     </div>
@@ -567,9 +577,5 @@ function CouchClasses() {
     
   );
 }
-
-// CouchClasses.propTypes = {
-//   rows: PropTypes.array.isRequired,
-// };
 
 export default CouchClasses;
