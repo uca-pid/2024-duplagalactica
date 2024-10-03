@@ -142,7 +142,10 @@ export default function CoachExercises() {
             navigate('/');
             console.error('No token found');
         }
-        if (userMail){
+    }, []);
+    
+    useEffect(() => {
+        if (userMail) {
             fetchUser();
         }
     }, [userMail]);

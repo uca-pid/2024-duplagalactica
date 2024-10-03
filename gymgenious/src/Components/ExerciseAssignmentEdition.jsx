@@ -213,7 +213,7 @@ export default function UsserAssignment({onUsersChange,routine}) {
     } else {
         console.error('No token found');
     }
-  }, [userMail]);
+  }, []);
 
   useEffect(() => {
     if (userMail) {

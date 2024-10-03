@@ -115,7 +115,7 @@ export default function RoutineCreation() {
     } else {
         console.error('No token found');
     }
-  }, [userMail]);
+  }, []);
 
   const verifyToken = async (token) => {
       try {

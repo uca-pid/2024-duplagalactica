@@ -160,10 +160,13 @@ export default function StickyHeadTable() {
             console.error('No token found');
             return;
         }
-        if (userMail){
-          fetchUser();
+      }, []);
+
+      useEffect(() => {
+        if (userMail) {
+            fetchUser();
         }
-      }, [userMail]);
+    }, [userMail]);
 
       useEffect(() => {
         if(type==='client'){
