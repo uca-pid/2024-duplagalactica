@@ -34,17 +34,18 @@ function CoachRoutines() {
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [desc, setDesc] = useState('');
-  const [fetchDay,setFetchDay] = useState('')
-  const [exercises, setExercises] = useState('');
+  const [exercises, setExercises] = useState([]);
   const [day, setDay] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editClass, setEditClass] = useState(false);
   const [userMail,setUserMail] = useState(null)
   const isSmallScreen = useMediaQuery('(max-width:700px)');
   const isSmallScreen250 = useMediaQuery('(max-width:400px)');
-  const [hour, setHour] = useState('');
-  const [hourFin, setHourFin] = useState('');
-  const [permanent, setPermanent] = useState('');
+  const [fetchName,setNameFetch] = useState('');
+  const [dayFetch,setDayFetch] = useState('');
+  const [descFetch,setDescFetch]= useState('');
+  const [exersFetch,setExersFetch]= useState([]);
+  const [routineFetch,setRoutine] = useState({});
   const [name, setName] = useState('');
   const [routines, setRoutines] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
@@ -86,18 +87,19 @@ function CoachRoutines() {
   const handleSaveEditRoutine = async () => {
     try {
         const updatedRoutines = {
+            ...routineFetch,
             rid: id,
-            day: day || fetchDay,
-            description: desc,
-            excers: exercises,
-            name: name,
+            day: day || dayFetch,
+            description: desc || descFetch,
+            excers: exercises || exersFetch,
+            name: name || fetchName,
         };
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
           console.error('Token no disponible en localStorage');
           return;
         }
-        const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_routine_info', {
+        const response = await fetch('http://127.0.0.1:5000/update_routine_info', {
             method: 'PUT', 
             headers: {
                 'Content-Type': 'application/json',
@@ -123,24 +125,27 @@ function CoachRoutines() {
       }
   }
 
-  const saveRoutine = async () => {
-    try {
-      await handleSaveEditRoutine(); 
-      window.location.reload();;
-    } catch (error) {
-      console.error("Error al guardar la rutina:", error);
-    }
-  };
+  const saveRoutine = async (event) => {
+      event.preventDefault(); 
+      handleSaveEditRoutine();
+      setEditClass(!editClass);
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+      }, 7000);
+      await fetchRoutines();
+      window.location.reload()
+  }
 
   const handleEditRoutine = (event) => {
     setEditClass(!editClass);
-    setHour('');
-    setHourFin('');
-    setPermanent('');
-    setId(event.id);
-    setFetchDay(event.day);
-    setName(event.name);
-    setDesc(event.description)
+    console.log("este es el evento",event)
+    setId(event.id)
+    setNameFetch(event.name);
+    setDayFetch(event.day);
+    setDescFetch(event.description);
+    setExersFetch(event.exercises);
+    setRoutine(event);
+    console.log(dayFetch)
   } 
 
   const handeDeleteRoutine = async (event) => {
@@ -450,10 +455,10 @@ function CoachRoutines() {
               </div>
             )}
             {editClass && (
-              <div className="Modal-edit-routine" onClick={handleEditRoutine}>
+              <div className="Modal-edit-routine" onClick={handleCloseModal}>
                 <div className="Modal-Content-edit-routine" onClick={(e) => e.stopPropagation()}>
                   <h2>Routine details</h2>
-                  <form>
+                  <form autoComplete='off' onSubmit={saveRoutine}>
                     <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                       <div className="input-small-container">
                         <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
@@ -502,8 +507,8 @@ function CoachRoutines() {
                         <ExcersiceAssignment onUsersChange={handleExcersiceChange} routine={selectedEvent.id}/>
                       </div>
                     </div>
-                    <button onClick={handleEditRoutine} className='button_login'>Cancell</button>
-                    <button onClick={saveRoutine} type="submit" className='button_login'>Save changes</button>
+                    <button onClick={handleCloseModal} className='button_login'>Cancell</button>
+                    <button type="submit" className='button_login'>Save changes</button>
                   </form>
                 </div>
               </div>
