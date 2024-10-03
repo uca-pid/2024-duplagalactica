@@ -6,13 +6,14 @@ import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: "AIzaSyCXwHZO56T1xnoK2XNR3nDwWj5NVbJ6Ltk",
-  authDomain: "pid2024.firebaseapp.com",
-  projectId: "pid2024",
-  storageBucket: "pid2024.appspot.com",
-  messagingSenderId: "791899624087",
-  appId: "1:791899624087:web:8c863e909d51397a778fd2",
-  measurementId: "G-4MY1QMB4E4"
+  authDomain: "pid22-40703.firebaseapp.com",
+  projectId: "pid22-40703",
+  storageBucket: "pid22-40703.appspot.com",
+  messagingSenderId: "200419985545",
+  appId: "1:200419985545:web:24380ac9b1fd4aedaa5e58",
+  measurementId: "G-FJS582T4TQ"
 };
+
 
 
 const app = initializeApp(firebaseConfig);
