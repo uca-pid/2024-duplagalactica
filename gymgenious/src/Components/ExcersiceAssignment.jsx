@@ -192,6 +192,13 @@ export default function UsserAssignment({onUsersChange}) {
     }
   }, [userMail]);
 
+  useEffect(() => {
+    if(isSmallScreen) {
+      if(right.length!=0){
+        handleToggle(right)
+      }
+    }
+  }, [isSmallScreen]);
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
