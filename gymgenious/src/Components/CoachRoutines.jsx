@@ -243,10 +243,13 @@ function CoachRoutines() {
             navigate('/');
             console.error('No token found');
         }
-        if (userMail){
-          fetchUser();
+      }, []);
+    
+      useEffect(() => {
+        if (userMail) {
+            fetchUser();
         }
-      }, [userMail]);
+    }, [userMail]);
 
       useEffect(() => {
         if(isSmallScreen) {
