@@ -85,7 +85,6 @@ export default function ExerciseCreation() {
         setSuccess(true);
         setTimeout(() => {
             setSuccess(false);
-            navigate(`/managing-routines`);
         }, 3000);
       } catch (error) {
         console.error("Error al crear el ejercicio:", error);

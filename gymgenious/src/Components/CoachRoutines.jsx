@@ -343,9 +343,9 @@ function CoachRoutines() {
                           </TableCell>
                           {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'hour'} direction={orderBy === 'hour' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'hour')}>
+                              <TableSortLabel active={orderBy === 'day'} direction={orderBy === 'day' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'day')}>
                                 Day
-                                {orderBy === 'hour' ? (
+                                {orderBy === 'day' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -357,9 +357,9 @@ function CoachRoutines() {
                           )}
                           {!isSmallScreen250 && (
                             <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'dateInicio'} direction={orderBy === 'dateInicio' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'dateInicio')}>
+                              <TableSortLabel active={orderBy === 'excercises.length'} direction={orderBy === 'excercises.length' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises.length')}>
                                 Exercises
-                                {orderBy === 'dateInicio' ? (
+                                {orderBy === 'excercises.length' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -371,9 +371,9 @@ function CoachRoutines() {
                           )}
                           {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'permanent'} direction={orderBy === 'permanent' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'permanent')}>
+                              <TableSortLabel active={orderBy === 'description'} direction={orderBy === 'description' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'description')}>
                                 Description
-                                {orderBy === 'permanent' ? (
+                                {orderBy === 'description' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
