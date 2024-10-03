@@ -386,51 +386,67 @@ function CoachRoutines() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {visibleRows.map((row) => (
-                          <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                              {row.name}
+                        {visibleRows.length===0 ? (
+                            <TableRow>
+                            <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                                There are no created routines
                             </TableCell>
-                            {!isSmallScreen && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                                {row.day}
-                              </TableCell>
-                            )}
-                            {!isSmallScreen250 && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                                {row.excercises.length}
-                              </TableCell>
-                            )}
-                            {!isSmallScreen && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                                {row.description} 
-                              </TableCell>
-                            )}
-                          </TableRow>
-                        ))}
+                            </TableRow>
+                        ) : (
+                          <>
+                            {visibleRows.map((row) => (
+                              <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                  {row.name}
+                                </TableCell>
+                                {!isSmallScreen && (
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                    {row.day}
+                                  </TableCell>
+                                )}
+                                {!isSmallScreen250 && (
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                    {row.excercises.length}
+                                  </TableCell>
+                                )}
+                                {!isSmallScreen && (
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                    {row.description} 
+                                  </TableCell>
+                                )}
+                              </TableRow>
+                            ))}
+                          </>
+                        )}
                       </TableBody>
                     </Table>
                   </TableContainer>
-                  {isSmallScreen ? (
-                    <TablePagination
-                        rowsPerPageOptions={[10]}
-                        component="div"
-                        count={routines.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                    />
-                    ) : (
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={routines.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                    )}
+                  {visibleRows.length!=0 ? (
+                    <>
+                      {isSmallScreen ? (
+                        <TablePagination
+                            rowsPerPageOptions={[10]}
+                            component="div"
+                            count={routines.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                        />
+                        ) : (
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={routines.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    null
+                  )}
                 </Paper>
               </Box>
             </div>

@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
 import { useMediaQuery } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 function not(a, b) {
   return a.filter((value) => !b.includes(value));
@@ -194,9 +195,9 @@ export default function UsserAssignment({onUsersChange,routine}) {
                 />
               </ListItemIcon>
               {isSmallScreen ? (
-                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{exercise.name}</p></ListItemText>
+                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{exercise.name}</p></ListItemText>
               ) : (
-                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px'}}>{exercise.name}</p></ListItemText>
+                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px'}}>{exercise.name}</p></ListItemText>
               )}
             </ListItemButton>
           );
@@ -244,7 +245,15 @@ export default function UsserAssignment({onUsersChange,routine}) {
     >
       {!isSmallScreen ? (
         <>
-      <Grid className='grid-transfer-content' item>{customList(left)}</Grid>
+      {left.length===0 ? (
+          <Grid item>
+          <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+            There are no exercises
+          </Typography>
+        </Grid>
+        ) : (
+          <Grid className='grid-transfer-content' item>{customList(left)}</Grid>
+        )}
         <Grid item>
         <Grid container direction="column" sx={{ alignItems: 'center' }}>
           <Button
@@ -290,7 +299,11 @@ export default function UsserAssignment({onUsersChange,routine}) {
         </Grid>
       </Grid>
       {right.length===0 ? (
-        <Grid className='grid-transfer-content' item>{customList([{'id':'1','name':'No exercises were chosen'}])}</Grid>
+        <Grid item>
+          <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+            No exercises were chosen
+          </Typography>
+        </Grid>
       ) : (
         <Grid className='grid-transfer-content' item>{customList(right)}</Grid>
       )}

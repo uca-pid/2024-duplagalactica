@@ -322,43 +322,57 @@ export default function StickyHeadTable() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                {visibleRows.map((row) => (
-                                    <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                                        {row.routine}
+                                    {visibleRows.length===0 ? (
+                                        <TableRow>
+                                        <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                                            There are no assigned routines
                                         </TableCell>
-                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                        </TableRow>
+                                    ) : (
+                                        visibleRows.map((row) => (
+                                        <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                            {row.routine}
+                                            </TableCell>
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
                                             {row.day}
-                                        </TableCell>
-                                        {!isSmallScreen && (
-                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                                            {row.owner} 
-                                        </TableCell>
-                                        )}
-                                    </TableRow>
-                                    ))}
+                                            </TableCell>
+                                            {!isSmallScreen && (
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                {row.owner}
+                                            </TableCell>
+                                            )}
+                                        </TableRow>
+                                        ))
+                                    )}
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                        {isSmallScreen ? (
-                            <TablePagination
-                                rowsPerPageOptions={[10]}
-                                component="div"
-                                count={routines.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                            />
-                            ) : (
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25]}
-                                component="div"
-                                count={routines.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                            />
+                        {visibleRows.length!=0 ? (
+                            <>
+                                {isSmallScreen ? (
+                                    <TablePagination
+                                        rowsPerPageOptions={[10]}
+                                        component="div"
+                                        count={routines.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                    />
+                                ) : (
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 25]}
+                                        component="div"
+                                        count={routines.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                    />
+                                )}
+                            </>
+                        ) : (
+                            null
                         )}
                     </Paper>
                 </Box>

@@ -316,45 +316,61 @@ export default function CoachExercises() {
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {visibleRows.map((row) => (
-                                                <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                                                            {row.name}
-                                                        </TableCell>
-                                                    {!isSmallScreen650 && (
-                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                                                            {row.description}
-                                                        </TableCell>
-                                                    )}
-                                                    {!isSmallScreen && (
-                                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
-                                                            {row.owner}
-                                                        </TableCell>
-                                                    )}
+                                            {visibleRows.length===0 ? (
+                                                <TableRow>
+                                                <TableCell colSpan={isSmallScreen650 ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                                                    There are no created exercises
+                                                </TableCell>
                                                 </TableRow>
-                                            ))}
+                                            ) : (
+                                                <>
+                                                    {visibleRows.map((row) => (
+                                                        <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                                                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                                    {row.name}
+                                                                </TableCell>
+                                                            {!isSmallScreen650 && (
+                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                                    {row.description}
+                                                                </TableCell>
+                                                            )}
+                                                            {!isSmallScreen && (
+                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
+                                                                    {row.owner}
+                                                                </TableCell>
+                                                            )}
+                                                        </TableRow>
+                                                    ))}
+                                                </>
+                                            )}
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                {isSmallScreen650 ? (
-                                    <TablePagination
-                                        rowsPerPageOptions={[10]}
-                                        component="div"
-                                        count={exercises.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        onPageChange={handleChangePage}
-                                    />
-                                    ) : (
-                                    <TablePagination
-                                        rowsPerPageOptions={[10, 25, 50]}
-                                        component="div"
-                                        count={exercises.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        onPageChange={handleChangePage}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                    />
+                                {visibleRows.length!=0 ? (
+                                    <>
+                                        {isSmallScreen650 ? (
+                                            <TablePagination
+                                                rowsPerPageOptions={[10]}
+                                                component="div"
+                                                count={exercises.length}
+                                                rowsPerPage={rowsPerPage}
+                                                page={page}
+                                                onPageChange={handleChangePage}
+                                            />
+                                            ) : (
+                                            <TablePagination
+                                                rowsPerPageOptions={[10, 25, 50]}
+                                                component="div"
+                                                count={exercises.length}
+                                                rowsPerPage={rowsPerPage}
+                                                page={page}
+                                                onPageChange={handleChangePage}
+                                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                            />
+                                        )}
+                                    </>
+                                ) : (
+                                    null
                                 )}
                             </Paper>
                         </Box>
@@ -362,7 +378,19 @@ export default function CoachExercises() {
                     {selectedEvent && (
                         <div className="Modal" onClick={handleCloseModal}>
                             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                                <h2>Exercise <p style={{ marginTop: '0px',whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '300px' }}>{selectedEvent.name}</p></h2>
+                                <h2 style={{marginBottom: '0px'}}>Exercise</h2>
+                                <p style={{
+                                    marginTop: '5px',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    maxWidth: '100%',
+                                    textAlign: 'center',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}>
+                                    {selectedEvent.name}
+                                </p>
                                 <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                                     <TableContainer sx={{ maxHeight: 440 }}>
                                         <Table stickyHeader aria-label="sticky table">

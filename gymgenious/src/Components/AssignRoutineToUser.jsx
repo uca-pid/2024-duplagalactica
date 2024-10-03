@@ -173,19 +173,21 @@ export default function RoutineCreation() {
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
                             <label htmlFor="routineAssigned" style={{ color: '#14213D' }}>Routine:</label>
-                            <select 
-                                id="routineAssigned" 
-                                name="routineAssigned" 
-                                value={routineAssigned} 
+                            <select
+                                id="routineAssigned"
+                                name="routineAssigned"
+                                value={routineAssigned}
                                 onChange={(e) => setRoutine(e.target.value)}
+                                style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
                             >
                                 <option value="">Select</option>
                                 {routines.map((routine) => (
-                                    <option key={routine.id} value={routine.id}>
-                                        {routine.name}
+                                    <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={routine.id} value={routine.id}>
+                                        {routine.name.length > 50 ? `${routine.name.substring(0, 50)}...` : routine.name}
                                     </option>
                                 ))}
                             </select>
+
                         </div>
                     </div>
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
