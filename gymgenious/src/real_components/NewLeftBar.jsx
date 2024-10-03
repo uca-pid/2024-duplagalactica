@@ -168,7 +168,7 @@ export default function TemporaryDrawer() {
     } else {
       console.error('No token found');
     }
-  }, [userMail]);
+  }, []);
 
   useEffect(() => {
     console.log(userMail)
