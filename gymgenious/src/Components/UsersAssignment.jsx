@@ -14,6 +14,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import { useMediaQuery } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 function not(a, b) {
   return a.filter((value) => !b.includes(value));
@@ -165,9 +166,9 @@ export default function UserAssignment({ onUsersChange, routine }) {
                 />
               </ListItemIcon>
               {isSmallScreen ? (
-                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{user.Mail}</p></ListItemText>
+                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{user.Mail}</p></ListItemText>
               ) : (
-                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.Mail}</p></ListItemText>
+                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.Mail}</p></ListItemText>
               )}
             </ListItemButton>
           );
@@ -180,12 +181,30 @@ export default function UserAssignment({ onUsersChange, routine }) {
     <Grid
       container
       spacing={2}
-      sx={{ justifyContent: 'center', alignItems: 'center' }}
+      sx={{ justifyContent: 'center', alignItems: 'center', maxWidth: '100%' }}
       className='grid-transfer-container'
     >
       {!isSmallScreen ? (
         <>
-        <Grid className='grid-transfer-content' item>{customList(left)}</Grid>
+        {!routine ? (
+          <Grid item>
+            <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+              Select a routine to assign
+            </Typography>
+          </Grid>
+        ) : (
+          <>
+            {left.length===0 ? (
+              <Grid item>
+              <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+                There are no users
+              </Typography>
+            </Grid>
+            ) : (
+              <Grid className='grid-transfer-content' item>{customList(left)}</Grid>
+            )}
+          </>
+        )}
         <Grid item>
           <Grid container direction="column" sx={{ alignItems: 'center' }}>
             <Button
@@ -231,7 +250,11 @@ export default function UserAssignment({ onUsersChange, routine }) {
           </Grid>
         </Grid>
         {right.length === 0 ? (
-          <Grid className='grid-transfer-content' item>{customList([{'Mail': 'No users were chosen'}])}</Grid>
+          <Grid item>
+            <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+              No users were chosen
+            </Typography>
+          </Grid>
         ) : (
           <Grid className='grid-transfer-content' item>{customList(right)}</Grid>
         )}

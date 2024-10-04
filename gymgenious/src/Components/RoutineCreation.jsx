@@ -83,7 +83,6 @@ export default function RoutineCreation() {
         setSuccess(true);
         setTimeout(() => {
             setSuccess(false);
-            navigate(`/`);
         }, 3000);
       } catch (error) {
         console.error("Error al crear la rutina:", error);

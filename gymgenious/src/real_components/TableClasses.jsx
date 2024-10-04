@@ -172,62 +172,77 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
               </TableRow>
             </TableHead>
             <TableBody>
-            {visibleRows.map((row) => {
-              const isTransparent = user && userType === 'client' &&
-                (new Date(row.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-                (new Date(row.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0)) &&
-                (row.BookedUsers.length<row.capacity);
-
-              return (
-                <TableRow
-                  onClick={() => handleSelectEvent(row)}
-                  hover
-                  tabIndex={-1}
-                  key={row.id}
-                  sx={{
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #BC6C25',
-                    opacity: !isTransparent ? 0.5 : 1,  // Aplica opacidad cuando la condición es verdadera
-                  }}
-                >
-                  <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                    {row.name}
-                  </TableCell>
-                  {!isSmallScreen500 && (
-                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
-                  )}
-                  {!isSmallScreen400 && (
-                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
-                  )}
-                  {!isSmallScreen600 && (
-                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
-                  )}
+              {visibleRows.length===0 ? (
+                <TableRow>
+                <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                    There are no classes
+                </TableCell>
                 </TableRow>
-              );
-            })}
+              ) : (
+                <>
+                  {visibleRows.map((row) => {
+                    const isTransparent = user && userType === 'client' &&
+                      (new Date(row.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+                      (new Date(row.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0)) &&
+                      (row.BookedUsers.length<row.capacity);
 
+                    return (
+                      <TableRow
+                        onClick={() => handleSelectEvent(row)}
+                        hover
+                        tabIndex={-1}
+                        key={row.id}
+                        sx={{
+                          cursor: 'pointer',
+                          borderBottom: '1px solid #BC6C25',
+                          opacity: !isTransparent ? 0.5 : 1,  // Aplica opacidad cuando la condición es verdadera
+                        }}
+                      >
+                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                          {row.name}
+                        </TableCell>
+                        {!isSmallScreen500 && (
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
+                        )}
+                        {!isSmallScreen400 && (
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                        )}
+                        {!isSmallScreen600 && (
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })}
+                </>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
-        {isSmallScreen500 ? (
-          <TablePagination
-            rowsPerPageOptions={[10]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-          />
+        {visibleRows.length!=0 ? (
+          <>
+            {isSmallScreen500 ? (
+              <TablePagination
+                rowsPerPageOptions={[10]}
+                component="div"
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+              />
+            ) : (
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            )}
+          </>
         ) : (
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          null
         )}
       </Paper>
       {selectedEvent && (

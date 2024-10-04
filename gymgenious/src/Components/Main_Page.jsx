@@ -208,7 +208,6 @@ export default function Main_Page() {
         console.error('No token found');
     }
     fetchClasses();
-    setClasses([{name:'class1',start:'28/09/2024'}])
   }, []);
 
   useEffect(() => {
