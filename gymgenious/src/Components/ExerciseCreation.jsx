@@ -12,6 +12,7 @@ import {jwtDecode} from "jwt-decode";
 export default function ExerciseCreation() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
+  const [image, setImage] = useState(null);
   const navigate = useNavigate();
   const [userMail,setUserMail] = useState(null);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
@@ -19,23 +20,23 @@ export default function ExerciseCreation() {
   const [failure, setFailure] = useState(false);
   const [errors, setErrors] = useState([]);
   const [failureErrors, setFailureErrors] = useState(false);
-  const [series, setSeries] = useState(4);
-  const [reps, setReps] = useState(Array(series).fill(''));
-  const [timing, setTiming] = useState(0);
+  // const [series, setSeries] = useState(4);
+  // const [reps, setReps] = useState(Array(series).fill(''));
+  // const [timing, setTiming] = useState(0);
 
-  const handleSeriesChange = (e) => {
-    const newSeries = parseInt(e.target.value);
-    if(newSeries>=0 && newSeries<=8) {
-      setSeries(newSeries);
-      setReps(Array(newSeries).fill(''));
-    }
-  };
+  // const handleSeriesChange = (e) => {
+  //   const newSeries = parseInt(e.target.value);
+  //   if(newSeries>=0 && newSeries<=8) {
+  //     setSeries(newSeries);
+  //     setReps(Array(newSeries).fill(''));
+  //   }
+  // };
 
-  const handleRepsChange = (index, value) => {
-    const newReps = [...reps];
-    newReps[index] = value;
-    setReps(newReps);
-  };
+  // const handleRepsChange = (index, value) => {
+  //   const newReps = [...reps];
+  //   newReps[index] = value;
+  //   setReps(newReps);
+  // };
 
   const validateForm = () => {
     let errors = [];
@@ -60,9 +61,10 @@ export default function ExerciseCreation() {
           name: name,
           description: desc,
           owner: userMail,
-          reps: reps,
-          series: series,
-          timing: timing,
+          image: image,
+          // reps: reps,
+          // series: series,
+          // timing: timing,
         };
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
@@ -152,12 +154,25 @@ export default function ExerciseCreation() {
                   type="text" 
                   id="desc" 
                   name="desc" 
-                  value={desc} 
+                  value={desc}
                   onChange={(e) => setDesc(e.target.value)} 
                   />
               </div>
           </div>
           <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+            <div className="input-small-container">
+              <label htmlFor="image" style={{ color: '#14213D' }}>Image:</label>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                accept="image/*"
+                className='input-image'
+                onChange={(e) => setImage(e)}
+              />
+            </div>
+          </div>
+          {/* <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container">
                   <label htmlFor="desc" style={{color:'#14213D'}}>Series:</label>
                   <input 
@@ -199,7 +214,7 @@ export default function ExerciseCreation() {
                   />
               ))}
             </div>
-          </div>
+          </div> */}
           <button type="submit" className='button_login'>
             Create exercise
           </button>
