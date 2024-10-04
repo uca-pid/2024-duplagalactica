@@ -925,8 +925,8 @@ iframe {
 }
 
 .grid-transfer-content {
-  flex: 1 1 30%;
-  max-width: 50%;
+  max-width: 100%;
+  background-color: #f5ebe0;
 }
 
 .grid-transfer-content-small-screen-users {
@@ -951,6 +951,7 @@ iframe {
   width: 100%;
   max-height: 250px;
   overflow-y: auto;
+  background-color: '#f5ebe0';
 }
 
 .transfer-list-modal {
@@ -1148,4 +1149,9 @@ iframe {
     left: 10%;
     width: 80%;
   }
+}
+
+.input-image {
+  width: 100%;
+  cursor: pointer;
 }
