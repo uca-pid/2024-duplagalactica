@@ -27,8 +27,8 @@ export default function StickyHeadTable() {
     const [orderBy, setOrderBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [userMail, setUserMail] = useState('');
-    const [visibleRows, setVisibleRows] = useState([]);
-    const [routine, setRoutines] = useState([]);
+    const [routines, setRoutines] = useState([]);
+    const [routine, setRoutine] = useState([]);
     const [selectedDay, setSelectedDay] = useState('');
     const isSmallScreen = useMediaQuery('(max-width:700px)');
     const [selectedEvent, setSelectedEvent] = useState(null);
@@ -40,6 +40,8 @@ export default function StickyHeadTable() {
     const navigate = useNavigate();
     const [type, setType] = useState(null);
     const [warningFetchingUserRoutines, setWarningFetchingUserRoutines] = useState(false);
+    const isMobileScreen = useMediaQuery('(min-height:750px)');
+    const [maxHeight, setMaxHeight] = useState('600px');
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -124,7 +126,7 @@ export default function StickyHeadTable() {
             }
             const data = await response.json();
             const filteredRows = data.filter((row) => row.name === routineName);
-            setRoutines(filteredRows[0]);
+            setRoutine(filteredRows[0]);
             setOpenCircularProgress(false);
         } catch (error) {
             setOpenCircularProgress(false);
@@ -204,11 +206,40 @@ export default function StickyHeadTable() {
     useEffect(() => {
         if (selectedDay) {
             const filteredRows = rows.filter((row) => row.day === selectedDay);
-            setVisibleRows(filteredRows);
+            setRoutines(filteredRows);
         } else {
-            setVisibleRows(rows);
+            setRoutines(rows);
         }
     }, [rows, selectedDay]);
+
+    useEffect(() => {
+        if(isSmallScreen) {
+          setRowsPerPage(10);
+        } else {
+          setRowsPerPage(5)
+        }
+        if(isMobileScreen) {
+          setMaxHeight('700px');
+        } else {
+          setMaxHeight('600px')
+        }
+      }, [isSmallScreen, isMobileScreen])
+
+    const visibleRows = React.useMemo(
+        () =>
+          [...routines]
+            .sort((a, b) =>
+              order === 'asc'
+                ? a[orderBy] < b[orderBy]
+                  ? -1
+                  : 1
+                : a[orderBy] > b[orderBy]
+                ? -1
+                : 1
+            )
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+        [order, orderBy, page, rowsPerPage, routines]
+      );
 
     return (
         <div className="App">
@@ -229,9 +260,22 @@ export default function StickyHeadTable() {
                     <DaySelection selectedDay={selectedDay} setSelectedDay={setSelectedDay}/>
                 )}
                 <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
-                    <Paper sx={{ width: '100%', backgroundColor: '#ffe0b5', borderRadius: '10px' }}>
-                        <TableContainer>
-                            <Table sx={{ width: '100%', borderCollapse: 'collapse' }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
+                    <Paper
+                        sx={{
+                        width: '100%',
+                        backgroundColor: '#ffe0b5',
+                        borderRadius: '10px'
+                        }}
+                    >
+                        <TableContainer sx={{maxHeight: {maxHeight}, overflow: 'auto'}}>
+                            <Table
+                                sx={{
+                                width: '100%',
+                                borderCollapse: 'collapse',
+                                }}
+                                aria-labelledby="tableTitle"
+                                size={dense ? 'small' : 'medium'}
+                            >
                                 <TableHead>
                                     <TableRow sx={{ height: '5vh', width: '5vh' }}>
                                         <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
@@ -248,60 +292,91 @@ export default function StickyHeadTable() {
                                                 ) : null}
                                             </TableSortLabel>
                                         </TableCell>
-                                        <TableCell
-                                            align="right"
-                                            sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
-                                        >
-                                            Day
+                                        <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                            <TableSortLabel
+                                                active={orderBy === 'exercises.length'}
+                                                direction={orderBy === 'exercises.length' ? order : 'asc'}
+                                                onClick={(event) => handleRequestSort(event, 'exercises.length')}
+                                            >
+                                                Exercises
+                                                {orderBy === 'exercises.length' ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : null}
+                                            </TableSortLabel>
                                         </TableCell>
                                         {!isSmallScreen && (
-                                            <TableCell
-                                                align="right"
-                                                sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}
+                                            <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                            <TableSortLabel
+                                                active={orderBy === 'owner'}
+                                                direction={orderBy === 'owner' ? order : 'asc'}
+                                                onClick={(event) => handleRequestSort(event, 'owner')}
                                             >
-                                                Teacher
-                                            </TableCell>
+                                                Owner
+                                                {orderBy === 'owner' ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : null}
+                                            </TableSortLabel>
+                                        </TableCell>
                                         )}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {visibleRows.map((row) => (
+                                    {visibleRows.length===0 ? (
+                                        <TableRow>
+                                        <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                                            There are no assigned routines
+                                        </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        visibleRows.map((row) => (
                                         <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                            <TableCell
-                                                component="th"
-                                                scope="row"
-                                                sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
-                                            >
-                                                {row.routine}
+                                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                            {row.routine}
                                             </TableCell>
-                                            <TableCell
-                                                align="right"
-                                                sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
-                                            >
-                                                {row.day}
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                            {row.day}
                                             </TableCell>
                                             {!isSmallScreen && (
-                                                <TableCell
-                                                    align="right"
-                                                    sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}
-                                                >
-                                                    {row.owner}
-                                                </TableCell>
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                {row.owner}
+                                            </TableCell>
                                             )}
                                         </TableRow>
-                                    ))}
+                                        ))
+                                    )}
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 25]}
-                            component="div"
-                            count={visibleRows.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
+                        {visibleRows.length!=0 ? (
+                            <>
+                                {isSmallScreen ? (
+                                    <TablePagination
+                                        rowsPerPageOptions={[10]}
+                                        component="div"
+                                        count={routines.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                    />
+                                ) : (
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 25]}
+                                        component="div"
+                                        count={routines.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                    />
+                                )}
+                            </>
+                        ) : (
+                            null
+                        )}
                     </Paper>
                 </Box>
             </div>
