@@ -1,21 +1,31 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
+import LeftBar from '../real_components/NewLeftBar.jsx';
 import { getAuth, confirmPasswordReset } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import Box from '@mui/material/Box';
 import Popper from '@mui/material/Popper';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
+import Slide from '@mui/material/Slide';
 
 export default function ChangePassword() {
     const [password, setPassword] = useState('');
     const [passwordAgain, setPasswordAgain] = useState('');
     const navigate = useNavigate();
-    const [errors, setErrors] = useState('');
+    const [errors, setErrors] = useState([]);
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const oobCode = query.get('code');
-    const auth = getAuth()
+    const auth = getAuth();
+    const [openCircularProgress, setOpenCircularProgress] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [failure, setFailure] = useState(false);
+    const [failureErrors, setFailureErrors] = useState(false);
+
     useEffect(() => {
       if (!oobCode) {
         navigate('/');
@@ -53,21 +63,32 @@ export default function ChangePassword() {
       setErrors(errors);
       return errors.length === 0;
   }
-  const handleCloseModal = () => {
-    setErrors([]);
-  }
     const handleSubmit = async (e) => {
+      setOpenCircularProgress(true);
       e.preventDefault();
       if(validateForm()){
-
         try {
           await confirmPasswordReset(auth, oobCode, password);
-          alert('Password reset successfully.');
-          navigate('/login');
+          setOpenCircularProgress(false);
+          setSuccess(true);
+          setTimeout(() => {
+              setSuccess(false);
+              navigate('/login');
+              }, 3000);
         } catch (error) {
           console.error('Password reset error:', error);
-          alert('Password reset error.');
+          setOpenCircularProgress(false);
+          setFailure(true);
+          setTimeout(() => {
+              setFailure(false);
+              }, 3000);
         }
+      } else {
+          setOpenCircularProgress(false);
+          setFailureErrors(true);
+          setTimeout(() => {
+              setFailureErrors(false);
+              }, 3000);
       }
     };
 
@@ -89,6 +110,15 @@ export default function ChangePassword() {
 
     return (
     <div className='App'>
+      {!oobCode ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+          <>
         <LeftBar value={'profile'}/>
         <div className='new-password-container'>
           <div className='new-password-content'>
@@ -136,17 +166,67 @@ export default function ChangePassword() {
             </form>
           </div>
         </div>
-        {errors.length > 0 && (
-                <div className="errorsCreateAccountModal" onClick={handleCloseModal}>
-                    <div className="errorsCreateAccountContentModal" onClick={handleCloseModal}>
-                        <ul>
-                            {errors.map((error, index) => (
-                                <li key={index}>{error}</li>
-                            ))}
-                        </ul>
+            {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
+                >
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+            { success ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                          <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                            <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                              Password reset successfully 
+                            </Alert>
+                          </Slide>
+                        </Box>
                     </div>
                 </div>
+            ) : (
+                null
             )}
+            { failureErrors ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
+                        <div>
+                            <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                              Password reset error
+                            </Alert>
+                            {errors.length > 0 && errors.map((error, index) => (
+                            <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                                <li>{error}</li>
+                            </Alert>
+                            ))}
+                        </div>
+                        </Slide>
+                    </Box>
+                    </div>
+                </div>
+              
+            ) : (
+                null
+            )}
+            { failure ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Password reset error</Alert>
+                        </Slide>
+                    </Box>
+                </div>
+            </div>
+            ) : (
+                null
+            )}
+            </>
+        )}
     </div>
     );
 }

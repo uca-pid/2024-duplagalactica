@@ -1,96 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
-import EnhancedTable from '../real_components/TableClasses.jsx';
 import { useMediaQuery } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-
-const localizer = momentLocalizer(moment);
-
-const Calendar = ({ events, onSelectEvent }) => {
-  const eventStyleGetter = (event) => {
-    const backgroundColor = '#fca311'; 
-    const style = {
-      backgroundColor: backgroundColor,
-      borderRadius: '0px',
-      opacity: 0.8,
-      color: 'white',
-      display: 'block',
-      padding: '5px',
-      border: 'none',
-    };
-    return {
-      style: style
-    };
-  };
-  return (
-    <div className="Calendar-Container">
-      <BigCalendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        className='calendar-content'
-        views={['month', 'day']}
-        onSelectEvent={onSelectEvent}
-        eventPropGetter={eventStyleGetter}
-        formats={{
-          timeGutterFormat: (date, culture, localizer) =>
-            localizer.format(date, 'HH:mm', culture),
-          eventTimeRangeFormat: (date, culture, localizer) => {
-            const startTime = new Date(date.start).toLocaleTimeString('es-ES', {
-              hour: '2-digit',
-              minute: '2-digit',
-            });
-            const endTime = new Date(date.end).toLocaleTimeString('es-ES', {
-              hour: '2-digit',
-              minute: '2-digit',
-            });
-            return `${startTime} - ${endTime}`;
-          },
-        }}
-      />
-    </div>
-  );
-};
-
+import NewLeftBar from '../real_components/NewLeftBar.jsx';
+import {jwtDecode} from "jwt-decode";
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Slide from '@mui/material/Slide';
+import CheckIcon from '@mui/icons-material/Check';
+import Calendar from '../real_components/Calendar.jsx';
+import EnhancedTable from '../real_components/TableClasses.jsx';
+import WarningConnectionAlert from '../real_components/WarningConnectionAlert.jsx';
+import ErrorTokenAlert from '../real_components/ErrorTokenAlert.jsx';
+import SuccessAlert from '../real_components/SuccessAlert.jsx';
 
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showCalendar, setShowCalendar] = useState(true);
-  const [leftBarOption, setLeftBarOption] = React.useState('');
-  const navigate = useNavigate();
+  const [leftBarOption, setLeftBarOption] = useState('');
+  const [openCircularProgress, setOpenCircularProgress] = useState(false);
+  const [userMail,setUserMail] = useState(null);
+  const [warningConnection, setWarningConnection] = useState(false);
+  const [errorToken,setErrorToken] = useState(false);
+  const [successBook,setSuccessBook] = useState(false);
+  const [successUnbook,setSuccessUnbook] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:250px)');
-  const location = useLocation();
-  const [openCircularProgress, setOpenCircularProgress] = useState(true)
-  useEffect(() => {
-    if (location.state?.message === 'block') {
-      setLeftBarOption('add');
-    } else {
-      setLeftBarOption('profile');
-    }
-  }, [location.state]);
+  const [type, setType] = useState(null);
 
   const changeShowCalendar = () => {
     setShowCalendar(prevState => !prevState);
     handleCloseModal()
   };
 
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+    console.log(event)
+  };
+
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
+
   const fetchClasses = async () => {
+    setOpenCircularProgress(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/get_classes');
-      console.log("HOLA")
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      console.log(data);
       setClasses(data);
       const calendarEvents = [];
       const today = new Date();
@@ -137,27 +97,158 @@ export default function Main_Page() {
           });
         }
       });
-      setOpenCircularProgress(false)
+      setOpenCircularProgress(false);
       setEvents(calendarEvents);
+      console.log(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningConnection(true);
+      setTimeout(() => {
+        setWarningConnection(false);
+      }, 3000);
     }
   };
+
+  const handleBookClass = async (event) => {
+    setOpenCircularProgress(true);
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/book_class', {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+      await fetchClasses();
+      setOpenCircularProgress(false);
+      handleCloseModal();
+      setSuccessBook(true)
+      setTimeout(() => {
+        setSuccessBook(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningConnection(true);
+      setTimeout(() => {
+        setWarningConnection(false);
+      }, 3000);
+    }
+    
+  };
+
+  const handleUnbookClass = async (event) => {
+    setOpenCircularProgress(true);
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/unbook_class', {
+        method: 'PUT', 
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ event: event,mail:userMail })
+      });
+      if (!response.ok) {
+        throw new Error('Error al actualizar la clase: ' + response.statusText);
+      }
+      await fetchClasses();
+      setOpenCircularProgress(false);
+      handleCloseModal();
+      setSuccessUnbook(true);
+      setTimeout(() => {
+        setSuccessUnbook(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningConnection(true);
+      setTimeout(() => {
+        setWarningConnection(false);
+      }, 3000);
+    }
+  };
+
+  const verifyToken = async (token) => {
+    setOpenCircularProgress(true);
+    try {
+        const decodedToken = jwtDecode(token);
+        setUserMail(decodedToken.email);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        setOpenCircularProgress(false);
+        setErrorToken(true);
+        setTimeout(() => {
+          setErrorToken(false);
+        }, 3000);
+        throw error;
+    }
+  };
+
   useEffect(() => {
+    let token = localStorage.getItem('authToken');
+    if (token) {
+        verifyToken(token);
+    } else {
+        console.error('No token found');
+    }
     fetchClasses();
   }, []);
 
-  const handleSelectEvent = (event) => {
-    setSelectedEvent(event);
-  };
+  useEffect(() => {
+    if (userMail) {
+      fetchUser();
+    }
+  }, [userMail, showCalendar]);
 
-  const handleCloseModal = () => {
-    setSelectedEvent(null);
+  const fetchUser = async () => {
+    setOpenCircularProgress(true);
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        console.error('Token no disponible en localStorage');
+        return;
+      }
+      const encodedUserMail = encodeURIComponent(userMail);
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
+            method: 'GET', 
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario: ' + response.statusText);
+        }
+        const data = await response.json();
+        setType(data.type);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
   };
-
+  
   return (
     <div className="App">
-      <LeftBar value={leftBarOption}/>
+      <SuccessAlert successAlert={successBook} message={'Successfully Booked!'}/>
+      <SuccessAlert successAlert={successUnbook} message={'Successfully Unbooked!'}/>
+      <WarningConnectionAlert warningConnection={warningConnection}/>
+      <ErrorTokenAlert errorToken={errorToken}/>
+      <NewLeftBar/>
       {openCircularProgress ? (
               <Backdrop
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -168,51 +259,66 @@ export default function Main_Page() {
       ) : null}
 
       {!isSmallScreen ? (
-  <>
-    <div className="Calendar-Button">
-      {showCalendar ? (
-        <button onClick={changeShowCalendar} className="Toggle-Button">
-          Show table
-        </button>
-      ) : (
-        <button onClick={changeShowCalendar} className="Toggle-Button">
-          Show calendar
-        </button>
-      )}
-    </div>
-
-    {showCalendar ? (
-      <div className="WebApp-Body">
-        <Calendar events={events} onSelectEvent={handleSelectEvent} />
-      </div>
-    ) : (
-      <div className="Table-Container">
-        <EnhancedTable rows={classes} user={leftBarOption} />
-      </div>
-    )}
-  </>
-) : (
-  <div className="Table-Container">
-        <EnhancedTable rows={classes} />
-      </div>
-)}
-
-
-
-      {selectedEvent && (
-        <div className="Modal" onClick={handleCloseModal}>
-          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-            <h2>Class details</h2>
-            <p><strong>Name:</strong> {selectedEvent.name}</p>
-            <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
-            <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
-            <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-            { leftBarOption==='add' &&
-               ( <button onClick={handleCloseModal}>Booking</button> )}
-            <button onClick={handleCloseModal}>Close</button>
-          </div>
+      <>
+        <div className="Calendar-Button">
+          {showCalendar ? (
+            <button onClick={changeShowCalendar} className="Toggle-Button">
+              Show table
+            </button>
+          ) : (
+            <button onClick={changeShowCalendar} className="Toggle-Button">
+              Show calendar
+            </button>
+          )}
+        </div>
+        {showCalendar ? (
+        <div className="WebApp-Body">
+          <Calendar events={events} onSelectEvent={handleSelectEvent} />
+        </div>
+        ) : (
+        <div className="Table-Container">
+          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
         </div>
       )}
+      </>
+  ) : (
+    <div className="Table-Container">
+          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
+    </div>
+  )}
+  {selectedEvent && (
+    <div className="Modal" onClick={handleCloseModal}>
+      <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+        <h2>Classes details:</h2>
+        <p><strong>Name:</strong> {selectedEvent.name}</p>
+        <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
+        <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+        <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+        <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
+        {userMail && type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+(new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
+ ? (
+          <>
+          {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
+                <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
+              ) : (
+                <>
+                {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
+                <button onClick={() => handleBookClass(selectedEvent.id)}>Book</button>
+                ) :
+                (<>
+                <button style={{background:'red'}}>Full</button>
+                </>)
+                }
+                </>
+          )}
+          <button onClick={handleCloseModal}>Close</button>
+          </>) : (
+          <button onClick={handleCloseModal}>Close</button>
+        )}
+      </div>
+    </div>
+  )}
     </div>
   );
 }

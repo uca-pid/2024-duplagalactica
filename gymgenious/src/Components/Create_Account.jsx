@@ -1,10 +1,15 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftBar from '../real_components/LaftBarMaterial.jsx';
+import LeftBar from '../real_components/NewLeftBar.jsx';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import Box from '@mui/material/Box';
 import Popper from '@mui/material/Popper';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
+import Slide from '@mui/material/Slide';
 
 export default function CreateAccount() {
     const [name, setName] = useState('');
@@ -13,7 +18,14 @@ export default function CreateAccount() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState([]);
+    const [typeAccount,setTypeAccount] = useState('')
     const navigate = useNavigate();
+    const [openCircularProgress, setOpenCircularProgress] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [failureEmailRepeated, setFailureEmailRepeated] = useState(false);
+    const [failure, setFailure] = useState(false);
+    const [failureErrors, setFailureErrors] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(true)
     const auth = getAuth();
 
     const validateForm = () => {
@@ -65,7 +77,8 @@ export default function CreateAccount() {
     }
 
     const handleCreateAccount = async () => {
-        if (validateForm()) {
+        setOpenCircularProgress(true);
+        if(validateForm()){
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const firebaseUser = userCredential.user;
@@ -75,8 +88,9 @@ export default function CreateAccount() {
                     Lastname: lastName,
                     Mail: email,
                     Birthday: date,
+                    type: typeAccount
                 };
-                await fetch('http://127.0.0.1:5000/create_user', {
+                await fetch('https://two024-duplagalactica-li8t.onrender.com/create_user', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -84,29 +98,53 @@ export default function CreateAccount() {
                     body: JSON.stringify(newUser),
                 });
                 await sendEmailVerification(firebaseUser, {
-                    url: 'http://localhost:3000/redirections?mode=verifyEmail', 
+                    url: 'https://2024-duplagalactica.vercel.app/redirections?mode=verifyEmail', 
                     handleCodeInApp: true
-                });navigate('/'); 
-                alert("Account created successfully!");
+                });
+                setOpenCircularProgress(false);
+                setSuccess(true);
+                setTimeout(() => {
+                    setSuccess(false);
+                    navigate('/'); 
+                }, 3000);
             } catch (error) {
+                setOpenCircularProgress(false);
                 if (error.code === 'auth/email-already-in-use') {
-                    alert("An account already exists with this email.");
+                    setFailureEmailRepeated(true);
+                    setTimeout(() => {
+                        setFailureEmailRepeated(false);
+                        }, 3000);
                 } else {
                     console.error("Error creating account:", error);
-                    alert("Error creating account");
+                    setFailure(true);
+                    setTimeout(() => {
+                        setFailure(false);
+                        }, 3000);
                 }
             }
+        } else {
+            setOpenCircularProgress(false);
+            setFailureErrors(true);
+            setTimeout(() => {
+                setFailureErrors(false);
+                }, 3000);
         }
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        console.log('Token:', token);
+        if (token) {
+          navigate('/');
+        } else {
+          setIsAuthenticated(false);
+        }
+      }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         handleCreateAccount();
     };
-
-    const handleCloseModal = () => {
-        setErrors([])
-    }
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [openPasswordRequirements, setOpenPasswordRequirements] = useState(false);
@@ -117,13 +155,22 @@ export default function CreateAccount() {
     const id = openPasswordRequirements ? 'simple-popper' : undefined;
     return (
         <div className='App'>
+            {isAuthenticated ? (
+            <Backdrop
+            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        ) : (
+          <>
             <LeftBar value={'profile'}/>
             <div className='create-account-container'>
                 <div className='create-account-content'>
-                    <h2 style={{color:'#14213D'}}>Create account</h2>
+                    <h2 style={{color:'#5e2404'}}>Create account</h2>
                     <form onSubmit={handleSubmit} autoComplete='off'>
                         <div className="input-container">
-                            <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+                            <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
                             <input 
                                 type="text" 
                                 id="name" 
@@ -133,7 +180,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="lastName" style={{color:'#14213D'}}>Last name:</label>
+                            <label htmlFor="lastName" style={{color:'#5e2404'}}>Last name:</label>
                             <input 
                                 type="text" 
                                 id="lastname" 
@@ -143,7 +190,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="date" style={{color:'#14213D'}}>Birthdate:</label>
+                            <label htmlFor="date" style={{color:'#5e2404'}}>Birthdate:</label>
                             <input 
                                 type="date" 
                                 id="date" 
@@ -153,7 +200,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="email" style={{color:'#14213D'}}>Email:</label>
+                            <label htmlFor="email" style={{color:'#5e2404'}}>Email:</label>
                             <input 
                                 type="email" 
                                 id="email" 
@@ -163,7 +210,7 @@ export default function CreateAccount() {
                             />
                         </div>
                         <div className="input-container">
-                            <label htmlFor="password" style={{color:'#14213D'}}>Password:</label>
+                            <label htmlFor="password" style={{color:'#5e2404'}}>Password:</label>
                             <input
                                 onClick={handleOpenPasswordRequirements}
                                 type="password"
@@ -182,23 +229,100 @@ export default function CreateAccount() {
                                 </Box>
                             </Popper>
                         </div>
+                        <div className="input-container">
+                            <label htmlFor="typeAccount" style={{color:'#5e2404'}}>Type of account:</label>
+                            <select
+                                type="typeAccount" 
+                                id="typeAccount" 
+                                name="typeAccount" 
+                                value={typeAccount} 
+                                onChange={(e) => setTypeAccount(e.target.value)} 
+                            >
+                                <option value="" >Select</option>
+                                <option value="client">client</option>
+                                <option value="coach">coach</option>
+                            </select>
+                        </div>
                         <button type="submit" className='button_create_account'>
                             Create account
                         </button>
                     </form>
                 </div>
             </div>
-            {errors.length > 0 && (
-                <div className="errorsCreateAccountModal" onClick={handleCloseModal}>
-                    <div className="errorsCreateAccountContentModal" onClick={handleCloseModal}>
-                        <ul>
-                            {errors.map((error, index) => (
-                                <li key={index}>{error}</li>
-                            ))}
-                        </ul>
+            {openCircularProgress ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={openCircularProgress}
+                >
+                <CircularProgress color="inherit" />
+                </Backdrop>
+            ) : null}
+            { success ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                        <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={success} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} icon={<CheckIcon fontSize="inherit" /> } severity="success">
+                                    Account successfully created!
+                                </Alert>
+                            </Slide>
+                        </Box>
                     </div>
                 </div>
+            ) : (
+                null
             )}
+            { failureErrors ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
+                        <div>
+                            <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                            Error creating account!
+                            </Alert>
+                            {errors.length > 0 && errors.map((error, index) => (
+                            <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
+                                <li>{error}</li>
+                            </Alert>
+                            ))}
+                        </div>
+                        </Slide>
+                    </Box>
+                    </div>
+                </div>
+              
+            ) : (
+                null
+            )}
+            { failureEmailRepeated ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failureEmailRepeated} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>An account already exists with this email!</Alert>
+                        </Slide>
+                    </Box>
+                </div>
+            </div>
+            ) : (
+                null
+            )}
+            { failure ? (
+                <div className='alert-container'>
+                    <div className='alert-content'>
+                    <Box sx={{ position: 'relative', zIndex: 1 }}>
+                        <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
+                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>Error creating account. Try again!</Alert>
+                        </Slide>
+                    </Box>
+                </div>
+            </div>
+            ) : (
+                null
+            )}
+            </>
+        )}
         </div>
     );
 }
