@@ -293,9 +293,32 @@ function CoachRoutines() {
         if (!response.ok) {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
-        const data = await response.json();
-        const filteredRoutines = await data.filter(event => event.owner.includes(userMail));
-        setRoutines(filteredRoutines);
+        const routines = await response.json();
+        const filteredRoutines = await routines.filter(event => event.owner.includes(userMail));
+
+        const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${authToken}`
+          }
+        });
+        if (!response2.ok) {
+            throw new Error('Error al obtener las rutinas asignadas: ' + response2.statusText);
+        }
+        const assignedRoutines = await response2.json();
+        const routinesWithAssignedCount = filteredRoutines.map((routine) => {
+            const assignedForRoutine = assignedRoutines.filter((assigned) => assigned.id === routine.id);
+            const totalAssignedUsers = assignedForRoutine.reduce((acc, assigned) => {
+                return acc + (assigned.users ? assigned.users.length : 0); 
+            }, 0);
+            return {
+                ...routine,
+                cant_asignados: totalAssignedUsers, 
+            };
+        });
+
+
+        setRoutines(routinesWithAssignedCount);
         setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching rutinas:", error);
@@ -306,6 +329,8 @@ function CoachRoutines() {
         }, 3000);
     }
 }
+
+
 const fetchExercises = async () => {
   setOpenCircularProgress(true);
   try {
@@ -485,20 +510,6 @@ const fetchExercises = async () => {
                               )}
                             </TableSortLabel>
                           </TableCell>
-                          {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'day'} direction={orderBy === 'day' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'day')}>
-                                Day
-                                {orderBy === 'day' ? (
-                                    <Box component="span" sx={visuallyHidden}>
-                                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                    </Box>
-                                ) : (
-                                  null
-                                )}
-                              </TableSortLabel>
-                            </TableCell>
-                          )}
                           {!isSmallScreen250 && (
                             <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
                               <TableSortLabel active={orderBy === 'excercises.length'} direction={orderBy === 'excercises.length' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises.length')}>
@@ -543,11 +554,6 @@ const fetchExercises = async () => {
                                 <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                   {row.name}
                                 </TableCell>
-                                {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                                    {row.day}
-                                  </TableCell>
-                                )}
                                 {!isSmallScreen250 && (
                                   <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
                                     {row.excercises.length}
@@ -600,9 +606,8 @@ const fetchExercises = async () => {
                   <h2>Routine details</h2>
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
-                  <p><strong>Day:</strong> {selectedEvent.day}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
-                  <p><strong>Users:</strong> {5}</p>
+                  <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
                   <button onClick={()=> handleEditRoutine(selectedEvent)}>Edit routine</button>
                   <button onClick={handleCloseModalEvent}>Close</button>
                   <button onClick={()=> handeDeleteRoutine(selectedEvent)}>Delete routine</button>
