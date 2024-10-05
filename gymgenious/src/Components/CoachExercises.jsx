@@ -307,7 +307,7 @@ export default function CoachExercises() {
                                                     direction={orderBy === 'owner' ? order : 'asc'}
                                                     onClick={(event) => handleRequestSort(event, 'owner')}
                                                 >
-                                                    Teacher
+                                                    Owner
                                                     {orderBy === 'owner' && (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}

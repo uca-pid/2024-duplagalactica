@@ -63,6 +63,14 @@ function CouchClasses() {
     return daysOfWeek[date.getDay()];
   };
 
+  function formatDate(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${month}/${day}/${year}`;
+  }
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -460,10 +468,10 @@ function CouchClasses() {
                                         <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
                                     )}
                                     {!isSmallScreen400 && (
-                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
                                     )}
                                     {!isSmallScreen600 && (
-                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
                                     )}
                                     </TableRow>
                                 ))}
@@ -504,8 +512,9 @@ function CouchClasses() {
                         <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                             <h2>Class details</h2>
                             <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
-                            <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
+                            <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.dateInicio))}</p>
                             <p><strong>Start time:</strong> {selectedEvent.hour}</p>
+                            <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
                             <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
                             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>
                             <button onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>

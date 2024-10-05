@@ -317,7 +317,14 @@ export default function RoutineCreation() {
           <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
             <div className="input-small-container">
                 <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
-                <Grid className='grid-transfer-content' item>{customList(exercises)}</Grid>
+                {exercises.length!=0 ? (
+                  <Grid className='grid-transfer-content' item>{customList(exercises)}</Grid>
+                ) : (
+                  <div className='grid-transfer-content'>
+                    There are not exercises
+                  </div>
+                )}
+                
             </div>
           </div>
           <button type="submit" className='button_login'>
