@@ -298,13 +298,13 @@ export default function Main_Page() {
     <div className="Modal" onClick={handleCloseModal}>
       <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
         <h2>Classes details:</h2>
-        <p><strong>Name:</strong> {selectedEvent.name}</p>
+        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
         <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.start))}</p>
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
         <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
         <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-        <p><strong>Coach:</strong> {selectedEvent.owner}</p>
+        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Coach:</strong> {selectedEvent.owner}</p>
         {userMail && type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
 (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
  ? (

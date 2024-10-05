@@ -206,7 +206,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                           opacity: !isTransparent ? 0.5 : 1,
                         }}
                       >
-                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                           {row.name}
                         </TableCell>
                         {!isSmallScreen500 && (
@@ -263,7 +263,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
             <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-            <p><strong>Coach:</strong> {selectedEvent.owner}</p>
+            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Coach:</strong> {selectedEvent.owner}</p>
             {user && userType==='client' && (new Date(selectedEvent.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
             (new Date(selectedEvent.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0))
             ? (
