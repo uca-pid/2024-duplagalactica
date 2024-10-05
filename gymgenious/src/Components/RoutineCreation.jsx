@@ -21,7 +21,6 @@ export default function RoutineCreation() {
     const [userMail,setUserMail] = useState(null);
     const [exercises, setExercises] = useState([]);
     const [routineExercises, setRoutineExercises] = useState([]);
-    // const [day, setDay] = useState('');
     const navigate = useNavigate();
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -170,10 +169,6 @@ export default function RoutineCreation() {
       if (desc === '') {
         errors.push('Please assign a description to the routine.');
       }
-
-      // if (day === '') {
-      //   errors.push('Please select one day to assign the routine.');
-      // }
       
       if (exercises === '') {
         errors.push('Please select at least one exercise to assign the routine.');
@@ -191,7 +186,6 @@ export default function RoutineCreation() {
           name: name,
           description: desc,
           excercises: routineExercises,
-          // day: day,
           owner: userMail,
         };
         
@@ -281,24 +275,6 @@ export default function RoutineCreation() {
                 onChange={(e) => setName(e.target.value)} 
               />
             </div>
-              {/* <div className="input-small-container">
-                  <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
-                  <select
-                  id="day" 
-                  name="day" 
-                  value={day} 
-                  onChange={(e) => setDay(e.target.value)} 
-                >
-                  <option value="" >Select</option>
-                  <option value="monday">Monday</option>
-                  <option value="tuesday">Tuesday</option>
-                  <option value="wednesday">Wednesday</option>
-                  <option value="thursday">Thursday</option>
-                  <option value="friday">Friday</option>
-                  <option value="saturday">Saturday</option>
-                  <option value="sunday">Sunday</option>
-                </select>
-              </div> */}
           </div>
           <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between'}}>
           <div className="input-small-container">
