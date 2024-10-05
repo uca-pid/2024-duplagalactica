@@ -7,6 +7,7 @@ from Controllers.classesController import get_classes_route, create_class_route,
 from Controllers.usersController import get_unique_user_by_email_route ,get_user_route, send_email_route, create_user_route,get_users_route,get_coach_users_route,get_clients_users_route,get_client_users_no_match_routine_route,update_users_info_route
 from Controllers.excersicesController import create_exersice_route,get_excersice_by_owner_route,get_excersices_route
 from Controllers.routineController import create_routine_route,assign_routine_to_user_route,get_routines_route,get_assigned_routines_route,update_routine_info_route,delete_routine_route
+from Controllers.salasController import get_salas_route
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -17,6 +18,9 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def get_classes():
     return get_classes_route()
 
+@app.route('/get_salas', methods=['GET'])
+def get_salas():
+    return get_salas_route()
 
 @app.route('/create_class', methods=['POST'])
 def create_class():

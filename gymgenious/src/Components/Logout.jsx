@@ -15,7 +15,6 @@ const Logout = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     const handleLogout = () => {
       localStorage.removeItem('authToken');
       setTimeout(() => {

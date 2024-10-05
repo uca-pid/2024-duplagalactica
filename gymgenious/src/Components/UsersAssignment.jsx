@@ -58,14 +58,10 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
         throw new Error('Error al obtener las rutinas asignadas: ' + assignedResponse.statusText);
       }
       const assignedUsersData = await assignedResponse.json();
-      console.log("esta es la primera respuesta",assignedUsersData)
-      console.log("esto es la rutina",routine)
       const assignedUsersData2 = assignedUsersData.filter(routi => routi.id==routine && routi.day==routineDay)
-      console.log("esta es la segundA respuesta",assignedUsersData2)
       const assignedUsers = assignedUsersData2.flatMap(routine => 
         routine.users.map(user => user)
       );
-      console.log("esta es la tercera respuesta",assignedUsers)
       const allUsersResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_users`, {
         method: 'GET', 
         headers: {

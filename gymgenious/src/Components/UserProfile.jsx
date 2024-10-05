@@ -49,7 +49,6 @@ export default function CreateAccount() {
             }
             const data = await response.json();
             const filteredRows = data.filter((row) => row.Mail === userMail);
-            console.log(filteredRows[0]);
             setNameFetch(filteredRows[0].Name);
             setLastNameFetch(filteredRows[0].Lastname);
             setEmailFetch(filteredRows[0].Mail);
@@ -96,7 +95,6 @@ export default function CreateAccount() {
             }
             const data = await response.json();
             setOpenCircularProgress(false);
-            console.log(data);
         } catch (error) {
             console.error("Error updating user:", error);
             setOpenCircularProgress(false);
@@ -128,7 +126,6 @@ export default function CreateAccount() {
         setOpenCircularProgress(true);
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken);
             setUserMail(decodedToken.email);
             setOpenCircularProgress(false);
         } catch (error) {
@@ -144,7 +141,6 @@ export default function CreateAccount() {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {

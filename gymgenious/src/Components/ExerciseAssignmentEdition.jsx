@@ -105,14 +105,12 @@ export default function UsserAssignment({onUsersChange,routine}) {
           exercisesInRoutines.add(exercise.id);
         });
       });
-      console.log(exercisesInRoutines.has(100000))
       const right = totalExercisesCorrected.filter(exercise => 
         exercisesInRoutines.has(exercise.id)
       );
       const left = totalExercisesCorrected.filter(exercise => 
         !exercisesInRoutines.has(exercise.id)
       ); 
-      console.log(right)
       setRight(right); 
       setLeft(left);    
   
@@ -208,7 +206,6 @@ export default function UsserAssignment({onUsersChange,routine}) {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {

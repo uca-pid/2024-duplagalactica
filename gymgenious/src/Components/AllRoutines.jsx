@@ -143,7 +143,6 @@ const handleSelectEvent = (event) => {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {
