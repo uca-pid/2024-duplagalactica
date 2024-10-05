@@ -73,9 +73,11 @@ export default function UserAssignment({ onUsersChange, routine }) {
         throw new Error('Error al obtener los usuarios: ' + allUsersResponse.statusText);
       }
       const allUsers = await allUsersResponse.json();
-      const filteredRows = allUsers.filter(user => !assignedUsers.includes(user.Mail));
-      console.log("4",filteredRows)
+
+
+      const filteredRows = allUsers.filter(user => !assignedUsers.includes(user.Mail) && user.type=='client');
       const filteredRowsRight = allUsers.filter(user => assignedUsers.includes(user.Mail));
+
       console.log("5",filteredRowsRight)
       setUsers(filteredRows);
       setLeft(filteredRows);
