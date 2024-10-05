@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ExcersiceAssignment from './ExcersiceAssignment.jsx';
+// import ExcersiceAssignment from './ExcersiceAssignment.jsx';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
@@ -9,22 +9,175 @@ import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
+import Grid from '@mui/material/Grid';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
 
 export default function RoutineCreation() {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
+    const [selectedExercise, setSelectedExercise] = useState(null);
     const [userMail,setUserMail] = useState(null);
-    const [exercises, setExercises] = useState('');
-    const [day, setDay] = useState('');
+    const [exercises, setExercises] = useState([]);
+    const [routineExercises, setRoutineExercises] = useState([]);
     const navigate = useNavigate();
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [success, setSuccess] = useState(false);
     const [failure, setFailure] = useState(false);
     const [errors, setErrors] = useState([]);
     const [failureErrors, setFailureErrors] = useState(false);
+    const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
+    const [openAdvise, setOpenAdvise] = useState(false);
+    const [openAddExercise, setOpenAddExercise] = useState(false);
 
-    const handleExcersiceChange = (newExcersices) => {
-      setExercises(newExcersices);
+    const [series, setSeries] = useState(4);
+    const [reps, setReps] = useState(Array(series).fill(''));
+    const [timing, setTiming] = useState(0);
+
+    const handleSeriesChange = (e) => {
+      const newSeries = parseInt(e.target.value);
+      if(newSeries>=0 && newSeries<=8) {
+        setSeries(newSeries);
+        setReps(Array(newSeries).fill(''));
+      }
+    };
+
+    const handleRepsChange = (index, value) => {
+      const newReps = [...reps];
+      newReps[index] = value;
+      setReps(newReps);
+    };
+
+    const handleAddExercise = (exercise) => {
+      let exerciseWithParams = {
+        id: exercise.id,
+        description: exercise.description,
+        name: exercise.name,
+        owner: exercise.owner,
+        reps: reps,
+        series: series,
+        timing: timing,
+      }
+      console.log("agregado",exerciseWithParams)
+      setRoutineExercises([...routineExercises, exerciseWithParams]);
+      handleCloseModal();
+    };
+
+    const handleDeleteExercise = (exercise) => {
+      const updatedExercises = routineExercises.filter(stateExercise => stateExercise.id !== exercise.id);
+      setRoutineExercises(updatedExercises);
+      handleCloseModal();
+    }
+  
+    const handleCloseModal = () => {
+      setSelectedExercise(null);
+      setOpenAdvise(false);
+      setOpenAddExercise(false);
+    };
+
+    const handleSelectExercise = (exercise) => {
+      setSelectedExercise(exercise);
+      if(routineExercises?.some(stateExercise => stateExercise.id === exercise.id)){
+        setOpenAdvise(true);
+      } else {
+        setOpenAddExercise(true);
+      }
+    };
+
+    const customList = (items) => (
+      <div className='transfer-list'>
+        <List dense component="div" role="list">
+          {items.map((exercise) => {
+            const labelId = `transfer-list-item-${exercise.name}-label`;
+            return (
+              <>
+              { (routineExercises?.some(stateExercise => stateExercise.id === exercise.id)) ? (
+                <ListItemButton
+                sx={{backgroundColor:'red'}}
+                key={exercise.id}
+                role="listitem"
+                onClick={() => handleSelectExercise(exercise)}
+              >
+                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'white' }}>{exercise.name}</p></ListItemText>
+                <DeleteIcon sx={{color:'white'}}/>
+              </ListItemButton>
+              ) : (
+                <ListItemButton
+                key={exercise.id}
+                role="listitem"
+                onClick={() => handleSelectExercise(exercise)}
+              >
+                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{exercise.name}</p></ListItemText>
+                <AddCircleOutlineSharpIcon/>
+              </ListItemButton>
+              )}
+              </>
+            );
+          })}
+        </List>
+      </div>
+    );
+
+    const correctExercisesData = async (exercisesData) => {
+      let autoIncrementId=0;
+      return exercisesData.map(element => {
+          if (!element.series) {
+              autoIncrementId++;
+              return {
+                  id: element.id || autoIncrementId,
+                  name: element.name,
+                  series: 4,
+                  reps: [12, 12, 10, 10],
+                  timing: '60',
+                  description: 'aaaa',
+                  owner: 'Train-Mate'
+              };
+          }
+          return element;
+      });
+  };
+  
+    const fetchExercises = async () => {
+      setOpenCircularProgress(true);
+      try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
+        }
+        const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_excersices`, {
+          method: 'GET', 
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+      });
+      if (!response.ok) {
+        throw new Error('Error al obtener los usuarios: ' + response.statusText);
+      }
+      const exercisesData = await response.json();
+  
+        const response2 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${authToken}`
+          }
+        });
+        const exercisesDataFromTrainMate = await response2.json();
+        const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
+        const totalExercisesCorrected = await correctExercisesData(totalExercises);
+        setExercises(totalExercisesCorrected);
+        setOpenCircularProgress(false);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        setOpenCircularProgress(false);
+        setWarningFetchingExercises(true);
+        setTimeout(() => {
+          setWarningFetchingExercises(false);
+        }, 3000);
+      }
     };
 
     const validateForm = () => {
@@ -36,10 +189,6 @@ export default function RoutineCreation() {
 
       if (desc === '') {
         errors.push('Please assign a description to the routine.');
-      }
-
-      if (day === '') {
-        errors.push('Please select one day to assign the routine.');
       }
       
       if (exercises === '') {
@@ -57,8 +206,7 @@ export default function RoutineCreation() {
         const newRoutine = {
           name: name,
           description: desc,
-          excercises: exercises,
-          day: day,
+          excercises: routineExercises,
           owner: userMail,
         };
         
@@ -108,13 +256,18 @@ export default function RoutineCreation() {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
         console.error('No token found');
     }
   }, []);
+  
+  useEffect(() => {
+    if (userMail) {
+      fetchExercises();
+    }
+  }, [userMail]);
 
   const verifyToken = async (token) => {
       try {
@@ -142,24 +295,6 @@ export default function RoutineCreation() {
                 onChange={(e) => setName(e.target.value)} 
               />
             </div>
-              <div className="input-small-container">
-                  <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
-                  <select
-                  id="day" 
-                  name="day" 
-                  value={day} 
-                  onChange={(e) => setDay(e.target.value)} 
-                >
-                  <option value="" >Select</option>
-                  <option value="monday">Monday</option>
-                  <option value="tuesday">Tuesday</option>
-                  <option value="wednesday">Wednesday</option>
-                  <option value="thursday">Thursday</option>
-                  <option value="friday">Friday</option>
-                  <option value="saturday">Saturday</option>
-                  <option value="sunday">Sunday</option>
-                </select>
-              </div>
           </div>
           <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between'}}>
           <div className="input-small-container">
@@ -173,17 +308,135 @@ export default function RoutineCreation() {
                   />
               </div>
           </div>
-          <div className="grid-create-routine-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
+          {/* <div className="grid-create-routine-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
               <div className="input-small-create-routine-container">
                   <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
                   <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={userMail}/>
               </div>
+          </div> */}
+          <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
+            <div className="input-small-container">
+                <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
+                <Grid className='grid-transfer-content' item>{customList(exercises)}</Grid>
+            </div>
           </div>
           <button type="submit" className='button_login'>
             Create routine
           </button>
         </form>
       </div>
+      {selectedExercise && openAddExercise && (
+        <div className="Modal" onClick={handleCloseModal}>
+          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+          <h2 style={{marginBottom: '0px'}}>Exercise</h2>
+                                <p style={{
+                                    marginTop: '5px',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    maxWidth: '100%',
+                                    textAlign: 'center',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}>
+                                    {selectedExercise.name}
+                                </p>
+            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                <div className="input-small-container">
+                    <label htmlFor="desc" style={{color:'#14213D'}}>Series:</label>
+                    <input 
+                    type="number" 
+                    id="series" 
+                    name="series" 
+                    value={series}
+                    min="1"
+                    step='1'
+                    max="8"
+                    onChange={handleSeriesChange}
+                    />
+                </div>
+                <div className="input-small-container">
+                    <label htmlFor="timing" style={{color:'#14213D'}}>Timing:</label>
+                    <input 
+                    type="number" 
+                    id="timing" 
+                    name="timing" 
+                    value={timing}
+                    min="1"
+                    max="500"
+                    step='1'
+                    onChange={(e) => setTiming(e.target.value)}
+                    />
+                </div>
+            </div>
+            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+              <div className="input-small-container" style={{ flex: 1, marginRight: '10px' }}>
+                  <label htmlFor='reps' style={{ color: '#14213D' }}>Reps:</label>
+                  {reps.map((rep, index) => (
+                    <input
+                      type="text"
+                      id={`reps-${index}`}
+                      name={`reps-${index}`}
+                      value={rep}
+                      onChange={(e) => handleRepsChange(index, e.target.value)}
+                      style={{ width: `${100 / series}%` }}
+                    />
+                ))}
+              </div>
+            </div>
+            <button onClick={() => handleAddExercise(selectedExercise)}>Add exercise</button>
+            <button onClick={handleCloseModal}>Close</button>
+          </div>
+        </div>
+      )}
+      { openAdvise && selectedExercise && (
+            <div className='alert-container' onClick={handleCloseModal}>
+              <div className='alert-content' onClick={(e) => e.stopPropagation()}>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Slide direction="up" in={openAdvise} mountOnEnter unmountOnExit>
+                  <Alert 
+                    style={{ 
+                      fontSize: '100%', 
+                      fontWeight: 'bold', 
+                      alignItems: 'center', 
+                    }} 
+                    severity="info"
+                  >
+                    Are you sure you want to delete the exercise?
+                    <div style={{ justifyContent: 'center', marginTop: '10px' }}>
+                      <button 
+                        onClick={() => handleDeleteExercise(selectedExercise)} 
+                        style={{ 
+                          padding: '8px 16px', 
+                          backgroundColor: '#f44336',
+                          color: '#fff', 
+                          border: 'none', 
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Delete exercise
+                      </button>
+                      <button 
+                        onClick={handleCloseModal} 
+                        style={{ 
+                          padding: '8px 16px', 
+                          backgroundColor: '#4caf50',
+                          color: '#fff', 
+                          border: 'none', 
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </Alert>
+                </Slide>
+              </Box>
+            </div>
+          </div>
+        )}
       {openCircularProgress ? (
           <Backdrop
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

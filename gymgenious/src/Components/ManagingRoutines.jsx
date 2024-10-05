@@ -157,17 +157,9 @@ export default function ManagingRoutines () {
                         );
                         })}
                     </Stepper>
-                    {activeStep === steps.length ? (
-                        <React.Fragment>
-                        <Typography>
-                            All steps completed - you&apos;re finished
-                        </Typography>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                            <Box sx={{ flex: '1 1 auto' }} />
-                            <Button onClick={handleReset}>Reset</Button>
-                        </Box>
-                        </React.Fragment>
-                    ) : (
+                    {activeStep === steps.length ? 
+                        navigate('/')
+                     : (
                         <React.Fragment>
                         <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                             <Button
@@ -179,11 +171,6 @@ export default function ManagingRoutines () {
                             Back
                             </Button>
                             <Box sx={{ flex: '1 1 auto' }} />
-                            {isStepOptional(activeStep) && (
-                            <Button color="inherit" onClick={handleSkip}>
-                                Skip
-                            </Button>
-                            )}
                             <Button onClick={handleNext}>
                             {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                             </Button>

@@ -23,6 +23,7 @@ export default function RoutineCreation() {
     const [errors, setErrors] = useState([]);
     const [failureErrors, setFailureErrors] = useState(false);
     const [fetchAttempt, setFetchAttempt] = useState(0);
+    const [day, setDay] = useState('');
 
     const fetchRoutines = async () => {
         setOpenCircularProgress(true);
@@ -42,8 +43,7 @@ export default function RoutineCreation() {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
             }
             const data = await response.json();
-            const filteredRoutines = data.filter(event => event.owner.includes(userMail));
-            setRoutines(filteredRoutines);
+            setRoutines(data);
             setOpenCircularProgress(false);
         } catch (error) {
             console.error("Error fetching rutinas:", error);
@@ -91,6 +91,10 @@ export default function RoutineCreation() {
             errors.push('Please select a routine to assign');
         }
 
+        if (day === '') {
+            errors.push('Please select one day to assign the routine.');
+        }
+
         setErrors(errors);
         return errors.length===0;
     }
@@ -118,12 +122,13 @@ export default function RoutineCreation() {
                 const newAsignRoutine = {
                     id: routineAssigned,
                     user: users,
-                    owner: userMail,
-                    day: filteredRoutines[0].day,
+                    owner: filteredRoutines[0].owner,
+                    assigner: userMail,
+                    day: day,
                     routine: filteredRoutines[0].name
                 };
                 const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/assign_routine_to_user', {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${authToken}`
@@ -187,13 +192,30 @@ export default function RoutineCreation() {
                                     </option>
                                 ))}
                             </select>
-
+                        </div>
+                        <div className="input-small-container">
+                            <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
+                            <select
+                            id="day" 
+                            name="day" 
+                            value={day} 
+                            onChange={(e) => setDay(e.target.value)} 
+                            >
+                                <option value="" >Select</option>
+                                <option value="monday">Monday</option>
+                                <option value="tuesday">Tuesday</option>
+                                <option value="wednesday">Wednesday</option>
+                                <option value="thursday">Thursday</option>
+                                <option value="friday">Friday</option>
+                                <option value="saturday">Saturday</option>
+                                <option value="sunday">Sunday</option>
+                            </select>
                         </div>
                     </div>
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
                             <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
-                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned}/>
+                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned} routineDay={day}/>
                         </div>
                     </div>
                     <button type="submit" className='button_login'>
@@ -280,3 +302,6 @@ export default function RoutineCreation() {
         </div>
     );
 }
+
+
+

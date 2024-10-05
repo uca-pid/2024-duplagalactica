@@ -265,7 +265,7 @@ def get_routines():
         print("Error")
         return jsonify({'error':'Something went wrong'})
 
-@app.route('/assign_routine_to_user', methods=['POST'])
+@app.route('/assign_routine_to_user', methods=['PUT'])
 def assign_routine_to_user():
     try :
         token = request.headers.get('Authorization')
