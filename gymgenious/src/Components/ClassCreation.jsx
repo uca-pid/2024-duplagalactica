@@ -224,7 +224,7 @@ export default function CreateClass() {
           console.error('Token no disponible en localStorage');
           return;
         }
-        const response = await fetch(`http://127.0.0.1:5000/get_salas`, {
+        const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_salas`, {
             method: 'GET', 
             headers: {
               'Authorization': `Bearer ${authToken}`
