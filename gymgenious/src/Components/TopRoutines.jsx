@@ -21,14 +21,14 @@ import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
-import { mobileAndDesktopOS, valueFormatter } from './webUsageStats.ts';
 
 function BarAnimation({ routines }) {
     const [itemNb, setItemNb] = React.useState(5);
+
+    const orderedRoutines = routines.sort((a, b) => b.cant_asignados - a.cant_asignados);
   
-    // Mapeamos los nombres de las rutinas y los datos
-    const routineNames = routines?.map(routine => routine.name);
-    const routineData = routines?.map(routine => routine.cant_asignados);
+    const routineNames = orderedRoutines?.map(routine => routine.name);
+    const routineData = orderedRoutines?.map(routine => routine.cant_asignados);
   
     const handleItemNbChange = (event, newValue) => {
       if (typeof newValue !== 'number') {
@@ -36,42 +36,49 @@ function BarAnimation({ routines }) {
       }
       setItemNb(newValue);
     };
+    
+    const routinesData = routines?.map(routine => ({
+      label: routine.name,
+      value: routine.cant_asignados, 
+    }));
   
     return (
-      <Box sx={{ width: '100%' }}>
-        <BarChart
-          height={300}
-          series={[{
-            data: routineData.slice(0, itemNb), // Datos de los asignados
-          }]}
-          xAxis={[{
-            scaleType: 'band', // Aquí está la corrección: eje X de tipo "band"
-            data: routineNames.slice(0, itemNb), // Nombres de las rutinas en el eje X
-          }]}
-        />
-        <Typography id="input-item-number" gutterBottom>
-          Número de rutinas
-        </Typography>
-        <Slider
-          value={itemNb}
-          onChange={handleItemNbChange}
-          valueLabelDisplay="auto"
-          min={1}
-          max={routines.length}
-          aria-labelledby="input-item-number"
-        />
-        <PieChart
-        height={300}
-        series={[
-          {
-            data: mobileAndDesktopOS.slice(0, itemNb),
-            innerRadius: 50,
-            arcLabel: (params) => params.label ?? '',
-            arcLabelMinAngle: 20,
-            valueFormatter,
-          },
-        ]}
-      />
+        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
+          <BarChart
+            height={250}
+            series={[{
+              data: routineData.slice(0, itemNb),
+            }]}
+            xAxis={[{
+              scaleType: 'band',
+              data: routineNames.slice(0, itemNb),
+            }]}
+          />
+          <PieChart
+            height={250}
+             legend= {{ hidden: true }}
+                series={[{data: routinesData.slice(0,itemNb),
+                  innerRadius: 50,
+                  arcLabel:(params) => params.label ?? '',
+                  arcLabelMinAngle: 20,
+                  valueFormatter: (item) => `${item.value} users`,
+                }]}
+          />
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: 250 }}>
+            <Typography id="input-item-number" gutterBottom>
+              Routines number
+            </Typography>
+            <Slider
+              value={itemNb}
+              orientation="vertical"
+              onChange={handleItemNbChange}
+              valueLabelDisplay="auto"
+              min={1}
+              max={5}
+              sx={{ height: '100%' }}
+              aria-labelledby="input-item-number"
+            />
+        </Box>
       </Box>
     );
   }
@@ -85,8 +92,8 @@ const day = (dateString) => {
 };
 
 function TopRoutines() {
-  const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('users');
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('cant_asignados');
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -156,7 +163,6 @@ function TopRoutines() {
             throw new Error('Error al obtener las rutinas asignadas: ' + response2.statusText);
         }
         const assignedRoutines = await response2.json();
-        console.log("asignados",assignedRoutines)
         const routinesWithAssignedCount = routines.map((routine) => {
             const assignedForRoutine = assignedRoutines.filter((assigned) => assigned.id === routine.id);
             const totalAssignedUsers = assignedForRoutine.reduce((acc, assigned) => {
@@ -200,7 +206,6 @@ function TopRoutines() {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {
@@ -282,9 +287,9 @@ function TopRoutines() {
                           </TableCell>
                           {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'day'} direction={orderBy === 'day' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'day')}>
+                              <TableSortLabel active={orderBy === 'owner'} direction={orderBy === 'owner' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'owner')}>
                                 Owner
-                                {orderBy === 'day' ? (
+                                {orderBy === 'owner' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -296,9 +301,9 @@ function TopRoutines() {
                           )}
                           {!isSmallScreen250 && (
                             <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'excercises.length'} direction={orderBy === 'excercises.length' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises.length')}>
+                              <TableSortLabel active={orderBy === 'excercises'} direction={orderBy === 'excercises' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises')}>
                                 Exercises
-                                {orderBy === 'excercises.length' ? (
+                                {orderBy === 'excercises' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -310,9 +315,9 @@ function TopRoutines() {
                           )}
                           {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'users'} direction={orderBy === 'users' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'users')}>
+                              <TableSortLabel active={orderBy === 'cant_asignados'} direction={orderBy === 'cant_asignados' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'cant_asignados')}>
                                 Users
-                                {orderBy === 'users' ? (
+                                {orderBy === 'cant_asignados' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -335,11 +340,11 @@ function TopRoutines() {
                           <>
                             {visibleRows.map((row) => (
                               <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                   {row.name}
                                 </TableCell>
                                 {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                     {row.owner}
                                   </TableCell>
                                 )}
@@ -349,7 +354,7 @@ function TopRoutines() {
                                   </TableCell>
                                 )}
                                 {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>
                                     {row.cant_asignados} 
                                   </TableCell>
                                 )}
@@ -375,8 +380,10 @@ function TopRoutines() {
                     null
                   )}
                 </Paper>
-              </Box>
+              </Box> 
+              <div className='graphic-container'>
               <BarAnimation routines={routines}/>
+            </div>
             </div>
             {selectedEvent && (
               <div className="Modal" onClick={handleCloseModal}>
@@ -386,7 +393,7 @@ function TopRoutines() {
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                   <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
-                  <p><strong>Owner:</strong> {selectedEvent.owner}</p>
+                  <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Owner:</strong> {selectedEvent.owner}</p>
                   <button onClick={handleViewExercises}>View exercises</button>
                   <button onClick={handleCloseModal}>Close</button>
                 </div>

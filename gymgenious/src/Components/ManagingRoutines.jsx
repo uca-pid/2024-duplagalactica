@@ -70,7 +70,6 @@ export default function ManagingRoutines () {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {

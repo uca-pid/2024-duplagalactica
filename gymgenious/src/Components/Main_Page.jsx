@@ -29,6 +29,14 @@ export default function Main_Page() {
   const isSmallScreen = useMediaQuery('(max-width:250px)');
   const [type, setType] = useState(null);
 
+  function formatDate(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${month}/${day}/${year}`;
+  }
+
   const changeShowCalendar = () => {
     setShowCalendar(prevState => !prevState);
     handleCloseModal()
@@ -36,7 +44,6 @@ export default function Main_Page() {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
-    console.log(event)
   };
 
   const handleCloseModal = () => {
@@ -51,23 +58,37 @@ export default function Main_Page() {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      setClasses(data);
+      
+      const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_salas');
+      if (!response2.ok) {
+        throw new Error('Error al obtener las salas: ' + response2.statusText);
+      }
+      const salas = await response2.json();
+  
+      const dataWithSala = data.map(clase => {
+        const salaInfo = salas.find(sala => sala.id === clase.sala);
+        return {
+          ...clase,
+          salaInfo, 
+        };
+      });
+  
       const calendarEvents = [];
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-    
-      data.forEach(clase => {
+  
+      dataWithSala.forEach(clase => {
         const startDate = new Date(clase.dateInicio);
-        const CorrectStarDate = new Date(startDate.getTime() + 60 * 3 * 60 * 1000); 
+        const CorrectStarDate = new Date(startDate.getTime() + 60 * 3 * 60 * 1000);
         const endDate = new Date(clase.dateFin);
         const CorrectEndDate = new Date(endDate.getTime() + 60 * 3 * 60 * 1000);
-    
+  
         if (clase.permanent === "Si") {
           let nextStartDate = new Date(CorrectStarDate);
           let nextEndDate = new Date(CorrectEndDate);
-    
+  
           if (nextStartDate < today) {
-            const dayOfWeek = CorrectStarDate.getDay(); 
+            const dayOfWeek = CorrectStarDate.getDay();
             let daysUntilNextClass = (dayOfWeek - today.getDay() + 7) % 7;
             if (daysUntilNextClass === 0 && today > CorrectStarDate) {
               daysUntilNextClass = 7;
@@ -75,7 +96,7 @@ export default function Main_Page() {
             nextStartDate.setDate(today.getDate() + daysUntilNextClass);
             nextEndDate = new Date(nextStartDate.getTime() + (CorrectEndDate.getTime() - CorrectStarDate.getTime()));
           }
-    
+  
           for (let i = 0; i < 4; i++) {
             calendarEvents.push({
               title: clase.name,
@@ -97,9 +118,9 @@ export default function Main_Page() {
           });
         }
       });
+      console.log("asi se agrergaron", calendarEvents)
       setOpenCircularProgress(false);
       setEvents(calendarEvents);
-      console.log(calendarEvents);
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
@@ -109,6 +130,7 @@ export default function Main_Page() {
       }, 3000);
     }
   };
+  
 
   const handleBookClass = async (event) => {
     setOpenCircularProgress(true);
@@ -290,11 +312,14 @@ export default function Main_Page() {
     <div className="Modal" onClick={handleCloseModal}>
       <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
         <h2>Classes details:</h2>
-        <p><strong>Name:</strong> {selectedEvent.name}</p>
-        <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
+        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
+        <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.start))}</p>
         <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+        <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
         <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
+        <p><strong>Sala:</strong> {selectedEvent.salaInfo.nombre}</p>
+        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Coach:</strong> {selectedEvent.owner}</p>
         {userMail && type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
 (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
  ? (

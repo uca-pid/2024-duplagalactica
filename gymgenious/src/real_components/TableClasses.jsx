@@ -25,6 +25,14 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
 
+  function formatDate(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${month}/${day}/${year}`;
+  }
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -195,20 +203,20 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                         sx={{
                           cursor: 'pointer',
                           borderBottom: '1px solid #BC6C25',
-                          opacity: !isTransparent ? 0.5 : 1,  // Aplica opacidad cuando la condición es verdadera
+                          opacity: !isTransparent ? 0.5 : 1,
                         }}
                       >
-                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                           {row.name}
                         </TableCell>
                         {!isSmallScreen500 && (
                           <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
                         )}
                         {!isSmallScreen400 && (
-                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
                         )}
                         {!isSmallScreen600 && (
-                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
                         )}
                       </TableRow>
                     );
@@ -248,12 +256,14 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
       {selectedEvent && (
         <div className="Modal" onClick={handleCloseModal}>
           <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-            <h2>Classes details:</h2>
+            <h2>Class details:</h2>
             <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
-            <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
+            <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.dateInicio))}</p>
             <p><strong>Start time:</strong> {new Date(new Date(selectedEvent.dateInicio).getTime() + 3 * 60 * 60 * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+            <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
             <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
+            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Coach:</strong> {selectedEvent.owner}</p>
             {user && userType==='client' && (new Date(selectedEvent.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
             (new Date(selectedEvent.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0))
             ? (

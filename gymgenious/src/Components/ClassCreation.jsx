@@ -18,6 +18,9 @@ export default function CreateClass() {
   const [hourFin, setHourFin] = useState('');
   const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
+  const [salas, setSalas] = useState([]);
+  const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
+  const [salaAssigned, setSala] = useState(null); 
   const [name, setName] = useState('');
   const [maxNum,setMaxNum] = useState(1);
   const navigate = useNavigate();
@@ -64,68 +67,184 @@ export default function CreateClass() {
       setErrors(errors);
       return errors.length === 0;
   }
+  const timeToMinutes = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
 
   const handleCreateClass = async () => {
     setOpenCircularProgress(true);
-    if(validateForm()){
-      try {
+    if (validateForm()) {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                console.error('Token no disponible en localStorage');
+                return;
+            }
+            const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+            if (!response2.ok) {
+                throw new Error('Error al obtener las clases: ' + response2.statusText);
+            }
+            const data = await response2.json();
+            const isoDateString = date; 
+            const newClassStartTime = new Date(`${date}T${hour}:00Z`);
+            const newClassEndTime = new Date(`${date}T${hourFin}:00Z`);
+            const newClassStartTimeInMinutes = timeToMinutes(hour);
+            const newClassEndTimeInMinutes = timeToMinutes(hourFin);
+            const conflictingClasses = data.filter(classItem => 
+                classItem.sala === salaAssigned &&
+                classItem.day === day(isoDateString) 
+            );
+            if (permanent == "No") {
+              const hasPermanentConflict = conflictingClasses.some(existingClass => 
+                  existingClass.permanent == "Si" && 
+                  newClassStartTime > new Date(existingClass.dateFin) &&
+                  newClassEndTime > new Date(existingClass.dateInicio) &&
+                  newClassEndTime > new Date(existingClass.dateFin) &&
+                  newClassStartTime > new Date(existingClass.dateInicio) &&
+                  newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+                  newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5))
+              );
+              const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
+                  newClassStartTime < new Date(existingClass.dateFin) &&
+                  newClassEndTime > new Date(existingClass.dateInicio)
+              );
+              if (hasNonPermanentConflict || hasPermanentConflict) {
+                  console.error('Conflicto de horario con clases existentes en esta sala.');
+                  setOpenCircularProgress(false);
+                  setFailureErrors(true);
+                  setTimeout(() => {
+                      setFailureErrors(false);
+                  }, 3000);
+                  return;
+              }
+          } 
+          else if (permanent == "Si") {
+              const hasPastPermanentConflict = conflictingClasses.some(existingClass =>
+                  existingClass.permanent == "Si" &&
+                  newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+                  newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
+                  newClassStartTime.getFullYear()>= (new Date(existingClass.dateFin)).getFullYear() &&
+                  newClassEndTime.getFullYear()>= (new Date(existingClass.dateInicio)).getFullYear() &&
+                  String((newClassStartTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
+                  String((newClassEndTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
+                  String((newClassStartTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
+                  String((newClassEndTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
+              );
+
+              const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
+                newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+                newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
+                newClassStartTime.getFullYear()<= (new Date(existingClass.dateFin)).getFullYear() &&
+                newClassEndTime.getFullYear()<= (new Date(existingClass.dateInicio)).getFullYear() &&
+                String((newClassStartTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
+                String((newClassEndTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
+                String((newClassStartTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
+                String((newClassEndTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
+              );
+
+              const hasPermanentConflict = conflictingClasses.some(existingClass =>
+                newClassStartTime < new Date(existingClass.dateFin) &&
+                newClassEndTime > new Date(existingClass.dateInicio)
+              );
+              if (hasPastPermanentConflict || hasPermanentConflict || hasNonPermanentConflict) {
+                  console.error('Ya existe una clase permanente en esta sala para este horario.');
+                  setOpenCircularProgress(false);
+                  setFailureErrors(true);
+                  setTimeout(() => {
+                      setFailureErrors(false);
+                  }, 3000);
+                  return;
+              }
+          }
+
+            
+
+            const newClass = {
+                name: name,
+                dateInicio: newClassStartTime.toISOString(),
+                dateFin: newClassEndTime.toISOString(),
+                hour: hour,
+                day: day(isoDateString),
+                permanent: permanent,
+                owner: userMail,
+                capacity: maxNum,
+                BookedUsers: [],
+                sala: salaAssigned
+            };
+
+            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/create_class', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(newClass),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al crear la clase');
+            }
+
+            setOpenCircularProgress(false);
+            setSuccess(true);
+            setTimeout(() => {
+                setSuccess(false);
+                navigate(`/?mail=${userMail}`, { state: { message: 'block' } });
+            }, 3000);
+        } catch (error) {
+            console.error("Error al crear la clase:", error);
+            setOpenCircularProgress(false);
+            setFailure(true);
+            setTimeout(() => {
+                setFailure(false);
+            }, 3000);
+        }
+    } else {
+        setOpenCircularProgress(false);
+        setFailureErrors(true);
+        setTimeout(() => {
+            setFailureErrors(false);
+        }, 3000);
+    }
+  };
+
+
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleCreateClass();
+  };
+
+  const fetchSalas = async () => {
+    setOpenCircularProgress(true);
+    try {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
           console.error('Token no disponible en localStorage');
           return;
         }
-        const isoDateStringInicio = `${date}T${hour}:00Z`;
-        const isoDateStringFin = `${date}T${hourFin}:00Z`;
-        const newClass = {
-          name: name,
-          dateInicio: isoDateStringInicio,
-          dateFin: isoDateStringFin,
-          hour: hour,
-          day: day(date),
-          permanent: permanent,
-          owner: userMail,
-          capacity: maxNum,
-          BookedUsers: []
-        };
-        const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/create_class', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-          },
-          body: JSON.stringify(newClass),
+        const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_salas`, {
+            method: 'GET', 
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
         });
-    
         if (!response.ok) {
-          throw new Error('Error al crear la clase');
+            throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
+        const data = await response.json();
+        const dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
+        setSalas(dataFinal);
         setOpenCircularProgress(false);
-        setSuccess(true);
-        setTimeout(() => {
-          setSuccess(false);
-          navigate(`/?mail=${userMail}`, { state: { message: 'block' } });
-        }, 3000);
-      } catch (error) {
-        console.error("Error al crear la clase:", error);
+    } catch (error) {
+        console.error("Error fetching rutinas:", error);
         setOpenCircularProgress(false);
-        setFailure(true);
+        setWarningFetchingRoutines(true);
         setTimeout(() => {
-          setFailure(false);
+            setWarningFetchingRoutines(false);
         }, 3000);
-        
-      }
-    } else {
-      setOpenCircularProgress(false);
-      setFailureErrors(true);
-      setTimeout(() => {
-        setFailureErrors(false);
-      }, 3000);
     }
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleCreateClass();
   };
 
   const verifyToken = async (token) => {
@@ -144,7 +263,6 @@ export default function CreateClass() {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
@@ -158,6 +276,12 @@ export default function CreateClass() {
       fetchUser();
     }
   }, [userMail]);
+
+  useEffect(() => {
+    if (userMail && maxNum) {
+      fetchSalas();
+    }
+  }, [userMail,maxNum]);
 
   const fetchUser = async () => {
     try {
@@ -295,6 +419,23 @@ export default function CreateClass() {
                             value={date} 
                             onChange={(e) => setDate(e.target.value)} 
                           />
+                        </div>
+                        <div className="input-small-container">
+                            <label htmlFor="salaAssigned" style={{ color: '#14213D' }}>Sala:</label>
+                            <select
+                                id="salaAssigned"
+                                name="salaAssigned"
+                                value={salaAssigned}
+                                onChange={(e) => setSala(e.target.value)}
+                                style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+                            >
+                                <option value="">Select</option>
+                                {salas.map((sala) => (
+                                    <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
+                                        {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                       </div>
                     </>
