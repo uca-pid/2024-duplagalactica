@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import { Box, useMediaQuery } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -238,7 +238,7 @@ function AllRoutines() {
                           {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
                               <TableSortLabel active={orderBy === 'day'} direction={orderBy === 'day' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'day')}>
-                                Day
+                                Owner
                                 {orderBy === 'day' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -295,7 +295,7 @@ function AllRoutines() {
                                 </TableCell>
                                 {!isSmallScreen && (
                                   <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                                    {row.day}
+                                    {row.owner}
                                   </TableCell>
                                 )}
                                 {!isSmallScreen250 && (
@@ -350,7 +350,6 @@ function AllRoutines() {
                   <h2>Routine details</h2>
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
-                  <p><strong>Day:</strong> {selectedEvent.day}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                   <p><strong>Users:</strong> {5}</p>
                   <p><strong>Owner:</strong> {selectedEvent.owner}</p>

@@ -50,14 +50,17 @@ export default function RoutineCreation() {
 
     const handleAddExercise = (exercise) => {
       let exerciseWithParams = {
-        exercise: exercise,
-        series: series,
+        id: exercise.id,
+        description: exercise.description,
+        name: exercise.name,
+        owner: exercise.owner,
         reps: reps,
+        series: series,
         timing: timing,
       }
+      console.log("agregado",exerciseWithParams)
       setRoutineExercises([...routineExercises, exerciseWithParams]);
       handleCloseModal();
-      console.log(routineExercises)
     };
 
     const handleSelectExercise = (event) => {
@@ -75,7 +78,7 @@ export default function RoutineCreation() {
             const labelId = `transfer-list-item-${exercise.name}-label`;
             return (
               <>
-              { (routineExercises?.some(stateExercise => stateExercise.exercise.id === exercise.id)) ? (
+              { (routineExercises?.some(stateExercise => stateExercise.id === exercise.id)) ? (
                 <ListItemButton
                 sx={{backgroundColor:'red'}}
                 key={exercise.id}
@@ -106,7 +109,7 @@ export default function RoutineCreation() {
           if (!element.series) {
               autoIncrementId++;
               return {
-                  id: autoIncrementId,
+                  id: element.id || autoIncrementId,
                   name: element.name,
                   series: 4,
                   reps: [12, 12, 10, 10],
@@ -133,10 +136,10 @@ export default function RoutineCreation() {
             'Authorization': `Bearer ${authToken}`
           }
       });
-        if (!response.ok) {
-          throw new Error('Error al obtener los usuarios: ' + response.statusText);
-        }
-        const exercisesData = await response.json();
+      if (!response.ok) {
+        throw new Error('Error al obtener los usuarios: ' + response.statusText);
+      }
+      const exercisesData = await response.json();
   
         const response2 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
           method: 'GET',
@@ -147,7 +150,6 @@ export default function RoutineCreation() {
         const exercisesDataFromTrainMate = await response2.json();
         const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
         const totalExercisesCorrected = await correctExercisesData(totalExercises);
-        console.log("ssss",userMail,totalExercisesCorrected)
         setExercises(totalExercisesCorrected);
         setOpenCircularProgress(false);
       } catch (error) {
@@ -170,10 +172,6 @@ export default function RoutineCreation() {
       if (desc === '') {
         errors.push('Please assign a description to the routine.');
       }
-
-      // if (day === '') {
-      //   errors.push('Please select one day to assign the routine.');
-      // }
       
       if (exercises === '') {
         errors.push('Please select at least one exercise to assign the routine.');
@@ -191,7 +189,6 @@ export default function RoutineCreation() {
           name: name,
           description: desc,
           excercises: routineExercises,
-          // day: day,
           owner: userMail,
         };
         
@@ -241,7 +238,6 @@ export default function RoutineCreation() {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {

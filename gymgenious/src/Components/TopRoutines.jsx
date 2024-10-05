@@ -76,27 +76,51 @@ function TopRoutines() {
         console.error('Token no disponible en localStorage');
         return;
       }
-        const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
-          method: 'GET', 
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          }
-      });
-        if (!response.ok) {
-            throw new Error('Error al obtener las rutinas: ' + response.statusText);
+      
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
         }
-        const data = await response.json();
-        setRoutines(data);
-        setOpenCircularProgress(false);
+      });
+      if (!response.ok) {
+        throw new Error('Error al obtener las rutinas: ' + response.statusText);
+      }
+      const routines = await response.json();
+      const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      if (!response2.ok) {
+        throw new Error('Error al obtener las rutinas asignadas: ' + response2.statusText);
+      }
+      const assignedRoutines = await response2.json();
+      console.log("rutinas", routines[0].id)
+      console.log("assigned routines",assignedRoutines[0].id)
+      const routinesWithAssignedCount = routines.map((routine) => {
+        const assignedCount = assignedRoutines
+          .filter((assigned) => assigned.id === routine.id)  
+        return {
+          ...routine,
+          cant_asignados: assignedCount.length || 0,
+        };
+      });
+      console.log("resultado", routinesWithAssignedCount)
+      setRoutines(routinesWithAssignedCount);
+      setOpenCircularProgress(false);
     } catch (error) {
-        console.error("Error fetching rutinas:", error);
-        setOpenCircularProgress(false);
-        setWarningConnection(true);
-        setTimeout(() => {
-          setWarningConnection(false);
-        }, 3000);
+      console.error("Error fetching rutinas:", error);
+      setOpenCircularProgress(false);
+      setWarningConnection(true);
+      setTimeout(() => {
+        setWarningConnection(false);
+      }, 3000);
     }
-}
+  };
+  
+  
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
@@ -205,7 +229,7 @@ function TopRoutines() {
                           {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
                               <TableSortLabel active={orderBy === 'day'} direction={orderBy === 'day' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'day')}>
-                                Day
+                                Owner
                                 {orderBy === 'day' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -262,7 +286,7 @@ function TopRoutines() {
                                 </TableCell>
                                 {!isSmallScreen && (
                                   <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
-                                    {row.day}
+                                    {row.owner}
                                   </TableCell>
                                 )}
                                 {!isSmallScreen250 && (
@@ -272,7 +296,7 @@ function TopRoutines() {
                                 )}
                                 {!isSmallScreen && (
                                   <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                                    {row.users?.length} 
+                                    {row.cant_asignados} 
                                   </TableCell>
                                 )}
                               </TableRow>
@@ -317,9 +341,8 @@ function TopRoutines() {
                   <h2>Routine details</h2>
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
-                  <p><strong>Day:</strong> {selectedEvent.day}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
-                  <p><strong>Users:</strong> {selectedEvent.users?.length}</p>
+                  <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
                   <p><strong>Owner:</strong> {selectedEvent.owner}</p>
                   <button onClick={handleCloseModal}>Close</button>
                 </div>
