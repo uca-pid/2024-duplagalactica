@@ -71,54 +71,57 @@ function TopRoutines() {
   const fetchRoutines = async () => {
     setOpenCircularProgress(true);
     try {
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) {
-        console.error('Token no disponible en localStorage');
-        return;
-      }
-      
-      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${authToken}`
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('Token no disponible en localStorage');
+            return;
         }
-      });
-      if (!response.ok) {
-        throw new Error('Error al obtener las rutinas: ' + response.statusText);
-      }
-      const routines = await response.json();
-      const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${authToken}`
+
+        const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
-      });
-      if (!response2.ok) {
-        throw new Error('Error al obtener las rutinas asignadas: ' + response2.statusText);
-      }
-      const assignedRoutines = await response2.json();
-      console.log("rutinas", routines[0].id)
-      console.log("assigned routines",assignedRoutines[0].id)
-      const routinesWithAssignedCount = routines.map((routine) => {
-        const assignedCount = assignedRoutines
-          .filter((assigned) => assigned.id === routine.id)  
-        return {
-          ...routine,
-          cant_asignados: assignedCount.length || 0,
-        };
-      });
-      console.log("resultado", routinesWithAssignedCount)
-      setRoutines(routinesWithAssignedCount);
-      setOpenCircularProgress(false);
+        const routines = await response.json();
+
+        const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response2.ok) {
+            throw new Error('Error al obtener las rutinas asignadas: ' + response2.statusText);
+        }
+        const assignedRoutines = await response2.json();
+        console.log("asignados",assignedRoutines)
+        const routinesWithAssignedCount = routines.map((routine) => {
+            const assignedForRoutine = assignedRoutines.filter((assigned) => assigned.id === routine.id);
+            const totalAssignedUsers = assignedForRoutine.reduce((acc, assigned) => {
+                return acc + (assigned.users ? assigned.users.length : 0); 
+            }, 0);
+            return {
+                ...routine,
+                cant_asignados: totalAssignedUsers, 
+            };
+        });
+
+        setRoutines(routinesWithAssignedCount);
+        setOpenCircularProgress(false);
     } catch (error) {
-      console.error("Error fetching rutinas:", error);
-      setOpenCircularProgress(false);
-      setWarningConnection(true);
-      setTimeout(() => {
-        setWarningConnection(false);
-      }, 3000);
+        console.error("Error fetching rutinas:", error);
+        setOpenCircularProgress(false);
+        setWarningConnection(true);
+        setTimeout(() => {
+            setWarningConnection(false);
+        }, 3000);
     }
-  };
+};
+
   
   
 

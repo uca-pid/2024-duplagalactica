@@ -122,12 +122,13 @@ export default function RoutineCreation() {
                 const newAsignRoutine = {
                     id: routineAssigned,
                     user: users,
-                    owner: userMail,
+                    owner: filteredRoutines[0].owner,
+                    assigner: userMail,
                     day: day,
                     routine: filteredRoutines[0].name
                 };
                 const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/assign_routine_to_user', {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${authToken}`
@@ -214,7 +215,7 @@ export default function RoutineCreation() {
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
                             <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
-                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned}/>
+                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned} routineDay={day}/>
                         </div>
                     </div>
                     <button type="submit" className='button_login'>
@@ -301,3 +302,6 @@ export default function RoutineCreation() {
         </div>
     );
 }
+
+
+

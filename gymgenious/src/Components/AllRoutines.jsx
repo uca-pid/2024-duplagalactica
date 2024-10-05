@@ -84,8 +84,29 @@ function AllRoutines() {
         if (!response.ok) {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
-        const data = await response.json();
-        setRoutines(data);
+
+        const routines = await response.json();
+        const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${authToken}`
+          }
+        });
+        if (!response2.ok) {
+            throw new Error('Error al obtener las rutinas asignadas: ' + response2.statusText);
+        }
+        const assignedRoutines = await response2.json();
+        const routinesWithAssignedCount = routines.map((routine) => {
+            const assignedForRoutine = assignedRoutines.filter((assigned) => assigned.id === routine.id);
+            const totalAssignedUsers = assignedForRoutine.reduce((acc, assigned) => {
+                return acc + (assigned.users ? assigned.users.length : 0); 
+            }, 0);
+            return {
+                ...routine,
+                cant_asignados: totalAssignedUsers, 
+            };
+        });
+        setRoutines(routinesWithAssignedCount);
         setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching rutinas:", error);
@@ -351,7 +372,7 @@ function AllRoutines() {
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
-                  <p><strong>Users:</strong> {5}</p>
+                  <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
                   <p><strong>Owner:</strong> {selectedEvent.owner}</p>
                   <button onClick={handleCloseModal}>Close</button>
                 </div>
