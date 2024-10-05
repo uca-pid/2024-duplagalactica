@@ -262,6 +262,9 @@ function CoachRoutines() {
     setDescFetch(event.description);
     setExersFetch(event.excercises);
     setRoutine(event);
+    setName('');
+    setDay('');
+    setDesc('');
   } 
 
   const handeDeleteRoutine = async (event) => {
@@ -644,8 +647,7 @@ const fetchExercises = async () => {
                         type="text" 
                         id="name" 
                         name="name" 
-                        value={name} 
-                        placeholder={fetchName}
+                        value={name || fetchName} 
                         onChange={(e) => setName(e.target.value)} 
                         />
                       </div>
@@ -654,10 +656,9 @@ const fetchExercises = async () => {
                         <select
                         id="day" 
                         name="day" 
-                        value={day} 
+                        value={day || dayFetch} 
                         onChange={(e) => setDay(e.target.value)} 
                         >
-                          <option value="" >Select</option>
                           <option value="monday">Monday</option>
                           <option value="tuesday">Tuesday</option>
                           <option value="wednesday">Wednesday</option>
@@ -675,8 +676,7 @@ const fetchExercises = async () => {
                         type="text" 
                         id="desc" 
                         name="desc" 
-                        value={desc} 
-                        placeholder={descFetch}
+                        value={desc || descFetch} 
                         onChange={(e) => setDesc(e.target.value)} 
                         />
                       </div>

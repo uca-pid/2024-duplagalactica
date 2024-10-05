@@ -71,6 +71,14 @@ function CouchClasses() {
     return `${month}/${day}/${year}`;
   }
 
+  function formatDateForInput(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${year}-${month}-${day}`;
+  }
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -102,6 +110,11 @@ function CouchClasses() {
     setFetchHour(selectedEvent.hour)
     setFetchPermanent(selectedEvent.permanent)
     setFetchClass(selectedEvent)
+    setHour('');
+    setHourFin('');
+    setPermanent('');
+    setDate('');
+    setName('');
   } 
   const fetchModifyClassInformation = async () => {
     setOpenCircularProgress(true);
@@ -529,24 +542,21 @@ function CouchClasses() {
                                     <div className="input-small-container">
                                         <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
                                         <input 
-                                        type={selectedEvent.hour ? 'text' : 'time'}
+                                        type='time'
                                         id="hour" 
-                                        name="hour" 
-                                        value={hour} 
+                                        name="hour"
+                                        value={hour || fetchHour} 
                                         onChange={(e) => setHour(e.target.value)}
-                                        onFocus={(e) => (e.target.type = 'time')}
-                                        onBlur={(e) => (e.target.type = 'text')}
-                                        placeholder={selectedEvent.hour}
                                         />
                                     </div>
                                     <div className="input-small-container">
                                         <label htmlFor="hourFin" style={{color:'#14213D'}}>End time:</label>
                                         <input 
-                                            type="time" 
+                                            type={selectedEvent.hour ? 'text' : 'time'}
                                             id="hourFin" 
                                             name="hourFin" 
-                                            value={hourFin} 
-                                            onChange={(e) => setHourFin(e.target.value)} 
+                                            value={hourFin || selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')} 
+                                            onChange={(e) => setHourFin(e.target.value)}
                                         />
                                     </div>
                                     <div className="input-small-container">
@@ -555,36 +565,31 @@ function CouchClasses() {
                                         type="text" 
                                         id="name" 
                                         name="name" 
-                                        value={name} 
-                                        onChange={(e) => setName(e.target.value)}
-                                        placeholder={selectedEvent.name}                                />
+                                        value={name || fetchName} 
+                                        onChange={(e) => setName(e.target.value)}/>
                                     </div>
                                 </div>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                     <div className="input-small-container" style={{width:"100%"}}>
                                         <label htmlFor="permanent" style={{color:'#14213D'}}>Recurrent:</label>
-                                        <select 
-                                        id="permanent" 
-                                        name="permanent" 
-                                        value={permanent} 
-                                        onChange={(e) => setPermanent(e.target.value)}
-                                        placeholder={selectedEvent.permanent}
-                                        >
-                                            <option value="" >Select</option>
+                                          <select
+                                            id="permanent"
+                                            name="permanent"
+                                            value={permanent || fetchPermanent}
+                                            onChange={(e) => setPermanent(e.target.value)}
+                                          >
                                             <option value="Si">Yes</option>
                                             <option value="No">No</option>
-                                        </select>
+                                          </select>
                                     </div>
                                     <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
                                         <label htmlFor="date" style={{color:'#14213D'}}>Date:</label>
                                         <input 
-                                            type={date ? 'date' : 'text'}
+                                            type='date'
                                             id='date'
                                             name='date'
-                                            value={date}
+                                            value={date || formatDateForInput(new Date(selectedEvent.dateInicio))}
                                             onChange={(e) => setDate(e.target.value)}
-                                            onFocus={(e) => (e.target.type = 'date')}
-                                            onBlur={(e) => (e.target.type = 'text')}
                                         />
                                     </div>
                                 </div>
