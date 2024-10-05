@@ -291,12 +291,12 @@ export default function StickyHeadTable() {
                                         </TableCell>
                                         <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
                                             <TableSortLabel
-                                                active={orderBy === 'exercises.length'}
-                                                direction={orderBy === 'exercises.length' ? order : 'asc'}
-                                                onClick={(event) => handleRequestSort(event, 'exercises.length')}
+                                                active={orderBy === 'day'}
+                                                direction={orderBy === 'day' ? order : 'asc'}
+                                                onClick={(event) => handleRequestSort(event, 'day')}
                                             >
-                                                Exercises
-                                                {orderBy === 'exercises.length' ? (
+                                                Day
+                                                {orderBy === 'day' ? (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                                     </Box>
@@ -331,7 +331,7 @@ export default function StickyHeadTable() {
                                     ) : (
                                         visibleRows.map((row) => (
                                         <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                             {row.routine}
                                             </TableCell>
                                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
@@ -381,11 +381,11 @@ export default function StickyHeadTable() {
                 <div className="Modal" onClick={handleCloseModal}>
                     <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                         <h2>Routine details</h2>
-                        <p><strong>Name:</strong> {routine.name}</p>
-                        <p><strong>Description:</strong> {routine.description}</p>
+                        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {routine.name}</p>
+                        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {routine.description}</p>
                         <p><strong>Day:</strong> {routine.day}</p>
                         <p><strong>Exercises:</strong> {routine.excercises ? routine.excercises.length : 0}</p>
-                        <p><strong>Teacher:</strong> {routine.owner}</p>
+                        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Owner:</strong> {routine.owner}</p>
                         <button onClick={handleViewExercises}>View exercises</button>
                         <button onClick={handleCloseModal}>Close</button>
                     </div>

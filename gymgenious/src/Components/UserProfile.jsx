@@ -227,6 +227,7 @@ export default function CreateAccount() {
                             <div className="input-container">
                                 <label htmlFor="name" style={{ color: '#14213D' }}>Name:</label>
                                 <input
+                                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}
                                     type="text"
                                     id="name"
                                     name="name"
@@ -239,6 +240,7 @@ export default function CreateAccount() {
                             <div className="input-container">
                                 <label htmlFor="lastName" style={{ color: '#14213D' }}>Last name:</label>
                                 <input
+                                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}
                                     type="text"
                                     id="lastname"
                                     name="lastname"
@@ -265,6 +267,7 @@ export default function CreateAccount() {
                             <div className="input-container">
                                 <label htmlFor="email" style={{ color: '#14213D' }}>Email:</label>
                                 <input
+                                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}
                                     id="email"
                                     name="email"
                                     value={email}

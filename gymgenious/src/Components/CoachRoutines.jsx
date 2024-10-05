@@ -530,9 +530,9 @@ const fetchExercises = async () => {
                           </TableCell>
                           {!isSmallScreen250 && (
                             <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'excercises.length'} direction={orderBy === 'excercises.length' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises.length')}>
+                              <TableSortLabel active={orderBy === 'excercises'} direction={orderBy === 'excercises' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises')}>
                                 Exercises
-                                {orderBy === 'excercises.length' ? (
+                                {orderBy === 'excercises' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -569,7 +569,7 @@ const fetchExercises = async () => {
                           <>
                             {visibleRows.map((row) => (
                               <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                   {row.name}
                                 </TableCell>
                                 {!isSmallScreen250 && (
@@ -578,7 +578,7 @@ const fetchExercises = async () => {
                                   </TableCell>
                                 )}
                                 {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                     {row.description} 
                                   </TableCell>
                                 )}
@@ -690,7 +690,13 @@ const fetchExercises = async () => {
                     <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
                       <div className="input-small-container">
                           <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
-                          <Grid className='grid-transfer-content' item>{customList(exercises)}</Grid>
+                          {exercises.length!=0 ? (
+                            <Grid className='grid-transfer-content' item>{customList(exercises)}</Grid>
+                          ) : (
+                            <div className='grid-transfer-content'>
+                              There are not exercices
+                            </div>
+                          )}
                       </div>
                     </div>
                     <button onClick={handleCloseEditRoutine} className='button_login'>Cancell</button>
