@@ -161,7 +161,6 @@ function UsserClasses() {
 
 useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {

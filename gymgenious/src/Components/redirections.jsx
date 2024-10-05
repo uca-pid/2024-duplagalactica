@@ -12,8 +12,6 @@ function ActionHandler() {
 
     useEffect(() => {
 
-        console.log("Mode:", mode);
-        console.log("Code:", code);
         if (!code || !mode) {
             console.error("Error", mode,code);
             navigate('/error');

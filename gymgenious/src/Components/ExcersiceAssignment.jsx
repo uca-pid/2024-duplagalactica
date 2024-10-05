@@ -87,7 +87,6 @@ export default function UsserAssignment({onUsersChange}) {
       const exercisesDataFromTrainMate = await response2.json();
       const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
       const totalExercisesCorrected = await correctExercisesData(totalExercises);
-      console.log("ssss",userMail,totalExercisesCorrected)
       setLeft(totalExercisesCorrected);
       setOpenCircularProgress(false);
     } catch (error) {

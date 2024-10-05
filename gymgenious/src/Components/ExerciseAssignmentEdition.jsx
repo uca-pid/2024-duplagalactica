@@ -67,7 +67,7 @@ export default function UsserAssignment({onUsersChange,routine}) {
         console.error('Token no disponible en localStorage');
         return;
       }
-      const response = await fetch(`http://127.0.0.1:5000/get_routines`, {
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
         method: 'GET', 
         headers: {
           'Authorization': `Bearer ${authToken}`
@@ -78,7 +78,7 @@ export default function UsserAssignment({onUsersChange,routine}) {
       }
       const routinesData = await response.json();
       const filteredRoutines = routinesData.filter(event => event.id === routine);
-      const response2 = await fetch(`http://127.0.0.1:5000/get_excersices`, {
+      const response2 = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_excersices`, {
         method: 'GET', 
         headers: {
           'Authorization': `Bearer ${authToken}`
@@ -105,14 +105,12 @@ export default function UsserAssignment({onUsersChange,routine}) {
           exercisesInRoutines.add(exercise.id);
         });
       });
-      console.log(exercisesInRoutines.has(100000))
       const right = totalExercisesCorrected.filter(exercise => 
         exercisesInRoutines.has(exercise.id)
       );
       const left = totalExercisesCorrected.filter(exercise => 
         !exercisesInRoutines.has(exercise.id)
       ); 
-      console.log(right)
       setRight(right); 
       setLeft(left);    
   
@@ -208,7 +206,6 @@ export default function UsserAssignment({onUsersChange,routine}) {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {

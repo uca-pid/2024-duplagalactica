@@ -61,7 +61,6 @@ export default function RoutineCreation() {
         series: series,
         timing: timing,
       }
-      console.log("agregado",exerciseWithParams)
       setRoutineExercises([...routineExercises, exerciseWithParams]);
       handleCloseModal();
     };

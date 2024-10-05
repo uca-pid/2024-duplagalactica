@@ -179,7 +179,6 @@ export default function TemporaryDrawer() {
   }, []);
 
   useEffect(() => {
-    console.log(userMail)
     if (userMail) {
       fetchUser(); 
     }
