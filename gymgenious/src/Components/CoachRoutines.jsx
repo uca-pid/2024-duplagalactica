@@ -857,10 +857,4 @@ const fetchExercises = async () => {
     );
 }
 
-
-
-  
-
-
-
 export default CoachRoutines;
