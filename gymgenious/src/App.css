@@ -1155,3 +1155,9 @@ iframe {
   width: 100%;
   cursor: pointer;
 }
+
+.graphic-container {
+  display: 'flex';
+  justify-content: 'space-around';
+  align-items: 'center';
+}

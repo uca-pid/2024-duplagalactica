@@ -1010,49 +1010,49 @@ const fetchExercises = async () => {
 //     onUsersChange(newLeft); 
 //   };
 
-  const customList = (items) => (
-    <Paper className='transfer-list-modal'>
-      <List dense component="div" role="list">
-        {items.map((exercise) => {
-          const labelId = `transfer-list-item-${exercise.name}-label`;
+  // const customList = (items) => (
+  //   <Paper className='transfer-list-modal'>
+  //     <List dense component="div" role="list">
+  //       {items.map((exercise) => {
+  //         const labelId = `transfer-list-item-${exercise.name}-label`;
 
-          return (
-            <ListItemButton
-              key={exercise.id}
-              role="listitem"
-              onClick={handleToggle(exercise)}
-            >
-              <ListItemIcon>
-                <Checkbox
-                  checked={checked.includes(exercise)}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{
-                    'aria-labelledby': labelId,
-                  }}
-                />
-              </ListItemIcon>
-              {isSmallScreen ? (
-                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{exercise.name}</p></ListItemText>
-              ) : (
-                <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px'}}>{exercise.name}</p></ListItemText>
-              )}
-            </ListItemButton>
-          );
-        })}
-      </List>
-    </Paper>
-  );
+  //         return (
+  //           <ListItemButton
+  //             key={exercise.id}
+  //             role="listitem"
+  //             onClick={handleToggle(exercise)}
+  //           >
+  //             <ListItemIcon>
+  //               <Checkbox
+  //                 checked={checked.includes(exercise)}
+  //                 tabIndex={-1}
+  //                 disableRipple
+  //                 inputProps={{
+  //                   'aria-labelledby': labelId,
+  //                 }}
+  //               />
+  //             </ListItemIcon>
+  //             {isSmallScreen ? (
+  //               <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{exercise.name}</p></ListItemText>
+  //             ) : (
+  //               <ListItemText id={labelId}><p style={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px'}}>{exercise.name}</p></ListItemText>
+  //             )}
+  //           </ListItemButton>
+  //         );
+  //       })}
+  //     </List>
+  //   </Paper>
+  // );
 
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
-    if (token) {
-        verifyToken(token);
-    } else {
-        console.error('No token found');
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem('authToken');
+  //   console.log('Token:', token);
+  //   if (token) {
+  //       verifyToken(token);
+  //   } else {
+  //       console.error('No token found');
+  //   }
+  // }, []);
 
 //           return (
 //             <ListItemButton
