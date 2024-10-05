@@ -381,20 +381,23 @@ export default function CoachExercises() {
                     {selectedEvent && (
                         <div className="Modal" onClick={handleCloseModal}>
                             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                                <h2 style={{marginBottom: '0px'}}>Exercise</h2>
-                                <p style={{
-                                    marginTop: '5px',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    maxWidth: '100%',
-                                    textAlign: 'center',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}>
+                                <h2 style={{marginBottom: '0px'}}>Exercise:</h2>
+                                <p style={{ marginTop: '5px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
                                     {selectedEvent.name}
                                 </p>
-                                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                                <img 
+                                    // src={selectedEvent.imageURL} 
+                                    alt={selectedEvent.name}
+                                    src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
+                                    style={{
+                                        display: 'block',
+                                        margin: '10px auto',
+                                        maxWidth: '100%',
+                                        height: 'auto',
+                                        borderRadius: '8px'
+                                    }} 
+                                />
+                                {/* <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                                     <TableContainer sx={{ maxHeight: 440 }}>
                                         <Table stickyHeader aria-label="sticky table">
                                             <TableHead>
@@ -413,7 +416,7 @@ export default function CoachExercises() {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
-                                </Paper>
+                                </Paper> */}
                                 <button onClick={handleCloseModal}>Close</button>
                             </div>
                         </div>

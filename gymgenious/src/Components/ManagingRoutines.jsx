@@ -179,11 +179,6 @@ export default function ManagingRoutines () {
                             Back
                             </Button>
                             <Box sx={{ flex: '1 1 auto' }} />
-                            {isStepOptional(activeStep) && (
-                            <Button color="inherit" onClick={handleSkip}>
-                                Skip
-                            </Button>
-                            )}
                             <Button onClick={handleNext}>
                             {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                             </Button>
