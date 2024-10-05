@@ -25,7 +25,7 @@ const day = (dateString) => {
   return daysOfWeek[date.getDay()];
 };
 
-function CoachRoutines() {
+function AllRoutines() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
@@ -404,4 +404,4 @@ function CoachRoutines() {
     );
 }
 
-export default CoachRoutines;
+export default AllRoutines;
