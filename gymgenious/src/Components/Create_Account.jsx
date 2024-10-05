@@ -133,7 +133,6 @@ export default function CreateAccount() {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
           navigate('/');
         } else {

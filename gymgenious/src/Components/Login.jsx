@@ -61,7 +61,6 @@ export default function Login() {
   
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
       if (token) {
         navigate('/');
         return;

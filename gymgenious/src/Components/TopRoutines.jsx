@@ -156,7 +156,6 @@ function TopRoutines() {
             throw new Error('Error al obtener las rutinas asignadas: ' + response2.statusText);
         }
         const assignedRoutines = await response2.json();
-        console.log("asignados",assignedRoutines)
         const routinesWithAssignedCount = routines.map((routine) => {
             const assignedForRoutine = assignedRoutines.filter((assigned) => assigned.id === routine.id);
             const totalAssignedUsers = assignedForRoutine.reduce((acc, assigned) => {
@@ -200,7 +199,6 @@ function TopRoutines() {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {

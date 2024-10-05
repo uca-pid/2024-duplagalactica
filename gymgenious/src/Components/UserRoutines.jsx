@@ -94,8 +94,6 @@ export default function StickyHeadTable() {
                 row.user.some((u) => u.Mail === userMail)
             );
             setRows(filteredRows);
-            console.log(data);
-            console.log(filteredRows);
             setOpenCircularProgress(false);
         } catch (error) {
             setOpenCircularProgress(false);
@@ -154,7 +152,6 @@ export default function StickyHeadTable() {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {

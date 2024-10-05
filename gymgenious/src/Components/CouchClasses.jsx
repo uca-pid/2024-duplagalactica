@@ -96,10 +96,8 @@ function CouchClasses() {
     setFetchClass(selectedEvent)
   } 
   const fetchModifyClassInformation = async () => {
-    console.log("toy aca")
     setOpenCircularProgress(true);
     try {
-        console.log("ssss",selectedEvent)
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
           console.error('Token no disponible en localStorage');
@@ -233,7 +231,6 @@ function CouchClasses() {
   
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
