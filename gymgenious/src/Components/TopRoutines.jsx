@@ -17,7 +17,66 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
+import Typography from '@mui/material/Typography';
+import Slider from '@mui/material/Slider';
+import { BarChart } from '@mui/x-charts/BarChart';
+import { PieChart } from '@mui/x-charts/PieChart';
+import { mobileAndDesktopOS, valueFormatter } from './webUsageStats.ts';
 
+function BarAnimation({ routines }) {
+    const [itemNb, setItemNb] = React.useState(5);
+  
+    // Mapeamos los nombres de las rutinas y los datos
+    const routineNames = routines?.map(routine => routine.name);
+    const routineData = routines?.map(routine => routine.cant_asignados);
+  
+    const handleItemNbChange = (event, newValue) => {
+      if (typeof newValue !== 'number') {
+        return;
+      }
+      setItemNb(newValue);
+    };
+  
+    return (
+      <Box sx={{ width: '100%' }}>
+        <BarChart
+          height={300}
+          series={[{
+            data: routineData.slice(0, itemNb), // Datos de los asignados
+          }]}
+          xAxis={[{
+            scaleType: 'band', // Aquí está la corrección: eje X de tipo "band"
+            data: routineNames.slice(0, itemNb), // Nombres de las rutinas en el eje X
+          }]}
+        />
+        <Typography id="input-item-number" gutterBottom>
+          Número de rutinas
+        </Typography>
+        <Slider
+          value={itemNb}
+          onChange={handleItemNbChange}
+          valueLabelDisplay="auto"
+          min={1}
+          max={routines.length}
+          aria-labelledby="input-item-number"
+        />
+        <PieChart
+        height={300}
+        series={[
+          {
+            data: mobileAndDesktopOS.slice(0, itemNb),
+            innerRadius: 50,
+            arcLabel: (params) => params.label ?? '',
+            arcLabelMinAngle: 20,
+            valueFormatter,
+          },
+        ]}
+      />
+      </Box>
+    );
+  }
+
+  
 
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -52,11 +111,6 @@ function TopRoutines() {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const handleSelectEvent = (event) => {
@@ -159,11 +213,6 @@ function TopRoutines() {
     }, [userMail]);
 
       useEffect(() => {
-        if(isSmallScreen) {
-          setRowsPerPage(10);
-        } else {
-          setRowsPerPage(5)
-        }
         if(isMobileScreen) {
           setMaxHeight('700px');
         } else {
@@ -310,32 +359,21 @@ function TopRoutines() {
                   </TableContainer>
                   {visibleRows.length!=0 ? (
                     <>
-                      {isSmallScreen ? (
                         <TablePagination
-                            rowsPerPageOptions={[10]}
+                            rowsPerPageOptions={[5]}
                             component="div"
                             count={routines.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}
                         />
-                        ) : (
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 25]}
-                            component="div"
-                            count={routines.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                      )}
                     </>
                   ) : (
                     null
                   )}
                 </Paper>
               </Box>
+              <BarAnimation routines={routines}/>
             </div>
             {selectedEvent && (
               <div className="Modal" onClick={handleCloseModal}>
