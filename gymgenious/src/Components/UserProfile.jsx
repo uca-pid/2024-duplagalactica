@@ -231,10 +231,9 @@ export default function CreateAccount() {
                                     type="text"
                                     id="name"
                                     name="name"
-                                    value={name}
+                                    value={name || nameFetch}
                                     onChange={(e) => setName(e.target.value)}
                                     disabled={isDisabled}
-                                    placeholder={nameFetch}
                                 />
                             </div>
                             <div className="input-container">
@@ -244,23 +243,19 @@ export default function CreateAccount() {
                                     type="text"
                                     id="lastname"
                                     name="lastname"
-                                    value={lastName}
+                                    value={lastName || lastNameFetch}
                                     onChange={(e) => setLastName(e.target.value)}
                                     disabled={isDisabled}
-                                    placeholder={lastNameFetch}
                                 />
                             </div>
                             <div className="input-container">
                                 <label htmlFor="date" style={{ color: '#14213D' }}>Birthdate:</label>
                                 <input
-                                    type={isDisabled ? 'text' : (date ? 'date' : 'text')}
+                                    type='date'
                                     id='date'
                                     name='date'
-                                    value={date}
+                                    value={date || dateFetch}
                                     onChange={(e) => setDate(e.target.value)}
-                                    placeholder={dateFetch}
-                                    onFocus={(e) => !isDisabled && (e.target.type = 'date')}
-                                    onBlur={(e) => !date && (e.target.type = 'text')}
                                     disabled={isDisabled}
                                 />
                             </div>

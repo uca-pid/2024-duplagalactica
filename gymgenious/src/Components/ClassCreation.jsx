@@ -381,20 +381,6 @@ export default function CreateClass() {
                         </div>
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                        <div className="input-small-container" style={{width:"100%"}}>
-                          <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
-                          <select
-                            onClick={handleCloseHourRequirements}
-                            id="permanent" 
-                            name="permanent" 
-                            value={permanent} 
-                            onChange={(e) => setPermanent(e.target.value)} 
-                          >
-                            <option value="" >Select</option>
-                            <option value="Si">Yes</option>
-                            <option value="No">No</option>
-                          </select>
-                        </div>
                         <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
                           <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
                           <input
@@ -420,24 +406,40 @@ export default function CreateClass() {
                             onChange={(e) => setDate(e.target.value)} 
                           />
                         </div>
-                        <div className="input-small-container">
-                            <label htmlFor="salaAssigned" style={{ color: '#14213D' }}>Sala:</label>
-                            <select
-                                id="salaAssigned"
-                                name="salaAssigned"
-                                value={salaAssigned}
-                                onChange={(e) => setSala(e.target.value)}
-                                style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
-                            >
-                                <option value="">Select</option>
-                                {salas.map((sala) => (
-                                    <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
-                                        {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
                       </div>
+                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        <div className="input-small-container">
+                              <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
+                              <select
+                                  id="salaAssigned"
+                                  name="salaAssigned"
+                                  value={salaAssigned}
+                                  onChange={(e) => setSala(e.target.value)}
+                                  style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+                              >
+                                  <option value="">Select</option>
+                                  {salas.map((sala) => (
+                                      <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
+                                          {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}
+                                      </option>
+                                  ))}
+                              </select>
+                          </div>
+                          <div className="input-small-container" style={{width:"100%"}}>
+                            <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                            <select
+                              onClick={handleCloseHourRequirements}
+                              id="permanent" 
+                              name="permanent" 
+                              value={permanent} 
+                              onChange={(e) => setPermanent(e.target.value)} 
+                            >
+                              <option value="" >Select</option>
+                              <option value="Si">Yes</option>
+                              <option value="No">No</option>
+                            </select>
+                          </div>
+                        </div>
                     </>
                   ) : (
                     <>
@@ -524,6 +526,25 @@ export default function CreateClass() {
                           />
                         </div>
                       </div>
+                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        <div className="input-small-container">
+                              <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
+                              <select
+                                  id="salaAssigned"
+                                  name="salaAssigned"
+                                  value={salaAssigned}
+                                  onChange={(e) => setSala(e.target.value)}
+                                  style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+                              >
+                                  <option value="">Select</option>
+                                  {salas.map((sala) => (
+                                      <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
+                                          {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}
+                                      </option>
+                                  ))}
+                              </select>
+                          </div>
+                        </div>
                     </>
                   )}
                   
