@@ -215,7 +215,7 @@ export default function RoutineCreation() {
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
                             <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
-                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned}/>
+                            <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned} routineDay={day}/>
                         </div>
                     </div>
                     <button type="submit" className='button_login'>

@@ -24,7 +24,7 @@ function intersection(a, b) {
   return a.filter((value) => b.includes(value));
 }
 
-export default function UserAssignment({ onUsersChange, routine }) {
+export default function UserAssignment({ onUsersChange, routine,routineDay }) {
   const [users, setUsers] = useState([]);
   const [checked, setChecked] = useState([]);
   const [left, setLeft] = useState([]);
@@ -58,10 +58,14 @@ export default function UserAssignment({ onUsersChange, routine }) {
         throw new Error('Error al obtener las rutinas asignadas: ' + assignedResponse.statusText);
       }
       const assignedUsersData = await assignedResponse.json();
-      const assignedUsersData2 = assignedUsersData.filter(routi => routi.id==routine)
+      console.log("esta es la primera respuesta",assignedUsersData)
+      console.log("esto es la rutina",routine)
+      const assignedUsersData2 = assignedUsersData.filter(routi => routi.id==routine && routi.day==routineDay)
+      console.log("esta es la segundA respuesta",assignedUsersData2)
       const assignedUsers = assignedUsersData2.flatMap(routine => 
-        routine.user.map(user => user)
+        routine.users.map(user => user)
       );
+      console.log("esta es la tercera respuesta",assignedUsers)
       const allUsersResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_users`, {
         method: 'GET', 
         headers: {
@@ -89,13 +93,13 @@ export default function UserAssignment({ onUsersChange, routine }) {
   };
 
   useEffect(() => {
-    if (routine) {
+    if (routine && routineDay) {
       fetchUsers();
     } else {
       setLeft([]);
       setRight([]);
     }
-  }, [routine]);
+  }, [routine,routineDay]);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
