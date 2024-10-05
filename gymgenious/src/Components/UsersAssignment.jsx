@@ -59,9 +59,8 @@ export default function UserAssignment({ onUsersChange, routine }) {
       }
       const assignedUsersData = await assignedResponse.json();
       const assignedUsersData2 = assignedUsersData.filter(routi => routi.id==routine)
-      console.log("2",assignedUsersData2)
       const assignedUsers = assignedUsersData2.flatMap(routine => 
-        routine.user.map(user => user.Mail)
+        routine.user.map(user => user)
       );
       const allUsersResponse = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_users`, {
         method: 'GET', 
@@ -73,12 +72,8 @@ export default function UserAssignment({ onUsersChange, routine }) {
         throw new Error('Error al obtener los usuarios: ' + allUsersResponse.statusText);
       }
       const allUsers = await allUsersResponse.json();
-
-
       const filteredRows = allUsers.filter(user => !assignedUsers.includes(user.Mail) && user.type=='client');
       const filteredRowsRight = allUsers.filter(user => assignedUsers.includes(user.Mail));
-
-      console.log("5",filteredRowsRight)
       setUsers(filteredRows);
       setLeft(filteredRows);
       setRight(filteredRowsRight)

@@ -122,12 +122,13 @@ export default function RoutineCreation() {
                 const newAsignRoutine = {
                     id: routineAssigned,
                     user: users,
-                    owner: userMail,
+                    owner: filteredRoutines[0].owner,
+                    assigner: userMail,
                     day: day,
                     routine: filteredRoutines[0].name
                 };
                 const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/assign_routine_to_user', {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${authToken}`
@@ -301,3 +302,6 @@ export default function RoutineCreation() {
         </div>
     );
 }
+
+
+
