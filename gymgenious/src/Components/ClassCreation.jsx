@@ -122,29 +122,25 @@ export default function CreateClass() {
           else if (permanent == "Si") {
               const hasPastPermanentConflict = conflictingClasses.some(existingClass =>
                   existingClass.permanent == "Si" &&
-                  hour.substring(0,2) < new Date(existingClass.dateFin).getUTCHours() &&
-                  hour.substring(3,5) < new Date(existingClass.dateFin).getUTCMinutes() &&
-                  hourFin.substring(0,2) > new Date(existingClass.dateInicio).getUTCHours() &&
-                  hourFin.substring(3,5) > new Date(existingClass.dateInicio).getUTCMinutes() &&
+                  newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+                  newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
                   newClassStartTime.getFullYear()>= (new Date(existingClass.dateFin)).getFullYear() &&
                   newClassEndTime.getFullYear()>= (new Date(existingClass.dateInicio)).getFullYear() &&
                   String((newClassStartTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
                   String((newClassEndTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
-                  String((newClassStartTime.getDate())).padStart(2, '0') >= String((new Date(existingClass[0].dateFin).getDate())).padStart(2, '0') && 
-                  String((newClassEndTime.getDate())).padStart(2, '0') >= String((new Date(existingClass[0].dateInicio).getDate())).padStart(2, '0')
+                  String((newClassStartTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
+                  String((newClassEndTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
               );
 
               const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
-                hour.substring(0,2) < new Date(existingClass.dateFin).getUTCHours() &&
-                hour.substring(3,5) < new Date(existingClass.dateFin).getUTCMinutes() &&
-                hourFin.substring(0,2) > new Date(existingClass.dateInicio).getUTCHours() &&
-                hourFin.substring(3,5) > new Date(existingClass.dateInicio).getUTCMinutes() &&
+                newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+                newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
                 newClassStartTime.getFullYear()<= (new Date(existingClass.dateFin)).getFullYear() &&
                 newClassEndTime.getFullYear()<= (new Date(existingClass.dateInicio)).getFullYear() &&
                 String((newClassStartTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
                 String((newClassEndTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
-                String((newClassStartTime.getDate())).padStart(2, '0') <= String((new Date(existingClass[0].dateFin).getDate())).padStart(2, '0') && 
-                String((newClassEndTime.getDate())).padStart(2, '0') <= String((new Date(existingClass[0].dateInicio).getDate())).padStart(2, '0')
+                String((newClassStartTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
+                String((newClassEndTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
               );
 
               const hasPermanentConflict = conflictingClasses.some(existingClass =>
