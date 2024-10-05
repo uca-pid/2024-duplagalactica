@@ -21,6 +21,8 @@ import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
 
 
 const day = (dateString) => {
@@ -61,6 +63,8 @@ function CoachRoutines() {
   const [routineExercises, setRoutineExercises] = useState([]);
   const navigate = useNavigate();
   const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
+  const [openAdvise, setOpenAdvise] = useState(false);
+  const [openAddExercise, setOpenAddExercise] = useState(false);
 
   const [series, setSeries] = useState(4);
   const [reps, setReps] = useState(Array(series).fill(''));
@@ -111,13 +115,27 @@ function CoachRoutines() {
     console.log(routineExercises)
   };
 
-  const handleSelectExercise = (event) => {
-    setSelectedExercise(event);
+  const handleDeleteExercise = (exercise) => {
+    const updatedExercises = routineExercises.filter(stateExercise => stateExercise.id !== exercise.id);
+    setRoutineExercises(updatedExercises);
+    handleCloseModal();
+  }
+
+  const handleCloseModal = () => {
+    setSelectedExercise(null);
+    setOpenAdvise(false);
+    setOpenAddExercise(false);
   };
-  
-    const handleCloseModal = () => {
-      setSelectedExercise(null);
-    };
+
+  const handleSelectExercise = (exercise) => {
+    console.log('boca',exercise,routineExercises)
+    setSelectedExercise(exercise);
+    if(routineExercises?.some(stateExercise => stateExercise.id === exercise.id)){
+      setOpenAdvise(true);
+    } else {
+      setOpenAddExercise(true);
+    }
+  };
 
     const handleCloseModalEvent = () => {
       setSelectedEvent(null);
@@ -125,6 +143,8 @@ function CoachRoutines() {
 
     const handleCloseEditRoutine = () => {
       setEditClass(false);
+      setName('');
+      setDesc('');
     };
 
     const customList = (items) => (
@@ -134,14 +154,15 @@ function CoachRoutines() {
             const labelId = `transfer-list-item-${exercise.name}-label`;
             return (
               <>
-              { (routineExercises?.some(stateExercise => stateExercise.exercise.id === exercise.id)) ? (
+              { (routineExercises?.some(stateExercise => stateExercise?.exercise?.id === exercise.id)) ? (
                 <ListItemButton
                 sx={{backgroundColor:'red'}}
                 key={exercise.id}
                 role="listitem"
                 onClick={() => handleSelectExercise(exercise)}
               >
-                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{exercise.name}</p></ListItemText>
+                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'white' }}>{exercise.name}</p></ListItemText>
+                <DeleteIcon sx={{color:'white'}}/>
               </ListItemButton>
               ) : (
                 <ListItemButton
@@ -150,6 +171,7 @@ function CoachRoutines() {
                 onClick={() => handleSelectExercise(exercise)}
               >
                 <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{exercise.name}</p></ListItemText>
+                <AddCircleOutlineSharpIcon/>
               </ListItemButton>
               )}
               </>
@@ -234,14 +256,15 @@ function CoachRoutines() {
   const handleEditRoutine = (event) => {
     fetchExercises();
     setEditClass(!editClass);
+    setRoutineExercises(event.excercises);
     console.log("este es el evento",event)
     setId(event.id)
     setNameFetch(event.name);
     setDayFetch(event.day);
     setDescFetch(event.description);
-    setExersFetch(event.exercises);
+    setExersFetch(event.excercises);
     setRoutine(event);
-    console.log(dayFetch)
+    console.log(event.excercises)
   } 
 
   const handeDeleteRoutine = async (event) => {
@@ -681,7 +704,7 @@ const fetchExercises = async () => {
                 </div>
               </div>
             )}
-            {selectedExercise && (
+            {selectedExercise && openAddExercise && (
               <div className="Modal" onClick={handleCloseModal}>
                 <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                 <h2 style={{marginBottom: '0px'}}>Exercise</h2>
@@ -745,6 +768,54 @@ const fetchExercises = async () => {
                 </div>
               </div>
             )}
+            { openAdvise && selectedExercise && (
+              <div className='alert-container' onClick={handleCloseModal}>
+                <div className='alert-content' onClick={(e) => e.stopPropagation()}>
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  <Slide direction="up" in={openAdvise} mountOnEnter unmountOnExit>
+                    <Alert 
+                      style={{ 
+                        fontSize: '100%', 
+                        fontWeight: 'bold', 
+                        alignItems: 'center', 
+                      }} 
+                      severity="info"
+                    >
+                      Are you sure you want to delete the exercise?
+                      <div style={{ justifyContent: 'center', marginTop: '10px' }}>
+                        <button 
+                          onClick={() => handleDeleteExercise(selectedExercise)} 
+                          style={{ 
+                            padding: '8px 16px', 
+                            backgroundColor: '#f44336',
+                            color: '#fff', 
+                            border: 'none', 
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Delete exercise
+                        </button>
+                        <button 
+                          onClick={handleCloseModal} 
+                          style={{ 
+                            padding: '8px 16px', 
+                            backgroundColor: '#4caf50',
+                            color: '#fff', 
+                            border: 'none', 
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </Alert>
+                  </Slide>
+                </Box>
+              </div>
+            </div>
+          )}
             {openCircularProgress ? (
               <Backdrop
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

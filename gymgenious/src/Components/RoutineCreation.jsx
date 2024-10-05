@@ -13,6 +13,8 @@ import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
 
 export default function RoutineCreation() {
     const [name, setName] = useState('');
@@ -28,6 +30,8 @@ export default function RoutineCreation() {
     const [errors, setErrors] = useState([]);
     const [failureErrors, setFailureErrors] = useState(false);
     const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
+    const [openAdvise, setOpenAdvise] = useState(false);
+    const [openAddExercise, setOpenAddExercise] = useState(false);
 
     const [series, setSeries] = useState(4);
     const [reps, setReps] = useState(Array(series).fill(''));
@@ -62,12 +66,25 @@ export default function RoutineCreation() {
       handleCloseModal();
     };
 
-    const handleSelectExercise = (event) => {
-      setSelectedExercise(event);
-    };
+    const handleDeleteExercise = (exercise) => {
+      const updatedExercises = routineExercises.filter(stateExercise => stateExercise.id !== exercise.id);
+      setRoutineExercises(updatedExercises);
+      handleCloseModal();
+    }
   
     const handleCloseModal = () => {
       setSelectedExercise(null);
+      setOpenAdvise(false);
+      setOpenAddExercise(false);
+    };
+
+    const handleSelectExercise = (exercise) => {
+      setSelectedExercise(exercise);
+      if(routineExercises?.some(stateExercise => stateExercise.id === exercise.id)){
+        setOpenAdvise(true);
+      } else {
+        setOpenAddExercise(true);
+      }
     };
 
     const customList = (items) => (
@@ -84,7 +101,8 @@ export default function RoutineCreation() {
                 role="listitem"
                 onClick={() => handleSelectExercise(exercise)}
               >
-                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{exercise.name}</p></ListItemText>
+                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'white' }}>{exercise.name}</p></ListItemText>
+                <DeleteIcon sx={{color:'white'}}/>
               </ListItemButton>
               ) : (
                 <ListItemButton
@@ -93,6 +111,7 @@ export default function RoutineCreation() {
                 onClick={() => handleSelectExercise(exercise)}
               >
                 <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{exercise.name}</p></ListItemText>
+                <AddCircleOutlineSharpIcon/>
               </ListItemButton>
               )}
               </>
@@ -306,7 +325,7 @@ export default function RoutineCreation() {
           </button>
         </form>
       </div>
-      {selectedExercise && (
+      {selectedExercise && openAddExercise && (
         <div className="Modal" onClick={handleCloseModal}>
           <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
           <h2 style={{marginBottom: '0px'}}>Exercise</h2>
@@ -370,6 +389,54 @@ export default function RoutineCreation() {
           </div>
         </div>
       )}
+      { openAdvise && selectedExercise && (
+            <div className='alert-container' onClick={handleCloseModal}>
+              <div className='alert-content' onClick={(e) => e.stopPropagation()}>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Slide direction="up" in={openAdvise} mountOnEnter unmountOnExit>
+                  <Alert 
+                    style={{ 
+                      fontSize: '100%', 
+                      fontWeight: 'bold', 
+                      alignItems: 'center', 
+                    }} 
+                    severity="info"
+                  >
+                    Are you sure you want to delete the exercise?
+                    <div style={{ justifyContent: 'center', marginTop: '10px' }}>
+                      <button 
+                        onClick={() => handleDeleteExercise(selectedExercise)} 
+                        style={{ 
+                          padding: '8px 16px', 
+                          backgroundColor: '#f44336',
+                          color: '#fff', 
+                          border: 'none', 
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Delete exercise
+                      </button>
+                      <button 
+                        onClick={handleCloseModal} 
+                        style={{ 
+                          padding: '8px 16px', 
+                          backgroundColor: '#4caf50',
+                          color: '#fff', 
+                          border: 'none', 
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </Alert>
+                </Slide>
+              </Box>
+            </div>
+          </div>
+        )}
       {openCircularProgress ? (
           <Backdrop
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}

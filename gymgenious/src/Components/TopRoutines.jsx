@@ -17,7 +17,66 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
+import Typography from '@mui/material/Typography';
+import Slider from '@mui/material/Slider';
+import { BarChart } from '@mui/x-charts/BarChart';
+import { PieChart } from '@mui/x-charts/PieChart';
+import { mobileAndDesktopOS, valueFormatter } from './webUsageStats.ts';
 
+function BarAnimation({ routines }) {
+    const [itemNb, setItemNb] = React.useState(5);
+  
+    // Mapeamos los nombres de las rutinas y los datos
+    const routineNames = routines?.map(routine => routine.name);
+    const routineData = routines?.map(routine => routine.cant_asignados);
+  
+    const handleItemNbChange = (event, newValue) => {
+      if (typeof newValue !== 'number') {
+        return;
+      }
+      setItemNb(newValue);
+    };
+  
+    return (
+      <Box sx={{ width: '100%' }}>
+        <BarChart
+          height={300}
+          series={[{
+            data: routineData.slice(0, itemNb), // Datos de los asignados
+          }]}
+          xAxis={[{
+            scaleType: 'band', // Aquí está la corrección: eje X de tipo "band"
+            data: routineNames.slice(0, itemNb), // Nombres de las rutinas en el eje X
+          }]}
+        />
+        <Typography id="input-item-number" gutterBottom>
+          Número de rutinas
+        </Typography>
+        <Slider
+          value={itemNb}
+          onChange={handleItemNbChange}
+          valueLabelDisplay="auto"
+          min={1}
+          max={routines.length}
+          aria-labelledby="input-item-number"
+        />
+        <PieChart
+        height={300}
+        series={[
+          {
+            data: mobileAndDesktopOS.slice(0, itemNb),
+            innerRadius: 50,
+            arcLabel: (params) => params.label ?? '',
+            arcLabelMinAngle: 20,
+            valueFormatter,
+          },
+        ]}
+      />
+      </Box>
+    );
+  }
+
+  
 
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -39,10 +98,10 @@ function TopRoutines() {
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningConnection, setWarningConnection] = useState(false);
   const [errorToken,setErrorToken] = useState(false);
-  const [type, setType] = useState(null);
   const navigate = useNavigate();
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
+  const [viewExercises, setViewExercises] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -54,19 +113,18 @@ function TopRoutines() {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
-    console.log(event)
-  };
+};
 
   const handleCloseModal = () => {
     setSelectedEvent(null);
+    setViewExercises(false);
   };
+
+  const handleViewExercises = () => {
+    setViewExercises(!viewExercises);
+};
 
   const fetchRoutines = async () => {
     setOpenCircularProgress(true);
@@ -120,10 +178,8 @@ function TopRoutines() {
             setWarningConnection(false);
         }, 3000);
     }
-};
 
-  
-  
+  };
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
@@ -160,11 +216,6 @@ function TopRoutines() {
     }, [userMail]);
 
       useEffect(() => {
-        if(isSmallScreen) {
-          setRowsPerPage(10);
-        } else {
-          setRowsPerPage(5)
-        }
         if(isMobileScreen) {
           setMaxHeight('700px');
         } else {
@@ -311,32 +362,21 @@ function TopRoutines() {
                   </TableContainer>
                   {visibleRows.length!=0 ? (
                     <>
-                      {isSmallScreen ? (
                         <TablePagination
-                            rowsPerPageOptions={[10]}
+                            rowsPerPageOptions={[5]}
                             component="div"
                             count={routines.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}
                         />
-                        ) : (
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 25]}
-                            component="div"
-                            count={routines.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                      )}
                     </>
                   ) : (
                     null
                   )}
                 </Paper>
               </Box>
+              <BarAnimation routines={routines}/>
             </div>
             {selectedEvent && (
               <div className="Modal" onClick={handleCloseModal}>
@@ -347,9 +387,42 @@ function TopRoutines() {
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                   <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
                   <p><strong>Owner:</strong> {selectedEvent.owner}</p>
+                  <button onClick={handleViewExercises}>View exercises</button>
                   <button onClick={handleCloseModal}>Close</button>
                 </div>
               </div>
+            )}
+            {viewExercises && (
+                <div className="Modal" onClick={handleViewExercises}>
+                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                        <h2>Exercises from {selectedEvent.routine}</h2>
+                        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                            <TableContainer sx={{ maxHeight: 440 }}>
+                                <Table stickyHeader aria-label="sticky table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Exercise</TableCell>
+                                            <TableCell>Series</TableCell>
+                                            <TableCell>Reps</TableCell>
+                                            <TableCell>Timing</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {selectedEvent?.excercises?.map((exercise) => (
+                                            <TableRow key={exercise.id}>
+                                                <TableCell>{exercise.name}</TableCell>
+                                                <TableCell>{exercise.series} x</TableCell>
+                                                <TableCell>{exercise.reps.join(', ')}</TableCell>
+                                                <TableCell>{exercise.timing}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Paper>
+                        <button onClick={handleViewExercises}>Close</button>
+                    </div>
+                </div>
             )}
             {openCircularProgress ? (
               <Backdrop

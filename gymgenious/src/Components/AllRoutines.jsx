@@ -43,6 +43,7 @@ function AllRoutines() {
   const navigate = useNavigate();
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
+  const [viewExercises, setViewExercises] = useState(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -59,12 +60,17 @@ function AllRoutines() {
     setPage(0);
   };
 
-  const handleSelectEvent = (event) => {
-    setSelectedEvent(event);
-  };
-
   const handleCloseModal = () => {
     setSelectedEvent(null);
+    setViewExercises(false);
+  };
+
+  const handleViewExercises = () => {
+    setViewExercises(!viewExercises);
+};
+
+const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
   };
 
   const fetchRoutines = async () => {
@@ -286,9 +292,9 @@ function AllRoutines() {
                           )}
                           {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
-                              <TableSortLabel active={orderBy === 'description'} direction={orderBy === 'description' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'description')}>
-                                Description
-                                {orderBy === 'description' ? (
+                              <TableSortLabel active={orderBy === 'likes'} direction={orderBy === 'likes' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'likes')}>
+                                Likes
+                                {orderBy === 'likes' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -326,7 +332,7 @@ function AllRoutines() {
                                 )}
                                 {!isSmallScreen && (
                                   <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
-                                    {row.description} 
+                                    {5} 
                                   </TableCell>
                                 )}
                               </TableRow>
@@ -373,10 +379,44 @@ function AllRoutines() {
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                   <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
+                  <p><strong>Likes:</strong> {5}</p>
                   <p><strong>Owner:</strong> {selectedEvent.owner}</p>
+                  <button onClick={handleViewExercises}>View exercises</button>
                   <button onClick={handleCloseModal}>Close</button>
                 </div>
               </div>
+            )}
+            {viewExercises && (
+                <div className="Modal" onClick={handleViewExercises}>
+                    <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                        <h2>Exercises from {selectedEvent.routine}</h2>
+                        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                            <TableContainer sx={{ maxHeight: 440 }}>
+                                <Table stickyHeader aria-label="sticky table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Exercise</TableCell>
+                                            <TableCell>Series</TableCell>
+                                            <TableCell>Reps</TableCell>
+                                            <TableCell>Timing</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {selectedEvent?.excercises?.map((exercise) => (
+                                            <TableRow key={exercise.id}>
+                                                <TableCell>{exercise.name}</TableCell>
+                                                <TableCell>{exercise.series} x</TableCell>
+                                                <TableCell>{exercise.reps.join(', ')}</TableCell>
+                                                <TableCell>{exercise.timing}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Paper>
+                        <button onClick={handleViewExercises}>Close</button>
+                    </div>
+                </div>
             )}
             {openCircularProgress ? (
               <Backdrop
