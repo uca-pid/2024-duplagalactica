@@ -25,6 +25,11 @@ function CouchClasses() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
+  const [maxNum,setMaxNum] = useState(1);
+  const [salas, setSalas] = useState([]);
+  const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
+  const [salaAssigned, setSala] = useState(null);
+  const [openHourRequirements, setOpenHourRequirements] = useState(false);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -56,6 +61,9 @@ function CouchClasses() {
   const [fetchHour,setFetchHour]=useState('');
   const [fetchPermanent,setFetchPermanent]=useState('');
   const [fetchClass,setFetchClass]=useState({});
+  const [fetchSala,setFetchSala] = useState('')
+  const [fetchCapacity, setFetchCapacity] = useState('')
+  const [failureErrors, setFailureErrors] = useState(false);
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -64,11 +72,60 @@ function CouchClasses() {
   };
 
   function formatDate(date) {
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     
     return `${month}/${day}/${year}`;
+  }
+
+  const handleCloseHourRequirements = () => {
+    setOpenHourRequirements(false);
+  }
+
+  useEffect(() => {
+    if (userMail && maxNum) {
+      fetchSalas();
+    }
+  }, [userMail,maxNum]);
+  
+  const fetchSalas = async () => {
+    setOpenCircularProgress(true);
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
+        }
+        const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_salas`, {
+            method: 'GET', 
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Error al obtener las rutinas: ' + response.statusText);
+        }
+        const data = await response.json();
+        const dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
+        setSalas(dataFinal);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error("Error fetching rutinas:", error);
+        setOpenCircularProgress(false);
+        setWarningFetchingRoutines(true);
+        setTimeout(() => {
+            setWarningFetchingRoutines(false);
+        }, 3000);
+    }
+  };
+  
+  function formatDateForInput(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${year}-${month}-${day}`;
   }
 
   const handleRequestSort = (event, property) => {
@@ -102,7 +159,22 @@ function CouchClasses() {
     setFetchHour(selectedEvent.hour)
     setFetchPermanent(selectedEvent.permanent)
     setFetchClass(selectedEvent)
+    setFetchSala(selectedEvent.sala)
+    setFetchCapacity(selectedEvent.capacity)
+    setHour('');
+    setHourFin('');
+    setPermanent('');
+    setDate('');
+    setName('');
   } 
+
+
+  const timeToMinutes = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+
   const fetchModifyClassInformation = async () => {
     setOpenCircularProgress(true);
     try {
@@ -111,18 +183,123 @@ function CouchClasses() {
           console.error('Token no disponible en localStorage');
           return;
         }
-        const isoDateStringInicio = date && hour ? `${date}T${hour}:00Z` : fetchDateInicio;
-        const isoDateStringFin = date && hourFin ? `${date}T${hourFin}:00Z` : fetchDateFin;
 
+        const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+        if (!response2.ok) {
+            throw new Error('Error al obtener las clases: ' + response2.statusText);
+        }
+        const data2 = await response2.json();
+        const isoDateString = date.toString() || fetchDateInicio.split('T')[0]; 
+
+
+
+        
+        const newPreviousDate = fetchDateInicio ? fetchDateInicio.split('T')[0] : null;
+        const newPreviousDateFin = fetchDateFin ? fetchDateFin.split('T')[0] : null;
+        const newPreviousHour = fetchDateInicio ? fetchDateInicio.split('T')[1].split('Z')[0] : "00:00:00";
+        const newPreviousHourFin = fetchDateFin ? fetchDateFin.split('T')[1].split('Z')[0] : "00:00:00";
+
+
+        const finalDateStart = date || newPreviousDate;
+        const finalHourStart = hour || newPreviousHour;
+        const finalDateEnd = date || newPreviousDateFin;
+        const finalHourEnd = hourFin || newPreviousHourFin;
+
+        
+        const newClassStartTime = new Date(`${finalDateStart}T${finalHourStart}Z`);
+        const newClassEndTime = new Date(`${finalDateEnd}T${finalHourEnd}Z`);
+        
+        
+        const newClassStartTimeInMinutes = timeToMinutes(hour);
+        const newClassEndTimeInMinutes = timeToMinutes(hourFin);
+        const conflictingClasses = data2.filter(classItem => 
+          classItem.sala === (salaAssigned || fetchSala) &&
+          classItem.day === day(isoDateString) 
+        );
+        
+        if ((permanent || fetchPermanent) == "No") {
+          const hasPermanentConflict = conflictingClasses.some(existingClass => 
+            existingClass.permanent == "Si" && 
+            newClassStartTime > new Date(existingClass.dateFin) &&
+            newClassEndTime > new Date(existingClass.dateInicio) &&
+            newClassEndTime > new Date(existingClass.dateFin) &&
+            newClassStartTime > new Date(existingClass.dateInicio) &&
+            newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+            newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5))
+          );
+          const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
+              newClassStartTime < new Date(existingClass.dateFin) &&
+              newClassEndTime > new Date(existingClass.dateInicio)
+          );
+          if (hasNonPermanentConflict || hasPermanentConflict) {
+              console.error('Conflicto de horario con clases existentes en esta sala.');
+              setOpenCircularProgress(false);
+              setFailureErrors(true);
+              setTimeout(() => {
+                  setFailureErrors(false);
+              }, 3000);
+              return;
+          }
+        } 
+        else if ((permanent || fetchPermanent) == "Si") {
+            const hasPastPermanentConflict = conflictingClasses.some(existingClass =>
+                existingClass.permanent == "Si" &&
+                newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+                newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
+                newClassStartTime.getFullYear()>= (new Date(existingClass.dateFin)).getFullYear() &&
+                newClassEndTime.getFullYear()>= (new Date(existingClass.dateInicio)).getFullYear() &&
+                String((newClassStartTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
+                String((newClassEndTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
+                String((newClassStartTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
+                String((newClassEndTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
+            );
+
+            const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
+              newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+              newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
+              newClassStartTime.getFullYear()<= (new Date(existingClass.dateFin)).getFullYear() &&
+              newClassEndTime.getFullYear()<= (new Date(existingClass.dateInicio)).getFullYear() &&
+              String((newClassStartTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
+              String((newClassEndTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
+              String((newClassStartTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
+              String((newClassEndTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
+            );
+
+            const hasPermanentConflict = conflictingClasses.some(existingClass =>
+              newClassStartTime < new Date(existingClass.dateFin) &&
+              newClassEndTime > new Date(existingClass.dateInicio)
+            );
+            if (hasPastPermanentConflict || hasPermanentConflict || hasNonPermanentConflict) {
+                console.error('Ya existe una clase permanente en esta sala para este horario.');
+                setOpenCircularProgress(false);
+                setFailureErrors(true);
+                setTimeout(() => {
+                    setFailureErrors(false);
+                }, 3000);
+                return;
+            }
+        }
+        
+
+        const previousDate = fetchDateInicio ? fetchDateInicio.split('T')[0] : null;
+        const previousDateFin = fetchDateFin ? fetchDateFin.split('T')[0] : null;
+
+        const previousHour = fetchDateInicio ? fetchDateInicio.split('T')[1].split('Z')[0].slice(0, -3) : "00:00"; 
+        const previousHourFin = fetchDateFin ? fetchDateFin.split('T')[1].split('Z')[0].slice(0, -3) : "00:00"; 
+
+        const isoDateStringInicio = `${date || previousDate}T${hour || previousHour}:00Z`;
+        const isoDateStringFin = `${date || previousDateFin}T${hourFin || previousHourFin}:00Z`;
         const updatedUser = {
             ...fetchClass,
             cid: fetchId,
             DateFin: isoDateStringFin,
             DateInicio: isoDateStringInicio,
-            Day: day(date) || fetchDay,
+            Day: day(date.toString()) || fetchDay,
             Name: name || fetchName,
             Hour: hour || fetchHour,
-            Permanent: permanent || fetchPermanent
+            Permanent: permanent || fetchPermanent,
+            sala: salaAssigned || fetchSala,
+            capacity: maxNum || fetchCapacity
         };
         const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_class_info', {
             method: 'PUT', 
@@ -158,7 +335,7 @@ function CouchClasses() {
       setOpenCircularProgress(false);
     }, 7000);
     await fetchClasses();
-    window.location.reload()
+    ///window.location.reload()
   };
 
   const handleDeleteClass = async (event) => {
@@ -207,7 +384,20 @@ function CouchClasses() {
       }
       const data = await response.json();
       const filteredClasses = data.filter(event => event.owner == userMail);
-      setClasses(filteredClasses);
+      const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_salas');
+      if (!response2.ok) {
+        throw new Error('Error al obtener las salas: ' + response2.statusText);
+      }
+      const salas = await response2.json();
+  
+      const dataWithSala = data.map(clase => {
+        const salaInfo = salas.find(sala => sala.id === clase.sala);
+        return {
+          ...clase,
+          salaInfo, 
+        };
+      });
+      setClasses(dataWithSala);
       setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -512,6 +702,7 @@ function CouchClasses() {
                             <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.dateInicio))}</p>
                             <p><strong>Start time:</strong> {selectedEvent.hour}</p>
                             <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
+                            <p><strong>Sala:</strong> {selectedEvent.salaInfo.nombre}</p>
                             <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
                             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>
                             <button onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
@@ -529,24 +720,21 @@ function CouchClasses() {
                                     <div className="input-small-container">
                                         <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
                                         <input 
-                                        type={selectedEvent.hour ? 'text' : 'time'}
+                                        type='time'
                                         id="hour" 
-                                        name="hour" 
-                                        value={hour} 
+                                        name="hour"
+                                        value={hour || fetchHour} 
                                         onChange={(e) => setHour(e.target.value)}
-                                        onFocus={(e) => (e.target.type = 'time')}
-                                        onBlur={(e) => (e.target.type = 'text')}
-                                        placeholder={selectedEvent.hour}
                                         />
                                     </div>
                                     <div className="input-small-container">
                                         <label htmlFor="hourFin" style={{color:'#14213D'}}>End time:</label>
                                         <input 
-                                            type="time" 
-                                            id="hourFin" 
+                                            id="hourFin"
+                                            type='time'
                                             name="hourFin" 
-                                            value={hourFin} 
-                                            onChange={(e) => setHourFin(e.target.value)} 
+                                            value={hourFin || selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')} 
+                                            onChange={(e) => setHourFin(e.target.value)}
                                         />
                                     </div>
                                     <div className="input-small-container">
@@ -555,38 +743,66 @@ function CouchClasses() {
                                         type="text" 
                                         id="name" 
                                         name="name" 
-                                        value={name} 
-                                        onChange={(e) => setName(e.target.value)}
-                                        placeholder={selectedEvent.name}                                />
+                                        value={name || fetchName} 
+                                        onChange={(e) => setName(e.target.value)}/>
                                     </div>
                                 </div>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                     <div className="input-small-container" style={{width:"100%"}}>
                                         <label htmlFor="permanent" style={{color:'#14213D'}}>Recurrent:</label>
-                                        <select 
-                                        id="permanent" 
-                                        name="permanent" 
-                                        value={permanent} 
-                                        onChange={(e) => setPermanent(e.target.value)}
-                                        placeholder={selectedEvent.permanent}
-                                        >
-                                            <option value="" >Select</option>
+                                          <select
+                                            id="permanent"
+                                            name="permanent"
+                                            value={permanent || fetchPermanent}
+                                            onChange={(e) => setPermanent(e.target.value)}
+                                          >
                                             <option value="Si">Yes</option>
                                             <option value="No">No</option>
-                                        </select>
+                                          </select>
                                     </div>
                                     <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
                                         <label htmlFor="date" style={{color:'#14213D'}}>Date:</label>
                                         <input 
-                                            type={date ? 'date' : 'text'}
+                                            type='date'
                                             id='date'
                                             name='date'
-                                            value={date}
+                                            value={date || formatDateForInput(new Date(selectedEvent.dateInicio))}
                                             onChange={(e) => setDate(e.target.value)}
-                                            onFocus={(e) => (e.target.type = 'date')}
-                                            onBlur={(e) => (e.target.type = 'text')}
                                         />
                                     </div>
+                                </div>
+                                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                <div className="input-small-container">
+                                      <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
+                                      <select
+                                          id="salaAssigned"
+                                          name="salaAssigned"
+                                          value={salaAssigned}
+                                          onChange={(e) => setSala(e.target.value)}
+                                          style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+                                      >
+                                          <option value="">Select</option>
+                                          {salas.map((sala) => (
+                                              <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
+                                                  {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}
+                                              </option>
+                                          ))}
+                                      </select>
+                                  </div>
+                                </div>
+                                <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                                  <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                                  <input
+                                    onClick={handleCloseHourRequirements}
+                                    type="number" 
+                                    id="maxNum" 
+                                    name="maxNum"
+                                    min='1'
+                                    max='500'
+                                    step='1'
+                                    value={maxNum} 
+                                    onChange={(e) => setMaxNum(e.target.value)} 
+                                  />
                                 </div>
                                 <button onClick={handleEditClass} className='button_login'>Cancell</button>
                                 <button  type="submit" className='button_login'>Save changes</button>

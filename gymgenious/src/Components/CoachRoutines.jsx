@@ -262,6 +262,9 @@ function CoachRoutines() {
     setDescFetch(event.description);
     setExersFetch(event.excercises);
     setRoutine(event);
+    setName('');
+    setDay('');
+    setDesc('');
   } 
 
   const handeDeleteRoutine = async (event) => {
@@ -644,8 +647,7 @@ const fetchExercises = async () => {
                         type="text" 
                         id="name" 
                         name="name" 
-                        value={name} 
-                        placeholder={fetchName}
+                        value={name || fetchName} 
                         onChange={(e) => setName(e.target.value)} 
                         />
                       </div>
@@ -654,10 +656,9 @@ const fetchExercises = async () => {
                         <select
                         id="day" 
                         name="day" 
-                        value={day} 
+                        value={day || dayFetch} 
                         onChange={(e) => setDay(e.target.value)} 
                         >
-                          <option value="" >Select</option>
                           <option value="monday">Monday</option>
                           <option value="tuesday">Tuesday</option>
                           <option value="wednesday">Wednesday</option>
@@ -675,18 +676,11 @@ const fetchExercises = async () => {
                         type="text" 
                         id="desc" 
                         name="desc" 
-                        value={desc} 
-                        placeholder={descFetch}
+                        value={desc || descFetch} 
                         onChange={(e) => setDesc(e.target.value)} 
                         />
                       </div>
                     </div>
-                    {/* <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div className="input-small-container">
-                        <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
-                        <UserAssignment onUsersChange={handleExcersiceChange} routine={id}/>
-                      </div>
-                    </div> */}
                     <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
                       <div className="input-small-container">
                           <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
