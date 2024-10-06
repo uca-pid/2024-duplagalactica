@@ -681,12 +681,6 @@ const fetchExercises = async () => {
                         />
                       </div>
                     </div>
-                    {/* <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div className="input-small-container">
-                        <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
-                        <UserAssignment onUsersChange={handleExcersiceChange} routine={id}/>
-                      </div>
-                    </div> */}
                     <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
                       <div className="input-small-container">
                           <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>

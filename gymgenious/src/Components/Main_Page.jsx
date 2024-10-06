@@ -121,6 +121,7 @@ export default function Main_Page() {
       console.log("asi se agrergaron", calendarEvents)
       setOpenCircularProgress(false);
       setEvents(calendarEvents);
+      setClasses(dataWithSala)
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
@@ -314,7 +315,7 @@ export default function Main_Page() {
         <h2>Classes details:</h2>
         <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
         <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.start))}</p>
-        <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+        <p><strong>Start time:</strong> {new Date(selectedEvent.dateInicio).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
         <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
         <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
