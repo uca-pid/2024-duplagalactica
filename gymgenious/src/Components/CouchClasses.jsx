@@ -62,6 +62,7 @@ function CouchClasses() {
   const [fetchPermanent,setFetchPermanent]=useState('');
   const [fetchClass,setFetchClass]=useState({});
   const [fetchSala,setFetchSala] = useState('')
+  const [fetchCapacity, setFetchCapacity] = useState('')
   const [failureErrors, setFailureErrors] = useState(false);
 
   const day = (dateString) => {
@@ -159,6 +160,7 @@ function CouchClasses() {
     setFetchPermanent(selectedEvent.permanent)
     setFetchClass(selectedEvent)
     setFetchSala(selectedEvent.sala)
+    setFetchCapacity(selectedEvent.capacity)
     setHour('');
     setHourFin('');
     setPermanent('');
@@ -296,7 +298,8 @@ function CouchClasses() {
             Name: name || fetchName,
             Hour: hour || fetchHour,
             Permanent: permanent || fetchPermanent,
-            sala: salaAssigned || fetchSala
+            sala: salaAssigned || fetchSala,
+            capacity: maxNum || fetchCapacity
         };
         const response = await fetch('http://127.0.0.1:5000/update_class_info', {
             method: 'PUT', 

@@ -84,7 +84,8 @@ def update_class_info(newClass):
                 'hour':newClass['Hour'],
                 'name': newClass['Name'],
                 'permanent': newClass['Permanent'],
-                'sala': newClass['sala']
+                'sala': newClass['sala'],
+                'capacity' : newClass['capacity']
             })
         return {"message": "Actualización realizada"} 
     except Exception as e:
