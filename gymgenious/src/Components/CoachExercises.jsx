@@ -64,12 +64,9 @@ export default function CoachExercises() {
 
     const correctExercisesData = async (exercisesData) => {
         return exercisesData.map(element => {
-            if (!element.series) {
+            if (!element.owner) {
                 return {
                     name: element.name,
-                    series: 4,
-                    reps: [12, 12, 10, 10],
-                    timing: '60',
                     description: 'aaaa',
                     owner: 'Train-Mate'
                 };
@@ -97,7 +94,6 @@ export default function CoachExercises() {
                 throw new Error('Error al obtener los ejercicios: ' + response.statusText);
             }
             const exercisesData = await response.json();
-
             const response2 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
                 method: 'GET',
                 headers: {
@@ -382,12 +378,11 @@ export default function CoachExercises() {
                             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                                 <h2 style={{marginBottom: '0px'}}>Exercise:</h2>
                                 <p style={{ marginTop: '5px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
-                                    {selectedEvent.name}
+                                    {selectedEvent.description}
                                 </p>
                                 <img 
-                                    // src={selectedEvent.imageURL} 
+                                    src={selectedEvent.image_url} 
                                     alt={selectedEvent.name}
-                                    src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
                                     style={{
                                         display: 'block',
                                         margin: '10px auto',
@@ -395,27 +390,7 @@ export default function CoachExercises() {
                                         height: 'auto',
                                         borderRadius: '8px'
                                     }} 
-                                />
-                                {/* <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                                    <TableContainer sx={{ maxHeight: 440 }}>
-                                        <Table stickyHeader aria-label="sticky table">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Series</TableCell>
-                                                    <TableCell>Reps</TableCell>
-                                                    <TableCell>Timing</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                <TableRow key={selectedEvent.id}>
-                                                    <TableCell>{selectedEvent.series} x</TableCell>
-                                                    <TableCell>{selectedEvent.reps.join(', ')}</TableCell>
-                                                    <TableCell>{selectedEvent.timing}</TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                </Paper> */}
+                                />                               
                                 <button onClick={handleCloseModal}>Close</button>
                             </div>
                         </div>

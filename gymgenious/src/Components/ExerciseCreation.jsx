@@ -20,23 +20,6 @@ export default function ExerciseCreation() {
   const [failure, setFailure] = useState(false);
   const [errors, setErrors] = useState([]);
   const [failureErrors, setFailureErrors] = useState(false);
-  // const [series, setSeries] = useState(4);
-  // const [reps, setReps] = useState(Array(series).fill(''));
-  // const [timing, setTiming] = useState(0);
-
-  // const handleSeriesChange = (e) => {
-  //   const newSeries = parseInt(e.target.value);
-  //   if(newSeries>=0 && newSeries<=8) {
-  //     setSeries(newSeries);
-  //     setReps(Array(newSeries).fill(''));
-  //   }
-  // };
-
-  // const handleRepsChange = (index, value) => {
-  //   const newReps = [...reps];
-  //   newReps[index] = value;
-  //   setReps(newReps);
-  // };
 
   const validateForm = () => {
     let errors = [];
@@ -56,16 +39,14 @@ export default function ExerciseCreation() {
   const handleCreateExersice = async () => {
     setOpenCircularProgress(true);
     if(validateForm()){
-      try {  
-        const newExersice = {
-          name: name,
-          description: desc,
-          owner: userMail,
-          image: image,
-          // reps: reps,
-          // series: series,
-          // timing: timing,
-        };
+      try {
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('description', desc);
+        formData.append('owner', userMail);
+        if (image) {
+            formData.append('image', image);
+        }
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
           console.error('Token no disponible en localStorage');
@@ -74,10 +55,9 @@ export default function ExerciseCreation() {
         const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/create_exersice', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${authToken}`
           },
-          body: JSON.stringify(newExersice),
+          body: formData,
         });
 
         if (!response.ok) {
@@ -167,53 +147,11 @@ export default function ExerciseCreation() {
                 name="image"
                 accept="image/*"
                 className='input-image'
-                onChange={(e) => setImage(e)}
+                onChange={(e) => setImage(e.target.files[0])                  
+                }  
               />
             </div>
           </div>
-          {/* <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-              <div className="input-small-container">
-                  <label htmlFor="desc" style={{color:'#14213D'}}>Series:</label>
-                  <input 
-                  type="number" 
-                  id="series" 
-                  name="series" 
-                  value={series}
-                  min="1"
-                  step='1'
-                  max="8"
-                  onChange={handleSeriesChange}
-                  />
-              </div>
-              <div className="input-small-container">
-                  <label htmlFor="timing" style={{color:'#14213D'}}>Timing:</label>
-                  <input 
-                  type="number" 
-                  id="timing" 
-                  name="timing" 
-                  value={timing}
-                  min="1"
-                  max="500"
-                  step='1'
-                  onChange={(e) => setTiming(e.target.value)}
-                  />
-              </div>
-          </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-            <div className="input-small-container" style={{ flex: 1, marginRight: '10px' }}>
-                <label htmlFor='reps' style={{ color: '#14213D' }}>Reps:</label>
-                {reps.map((rep, index) => (
-                  <input
-                    type="text"
-                    id={`reps-${index}`}
-                    name={`reps-${index}`}
-                    value={rep}
-                    onChange={(e) => handleRepsChange(index, e.target.value)}
-                    style={{ width: `${100 / series}%` }}
-                  />
-              ))}
-            </div>
-          </div> */}
           <button type="submit" className='button_login'>
             Create exercise
           </button>
