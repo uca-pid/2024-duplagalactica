@@ -4,7 +4,6 @@ from services.exercisesRoutes import create_excersice,get_excersice_by_owner,get
 
 def create_exersice_route(excersice):
     try:
-        excersice = request.json
         exce = create_excersice(excersice)
         return jsonify(exce), 200
     except ValueError as e:

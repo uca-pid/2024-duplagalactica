@@ -239,10 +239,25 @@ def create_exersice():
         token = request.headers.get('Authorization')
         if not token or 'Bearer' not in token:
             return jsonify({'error':'Missing token'})
-        newExersice = request.json
+        name = request.form.get('name')
+        description = request.form.get('description')
+        owner = request.form.get('owner')        
+        image = request.files.get('image')
+        print("asi se ve la imagen",image)
+        image_data = None
+        if image:
+            image_data = image.read()  
+
+        newExersice = {
+            'name': name,
+            'description': description,
+            'owner': owner,
+            'image': image_data 
+        }
+        print(f'Datos recibidos: {name}, {description}, {owner}, {image}')
         return create_exersice_route(newExersice)
     except Exception as e:
-        print("Error")
+        print("Error a")
         return jsonify({'error':'Something went wrong'})
 
 @app.route('/create_routine', methods=['POST'])
