@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, useMediaQuery } from '@mui/material';
+import { Box, fabClasses, useMediaQuery } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -38,6 +38,10 @@ export default function CoachExercises() {
     const [type, setType] = useState(null);
     const isMobileScreen = useMediaQuery('(min-height:750px)');
     const [maxHeight, setMaxHeight] = useState('600px');
+    const [editExercise, setEditExercise] = useState(false);
+    const [name, setName] = useState('');
+    const [desc, setDesc] = useState('');
+    const [image, setImage] = useState('');
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -58,9 +62,21 @@ export default function CoachExercises() {
         setSelectedEvent(event);
     };
 
-    const handleCloseModal = () => {
+    const handleCloseModalEvent = () => {
         setSelectedEvent(null);
+      };
+
+    const handleEditExercise = () => {
+        setEditExercise(true);
+    }
+
+    const handleCloseModal = () => {
+        setEditExercise(false);
     };
+
+    const handleSaveChanges = () => {
+        handleCloseModal();
+    }
 
     const correctExercisesData = async (exercisesData) => {
         return exercisesData.map(element => {
@@ -374,7 +390,7 @@ export default function CoachExercises() {
                         </Box>
                     </div>
                     {selectedEvent && (
-                        <div className="Modal" onClick={handleCloseModal}>
+                        <div className="Modal" onClick={handleCloseModalEvent}>
                             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                                 <h2 style={{marginBottom: '0px'}}>Exercise:</h2>
                                 <p style={{ marginTop: '5px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
@@ -390,8 +406,57 @@ export default function CoachExercises() {
                                         height: 'auto',
                                         borderRadius: '8px'
                                     }} 
-                                />                               
-                                <button onClick={handleCloseModal}>Close</button>
+                                />
+                                <button onClick={handleEditExercise}>Edit exercise</button>                            
+                                <button onClick={handleCloseModalEvent}>Close</button>
+                            </div>
+                        </div>
+                    )}
+                    {editExercise && (
+                        <div className="Modal-edit-routine" onClick={handleCloseModal}>
+                            <div className="Modal-Content-edit-routine" onClick={(e) => e.stopPropagation()}>
+                                <h2>Routine details</h2>
+                                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                    <div className="input-small-container">
+                                    <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+                                    <input 
+                                        type="text" 
+                                        id="name" 
+                                        name="name" 
+                                        value={name || selectedEvent.name} 
+                                        onChange={(e) => setName(e.target.value)} 
+                                    />
+                                    </div>
+                                </div>
+                                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                    <div className="input-small-container">
+                                        <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
+                                        <input 
+                                        type="text" 
+                                        id="desc" 
+                                        name="desc" 
+                                        value={desc || selectedEvent.description}
+                                        onChange={(e) => setDesc(e.target.value)} 
+                                        />
+                                    </div>
+                                </div>
+                                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                    <div className="input-small-container">
+                                    <label htmlFor="image" style={{ color: '#14213D' }}>Image:</label>
+                                    <input
+                                        type="file"
+                                        id="image"
+                                        name="image"
+                                        accept="image/*"
+                                        className='input-image'
+                                        value={image || selectedEvent.image_url}
+                                        onChange={(e) => setImage(e.target.files[0])                  
+                                        }  
+                                    />
+                                    </div>
+                                </div>
+                                <button onClick={handleSaveChanges}>Save</button>                            
+                                <button onClick={handleCloseModal}>Cancell</button>
                             </div>
                         </div>
                     )}
