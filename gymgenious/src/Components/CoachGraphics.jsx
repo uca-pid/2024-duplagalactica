@@ -56,9 +56,6 @@ function TopRoutines({ routines }) {
     const orderedClasses = classes.sort((a, b) => b.BookedUsers.length - a.BookedUsers.length);
     const classesNames = orderedClasses?.map(clase => clase.name);
     const classesData = orderedClasses?.map(clase => clase.BookedUsers.length);
-
-    // const exercisesData = [10,8,5,3,1];
-    // const exercisesNames = ['Chest','Legs','Lats','Glutes','Biceps'];
   
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
@@ -76,70 +73,26 @@ function TopRoutines({ routines }) {
     );
   }
 
-  function ExercisesVsUsers() {
+  function ExercisesVsUsers({exersCoachUsers}) {
     const [itemNb, setItemNb] = React.useState(20);
-    const [user, setUser] = React.useState('agus');
-    const usersExercises = [
-        {
-            user: 'agus',
-            exercisesData: [10,8,5,3,1],
-            exercisesNames: ['Chest','Legs','Lats','Glutes','Biceps'],
-        },
-        {
-            user: 'juan',
-            exercisesData: [5,4,3,2,1],
-            exercisesNames: ['ex1','ex2','ex3','ex4','ex5'],
-        },
-        {
-            user: 'pepito',
-            exercisesData: [50,25,12,6,3],
-            exercisesNames: ['1','2','3','4','5'],
-        },
-    ]
-    const users = usersExercises.map(userObj => userObj.user);
-
-    // const orderedRoutines = routines.sort((a, b) => b.cant_asignados - a.cant_asignados);
-  
-    // const routineNames = orderedRoutines?.map(routine => routine.name);
-    // const routineData = orderedRoutines?.map(routine => routine.cant_asignados);
-
-    // const exercisesData = [10,8,5,3,1];
-    // const exercisesNames = ['Chest','Legs','Lats','Glutes','Biceps'];
+    const orderedClasses = exersCoachUsers.sort((a, b) => b.amount - a.amount);
+    const classesNames = orderedClasses?.map(clase => clase.exercise);
+    const classesData = orderedClasses?.map(clase => clase.count);
   
     return (
-        <>
-        <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div className="input-small-container">
-                <label htmlFor="routineAssigned" style={{ color: '#14213D' }}>Routine:</label>
-                <select
-                    id="user"
-                    name="user"
-                    value={user}
-                    onChange={(e) => setUser(e.target.value)}
-                    style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
-                >
-                    {users.map((user) => (
-                        <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={user} value={user}>
-                            {user}
-                        </option>
-                    ))}
-                </select>
-            </div>
-        </div>
-        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
-          <BarChart
-            height={500}
-            series={[{
-              data: usersExercises.find(userObj => userObj.user === user).exercisesData.slice(0, itemNb),
-            }]}
-            xAxis={[{
-              scaleType: 'band',
-              data: usersExercises.find(userObj => userObj.user === user).exercisesNames.slice(0, itemNb),
-            }]}
-          />
-      </Box>
-      </>
-    );
+      <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
+        <BarChart
+          height={500}
+          series={[{
+            data: classesData.slice(0, itemNb),
+          }]}
+          xAxis={[{
+            scaleType: 'band',
+            data: classesNames.slice(0, itemNb),
+          }]}
+        />
+    </Box>
+  );
   }
 
 function CoachGraphics() {
@@ -164,8 +117,9 @@ function CoachGraphics() {
   const step = 0;
   const [activeStep, setActiveStep] = React.useState(step);
   const [skipped, setSkipped] = React.useState(new Set());
-  const steps = ['Top routines', 'Top muscles', 'Users vs. Exercises'];
+  const steps = ['Top routines', 'Top classes', 'Users vs. Exercises'];
   const [classes, setClasses] = useState([]);
+  const [exersCoachUsers,setExersCoachUsers] = useState([])
 
     const isStepSkipped = (step) => {
         return skipped.has(step);
@@ -243,6 +197,7 @@ function CoachGraphics() {
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
+      
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
@@ -259,6 +214,86 @@ function CoachGraphics() {
       }, 3000);
     }
   };
+
+  const fetchExcersicesCoachUsers = async () => {
+    setOpenCircularProgress(true);
+    try {
+      const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('Token no disponible en localStorage');
+            return;
+      }     
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authToken}`
+        }
+      });
+        if (!response.ok) {
+            throw new Error('Error al obtener las clases: ' + response.statusText);
+        }
+        const data = await response.json();
+        const assignedRoutines = data.filter(routine => routine.assigner === userMail);
+        
+        const uniqueBookedUsers = new Set();
+        assignedRoutines.forEach(routine => {
+            routine.users.forEach(user => uniqueBookedUsers.add(user));
+        });
+
+        const bookedUsersArray = Array.from(uniqueBookedUsers);
+        const userRoutinesMap = {};
+
+        for (const user of bookedUsersArray) {
+            userRoutinesMap[user] = []; 
+            assignedRoutines.forEach(routine => {
+                if (routine.users.includes(user)) {
+                    userRoutinesMap[user].push(routine.id);
+                }
+            });
+        }
+
+        const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines', {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${authToken}`
+          }
+        });
+        if (!response2.ok) {
+            throw new Error('Error al obtener las rutinas: ' + response2.statusText);
+        }
+        const data2 = await response2.json();
+        
+        const exerciseCountMap = {}; 
+
+        for (const user of bookedUsersArray) {
+            const exercisesSeen = new Set(); 
+            userRoutinesMap[user].forEach(routineId => {
+                const routine = data2.find(r => r.id === routineId); 
+                if (routine) {
+                    routine.excercises.forEach(exercise => {
+                        exercisesSeen.add(exercise.name);
+                    });
+                }
+            });
+
+            exercisesSeen.forEach(exercise => {
+                exerciseCountMap[exercise] = (exerciseCountMap[exercise] || 0) + 1;
+            });
+        }
+        const resultArray = Object.entries(exerciseCountMap).map(([exercise, count]) => ({ exercise, count }));
+        console.log("Ejercicios y conteo:", resultArray);
+
+        setExersCoachUsers(resultArray);
+        setOpenCircularProgress(false);
+    } catch (error) {
+        console.error("Error fetching classes:", error);
+        setOpenCircularProgress(false);
+        setWarningConnection(true);
+        setTimeout(() => {
+            setWarningConnection(false);
+        }, 3000);
+    }
+};
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
@@ -297,6 +332,7 @@ function CoachGraphics() {
         if (userMail) { 
             fetchRoutines();
             fetchClasses();
+            fetchExcersicesCoachUsers();
         }
     }, [userMail]);
 
@@ -398,7 +434,7 @@ function CoachGraphics() {
                             <TopClasses classes={classes}/>
                         )}
                         {activeStep===2 && (
-                            <ExercisesVsUsers/>
+                            <ExercisesVsUsers exersCoachUsers={exersCoachUsers}/>
                         )}
                     </div>
                 </div>
