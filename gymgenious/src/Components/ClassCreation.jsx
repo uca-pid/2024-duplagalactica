@@ -19,6 +19,7 @@ export default function CreateClass() {
   const [permanent, setPermanent] = useState('');
   const [date, setDate] = useState('');
   const [salas, setSalas] = useState([]);
+  const [showSalas, setShowSalas] = useState(false);
   const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
   const [salaAssigned, setSala] = useState(null); 
   const [name, setName] = useState('');
@@ -216,6 +217,10 @@ export default function CreateClass() {
     handleCreateClass();
   };
 
+  const handleViewRooms = () => {
+    setShowSalas(!showSalas);
+  };
+
   const fetchSalas = async () => {
     setOpenCircularProgress(true);
     try {
@@ -234,8 +239,8 @@ export default function CreateClass() {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
         const data = await response.json();
-        const dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
-        setSalas(dataFinal);
+        // const dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
+        setSalas(data);
         setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching rutinas:", error);
@@ -274,14 +279,15 @@ export default function CreateClass() {
   useEffect(() => {
     if (userMail) {
       fetchUser();
+      fetchSalas();
     }
   }, [userMail]);
 
-  useEffect(() => {
-    if (userMail && maxNum) {
-      fetchSalas();
-    }
-  }, [userMail,maxNum]);
+  // useEffect(() => {
+  //   if (userMail && maxNum) {
+  //     fetchSalas();
+  //   }
+  // }, [userMail,maxNum]);
 
   const fetchUser = async () => {
     try {
@@ -324,6 +330,8 @@ export default function CreateClass() {
 
   return (
     <div className='full-screen-image-2'>
+      {!showSalas ? (
+      <>
       {type!='coach' ? (
             <Backdrop
             sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -337,7 +345,7 @@ export default function CreateClass() {
             <div className='class-creation-container'>
               <div className='class-creation-content'>
                 <h2 style={{color:'#5e2404'}}>Create class</h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleViewRooms}>
                   {!isSmallScreen ? (
                     <>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
@@ -408,7 +416,7 @@ export default function CreateClass() {
                         </div>
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                        <div className="input-small-container">
+                        {/* <div className="input-small-container">
                               <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
                               <select
                                   id="salaAssigned"
@@ -424,7 +432,7 @@ export default function CreateClass() {
                                       </option>
                                   ))}
                               </select>
-                          </div>
+                          </div> */}
                           <div className="input-small-container" style={{width:"100%"}}>
                             <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
                             <select
@@ -526,7 +534,7 @@ export default function CreateClass() {
                           />
                         </div>
                       </div>
-                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                      {/* <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                         <div className="input-small-container">
                               <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
                               <select
@@ -544,7 +552,7 @@ export default function CreateClass() {
                                   ))}
                               </select>
                           </div>
-                        </div>
+                        </div> */}
                     </>
                   )}
                   
@@ -629,6 +637,76 @@ export default function CreateClass() {
                 null
             )}
           </>
+      )}
+      </>
+      ) : (
+        <>
+          <LeftBar/>
+            <div className='class-creation-container'>
+              <div className='class-creation-content'>
+                <h2 style={{color:'#5e2404'}}>Create class</h2>
+                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                    <img 
+                      src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
+                      alt={'logo'}
+                      style={{
+                          display: 'block',
+                          margin: '10px auto',
+                          maxWidth: '100%',
+                          height: 'auto',
+                          borderRadius: '8px'
+                      }}
+                    />
+                  </div>
+                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                    <img 
+                      src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
+                      alt={'logo'}
+                      style={{
+                          display: 'block',
+                          margin: '10px auto',
+                          maxWidth: '100%',
+                          height: 'auto',
+                          borderRadius: '8px'
+                      }}
+                    />
+                  </div>
+                </div>
+                  <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                    <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
+                      <img 
+                        src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
+                        alt={'logo'}
+                        style={{
+                            display: 'block',
+                            margin: '10px auto',
+                            maxWidth: '100%',
+                            height: 'auto',
+                            borderRadius: '8px'
+                        }}
+                      />
+                  </div>
+                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left', opacity: 0.5 }}>
+                    <img
+                      src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
+                      alt={'logo'}
+                      style={{
+                          display: 'block',
+                          margin: '10px auto',
+                          maxWidth: '100%',
+                          height: 'auto',
+                          borderRadius: '8px'
+                      }}
+                    />
+                  </div>
+                </div>
+                <button className='button_login' onClick={handleSubmit}>
+                    Create class
+                  </button>
+              </div>
+            </div>
+        </>
       )}
     </div>
   );

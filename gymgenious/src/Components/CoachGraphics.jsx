@@ -51,11 +51,11 @@ function TopRoutines({ routines }) {
   }
 
   function TopClasses({classes}) {
-    const [itemNb, setItemNb] = React.useState(5);
+    const [itemNb, setItemNb] = React.useState(20);
 
-    const orderedClasses = classes.sort((a, b) => b.BookedUsers - a.BookedUsers);
+    const orderedClasses = classes.sort((a, b) => b.BookedUsers.length - a.BookedUsers.length);
     const classesNames = orderedClasses?.map(clase => clase.name);
-    const classesData = orderedClasses?.map(clase => clase.BookedUsers);
+    const classesData = orderedClasses?.map(clase => clase.BookedUsers.length);
 
     // const exercisesData = [10,8,5,3,1];
     // const exercisesNames = ['Chest','Legs','Lats','Glutes','Biceps'];
