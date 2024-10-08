@@ -26,7 +26,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 
-function BarAnimation({ routines }) {
+function TopRoutines({ routines }) {
     const [itemNb, setItemNb] = React.useState(20);
 
     const orderedRoutines = routines.sort((a, b) => b.cant_asignados - a.cant_asignados);
@@ -50,27 +50,26 @@ function BarAnimation({ routines }) {
     );
   }
 
-  function TopMuscles() {
-    const [itemNb, setItemNb] = React.useState(20);
+  function TopClasses({classes}) {
+    const [itemNb, setItemNb] = React.useState(5);
 
-    // const orderedRoutines = routines.sort((a, b) => b.cant_asignados - a.cant_asignados);
-  
-    // const routineNames = orderedRoutines?.map(routine => routine.name);
-    // const routineData = orderedRoutines?.map(routine => routine.cant_asignados);
+    const orderedClasses = classes.sort((a, b) => b.BookedUsers - a.BookedUsers);
+    const classesNames = orderedClasses?.map(clase => clase.name);
+    const classesData = orderedClasses?.map(clase => clase.BookedUsers);
 
-    const exercisesData = [10,8,5,3,1];
-    const exercisesNames = ['Chest','Legs','Lats','Glutes','Biceps'];
+    // const exercisesData = [10,8,5,3,1];
+    // const exercisesNames = ['Chest','Legs','Lats','Glutes','Biceps'];
   
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
           <BarChart
             height={500}
             series={[{
-              data: exercisesData.slice(0, itemNb),
+              data: classesData.slice(0, itemNb),
             }]}
             xAxis={[{
               scaleType: 'band',
-              data: exercisesNames.slice(0, itemNb),
+              data: classesNames.slice(0, itemNb),
             }]}
           />
       </Box>
@@ -143,7 +142,7 @@ function BarAnimation({ routines }) {
     );
   }
 
-function TopRoutines() {
+function CoachGraphics() {
   const [order, setOrder] = useState('desc');
   const [orderBy, setOrderBy] = useState('cant_asignados');
   const [page, setPage] = useState(0);
@@ -166,6 +165,7 @@ function TopRoutines() {
   const [activeStep, setActiveStep] = React.useState(step);
   const [skipped, setSkipped] = React.useState(new Set());
   const steps = ['Top routines', 'Top muscles', 'Users vs. Exercises'];
+  const [classes, setClasses] = useState([]);
 
     const isStepSkipped = (step) => {
         return skipped.has(step);
@@ -240,6 +240,26 @@ function TopRoutines() {
 
   };
 
+  const fetchClasses = async () => {
+    setOpenCircularProgress(true);
+    try {
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+      if (!response.ok) {
+        throw new Error('Error al obtener las clases: ' + response.statusText);
+      }
+      const data = await response.json();
+      setOpenCircularProgress(false);
+      setClasses(data);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      setOpenCircularProgress(false);
+      setWarningConnection(true);
+      setTimeout(() => {
+        setWarningConnection(false);
+      }, 3000);
+    }
+  };
+
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
     try {
@@ -276,6 +296,7 @@ function TopRoutines() {
     useEffect(() => {
         if (userMail) { 
             fetchRoutines();
+            fetchClasses();
         }
     }, [userMail]);
 
@@ -371,10 +392,10 @@ function TopRoutines() {
                 <div className="graphics-container">
                     <div className='graphics-content'>
                         {activeStep===0 && (
-                            <BarAnimation routines={routines}/>
+                            <TopRoutines routines={routines}/>
                         )}
                         {activeStep===1 && ( 
-                            <TopMuscles/>
+                            <TopClasses classes={classes}/>
                         )}
                         {activeStep===2 && (
                             <ExercisesVsUsers/>
@@ -427,4 +448,4 @@ function TopRoutines() {
     );
 }
 
-export default TopRoutines;
+export default CoachGraphics;
