@@ -54,8 +54,6 @@ export default function RoutineCreation() {
     const handleAddExercise = (exercise) => {
       let exerciseWithParams = {
         id: exercise.id,
-        description: exercise.description,
-        name: exercise.name,
         owner: exercise.owner,
         reps: reps,
         series: series,

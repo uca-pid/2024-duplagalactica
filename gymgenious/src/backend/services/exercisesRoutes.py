@@ -53,3 +53,34 @@ def get_excersices():
     except Exception as e:
         print(f"Error al obtener los ejercicios: {e}")
         raise RuntimeError("No se pudo obtener los ejercicios")
+
+
+def update_exer_info(newExer):
+    try:
+        users_ref = db.collection('exersices')
+        doc_ref = users_ref.document(newExer['id'])
+        doc = doc_ref.get()
+        print("asi seria",newExer)
+        if doc.exists:
+            if newExer['image']: 
+                file_name = f"{newExer['id']}_exercise_image.jpg"
+                image_url = upload_image_to_storage(newExer['image'], file_name)
+                doc_ref.update({
+                    'description': newExer['description'],
+                    'name': newExer['name'],
+                    'image_url': image_url 
+                })
+            else:
+                doc_ref.update({
+                    'description': newExer['description'],
+                    'name': newExer['name']
+                })
+                
+            return {"message": "Actualización realizada"}
+        else:
+            print(f"No se encontró un ejercicio con el id: {newExer['id']}")
+            return {"message": "No se encontró el ejercicio"}
+
+    except Exception as e:
+        print(f"Error actualizando el ejercicio: {e}")
+        raise RuntimeError("No se pudo actualizar el ejercicio")

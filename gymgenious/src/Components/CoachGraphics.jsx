@@ -218,23 +218,23 @@ function CoachGraphics() {
   const fetchExcersicesCoachUsers = async () => {
     setOpenCircularProgress(true);
     try {
-      const authToken = localStorage.getItem('authToken');
+        const authToken = localStorage.getItem('authToken');
         if (!authToken) {
             console.error('Token no disponible en localStorage');
             return;
-      }     
-      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${authToken}`
         }
-      });
+        const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
         if (!response.ok) {
             throw new Error('Error al obtener las clases: ' + response.statusText);
         }
         const data = await response.json();
         const assignedRoutines = data.filter(routine => routine.assigner === userMail);
-        
+
         const uniqueBookedUsers = new Set();
         assignedRoutines.forEach(routine => {
             routine.users.forEach(user => uniqueBookedUsers.add(user));
@@ -244,31 +244,78 @@ function CoachGraphics() {
         const userRoutinesMap = {};
 
         for (const user of bookedUsersArray) {
-            userRoutinesMap[user] = []; 
+            userRoutinesMap[user] = [];
             assignedRoutines.forEach(routine => {
                 if (routine.users.includes(user)) {
                     userRoutinesMap[user].push(routine.id);
                 }
             });
         }
-
         const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines', {
-          method: 'GET',
-          headers: {
-              'Authorization': `Bearer ${authToken}`
-          }
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
         });
         if (!response2.ok) {
             throw new Error('Error al obtener las rutinas: ' + response2.statusText);
         }
         const data2 = await response2.json();
-        
-        const exerciseCountMap = {}; 
+
+        const response3 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_excersices', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response3.ok) {
+            throw new Error('Error al obtener los ejercicios: ' + response3.statusText);
+        }
+        const exercisesData = await response3.json();
+
+        const response4 = await fetch('https://train-mate-api.onrender.com/api/exercise/get-all-exercises', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        const exercisesDataFromTrainMate = await response4.json();
+        const routinesWithExercisesData = data2.map((routine) => {
+            const updatedExercises = routine.excercises.map((exercise) => {
+                if (exercise.owner === "Train-Mate") {
+                    const matchedExercise = exercisesDataFromTrainMate.exercises.find((ex) => ex.id === exercise.id);
+                    if (matchedExercise) {
+                        return {
+                            ...exercise,
+                            name: matchedExercise.name,
+                            description: matchedExercise.description,
+                        };
+                    }
+                } else {
+                    const matchedExercise = exercisesData.find((ex) => ex.id === exercise.id);
+                    if (matchedExercise) {
+                        return {
+                            ...exercise,
+                            name: matchedExercise.name,
+                            description: matchedExercise.description,
+                        };
+                    }
+                }
+                return exercise; 
+            });
+
+            return {
+                ...routine,
+                excercises: updatedExercises, 
+            };
+        });
+
+        const exerciseCountMap = {};
 
         for (const user of bookedUsersArray) {
-            const exercisesSeen = new Set(); 
+            const exercisesSeen = new Set();
             userRoutinesMap[user].forEach(routineId => {
-                const routine = data2.find(r => r.id === routineId); 
+                const routine = routinesWithExercisesData.find(r => r.id === routineId);
                 if (routine) {
                     routine.excercises.forEach(exercise => {
                         exercisesSeen.add(exercise.name);
@@ -280,6 +327,7 @@ function CoachGraphics() {
                 exerciseCountMap[exercise] = (exerciseCountMap[exercise] || 0) + 1;
             });
         }
+
         const resultArray = Object.entries(exerciseCountMap).map(([exercise, count]) => ({ exercise, count }));
         console.log("Ejercicios y conteo:", resultArray);
 
@@ -294,6 +342,7 @@ function CoachGraphics() {
         }, 3000);
     }
 };
+
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
