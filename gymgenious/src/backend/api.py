@@ -168,7 +168,7 @@ def update_exer_info():
         description = request.form.get('description')
         image_url = request.form.get('image_url')        
         image = request.files.get('image')
-        image_data = None
+        image_data = Non
         if image:
             image_data = image.read()  
         id = request.form.get('id')
