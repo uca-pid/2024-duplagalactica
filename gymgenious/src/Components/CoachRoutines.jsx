@@ -48,7 +48,6 @@ function CoachRoutines() {
   const isSmallScreen = useMediaQuery('(max-width:700px)');
   const isSmallScreen250 = useMediaQuery('(max-width:400px)');
   const [fetchName,setNameFetch] = useState('');
-  const [dayFetch,setDayFetch] = useState('');
   const [descFetch,setDescFetch]= useState('');
   const [exersFetch,setExersFetch]= useState([]);
   const [routineFetch,setRoutine] = useState({});
@@ -205,7 +204,6 @@ function CoachRoutines() {
         const updatedRoutines = {
             ...routineFetch,
             rid: id,
-            day: day || dayFetch,
             description: desc || descFetch,
             excers: exercises || exersFetch,
             name: name || fetchName,
@@ -258,7 +256,6 @@ function CoachRoutines() {
     setRoutineExercises(event.excercises);
     setId(event.id)
     setNameFetch(event.name);
-    setDayFetch(event.day);
     setDescFetch(event.description);
     setExersFetch(event.excercises);
     setRoutine(event);
@@ -302,44 +299,86 @@ function CoachRoutines() {
   const fetchRoutines = async () => {
     setOpenCircularProgress(true);
     try {
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) {
-        console.error('Token no disponible en localStorage');
-        return;
-      }
-        const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_routines`, {
-          method: 'GET', 
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          }
-      });
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('Token no disponible en localStorage');
+            return;
+        }
+        const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines', {
+            method: 'GET', 
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
         if (!response.ok) {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
         const routines = await response.json();
-        const filteredRoutines = await routines.filter(event => event.owner.includes(userMail));
-
+        const filteredRoutines = routines.filter(event => event.owner.includes(userMail));
         const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines', {
-          method: 'GET',
-          headers: {
-              'Authorization': `Bearer ${authToken}`
-          }
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
         });
         if (!response2.ok) {
             throw new Error('Error al obtener las rutinas asignadas: ' + response2.statusText);
         }
         const assignedRoutines = await response2.json();
-        const routinesWithAssignedCount = filteredRoutines.map((routine) => {
+        const response3 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_excersices', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        if (!response3.ok) {
+            throw new Error('Error al obtener los ejercicios: ' + response3.statusText);
+        }
+        const exercisesData = await response3.json();
+        console.log("Ejercicios locales:", exercisesData);
+        const response4 = await fetch('https://train-mate-api.onrender.com/api/exercise/get-all-exercises', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}` 
+            }
+        });
+        if (!response4.ok) {
+            throw new Error('Error al obtener los ejercicios de Train Mate: ' + response4.statusText);
+        }
+        const exercisesDataFromTrainMate = await response4.json();
+        const routinesWithExercisesData = filteredRoutines.map((routine) => {
+            const updatedExercises = routine.excercises.map((exercise) => {
+                let matchedExercise = exercisesData.find((ex) => ex.id === exercise.id);
+                if (!matchedExercise && Array.isArray(exercisesDataFromTrainMate.exercises)) {
+                    matchedExercise = exercisesDataFromTrainMate.exercises.find((ex) => ex.id === exercise.id);
+                }
+                if (matchedExercise) {
+                    return {
+                        ...exercise,
+                        name: matchedExercise.name,
+                        description: matchedExercise.description,
+                    };
+                }
+
+                return exercise;
+            });
+
+            return {
+                ...routine,
+                excercises: updatedExercises,
+            };
+        });
+        const routinesWithAssignedCount = routinesWithExercisesData.map((routine) => {
             const assignedForRoutine = assignedRoutines.filter((assigned) => assigned.id === routine.id);
             const totalAssignedUsers = assignedForRoutine.reduce((acc, assigned) => {
                 return acc + (assigned.users ? assigned.users.length : 0); 
             }, 0);
+
             return {
                 ...routine,
-                cant_asignados: totalAssignedUsers, 
+                cant_asignados: totalAssignedUsers,
             };
         });
-
 
         setRoutines(routinesWithAssignedCount);
         setOpenCircularProgress(false);
@@ -348,10 +387,11 @@ function CoachRoutines() {
         setOpenCircularProgress(false);
         setWarningConnection(true);
         setTimeout(() => {
-          setWarningConnection(false);
+            setWarningConnection(false);
         }, 3000);
     }
-}
+};
+
 
 
 const fetchExercises = async () => {
@@ -650,23 +690,6 @@ const fetchExercises = async () => {
                         value={name || fetchName} 
                         onChange={(e) => setName(e.target.value)} 
                         />
-                      </div>
-                      <div className="input-small-container">
-                        <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
-                        <select
-                        id="day" 
-                        name="day" 
-                        value={day || dayFetch} 
-                        onChange={(e) => setDay(e.target.value)} 
-                        >
-                          <option value="monday">Monday</option>
-                          <option value="tuesday">Tuesday</option>
-                          <option value="wednesday">Wednesday</option>
-                          <option value="thursday">Thursday</option>
-                          <option value="friday">Friday</option>
-                          <option value="saturday">Saturday</option>
-                          <option value="sunday">Sunday</option>
-                        </select>
                       </div>
                     </div>
                     <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>

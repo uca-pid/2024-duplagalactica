@@ -85,7 +85,6 @@ def update_routine_info(newRoutine):
         print("rutina nueva",newRoutine)
         if doc.exists:        
             doc_ref.update({
-                'day': newRoutine['day'],
                 'description': newRoutine['description'],
                 'name': newRoutine['name'],
                 'excercises': newRoutine['excers']

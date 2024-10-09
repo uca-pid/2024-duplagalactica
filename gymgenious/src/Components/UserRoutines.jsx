@@ -91,7 +91,7 @@ export default function StickyHeadTable() {
             }
             const data = await response.json();
             const filteredRows = data.filter((row) =>
-                row.user.some((u) => u.Mail === userMail)
+                row.users.some((u) => u === userMail)
             );
             setRows(filteredRows);
             setOpenCircularProgress(false);
@@ -110,21 +110,63 @@ export default function StickyHeadTable() {
         try {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) {
-              console.error('Token no disponible en localStorage');
-              return;
+                console.error('Token no disponible en localStorage');
+                return;
             }
             const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines', {
-                method: 'GET', 
+                method: 'GET',
                 headers: {
-                  'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`
                 }
             });
             if (!response.ok) {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
             }
-            const data = await response.json();
-            const filteredRows = data.filter((row) => row.name === routineName);
-            setRoutine(filteredRows[0]);
+            const routines = await response.json();
+            const filteredRows = routines.filter((row) => row.name === routineName);
+            const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_excersices', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            if (!response2.ok) {
+                throw new Error('Error al obtener los ejercicios locales: ' + response2.statusText);
+            }
+            const exercisesData = await response2.json();
+            const response3 = await fetch('https://train-mate-api.onrender.com/api/exercise/get-all-exercises', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}` 
+                }
+            });
+            if (!response3.ok) {
+                throw new Error('Error al obtener los ejercicios de Train Mate: ' + response3.statusText);
+            }
+            const exercisesDataFromTrainMate = await response3.json();
+            console.log("Ejercicios de Train Mate:", exercisesDataFromTrainMate);
+            const updatedExercises = filteredRows[0].excercises.map((exercise) => {
+                let matchedExercise = exercisesData.find((ex) => ex.id === exercise.id);
+                if (!matchedExercise && Array.isArray(exercisesDataFromTrainMate.exercises)) {
+                    matchedExercise = exercisesDataFromTrainMate.exercises.find((ex) => ex.id === exercise.id);
+                }
+                if (matchedExercise) {
+                    return {
+                        ...exercise,
+                        name: matchedExercise.name,
+                        description: matchedExercise.description,
+                    };
+                }
+    
+                return exercise; 
+            });
+    
+            const routineWithUpdatedExercises = {
+                ...filteredRows[0],
+                excercises: updatedExercises
+            };
+    
+            setRoutine(routineWithUpdatedExercises);
             setOpenCircularProgress(false);
         } catch (error) {
             setOpenCircularProgress(false);
@@ -135,6 +177,7 @@ export default function StickyHeadTable() {
             }, 3000);
         }
     };
+    
 
     const verifyToken = async (token) => {
         try {
