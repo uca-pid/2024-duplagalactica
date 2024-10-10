@@ -53,15 +53,15 @@ export default function Main_Page() {
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
-      //const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
-      const response = await fetch('http://127.0.0.1:5000/get_classes');
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+      //const response = await fetch('http://127.0.0.1:5000/get_classes');
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
       
-      //const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_salas');
-      const response2 = await fetch('http://127.0.0.1:5000/get_salas');
+      const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_salas');
+      //const response2 = await fetch('http://127.0.0.1:5000/get_salas');
       if (!response2.ok) {
         throw new Error('Error al obtener las salas: ' + response2.statusText);
       }

@@ -51,7 +51,12 @@ function CouchClasses() {
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
   const [type, setType] = useState(null);
-
+  const [errorSala, setErrorSala] = useState(false);
+  const [errorStartTime, setErrorStartTime] = useState(false);
+  const [errorEndTime, setErrorEndTime] = useState(false);
+  const [errorEndTime30, setErrorEndTime30] = useState(false);
+  const [errorName, setErrorName] = useState(false);
+  const [errorDate, setErrorDate] = useState(false);
 
   const [fetchId,setFetchId] = useState('');
   const [fetchDateFin,setFetchDateFin]= useState('¿');
@@ -191,24 +196,18 @@ function CouchClasses() {
         const data2 = await response2.json();
         const isoDateString = date.toString() || fetchDateInicio.split('T')[0]; 
 
-
-
-        
         const newPreviousDate = fetchDateInicio ? fetchDateInicio.split('T')[0] : null;
         const newPreviousDateFin = fetchDateFin ? fetchDateFin.split('T')[0] : null;
         const newPreviousHour = fetchDateInicio ? fetchDateInicio.split('T')[1].split('Z')[0] : "00:00:00";
         const newPreviousHourFin = fetchDateFin ? fetchDateFin.split('T')[1].split('Z')[0] : "00:00:00";
-
 
         const finalDateStart = date || newPreviousDate;
         const finalHourStart = hour || newPreviousHour;
         const finalDateEnd = date || newPreviousDateFin;
         const finalHourEnd = hourFin || newPreviousHourFin;
 
-        
         const newClassStartTime = new Date(`${finalDateStart}T${finalHourStart}Z`);
         const newClassEndTime = new Date(`${finalDateEnd}T${finalHourEnd}Z`);
-        
         
         const newClassStartTimeInMinutes = timeToMinutes(hour);
         const newClassEndTimeInMinutes = timeToMinutes(hourFin);
@@ -713,7 +712,7 @@ function CouchClasses() {
                 )}
                 {editClass && (
                     <div className="Modal" onClick={handleEditClass}>
-                        <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                        <div className="Modal-Content-class-creation" onClick={(e) => e.stopPropagation()}>
                             <h2>Class details</h2>
                             <form autoComplete='off' onSubmit={saveClass}>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
@@ -777,11 +776,10 @@ function CouchClasses() {
                                       <select
                                           id="salaAssigned"
                                           name="salaAssigned"
-                                          value={salaAssigned}
+                                          value={salaAssigned || selectedEvent.sala}
                                           onChange={(e) => setSala(e.target.value)}
                                           style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
                                       >
-                                          <option value="">Select</option>
                                           {salas.map((sala) => (
                                               <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
                                                   {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}

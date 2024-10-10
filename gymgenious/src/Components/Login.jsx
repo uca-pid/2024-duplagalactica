@@ -19,7 +19,8 @@ export default function Login() {
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
   const [verifyEmail, setVerifyEmail] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [errorLogin, setErrorLogin] = useState(false);
 
   const goToCreateAccount = () => {
     navigate('/create-account');
@@ -30,6 +31,7 @@ export default function Login() {
   };
 
   const loginUser = async (e) => {
+    setErrorLogin(false)
     setOpenCircularProgress(true);
     e.preventDefault(); 
     try {
@@ -54,8 +56,7 @@ export default function Login() {
     } catch (error) {
       console.error("Login error:", error);
       setOpenCircularProgress(false);
-      setFailure(true);
-      setTimeout(() => setFailure(false), 3000);
+      setErrorLogin(true)
     }
   };
   
@@ -108,6 +109,7 @@ export default function Login() {
                       onChange={(e) => setPassword(e.target.value)} 
                     />
                   </div>
+                  {errorLogin && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Credentials or server error.</p>)}
                   <button type="submit" className='button_login'>
                     Login
                   </button>

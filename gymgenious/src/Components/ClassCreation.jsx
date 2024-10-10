@@ -116,8 +116,8 @@ export default function CreateClass() {
         if(salaAssigned===null){
           throw new Error('Select a room');
         }
-        //render//const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
-        const response2 = await fetch('http://127.0.0.1:5000/get_classes');
+        const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+        //const response2 = await fetch('http://127.0.0.1:5000/get_classes');
         if (!response2.ok) {
             throw new Error('Error al obtener las clases: ' + response2.statusText);
         }
@@ -199,8 +199,8 @@ export default function CreateClass() {
             sala: salaAssigned
         };
 
-        //const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/create_class', {
-          const response = await fetch('http://127.0.0.1:5000/create_class', {
+        const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/create_class', {
+        //const response = await fetch('http://127.0.0.1:5000/create_class', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -264,8 +264,8 @@ export default function CreateClass() {
           console.error('Token no disponible en localStorage');
           return;
         }
-        //const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_salas`, {
-          const response = await fetch(`http://127.0.0.1:5000/get_salas`, {
+        const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_salas`, {
+        //const response = await fetch(`http://127.0.0.1:5000/get_salas`, {
             method: 'GET', 
             headers: {
               'Authorization': `Bearer ${authToken}`
@@ -345,8 +345,8 @@ export default function CreateClass() {
         return;
       }
       const encodedUserMail = encodeURIComponent(userMail);
-      //const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
-      const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`, {
+      const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
+      //const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`, {
             method: 'GET', 
             headers: {
               'Authorization': `Bearer ${authToken}`
