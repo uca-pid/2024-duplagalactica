@@ -193,7 +193,7 @@ function CouchClasses() {
         if (!response2.ok) {
             throw new Error('Error al obtener las clases: ' + response2.statusText);
         }
-        const data2 = await response2.json();
+        const data2 = (await response2.json()).filter((res)=> res.id!=fetchId);
         const isoDateString = date.toString() || fetchDateInicio.split('T')[0]; 
 
         const newPreviousDate = fetchDateInicio ? fetchDateInicio.split('T')[0] : null;
