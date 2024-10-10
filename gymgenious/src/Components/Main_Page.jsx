@@ -54,12 +54,14 @@ export default function Main_Page() {
     setOpenCircularProgress(true);
     try {
       const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+      //const response = await fetch('http://127.0.0.1:5000/get_classes');
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
       
       const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_salas');
+      //const response2 = await fetch('http://127.0.0.1:5000/get_salas');
       if (!response2.ok) {
         throw new Error('Error al obtener las salas: ' + response2.statusText);
       }
@@ -315,7 +317,7 @@ export default function Main_Page() {
         <h2>Classes details:</h2>
         <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
         <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.start))}</p>
-        <p><strong>Start time:</strong> {new Date(selectedEvent.dateInicio).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+        <p><strong>Start time:</strong> {selectedEvent.dateInicio.split('T')[1].split(':').slice(0, 2).join(':')}</p>
         <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
         <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
