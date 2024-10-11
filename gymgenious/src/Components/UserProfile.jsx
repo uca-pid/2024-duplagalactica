@@ -28,6 +28,7 @@ export default function CreateAccount() {
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [warningFetchingUserInformation, setWarningFetchingUserInformation] = useState(false);
     const [warningModifyingData, setWarningModifyingData] = useState(false);
+    const [errorForm, setErrorForm] = useState(false);
 
     const fetchUserInformation = async () => {
         setOpenCircularProgress(true);
@@ -94,6 +95,7 @@ export default function CreateAccount() {
                 throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
             }
             const data = await response.json();
+            fetchUserInformation();
             setOpenCircularProgress(false);
         } catch (error) {
             console.error("Error updating user:", error);
@@ -116,11 +118,23 @@ export default function CreateAccount() {
         navigate('/reset-password');
     };
 
+    const validateForm = () => {
+        let res = true;
+        if (name === '' && lastName === '' && date === '') {
+            setErrorForm(true);
+            res = false;
+        } else {
+            setErrorForm(false);
+        }
+        return res;
+    }
+
     const handleSave = (event) => {
-        event.preventDefault(); 
-        fetchModifyUserInformation();
-        setIsDisabled(!isDisabled);
-        fetchUserInformation();
+        if(validateForm()){
+            event.preventDefault(); 
+            fetchModifyUserInformation();
+            setIsDisabled(!isDisabled);
+        }
     };
     const verifyToken = async (token) => {
         setOpenCircularProgress(true);
@@ -223,7 +237,6 @@ export default function CreateAccount() {
                 <div className='user-profile-container'>
                     <div className='create-account-content'>
                         <h2 style={{ color: '#14213D' }}>Profile</h2>
-                        <form autoComplete='off' onSubmit={handleSave}>
                             <div className="input-container">
                                 <label htmlFor="name" style={{ color: '#14213D' }}>Name:</label>
                                 <input
@@ -231,9 +244,10 @@ export default function CreateAccount() {
                                     type="text"
                                     id="name"
                                     name="name"
-                                    value={name || nameFetch}
+                                    value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     disabled={isDisabled}
+                                    placeholder={nameFetch}
                                 />
                             </div>
                             <div className="input-container">
@@ -243,9 +257,10 @@ export default function CreateAccount() {
                                     type="text"
                                     id="lastname"
                                     name="lastname"
-                                    value={lastName || lastNameFetch}
+                                    value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
                                     disabled={isDisabled}
+                                    placeholder={lastNameFetch}
                                 />
                             </div>
                             <div className="input-container">
@@ -258,6 +273,7 @@ export default function CreateAccount() {
                                     onChange={(e) => setDate(e.target.value)}
                                     disabled={isDisabled}
                                 />
+                                {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
                             </div>
                             <div className="input-container">
                                 <label htmlFor="email" style={{ color: '#14213D' }}>Email:</label>
@@ -282,7 +298,7 @@ export default function CreateAccount() {
                                     <button className='button_create_account' type="button" onClick={goToChangePassword}>
                                         Change password
                                     </button>
-                                    <button type="submit" className='button_create_account'>
+                                    <button onClick={handleSave} className='button_create_account'>
                                         Save
                                     </button>
                                     <button className='button_create_account' type="button" onClick={handleChangeModify}>
@@ -290,7 +306,6 @@ export default function CreateAccount() {
                                     </button>
                                 </>
                             )}
-                        </form>
                     </div>
                 </div>
             </>

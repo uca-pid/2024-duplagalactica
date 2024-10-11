@@ -19,17 +19,14 @@ import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
 
-
-
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
-  const [maxNum,setMaxNum] = useState(1);
+  const [maxNum,setMaxNum] = useState(null);
   const [salas, setSalas] = useState([]);
   const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
   const [salaAssigned, setSala] = useState(null);
-  const [openHourRequirements, setOpenHourRequirements] = useState(false);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -52,11 +49,8 @@ function CouchClasses() {
   const [maxHeight, setMaxHeight] = useState('600px');
   const [type, setType] = useState(null);
   const [errorSala, setErrorSala] = useState(false);
-  const [errorStartTime, setErrorStartTime] = useState(false);
   const [errorEndTime, setErrorEndTime] = useState(false);
-  const [errorEndTime30, setErrorEndTime30] = useState(false);
-  const [errorName, setErrorName] = useState(false);
-  const [errorDate, setErrorDate] = useState(false);
+
 
   const [fetchId,setFetchId] = useState('');
   const [fetchDateFin,setFetchDateFin]= useState('¿');
@@ -69,6 +63,7 @@ function CouchClasses() {
   const [fetchSala,setFetchSala] = useState('')
   const [fetchCapacity, setFetchCapacity] = useState('')
   const [failureErrors, setFailureErrors] = useState(false);
+  const [errorForm, setErrorForm] = useState(false);
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -84,15 +79,11 @@ function CouchClasses() {
     return `${month}/${day}/${year}`;
   }
 
-  const handleCloseHourRequirements = () => {
-    setOpenHourRequirements(false);
-  }
-
   useEffect(() => {
-    if (userMail && maxNum) {
+    if (userMail && (maxNum || fetchCapacity)) {
       fetchSalas();
     }
-  }, [userMail,maxNum]);
+  }, [userMail,maxNum,fetchCapacity]);
   
   const fetchSalas = async () => {
     setOpenCircularProgress(true);
@@ -112,7 +103,14 @@ function CouchClasses() {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
         const data = await response.json();
-        const dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
+        let dataFinal=[]
+        if(maxNum!=null){
+          dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
+          console.log(fetchCapacity)
+        } else {
+          dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=fetchCapacity)
+          console.log(fetchCapacity)
+        }
         setSalas(dataFinal);
         setOpenCircularProgress(false);
     } catch (error) {
@@ -171,6 +169,10 @@ function CouchClasses() {
     setPermanent('');
     setDate('');
     setName('');
+    setMaxNum(null);
+    setSala(null);
+    setErrorForm(false);
+    setErrorSala(false);
   } 
 
 
@@ -182,6 +184,7 @@ function CouchClasses() {
 
   const fetchModifyClassInformation = async () => {
     setOpenCircularProgress(true);
+    setErrorSala(false);
     try {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
@@ -233,11 +236,7 @@ function CouchClasses() {
           if (hasNonPermanentConflict || hasPermanentConflict) {
               console.error('Conflicto de horario con clases existentes en esta sala.');
               setOpenCircularProgress(false);
-              setFailureErrors(true);
-              setTimeout(() => {
-                  setFailureErrors(false);
-              }, 3000);
-              return;
+              throw new Error('Error al crear la clase: Conflicto de horario con clases existentes en esta sala.');
           }
         } 
         else if ((permanent || fetchPermanent) == "Si") {
@@ -271,11 +270,7 @@ function CouchClasses() {
             if (hasPastPermanentConflict || hasPermanentConflict || hasNonPermanentConflict) {
                 console.error('Ya existe una clase permanente en esta sala para este horario.');
                 setOpenCircularProgress(false);
-                setFailureErrors(true);
-                setTimeout(() => {
-                    setFailureErrors(false);
-                }, 3000);
-                return;
+                throw new Error('Error al crear la clase: Ya existe una clase permanente en esta sala para este horario.');
             }
         }
         
@@ -315,26 +310,31 @@ function CouchClasses() {
         const data = await response.json();
         await fetchClasses();
         setOpenCircularProgress(false);
+        setEditClass(!editClass);
         handleCloseModal(); 
     } catch (error) {
         console.error("Error updating user:", error);
         setOpenCircularProgress(false);
-        setWarningConnection(true);
-        setTimeout(() => {
-            setWarningConnection(false);
-        }, 3000);
+        setErrorSala(true);
     }
 };
+  const validateForm = () => {
+    let res = true;
+    console.log(name)
+    if (name==='' && hour === '' && hourFin === '' && date=== '') {
+        setErrorForm(true);
+        res = false;
+    } else {
+        setErrorForm(false);
+    }
+    return res;
+  }
 
-  const saveClass = async (event) => {
-    event.preventDefault(); 
-    fetchModifyClassInformation();
-    setEditClass(!editClass);
-    setTimeout(() => {
-      setOpenCircularProgress(false);
-    }, 7000);
-    await fetchClasses();
-    ///window.location.reload()
+  const saveClass = (event) => {
+    if(validateForm()){
+      event.preventDefault(); 
+      fetchModifyClassInformation();
+    }
   };
 
   const handleDeleteClass = async (event) => {
@@ -711,10 +711,9 @@ function CouchClasses() {
                     </div>
                 )}
                 {editClass && (
-                    <div className="Modal" onClick={handleEditClass}>
+                    <div className="Modal">
                         <div className="Modal-Content-class-creation" onClick={(e) => e.stopPropagation()}>
                             <h2>Class details</h2>
-                            <form autoComplete='off' onSubmit={saveClass}>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                     <div className="input-small-container">
                                         <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
@@ -742,8 +741,9 @@ function CouchClasses() {
                                         type="text" 
                                         id="name" 
                                         name="name" 
-                                        value={name || fetchName} 
-                                        onChange={(e) => setName(e.target.value)}/>
+                                        value={name} 
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder={fetchName}/>
                                     </div>
                                 </div>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
@@ -786,25 +786,25 @@ function CouchClasses() {
                                               </option>
                                           ))}
                                       </select>
+                                      {errorSala && (<p style={{color: 'red', margin: '0px'}}>Room no available</p>)}
                                   </div>
                                 </div>
                                 <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
                                   <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
                                   <input
-                                    onClick={handleCloseHourRequirements}
                                     type="number" 
                                     id="maxNum" 
                                     name="maxNum"
                                     min='1'
                                     max='500'
                                     step='1'
-                                    value={maxNum} 
-                                    onChange={(e) => setMaxNum(e.target.value)} 
+                                    value={maxNum || fetchCapacity} 
+                                    onChange={(e) => setMaxNum(e.target.value)}
                                   />
+                                  {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
                                 </div>
                                 <button onClick={handleEditClass} className='button_login'>Cancell</button>
-                                <button  type="submit" className='button_login'>Save changes</button>
-                            </form>
+                                <button  onClick={saveClass} className='button_login'>Save changes</button>
                         </div>
                     </div>
                 )}
