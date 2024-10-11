@@ -393,12 +393,12 @@ export default function CreateClass() {
             <LeftBar/>
             <div className='class-creation-container'>
               <div className='class-creation-content'>
-                <h2 style={{color:'#5e2404'}}>Create class</h2>
+                <h2 style={{color:'#424242'}}>Create class</h2>
                   {!isSmallScreen ? (
                     <>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                         <div className="input-small-container">
-                          <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                          <label htmlFor="name" style={{color:'#424242'}}>Name:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="text" 
@@ -412,7 +412,7 @@ export default function CreateClass() {
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                         <div className="input-small-container" style={{marginBottom: '0px'}}>
-                          <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
+                          <label htmlFor="hour" style={{color:'#424242'}}>Start time:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="time" 
@@ -424,7 +424,7 @@ export default function CreateClass() {
                           {errorStartTime && (<p style={{color: 'red', margin: '0px'}}>Enter a start time</p>)}
                         </div>
                         <div className="input-small-container" style={{marginBottom: '0px'}}>
-                          <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
+                          <label htmlFor="hour" style={{color:'#424242'}}>End time:</label>
                           <input
                             onClick={handleOpenHourRequirements}
                             type="time" 
@@ -444,7 +444,7 @@ export default function CreateClass() {
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                         <div className="input-small-container" style={{ flex: 3, textAlign: 'left', marginBottom: '0px' }}>
-                            <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
+                            <label htmlFor="date" style={{color:'#424242'}}>Date:</label>
                             <input
                               onClick={handleCloseHourRequirements}
                               type="date" 
@@ -456,7 +456,7 @@ export default function CreateClass() {
                             {errorDate && (<p style={{color: 'red', margin: '0px'}}>Select a date</p>)}
                           </div>
                           <div className="input-small-container" style={{ flex: 3, textAlign: 'left', marginBottom: '0px' }}>
-                          <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                          <label htmlFor="maxNum" style={{color:'#424242'}}>Participants:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="number" 
@@ -472,7 +472,7 @@ export default function CreateClass() {
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                           <div className="input-small-container" style={{width:"100%", marginBottom: '0px'}}>
-                            <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                            <label htmlFor="permanent" style={{color:'#424242'}}>Recurrent:</label>
                             <select
                               onClick={handleCloseHourRequirements}
                               id="permanent" 
@@ -495,7 +495,7 @@ export default function CreateClass() {
                     <>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                         <div className="input-small-container" style={{marginBottom: '0px'}}>
-                          <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
+                          <label htmlFor="hour" style={{color:'#424242'}}>Start time:</label>
                           <input
                             style={{marginBottom: '0px'}}
                             onClick={handleCloseHourRequirements}
@@ -508,7 +508,7 @@ export default function CreateClass() {
                           {errorStartTime && (<p style={{color: 'red', margin: '0px'}}>Enter a start time</p>)}
                         </div>
                         <div className="input-small-container" style={{marginBottom: '0px'}}>
-                          <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
+                          <label htmlFor="hour" style={{color:'#424242'}}>End time:</label>
                           <input
                             onClick={handleOpenHourRequirements}
                             type="time" 
@@ -528,7 +528,7 @@ export default function CreateClass() {
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                         <div className="input-small-container" style={{marginBottom: '0px'}}>
-                            <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                            <label htmlFor="name" style={{color:'#424242'}}>Name:</label>
                             <input
                               onClick={handleCloseHourRequirements}
                               type="text" 
@@ -540,7 +540,7 @@ export default function CreateClass() {
                             {errorName && (<p style={{color: 'red', margin: '0px'}}>Enter a name</p>)}
                           </div>
                         <div className="input-small-container" style={{width:"100%", marginBottom: '0px'}}>
-                          <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                          <label htmlFor="permanent" style={{color:'#424242'}}>Recurrent:</label>
                           <select
                             onClick={handleCloseHourRequirements}
                             id="permanent" 
@@ -557,7 +557,7 @@ export default function CreateClass() {
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                         <div className="input-small-container" style={{ flex: 3, textAlign: 'left', marginBottom: '0px' }}>
-                          <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                          <label htmlFor="maxNum" style={{color:'#424242'}}>Participants:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="number" 
@@ -571,7 +571,7 @@ export default function CreateClass() {
                           />
                         </div>
                         <div className="input-small-container" style={{ flex: 3, textAlign: 'left', marginBottom: '0px'}}>
-                          <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
+                          <label htmlFor="date" style={{color:'#424242'}}>Date:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="date" 
@@ -599,7 +599,7 @@ export default function CreateClass() {
           <LeftBar/>
             <div className='class-creation-rooms-container'>
               <div className='class-creation-content'>
-                <h2 style={{color:'#5e2404'}}>Create class</h2>
+                <h2 style={{color:'#424242'}}>Create class</h2>
                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                   <div onClick={() => handleSelectSala(salas[0])} className="input-small-container" style={{ flex: 3, textAlign: 'center', backgroundColor: salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'green' : '' }}>
                     <img 

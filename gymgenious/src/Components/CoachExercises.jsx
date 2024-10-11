@@ -324,11 +324,11 @@ export default function CoachExercises() {
                         </div>
                     )}
                     <div className="Table-Container">
-                    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+                    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
                         <Paper
                             sx={{
                             width: '100%',
-                            backgroundColor: '#ffe0b5',
+                            backgroundColor: '#F5F5F5',
                             borderRadius: '10px'
                             }}
                         >
@@ -343,7 +343,7 @@ export default function CoachExercises() {
                                 >
                                     <TableHead>
                                         <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                            <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                            <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                                 <TableSortLabel
                                                 active={orderBy === 'name'}
                                                 direction={orderBy === 'name' ? order : 'asc'}
@@ -358,7 +358,7 @@ export default function CoachExercises() {
                                                 </TableSortLabel>
                                             </TableCell>
                                             {!isSmallScreen650 && (
-                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                                                <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                                                 <TableSortLabel
                                                     active={orderBy === 'description'}
                                                     direction={orderBy === 'description' ? order : 'asc'}
@@ -374,7 +374,7 @@ export default function CoachExercises() {
                                                 </TableCell>
                                             )}
                                             {!isSmallScreen && (
-                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                                                <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                                                 <TableSortLabel
                                                     active={orderBy === 'owner'}
                                                     direction={orderBy === 'owner' ? order : 'asc'}
@@ -394,7 +394,7 @@ export default function CoachExercises() {
                                         <TableBody>
                                             {visibleRows.length===0 ? (
                                                 <TableRow>
-                                                <TableCell colSpan={isSmallScreen650 ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                                                <TableCell colSpan={isSmallScreen650 ? 2 : 3} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                                     There are no created exercises
                                                 </TableCell>
                                                 </TableRow>
@@ -402,16 +402,16 @@ export default function CoachExercises() {
                                                 <>
                                                     {visibleRows.map((row) => (
                                                         <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                                     {row.name}
                                                                 </TableCell>
                                                             {!isSmallScreen650 && (
-                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                                     {row.description}
                                                                 </TableCell>
                                                             )}
                                                             {!isSmallScreen && (
-                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
+                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
                                                                     {row.owner}
                                                                 </TableCell>
                                                             )}

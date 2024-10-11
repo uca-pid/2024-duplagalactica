@@ -299,11 +299,11 @@ export default function StickyHeadTable() {
                 ) : (
                     <DaySelection selectedDay={selectedDay} setSelectedDay={setSelectedDay}/>
                 )}
-                <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+                <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
                     <Paper
                         sx={{
                         width: '100%',
-                        backgroundColor: '#ffe0b5',
+                        backgroundColor: '#F5F5F5',
                         borderRadius: '10px'
                         }}
                     >
@@ -318,7 +318,7 @@ export default function StickyHeadTable() {
                             >
                                 <TableHead>
                                     <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                        <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                        <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                             <TableSortLabel
                                                 active={orderBy === 'name'}
                                                 direction={orderBy === 'name' ? order : 'asc'}
@@ -332,7 +332,7 @@ export default function StickyHeadTable() {
                                                 ) : null}
                                             </TableSortLabel>
                                         </TableCell>
-                                        <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                        <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                             <TableSortLabel
                                                 active={orderBy === 'day'}
                                                 direction={orderBy === 'day' ? order : 'asc'}
@@ -347,7 +347,7 @@ export default function StickyHeadTable() {
                                             </TableSortLabel>
                                         </TableCell>
                                         {!isSmallScreen && (
-                                            <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                            <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                             <TableSortLabel
                                                 active={orderBy === 'owner'}
                                                 direction={orderBy === 'owner' ? order : 'asc'}
@@ -367,21 +367,21 @@ export default function StickyHeadTable() {
                                 <TableBody>
                                     {visibleRows.length===0 ? (
                                         <TableRow>
-                                        <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                                        <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                             There are no assigned routines
                                         </TableCell>
                                         </TableRow>
                                     ) : (
                                         visibleRows.map((row) => (
                                         <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                             {row.routine}
                                             </TableCell>
-                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>
                                             {row.day}
                                             </TableCell>
                                             {!isSmallScreen && (
-                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242', color: '#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                 {row.owner}
                                             </TableCell>
                                             )}
