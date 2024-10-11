@@ -1253,8 +1253,6 @@ iframe {
   padding-bottom: 20px;
 }
 
-
-
 .grid-container {
   display: grid;
   place-content: center;
@@ -1493,4 +1491,9 @@ iframe {
 
 .inline-block {
   display: inline-block; 
+}
+.button-come-back {
+  position: absolute;
+  top: 1%;
+  left: 1%;
 }
