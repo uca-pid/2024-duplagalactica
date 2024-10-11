@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import ExcersiceAssignment from './ExcersiceAssignment.jsx';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
@@ -15,6 +14,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 export default function RoutineCreation() {
     const [name, setName] = useState('');
@@ -278,6 +278,12 @@ export default function RoutineCreation() {
 
   return (
     <div className='routine-creation-container'>
+      <button 
+        onClick={() => window.location.reload()} 
+        className="custom-button-go-back-managing"
+      >
+        <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+      </button>
       <div className='routine-creation-content'>
         <h2 style={{color:'#424242'}}>Create routine</h2>
         <form onSubmit={handleSubmit}>

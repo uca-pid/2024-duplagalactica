@@ -704,9 +704,9 @@ function CouchClasses() {
                             <p><strong>Sala:</strong> {selectedEvent.salaInfo.nombre}</p>
                             <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
                             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>
-                            <button onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
-                            <button onClick={handleCloseModal}>Close</button>
-                            <button onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
+                            <button style={{marginLeft:'10px'}} onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
+                            <button style={{marginLeft:'10px'}} onClick={handleCloseModal}>Close</button>
+                            <button style={{marginLeft:'10px'}} onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
                         </div>
                     </div>
                 )}
@@ -772,7 +772,7 @@ function CouchClasses() {
                                 </div>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                 <div className="input-small-container">
-                                      <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
+                                      <label htmlFor="salaAssigned" style={{ color: '#14213D' }}>Gymroom:</label>
                                       <select
                                           id="salaAssigned"
                                           name="salaAssigned"
@@ -790,7 +790,7 @@ function CouchClasses() {
                                   </div>
                                 </div>
                                 <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                                  <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                                  <label htmlFor="maxNum" style={{color:'#14213D'}}>Participants:</label>
                                   <input
                                     type="number" 
                                     id="maxNum" 
@@ -803,8 +803,9 @@ function CouchClasses() {
                                   />
                                   {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
                                 </div>
-                                <button onClick={handleEditClass} className='button_login'>Cancell</button>
-                                <button  onClick={saveClass} className='button_login'>Save changes</button>
+                                <button   onClick={handleEditClass} className='button_login'>Cancell</button>
+                                <button style={{merginTop:'10px'}} type="submit" className='button_login'>Save changes</button>
+                            </form>
                         </div>
                     </div>
                 )}
