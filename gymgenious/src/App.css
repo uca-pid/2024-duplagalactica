@@ -1225,3 +1225,9 @@ iframe {
   padding-right: 20px;
   padding-bottom: 20px;
 }
+
+.button-come-back {
+  position: absolute;
+  top: 1%;
+  left: 1%;
+}

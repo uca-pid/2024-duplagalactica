@@ -18,7 +18,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
-import Popper from '@mui/material/Popper';
 
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
@@ -50,11 +49,8 @@ function CouchClasses() {
   const [maxHeight, setMaxHeight] = useState('600px');
   const [type, setType] = useState(null);
   const [errorSala, setErrorSala] = useState(false);
-  const [errorStartTime, setErrorStartTime] = useState(false);
   const [errorEndTime, setErrorEndTime] = useState(false);
-  const [errorEndTime30, setErrorEndTime30] = useState(false);
-  const [errorName, setErrorName] = useState(false);
-  const [errorDate, setErrorDate] = useState(false);
+
 
   const [fetchId,setFetchId] = useState('');
   const [fetchDateFin,setFetchDateFin]= useState('¿');
@@ -176,6 +172,7 @@ function CouchClasses() {
     setMaxNum(null);
     setSala(null);
     setErrorForm(false);
+    setErrorSala(false);
   } 
 
 
@@ -187,6 +184,7 @@ function CouchClasses() {
 
   const fetchModifyClassInformation = async () => {
     setOpenCircularProgress(true);
+    setErrorSala(false);
     try {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
@@ -238,11 +236,7 @@ function CouchClasses() {
           if (hasNonPermanentConflict || hasPermanentConflict) {
               console.error('Conflicto de horario con clases existentes en esta sala.');
               setOpenCircularProgress(false);
-              setFailureErrors(true);
-              setTimeout(() => {
-                  setFailureErrors(false);
-              }, 3000);
-              return;
+              throw new Error('Error al crear la clase: Conflicto de horario con clases existentes en esta sala.');
           }
         } 
         else if ((permanent || fetchPermanent) == "Si") {
@@ -276,11 +270,7 @@ function CouchClasses() {
             if (hasPastPermanentConflict || hasPermanentConflict || hasNonPermanentConflict) {
                 console.error('Ya existe una clase permanente en esta sala para este horario.');
                 setOpenCircularProgress(false);
-                setFailureErrors(true);
-                setTimeout(() => {
-                    setFailureErrors(false);
-                }, 3000);
-                return;
+                throw new Error('Error al crear la clase: Ya existe una clase permanente en esta sala para este horario.');
             }
         }
         
@@ -320,19 +310,18 @@ function CouchClasses() {
         const data = await response.json();
         await fetchClasses();
         setOpenCircularProgress(false);
+        setEditClass(!editClass);
         handleCloseModal(); 
     } catch (error) {
         console.error("Error updating user:", error);
         setOpenCircularProgress(false);
-        setWarningConnection(true);
-        setTimeout(() => {
-            setWarningConnection(false);
-        }, 3000);
+        setErrorSala(true);
     }
 };
   const validateForm = () => {
     let res = true;
-    if (name==='' && hour === '' && hourFin === '' && permanent===fetchPermanent && date=== '' && salaAssigned === fetchSala && maxNum===fetchCapacity) {
+    console.log(name)
+    if (name==='' && hour === '' && hourFin === '' && date=== '') {
         setErrorForm(true);
         res = false;
     } else {
@@ -345,8 +334,6 @@ function CouchClasses() {
     if(validateForm()){
       event.preventDefault(); 
       fetchModifyClassInformation();
-      setEditClass(!editClass);
-      fetchClasses();
     }
   };
 
@@ -799,6 +786,7 @@ function CouchClasses() {
                                               </option>
                                           ))}
                                       </select>
+                                      {errorSala && (<p style={{color: 'red', margin: '0px'}}>Room no available</p>)}
                                   </div>
                                 </div>
                                 <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
