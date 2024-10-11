@@ -9,6 +9,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 export default function RoutineCreation() {
     const [routineAssigned, setRoutine] = useState(); 
@@ -171,6 +172,12 @@ export default function RoutineCreation() {
 
     return (
         <div className='assign-routine-container'>
+            <button 
+                onClick={() => window.location.reload()} 
+                className="custom-button-go-back-managing"
+            >
+                <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+            </button>
             <div className='class-creation-content'>
                 <h2 style={{ color: '#424242' }}>Assign users</h2>
                 <form onSubmit={handleSubmit}>

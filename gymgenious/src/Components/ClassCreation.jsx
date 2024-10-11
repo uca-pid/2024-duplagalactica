@@ -9,9 +9,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Slide from '@mui/material/Slide';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Popper from '@mui/material/Popper';
 import {jwtDecode} from "jwt-decode";
 import { useMediaQuery } from '@mui/material';
+
+
+
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
@@ -49,6 +53,46 @@ export default function CreateClass() {
     const date = new Date(dateString);
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     return daysOfWeek[date.getDay()];
+  };
+
+  const ComponenteBotonShowGymRoom = () => {
+    return (
+      <div className="grid-container">
+        <BotonShowGymRoom>Show gymroom</BotonShowGymRoom>
+      </div>
+    );
+  };
+  
+  const BotonShowGymRoom = ({ children, ...rest }) => {
+    return (
+      <button {...rest} className="draw-outline-button" onClick={handleViewRooms}>
+        <span>{children}</span>
+        <span className="top" />
+        <span className="right" />
+        <span className="bottom" />
+        <span className="left" />
+    </button>
+    );
+  };
+
+  const ComponenteCreateClass = () => {
+    return (
+      <div className="grid-container">
+        <CreateClass>Create class</CreateClass>
+      </div>
+    );
+  };
+  
+  const CreateClass = ({ children, ...rest }) => {
+    return (
+      <button {...rest} className="draw-outline-button" onClick={handleCreateClass}>
+        <span>{children}</span>
+        <span className="top" />
+        <span className="right" />
+        <span className="bottom" />
+        <span className="left" />
+    </button>
+    );
   };
 
   const validateForm = () => {
@@ -487,9 +531,7 @@ export default function CreateClass() {
                             {errorRecurrent && (<p style={{color: 'red', margin: '0px'}}>Select a recurrent value</p>)}
                           </div>
                         </div>
-                        <button className='button_login' onClick={handleViewRooms}>
-                    Show gymrooms
-                  </button>
+                        <ComponenteBotonShowGymRoom/>
                     </>
                   ) : (
                     <>
@@ -601,7 +643,7 @@ export default function CreateClass() {
               <div className='class-creation-content'>
                 <h2 style={{color:'#424242'}}>Create class</h2>
                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                  <div onClick={() => handleSelectSala(salas[0])} className="input-small-container" style={{ flex: 3, textAlign: 'center', backgroundColor: salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'green' : '' }}>
+                  <div onClick={() => handleSelectSala(salas[0])} className={salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center',borderRadius:'10px' ,backgroundColor: salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
                     <img 
                       src={`${process.env.PUBLIC_URL}/salon_pequenio.jpeg`} 
                       alt={'logo'}
@@ -617,7 +659,7 @@ export default function CreateClass() {
                     <p style={{marginBottom: '0px'}}>{salas[0]?.nombre} ({salas[0]?.capacidad})</p>
                     {errorSala1 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
                   </div>
-                  <div onClick={() => handleSelectSala(salas[1])} className="input-small-container" style={{ flex: 3, textAlign: 'center', backgroundColor: salaAssigned==salas[1]?.id && salas[1]?.opacity===1 ? 'green' : '' }}>
+                  <div onClick={() => handleSelectSala(salas[1])} className={salaAssigned==salas[1]?.id && salas[1] ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center', borderRadius:'10px',backgroundColor: salaAssigned==salas[1]?.id && salas[1]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
                     <img 
                       src={`${process.env.PUBLIC_URL}/gimnasio.jpeg`} 
                       alt={'logo'}
@@ -635,7 +677,7 @@ export default function CreateClass() {
                   </div>
                 </div>
                   <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                    <div onClick={() => handleSelectSala(salas[2])} className="input-small-container" style={{ flex: 3, textAlign: 'center', backgroundColor: salaAssigned==salas[2]?.id && salas[2]?.opacity===1 ? 'green' : '' }}>
+                    <div onClick={() => handleSelectSala(salas[2])} className={salaAssigned==salas[2]?.id && salas[1] ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center', borderRadius:'10px', backgroundColor: salaAssigned==salas[2]?.id && salas[2]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
                       <img 
                         src={`${process.env.PUBLIC_URL}/salon_de_functional.jpeg`} 
                         alt={'logo'}
@@ -651,7 +693,7 @@ export default function CreateClass() {
                       <p style={{marginBottom: '0px'}}>{salas[2]?.nombre} ({salas[2]?.capacidad})</p>
                       {errorSala3 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
                   </div>
-                  <div onClick={() => handleSelectSala(salas[3])} className="input-small-container" style={{ flex: 3, textAlign: 'center', backgroundColor: salaAssigned==salas[3]?.id && salas[3]?.opacity===1 ? 'green' : '' }}>
+                  <div onClick={() => handleSelectSala(salas[3])} className={salaAssigned==salas[3]?.id && salas[3  ] ? 'box':'input-small-container'}   style={{ flex: 3, textAlign: 'center', borderRadius:'10px', backgroundColor: salaAssigned==salas[3]?.id && salas[3]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
                     <img
                       src={`${process.env.PUBLIC_URL}/salon_de_gimnasio.jpg`} 
                       alt={'logo'}
@@ -668,9 +710,7 @@ export default function CreateClass() {
                     {errorSala4 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
                   </div>
                 </div>
-                <button className='button_login' onClick={handleCreateClass}>
-                    Create class
-                  </button>
+                <ComponenteCreateClass/>
               </div>
             </div>
         </>
