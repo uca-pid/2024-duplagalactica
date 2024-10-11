@@ -79,21 +79,6 @@ export default function CreateAccount() {
         } else {
             setErrorPassword(false);
         }
-        // if (!isValidLength) {
-        //     errors.push('The password must be more than 8 characters.');
-        // } 
-        // if (!hasNumber) {
-        //     errors.push('The password must contain at least 1 number.');
-        // } 
-        // if (!hasLowerCase) {
-        //     errors.push('The password must contain at least 1 lowercase letter.');
-        // } 
-        // if (!hasUpperCase) {
-        //     errors.push('The password must contain at least 1 uppercase letter.');
-        // } 
-        // if (!hasSpecialChar) {
-        //     errors.push('The password must contain at least 1 special character.');
-        // }
 
         if(typeAccount===''){
             setErrorType(true);
@@ -186,9 +171,9 @@ export default function CreateAccount() {
             <LeftBar value={'profile'}/>
             <div className='create-account-container-new'>
                 <div className='create-account-content'>
-                    <h2 style={{color:'#5e2404'}}>Create account</h2>
+                    <h2 style={{color:'#424242'}}>Create account</h2>
                         <div className="input-container">
-                            <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                            <label htmlFor="name" style={{color:'#424242'}}>Name:</label>
                             <input 
                                 type="text" 
                                 id="name" 
@@ -199,7 +184,7 @@ export default function CreateAccount() {
                             {errorName && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a name</p>)}
                         </div>
                         <div className="input-container">
-                            <label htmlFor="lastName" style={{color:'#5e2404'}}>Last name:</label>
+                            <label htmlFor="lastName" style={{color:'#424242'}}>Last name:</label>
                             <input 
                                 type="text" 
                                 id="lastname" 
@@ -210,7 +195,7 @@ export default function CreateAccount() {
                             {errorLastName && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a last name</p>)}
                         </div>
                         <div className="input-container">
-                            <label htmlFor="date" style={{color:'#5e2404'}}>Birthdate:</label>
+                            <label htmlFor="date" style={{color:'#424242'}}>Birthdate:</label>
                             <input 
                                 type="date" 
                                 id="date" 
@@ -221,7 +206,7 @@ export default function CreateAccount() {
                             {errorDate && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a date</p>)}
                         </div>
                         <div className="input-container">
-                            <label htmlFor="email" style={{color:'#5e2404'}}>Email:</label>
+                            <label htmlFor="email" style={{color:'#424242'}}>Email:</label>
                             <input 
                                 type="email" 
                                 id="email" 
@@ -233,7 +218,7 @@ export default function CreateAccount() {
                             {errorEmailRepeated && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>An account already exists with this email</p>)}
                         </div>
                         <div className="input-container">
-                            <label htmlFor="password" style={{color:'#5e2404'}}>Password:</label>
+                            <label htmlFor="password" style={{color:'#424242'}}>Password:</label>
                             <input
                                 onClick={handleOpenPasswordRequirements}
                                 type="password"
@@ -254,7 +239,7 @@ export default function CreateAccount() {
                             </Popper>
                         </div>
                         <div className="input-container">
-                            <label htmlFor="typeAccount" style={{color:'#5e2404'}}>Type of account:</label>
+                            <label htmlFor="typeAccount" style={{color:'#424242'}}>Type of account:</label>
                             <select
                                 type="typeAccount" 
                                 id="typeAccount" 

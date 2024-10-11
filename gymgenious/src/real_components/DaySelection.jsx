@@ -27,11 +27,11 @@ export default function BasicSelect({ selectedDay, setSelectedDay }) {
   }
 
   return (
-    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Day</InputLabel>
         <Select
-          sx={{ width: '100%', backgroundColor: '#ffe0b5', borderRadius: '10px' }}
+          sx={{ width: '100%', backgroundColor: '#F5F5F5', borderRadius: '10px' }}
           color="primary"
           value={daySelection}
           onChange={(event) => handleChangeDay(event)}
@@ -41,7 +41,7 @@ export default function BasicSelect({ selectedDay, setSelectedDay }) {
             <MenuItem
               key={day}
               style={{
-                backgroundColor: selectedDay === day || hovered === day ? '#5e2404' : '#b87d48',
+                backgroundColor: selectedDay === day || hovered === day ? '#424242' : '#424242',
                 color: 'white',
               }}
               value={day}

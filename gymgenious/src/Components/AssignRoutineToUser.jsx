@@ -172,11 +172,11 @@ export default function RoutineCreation() {
     return (
         <div className='assign-routine-container'>
             <div className='class-creation-content'>
-                <h2 style={{ color: '#14213D' }}>Assign users</h2>
+                <h2 style={{ color: '#424242' }}>Assign users</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
-                            <label htmlFor="routineAssigned" style={{ color: '#14213D' }}>Routine:</label>
+                            <label htmlFor="routineAssigned" style={{ color: '#424242' }}>Routine:</label>
                             <select
                                 id="routineAssigned"
                                 name="routineAssigned"
@@ -193,7 +193,7 @@ export default function RoutineCreation() {
                             </select>
                         </div>
                         <div className="input-small-container">
-                            <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
+                            <label htmlFor="day" style={{color:'#424242'}}>Day:</label>
                             <select
                             id="day" 
                             name="day" 
@@ -213,7 +213,7 @@ export default function RoutineCreation() {
                     </div>
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
-                            <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
+                            <label htmlFor="users" style={{ color: '#424242' }}>Users:</label>
                             <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned} routineDay={day}/>
                         </div>
                     </div>

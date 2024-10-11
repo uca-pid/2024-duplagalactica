@@ -56,15 +56,6 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
     setSelectedEvent(null);
   };
 
-  const handleBookClassModal = (event) => {
-    handleBookClass(event);
-    handleCloseModal();
-  };
-
-  const handleUnbookClassModal = (event) => {
-    handleUnbookClass(event);
-    handleCloseModal();
-  };
 
   useEffect(() => {
     if(isSmallScreen400 || isSmallScreen500) {
@@ -94,13 +85,12 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [order, orderBy, page, rowsPerPage, rows]
   );
-
   return (
-    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
       <Paper
         sx={{
           width: '100%',
-          backgroundColor: '#ffe0b5',
+          backgroundColor: '#F5F5F5',
           borderRadius: '10px'
         }}
       >
@@ -115,7 +105,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
           >
             <TableHead>
               <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold',color: '#424242' }}>
                   <TableSortLabel
                     active={orderBy === 'name'}
                     direction={orderBy === 'name' ? order : 'asc'}
@@ -130,7 +120,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                   </TableSortLabel>
                 </TableCell>
                 {!isSmallScreen500 && (
-                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                     <TableSortLabel
                       active={orderBy === 'hour'}
                       direction={orderBy === 'hour' ? order : 'asc'}
@@ -146,7 +136,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                   </TableCell>
                 )}
                 {!isSmallScreen400 && (
-                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                     <TableSortLabel
                       active={orderBy === 'dateInicio'}
                       direction={orderBy === 'dateInicio' ? order : 'asc'}
@@ -162,7 +152,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                   </TableCell>
                 )}
                 {!isSmallScreen600 && (
-                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                     <TableSortLabel
                       active={orderBy === 'permanent'}
                       direction={orderBy === 'permanent' ? order : 'asc'}
@@ -182,7 +172,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
             <TableBody>
               {visibleRows.length===0 ? (
                 <TableRow>
-                <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                     There are no classes
                 </TableCell>
                 </TableRow>
@@ -202,21 +192,21 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                         key={row.id}
                         sx={{
                           cursor: 'pointer',
-                          borderBottom: '1px solid #BC6C25',
+                          borderBottom: '1px solid #424242',
                           opacity: !isTransparent ? 0.5 : 1,
                         }}
                       >
-                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                           {row.name}
                         </TableCell>
                         {!isSmallScreen500 && (
-                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{row.hour}</TableCell>
                         )}
                         {!isSmallScreen400 && (
-                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
                         )}
                         {!isSmallScreen600 && (
-                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #424242', color: '#424242' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
                         )}
                       </TableRow>
                     );
@@ -235,6 +225,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
+                sx={{color:'#424242'}}
                 onPageChange={handleChangePage}
               />
             ) : (
@@ -244,6 +235,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
+                sx={{color:'#424242'}}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />

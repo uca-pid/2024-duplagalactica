@@ -4,7 +4,8 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  background-image: url('../public/marron1.jpg');
+  background-image: url('../public/marron3.png');
+  background-color: #F5F5F5;
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -15,10 +16,34 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  background-image: url('../public/walk.jpg');
+  
+  background-color: #F5F5F5;
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
+}
+
+
+/* EnhancedTable.css */
+
+.table-header {
+  border-bottom: 1px solid #229799;
+  border-right: 1px solid #229799;
+  font-weight: bold;
+  color: #48CFCB;
+}
+
+.table-cell {
+  border-bottom: 1px solid #48CFCB;
+  border-right: 1px solid #48CFCB;
+  color: #48CFCB;
+}
+
+.table-cell:last-child {
+  border-right: none; /* Para evitar el borde derecho en la última celda */
+}
+.sorted-header {
+  color: #FF5733 !important; /* Cambia a tu color deseado para la columna ordenada */
 }
 
 .full-screen-image-1 {
@@ -27,7 +52,8 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  background-image: url('../public/marron3.jpg');
+  background-image: url('../public/marron3.png');
+  background-color: #F5F5F5;
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -37,11 +63,12 @@
   display: flex;
   flex-direction: row;
   position: absolute;
+  background-color: #F5F5F5;
   top: 0;
   left: 0;
   height: 100%;
+  background-image: url('../public/marron1.png');
   width: 100%;
-  background-image: url('../public/marron4.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -50,12 +77,13 @@
 .full-screen-image-3 {
   display: flex;
   flex-direction: row;
+  background-color: #F5F5F5;
   position: absolute;
   top: 0;
   left: 0;
+  background-image: url('../public/marron1.png');
   height: 100%;
   width: 100%;
-  background-image: url('../public/marron5.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -64,12 +92,13 @@
 .full-screen-image-4 {
   display: flex;
   flex-direction: row;
+  background-color: #F5F5F5;
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
+  background-image: url('../public/marron4.png');
   width: 100%;
-  background-image: url('../public/walk.jpg');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -79,11 +108,12 @@
   display: flex;
   flex-direction: row;
   position: absolute;
+  background-color: #F5F5F5;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
-  background-image: url('../public/walk.jpg');
+  background-image: url('../public/marron4.png');
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat;
@@ -216,7 +246,8 @@
 }
 
 .calendar-content {
-  color: #5e2404 !important;
+  color: black !important;
+  font-weight: bold !important;
 }
 
 @media (max-width: 768px) {
@@ -231,11 +262,11 @@
 
 
 .rbc-day-slot.rbc-time-column.rbc-now.rbc-today {
-  background-color: #FEFAE0;
+  background-color: #F5F5F5;
 }
 
 .rbc-day-slot {
-  background-color: #FEFAE0; 
+  background-color: #F5F5F5; 
 }
 
 
@@ -249,7 +280,7 @@
 .Calendar-Day {
   text-align: center;
   padding: 5%;
-  border: 1px solid #14213D;
+  border: 1px solid #229799;
 }
 
 .Calendar-Day.filled {
@@ -267,7 +298,7 @@ table {
 }
 
 .Table-Classes-Header {
-  background-color: #E5E5E5;
+  background-color: #F5F5F5;
   color: white;
 }
 
@@ -300,7 +331,7 @@ iframe {
   border-style: solid;
   border-color: black;
   overflow: hidden;
-  background-color: #E5E5E5;
+  background-color: #F5F5F5;
   border-radius: 30px;
 }
 
@@ -333,8 +364,8 @@ iframe {
 }
 
 .login-container {
-  background-color: #FEFAE0;
-  border-color: #BC6C25;
+  background-color: #F5F5F5;
+  border-color: #229799;
   border-width: 1px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -368,7 +399,7 @@ iframe {
   padding-left:20px;
   padding-right: 20px;
   padding-bottom: 20px;
-  color: #DDA15E;
+  color: #48CFCB;
 }
 
 .input-container {
@@ -392,7 +423,7 @@ iframe {
 }
 
 .button_login {
-  background-color: #b87d48 !important;
+  background-color: #48CFCB !important;
   color: white !important; 
   font-weight: bold;
   padding: 10px 15px;
@@ -404,7 +435,7 @@ iframe {
 }
 
 .button_login:hover {
-  background-color:#5e2404 !important;
+  background-color:#424242 !important;
   color: white !important;
 }
 
@@ -428,7 +459,7 @@ iframe {
     cursor: pointer;
     transition: color 0.3s ease;
     text-decoration: 0.3s ease;
-    color: #DDA15E;
+    color: #48CFCB;
     font-weight: bold;
     text-decoration: underline;
     border: 0;
@@ -499,8 +530,8 @@ iframe {
   margin-right: 5px;
 }
 .create-account-container {
-  background-color: #FEFAE0;
-  border-color: #BC6C25;
+  background-color: #F5F5F5;
+  border-color: #229799;
   border-width: 1px;
   border-style: solid;
   border-radius: 8px;
@@ -515,8 +546,8 @@ iframe {
 }
 
 .create-account-container-new {
-  background-color: #FEFAE0;
-  border-color: #BC6C25;
+  background-color: #F5F5F5;
+  border-color: #229799;
   border-width: 1px;
   border-style: solid;
   border-radius: 8px;
@@ -543,7 +574,7 @@ iframe {
 }
 
 .button_create_account {
-  background-color: #b87d48 !important;
+  background-color: #48CFCB !important;
   color: white !important; 
   font-weight: bold;
   padding: 10px 15px;
@@ -555,13 +586,13 @@ iframe {
 }
 
 .button_create_account:hover {
-  background-color:#5e2404 !important;
+  background-color:#424242 !important;
   color: white !important;
 }
 
 .reset-password-container {
-  background-color: #FEFAE0;
-  border-color: #BC6C25;
+  background-color: #F5F5F5;
+  border-color: #229799;
   border-width: 1px;
   border-style: solid;
   border-radius: 8px;
@@ -599,57 +630,51 @@ iframe {
   width: 100%;
 }
 
-/* .rbc-event {
-  background-color: #5e2404 !important;
-  border-radius: 1vh !important;
-  color: #FEFAE0 !important; 
-  text-align: center;
-} */
 
 
 
 .rbc-time-gutter {
-  background-color: #5e2404;
+  background-color: #424242;
   color: white;
   text-decoration: underline;
 }
 
 .rbc-time-header {
-  background-color: #5e2404;
+  background-color: #229799;
   color: white;
   text-decoration: underline;
 }
 
 .rbc-day-bg {
-  background-color: rgba(254, 250, 224, 0.8) !important;
+  background-color: rgba(245, 245, 245, 0.6) !important;
 }
 
 .rbc-day-bg.rbc-today {
-  background-color: rgba(221, 161, 94, 0.6) !important;
+  background-color: rgba(34, 153, 153, 0.6) !important;
 }
 
 .rbc-toolbar button {
-  background-color: #b87d48 !important;
+  background-color: #229799 !important;
   color: white !important; 
 }
 
 .rbc-toolbar button:hover {
-  background-color:#5e2404 !important;
+  background-color:#424242 !important;
   color: white !important;
 }
 
 .rbc-toolbar button.rbc-active {
-  background-color:#5e2404 !important;
+  background-color:#424242 !important;
   color: white !important;
 }
 
 .rbc-header {
-  background-color:  #b87d48;
+  background-color:  #229799;
   color: white; 
 }
 
 .rbc-toolbar-label {
-  color: #5e2404;
+  color: #F5F5F5;
   font-weight: bold;
   text-decoration:underline;
   font-size: 2.5vh;  
@@ -662,7 +687,7 @@ iframe {
 }
 
 .Toggle-Button {
-  background-color: #b87d48;
+  background-color: #229799;
   border: none;
   border-radius: 0.5vh;
   color: white;
@@ -672,7 +697,7 @@ iframe {
 }
 
 .Toggle-Button:hover {
-  background-color: #5e2404;
+  background-color: #424242;
 }
 
 
@@ -694,11 +719,11 @@ iframe {
 }
 
 .Modal-Content {
-  background-color: #FEFAE0;
+  background-color: #F5F5F5;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
-  color: #5e2404;
+  color: #424242;
   font-weight: bold;
   max-width: 500px;
   text-align: center;
@@ -707,11 +732,11 @@ iframe {
 }
 
 .Modal-Content-class-creation {
-  background-color: #FEFAE0;
+  background-color: #F5F5F5;
   padding: 20px;
   border-radius: 8px;
   width: 75%;
-  color: #5e2404;
+  color: #424242;
   font-weight: bold;
   text-align: center;
   position: relative;
@@ -724,7 +749,7 @@ iframe {
 }
 
 .Modal-Content button {
-  background-color: #b87d48;
+  background-color: #48CFCB;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -733,7 +758,7 @@ iframe {
 }
 
 .Modal-Content button:hover {
-  background-color: #5e2404;
+  background-color: #424242;
 }
 
 @media (max-width: 768px) {
@@ -817,8 +842,8 @@ iframe {
   visibility: hidden;
 }
 .new-password-container {
-  background-color: #FEFAE0;
-  border-color: #BC6C25;
+  background-color: #F5F5F5;
+  border-color: #229799;
   border-width: 1px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -855,8 +880,8 @@ iframe {
 }
 
 .class-creation-container {
-  background-color: #FEFAE0;
-  color:'#E5E5E5';
+  background-color: #F5F5F5;
+  color:'#F5F5F5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 60%;
@@ -869,8 +894,8 @@ iframe {
 }
 
 .class-creation-rooms-container {
-  background-color: #FEFAE0;
-  color:'#E5E5E5';
+  background-color: #F5F5F5;
+  color:'#F5F5F5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 70%;
@@ -897,7 +922,7 @@ iframe {
 }
 
 .stepper-container {
-  background-color: #FEFAE0;
+  background-color: #F5F5F5;
   width: 80%;
   margin-left: 10%;
   height: fit-content;
@@ -936,7 +961,7 @@ iframe {
 }
 
 .stepper-container .MuiStepIcon-root.Mui-active {
-  color: #BC6C25; /* Color for the active step icon */
+  color: #229799; /* Color for the active step icon */
 }
 
 .alert-container {
@@ -970,7 +995,7 @@ iframe {
 
 .grid-transfer-content {
   max-width: 100%;
-  background-color: #f5ebe0;
+  background-color: #96B6C5;
 }
 
 .grid-transfer-content-small-screen-users {
@@ -995,7 +1020,7 @@ iframe {
   width: 100%;
   max-height: 250px;
   overflow-y: auto;
-  background-color: '#f5ebe0';
+  background-color: '#96B6C5';
 }
 
 .transfer-list-modal {
@@ -1013,8 +1038,8 @@ iframe {
 }
 
 .routine-creation-container {
-  background-color: #FEFAE0;
-  color:'#E5E5E5';
+  background-color: #F5F5F5;
+  color:'#F5F5F5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
@@ -1102,11 +1127,11 @@ iframe {
 }
 
 .Modal-Content-edit-routine {
-  background-color: #FEFAE0;
+  background-color: #F5F5F5;
   padding: 20px;
   border-radius: 8px;
   width: 80%;
-  color: #5e2404;
+  color: #424242;
   font-weight: bold;
   text-align: center;
   position: relative;
@@ -1119,7 +1144,7 @@ iframe {
 }
 
 .Modal-Content-edit-routine button {
-  background-color: #b87d48;
+  background-color: #48CFCB;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -1128,7 +1153,7 @@ iframe {
 }
 
 .Modal-Content-edit-routine button:hover {
-  background-color: #5e2404;
+  background-color: #424242;
 }
 
 @media (max-width: 700px) {
@@ -1138,8 +1163,8 @@ iframe {
 }
 
 .assign-routine-container {
-  background-color: #FEFAE0;
-  color:'#E5E5E5';
+  background-color: #F5F5F5;
+  color:'#F5F5F5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
@@ -1160,8 +1185,8 @@ iframe {
 }
 
 .exercise-creation-container {
-  background-color: #FEFAE0;
-  color:'#E5E5E5';
+  background-color: #F5F5F5;
+  color:'#F5F5F5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
@@ -1174,8 +1199,8 @@ iframe {
 }
 
 .user-profile-container {
-  background-color: #FEFAE0;
-  border-color: #BC6C25;
+  background-color: #F5F5F5;
+  border-color: #229799;
   border-width: 1px;
   border-style: solid;
   border-radius: 8px;
@@ -1207,8 +1232,8 @@ iframe {
 }
 
 .graphics-container {
-  background-color: #FEFAE0;
-  color:'#E5E5E5';
+  background-color: #F5F5F5;
+  color:'#F5F5F5';
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;

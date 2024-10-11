@@ -185,7 +185,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
         <>
         {!routine ? (
           <Grid item>
-            <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+            <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
               Select a routine to assign
             </Typography>
           </Grid>
@@ -193,7 +193,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
           <>
             {left.length===0 ? (
               <Grid item>
-              <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+              <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
                 There are no users
               </Typography>
             </Grid>
@@ -248,7 +248,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
         </Grid>
         {right.length === 0 ? (
           <Grid item>
-            <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+            <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
               No users were chosen
             </Typography>
           </Grid>
