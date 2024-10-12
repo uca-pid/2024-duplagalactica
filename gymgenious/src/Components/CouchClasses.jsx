@@ -805,7 +805,6 @@ function CouchClasses() {
                                 </div>
                                 <button   onClick={handleEditClass} className='button_login'>Cancell</button>
                                 <button style={{merginTop:'10px'}} type="submit" className='button_login'>Save changes</button>
-                            </form>
                         </div>
                     </div>
                 )}

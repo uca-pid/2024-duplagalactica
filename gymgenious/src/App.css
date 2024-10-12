@@ -422,6 +422,28 @@ iframe {
   box-sizing: border-box;
 }
 
+
+
+
+.input-container-profile {
+  text-align: left;
+  font-size: 14px;
+}
+
+.input-container-profile label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-container-profile input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
 .button_login {
   background-color: #48CFCB !important;
   color: white !important; 
@@ -578,16 +600,35 @@ iframe {
   background-color: #48CFCB !important;
   color: white !important; 
   font-weight: bold;
-  padding: 10px 15px;
+  padding: 5px 5px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%;
+  width: 20%;
   font-size: 16px;
-  margin-top: 10px;
 }
 
 .button_create_account:hover {
+  background-color:#424242 !important;
+  color: white !important;
+}
+
+
+.button_create_account2 {
+  background-color: #48CFCB !important;
+  color: white !important; 
+  font-weight: bold;
+  padding: 5px 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 20%;
+  font-size: 16px;
+  margin-left: 3%;
+  margin-right: 3%;
+}
+
+.button_create_account2:hover {
   background-color:#424242 !important;
   color: white !important;
 }
@@ -719,6 +760,10 @@ iframe {
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
   z-index: 1000;
 }
+
+
+
+
 
 .Modal-Content {
   background-color: #F5F5F5;
@@ -1207,9 +1252,11 @@ iframe {
   border-style: solid;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  width: 50%;
-  left: 25%;
-  top: 18%;
+  width: 80%;
+  height: 95%;
+  top: 2.5%;
+  overflow-y: auto;
+  left: 10%;
   text-align: center;
   position: fixed;
   overflow-y: auto;
@@ -1497,3 +1544,4 @@ iframe {
   top: 1%;
   left: 1%;
 }
+
