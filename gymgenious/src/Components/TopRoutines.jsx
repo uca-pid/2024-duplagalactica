@@ -21,7 +21,7 @@ import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
-
+import Loader from '../real_components/loader.jsx'
 function BarAnimation({ routines }) {
     const [itemNb, setItemNb] = React.useState(5);
 
@@ -484,7 +484,7 @@ const fetchRoutines = async () => {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
               >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
               </Backdrop>
             ) : (
               null

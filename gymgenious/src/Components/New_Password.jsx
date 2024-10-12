@@ -11,7 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function ChangePassword() {
     const [password, setPassword] = useState('');
     const [passwordAgain, setPasswordAgain] = useState('');
@@ -182,7 +182,7 @@ export default function ChangePassword() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             { success ? (

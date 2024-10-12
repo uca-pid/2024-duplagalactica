@@ -19,7 +19,7 @@ import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from 'react-router-dom';
-
+import Loader from '../real_components/loader.jsx'
 export default function CoachExercises() {
     const [order, setOrder] = useState('asc');
     const [id,setId] = useState()
@@ -294,7 +294,7 @@ export default function CoachExercises() {
                     <NewLeftBar />
                     {openCircularProgress && (
                         <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
-                            <CircularProgress color="inherit" />
+                            <Loader></Loader>
                         </Backdrop>
                     )}
                     {warningConnection && (

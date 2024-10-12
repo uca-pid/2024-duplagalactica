@@ -27,7 +27,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-
+import Loader from '../real_components/loader.jsx'
 function TopRoutines({ routines }) {
     const [itemNb, setItemNb] = React.useState(20);
 
@@ -602,7 +602,7 @@ function CoachGraphics() {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
               >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
               </Backdrop>
             ) : (
               null

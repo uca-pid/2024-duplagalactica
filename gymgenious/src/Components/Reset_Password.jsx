@@ -9,7 +9,7 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function ResetPassword() {
     const [email, setEmail] = useState('');
     const [showNotMatchEmail, setShowNoMatchEmail] = useState(false);
@@ -61,7 +61,7 @@ export default function ResetPassword() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             <div className='reset-password-container'>

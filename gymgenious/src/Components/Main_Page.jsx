@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress, { circularProgressClasses } from '@mui/material/CircularProgress';
 import NewLeftBar from '../real_components/NewLeftBar.jsx';
 import {jwtDecode} from "jwt-decode";
 import Alert from '@mui/material/Alert';
@@ -19,7 +19,7 @@ import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import CloseIcon from '@mui/icons-material/Close';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
-
+import Loader from '../real_components/loader.jsx'
 
     
 
@@ -41,6 +41,8 @@ export default function Main_Page() {
   const isSmallScreen = useMediaQuery('(max-width:250px)');
   const [type, setType] = useState(null);
 
+
+  
   function formatDate(date) {
     const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
@@ -245,8 +247,9 @@ export default function Main_Page() {
           });
         }
       });
-      console.log("asi se agrergaron", calendarEvents)
-      setOpenCircularProgress(false);
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+      }, 3000);
       setEvents(calendarEvents);
       setClasses(dataWithSala)
     } catch (error) {
@@ -325,7 +328,9 @@ export default function Main_Page() {
       }, 3000);
     } catch (error) {
       console.error("Error fetching classes:", error);
-      setOpenCircularProgress(false);
+      setTimeout(() => {
+        setOpenCircularProgress(false);
+      }, 3000);
       setWarningConnection(true);
       setTimeout(() => {
         setWarningConnection(false);
@@ -386,7 +391,9 @@ export default function Main_Page() {
         }
         const data = await response.json();
         setType(data.type);
-        setOpenCircularProgress(false);
+        setTimeout(() => {
+          setOpenCircularProgress(false);
+        }, 3000);
     } catch (error) {
         console.error("Error fetching user:", error);
     }
@@ -394,6 +401,7 @@ export default function Main_Page() {
   
   return (
     <div className="App">
+      {circularProgressClasses ? (<><loader></loader></>):(<></>)}
       <SuccessAlert successAlert={successBook} message={'Successfully Booked!'}/>
       <SuccessAlert successAlert={successUnbook} message={'Successfully Unbooked!'}/>
       <WarningConnectionAlert warningConnection={warningConnection}/>
@@ -404,7 +412,7 @@ export default function Main_Page() {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
             >
-              <CircularProgress color="inherit" />
+              <Loader></Loader>
           </Backdrop>
       ) : null}
 

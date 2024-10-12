@@ -20,7 +20,7 @@ import DaySelection from '../real_components/DaySelection.jsx';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function StickyHeadTable() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -468,7 +468,7 @@ export default function StickyHeadTable() {
             )}
             {openCircularProgress && (
                 <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
-                    <CircularProgress color="inherit" />
+                    <Loader></Loader>
                 </Backdrop>
             )}
             { warningFetchingUserRoutines ? (

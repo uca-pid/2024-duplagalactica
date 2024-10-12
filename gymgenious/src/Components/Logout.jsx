@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 const Logout = () => {
   const navigate = useNavigate();
   const [openCircularProgress, setOpenCircularProgress] = useState(true);
@@ -53,7 +53,7 @@ const Logout = () => {
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
           open={openCircularProgress}
         >
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
         </Backdrop>
       ) : null}
       { success ? (

@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import Loader from '../real_components/loader.jsx'
 
 export default function RoutineCreation() {
     const [routineAssigned, setRoutine] = useState(); 
@@ -234,7 +235,7 @@ export default function RoutineCreation() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             { success ? (
