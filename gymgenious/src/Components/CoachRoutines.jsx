@@ -24,7 +24,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
-
+import Loader from '../real_components/loader.jsx'
 
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -154,7 +154,7 @@ function CoachRoutines() {
               <>
               { (routineExercises?.some(stateExercise => stateExercise?.exercise?.id === exercise.id)) ? (
                 <ListItemButton
-                sx={{backgroundColor:'red'}}
+                sx={{backgroundColor:'#091057'}}
                 key={exercise.id}
                 role="listitem"
                 onClick={() => handleSelectExercise(exercise)}
@@ -540,11 +540,11 @@ const fetchExercises = async () => {
           <>
             <NewLeftBar/>
             <div className="Table-Container">
-            <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+            <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
               <Paper
                   sx={{
                   width: '100%',
-                  backgroundColor: '#ffe0b5',
+                  backgroundColor: '#F5F5F5',
                   borderRadius: '10px'
                   }}
               >
@@ -559,7 +559,7 @@ const fetchExercises = async () => {
                       >
                           <TableHead>
                               <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                  <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                  <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                             <TableSortLabel active={orderBy === 'name'} direction={orderBy === 'name' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'name')}>
                               Name
                               {orderBy === 'name' ? (
@@ -572,7 +572,7 @@ const fetchExercises = async () => {
                             </TableSortLabel>
                           </TableCell>
                           {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableCell align="right" sx={{borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
                               <TableSortLabel active={orderBy === 'excercises'} direction={orderBy === 'excercises' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises')}>
                                 Exercises
                                 {orderBy === 'excercises' ? (
@@ -586,7 +586,7 @@ const fetchExercises = async () => {
                             </TableCell>
                           )}
                           {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
                               <TableSortLabel active={orderBy === 'description'} direction={orderBy === 'description' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'description')}>
                                 Description
                                 {orderBy === 'description' ? (
@@ -604,7 +604,7 @@ const fetchExercises = async () => {
                       <TableBody>
                         {visibleRows.length===0 ? (
                             <TableRow>
-                            <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                            <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                 There are no created routines
                             </TableCell>
                             </TableRow>
@@ -612,16 +612,16 @@ const fetchExercises = async () => {
                           <>
                             {visibleRows.map((row) => (
                               <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                   {row.name}
                                 </TableCell>
                                 {!isSmallScreen250 && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242',color:'#424242' }}>
                                     {row.excercises.length}
                                   </TableCell>
                                 )}
                                 {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242',color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                     {row.description} 
                                   </TableCell>
                                 )}
@@ -839,7 +839,7 @@ const fetchExercises = async () => {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
               >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
               </Backdrop>
             ) : (
               null

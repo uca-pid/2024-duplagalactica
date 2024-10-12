@@ -19,6 +19,7 @@ import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../real_components/loader.jsx'
 
 function UsserClasses() {
   const [order, setOrder] = useState('asc');
@@ -252,11 +253,11 @@ useEffect(() => {
           <>
       <NewLeftBar />
       <div className="Table-Container">
-        <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+        <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
             <Paper
                 sx={{
                 width: '100%',
-                backgroundColor: '#ffe0b5',
+                backgroundColor: '#F5F5F5',
                 borderRadius: '10px'
                 }}
             >
@@ -271,7 +272,7 @@ useEffect(() => {
                     >
                         <TableHead>
                             <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                       <TableSortLabel
                         active={orderBy === 'name'}
                         direction={orderBy === 'name' ? order : 'asc'}
@@ -286,7 +287,7 @@ useEffect(() => {
                       </TableSortLabel>
                     </TableCell>
                     {!isSmallScreen500 && (
-                      <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                      <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                         <TableSortLabel
                           active={orderBy === 'hour'}
                           direction={orderBy === 'hour' ? order : 'asc'}
@@ -302,7 +303,7 @@ useEffect(() => {
                       </TableCell>
                     )}
                     {!isSmallScreen400 && (
-                      <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                      <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                         <TableSortLabel
                           active={orderBy === 'dateInicio'}
                           direction={orderBy === 'dateInicio' ? order : 'asc'}
@@ -318,7 +319,7 @@ useEffect(() => {
                       </TableCell>
                     )}
                     {!isSmallScreen600 && (
-                      <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                      <TableCell align="right" sx={{ borderBottom: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                         <TableSortLabel
                           active={orderBy === 'permanent'}
                           direction={orderBy === 'permanent' ? order : 'asc'}
@@ -338,25 +339,25 @@ useEffect(() => {
                 <TableBody>
                   {visibleRows.length===0 ? (
                       <TableRow>
-                      <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                      <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                           There are no booked classes
                       </TableCell>
                       </TableRow>
                   ) : (
                     <>
                       {visibleRows.map((row) => (
-                          <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #BC6C25' }}>
-                          <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                          <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #424242' }}>
+                          <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                               {row.name}
                           </TableCell>
                           {!isSmallScreen500 && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
+                              <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{row.hour}</TableCell>
                           )}
                           {!isSmallScreen400 && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
+                              <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
                           )}
                           {!isSmallScreen600 && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
+                              <TableCell align="right" sx={{ borderBottom: '1px solid #424242', color: '#424242' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
                           )}
                           </TableRow>
                       ))}
@@ -412,7 +413,7 @@ useEffect(() => {
       )}
       {openCircularProgress && (
         <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
         </Backdrop>
       )}
       {errorToken && (

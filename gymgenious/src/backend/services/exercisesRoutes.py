@@ -3,6 +3,7 @@ from firebase_config import db
 from firebase_admin import credentials, firestore, storage
 import logging
 import base64
+import uuid
 
 def upload_image_to_storage(image_data, file_name):
     try:
@@ -24,7 +25,8 @@ def create_excersice(excersice):
         
         image_data = excersice.get('image')
         if image_data:
-            image_url = upload_image_to_storage(image_data, excersice['name'] + ".jpeg")
+            unique_file_name = f"{excersice['name']}_{uuid.uuid4()}.jpeg"
+            image_url = upload_image_to_storage(image_data, unique_file_name)
             excersice['image_url'] = image_url
             del excersice['image']
         class_ref = db.collection('exersices').add(excersice)

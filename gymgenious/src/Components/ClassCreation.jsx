@@ -9,9 +9,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Slide from '@mui/material/Slide';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Popper from '@mui/material/Popper';
 import {jwtDecode} from "jwt-decode";
 import { useMediaQuery } from '@mui/material';
+import Loader from '../real_components/loader.jsx'
+
+
 
 export default function CreateClass() {
   const [hour, setHour] = useState('');
@@ -34,35 +38,107 @@ export default function CreateClass() {
   const [errorToken,setErrorToken] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:768px)');
   const [type, setType] = useState(null);
-
+  const [maxWidthImg, setMaxWidthImg] = useState('0px');
+  const [errorSala1, setErrorSala1] = useState(false);
+  const [errorSala2, setErrorSala2] = useState(false);
+  const [errorSala3, setErrorSala3] = useState(false);
+  const [errorSala4, setErrorSala4] = useState(false);
+  const [errorStartTime, setErrorStartTime] = useState(false);
+  const [errorEndTime, setErrorEndTime] = useState(false);
+  const [errorEndTime30, setErrorEndTime30] = useState(false);
+  const [errorName, setErrorName] = useState(false);
+  const [errorRecurrent, setErrorRecurrent] = useState(false);
+  const [errorDate, setErrorDate] = useState(false);
   const day = (dateString) => {
     const date = new Date(dateString);
     const daysOfWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     return daysOfWeek[date.getDay()];
   };
 
+  const ComponenteBotonShowGymRoom = () => {
+    return (
+      <div className="grid-container">
+        <BotonShowGymRoom>Show gymroom</BotonShowGymRoom>
+      </div>
+    );
+  };
+  
+  const BotonShowGymRoom = ({ children, ...rest }) => {
+    return (
+      <button {...rest} className="draw-outline-button" onClick={handleViewRooms}>
+        <span>{children}</span>
+        <span className="top" />
+        <span className="right" />
+        <span className="bottom" />
+        <span className="left" />
+    </button>
+    );
+  };
+
+  const ComponenteCreateClass = () => {
+    return (
+      <div className="grid-container">
+        <CreateClass>Create class</CreateClass>
+      </div>
+    );
+  };
+  
+  const CreateClass = ({ children, ...rest }) => {
+    return (
+      <button {...rest} className="draw-outline-button" onClick={handleCreateClass}>
+        <span>{children}</span>
+        <span className="top" />
+        <span className="right" />
+        <span className="bottom" />
+        <span className="left" />
+    </button>
+    );
+  };
+
   const validateForm = () => {
       let errors = [];
       const format= "HH:mm";
       const realHourEnd = moment(hourFin, format).subtract(30, 'minutes').format(format);
-      if(moment(realHourEnd, format).isBefore(moment(hour, format))){
+      if(moment(realHourEnd, format).isBefore(moment(hour, format)) && hourFin!=''){
         errors.push('Class must last at least 30 minutes.');
+        setErrorEndTime30(true);
+      } else {
+        setErrorEndTime30(false);
       }
 
-      if(hour==='' || hourFin===''){
-        errors.push('Please enter both the start and end times.')
+      if(hour===''){
+        errors.push('Please enter both the start and end times.');
+        setErrorStartTime(true);
+      } else {
+        setErrorStartTime(false);
+      }
+
+      if(hourFin===''){
+        errors.push('Please enter both the start and end times.');
+        setErrorEndTime(true);
+      } else {
+        setErrorEndTime(false);
       }
 
       if (name === '') {
           errors.push('Please enter an exercise name.');
+          setErrorName(true);
+      } else {
+        setErrorName(false);
       }
 
       if(permanent===''){
         errors.push('Please enter if the class is recurring or not.');
+        setErrorRecurrent(true);
+      } else {
+        setErrorRecurrent(false);
       }
 
       if(date===''){
-        errors.push('Please enter a date.')
+        errors.push('Please enter a date.');
+        setErrorDate(true);
+      } else {
+        setErrorDate(false);
       }
 
       setErrors(errors);
@@ -75,150 +151,157 @@ export default function CreateClass() {
 
   const handleCreateClass = async () => {
     setOpenCircularProgress(true);
-    if (validateForm()) {
-        try {
-            const authToken = localStorage.getItem('authToken');
-            if (!authToken) {
-                console.error('Token no disponible en localStorage');
-                return;
-            }
-            const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
-            if (!response2.ok) {
-                throw new Error('Error al obtener las clases: ' + response2.statusText);
-            }
-            const data = await response2.json();
-            const isoDateString = date; 
-            const newClassStartTime = new Date(`${date}T${hour}:00Z`);
-            const newClassEndTime = new Date(`${date}T${hourFin}:00Z`);
-            const newClassStartTimeInMinutes = timeToMinutes(hour);
-            const newClassEndTimeInMinutes = timeToMinutes(hourFin);
-            const conflictingClasses = data.filter(classItem => 
-                classItem.sala === salaAssigned &&
-                classItem.day === day(isoDateString) 
-            );
-            if (permanent == "No") {
-              const hasPermanentConflict = conflictingClasses.some(existingClass => 
-                  existingClass.permanent == "Si" && 
-                  newClassStartTime > new Date(existingClass.dateFin) &&
-                  newClassEndTime > new Date(existingClass.dateInicio) &&
-                  newClassEndTime > new Date(existingClass.dateFin) &&
-                  newClassStartTime > new Date(existingClass.dateInicio) &&
-                  newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
-                  newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5))
-              );
-              const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
-                  newClassStartTime < new Date(existingClass.dateFin) &&
-                  newClassEndTime > new Date(existingClass.dateInicio)
-              );
-              if (hasNonPermanentConflict || hasPermanentConflict) {
-                  console.error('Conflicto de horario con clases existentes en esta sala.');
-                  setOpenCircularProgress(false);
-                  setFailureErrors(true);
-                  setTimeout(() => {
-                      setFailureErrors(false);
-                  }, 3000);
-                  return;
-              }
-          } 
-          else if (permanent == "Si") {
-              const hasPastPermanentConflict = conflictingClasses.some(existingClass =>
-                  existingClass.permanent == "Si" &&
-                  newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
-                  newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
-                  newClassStartTime.getFullYear()>= (new Date(existingClass.dateFin)).getFullYear() &&
-                  newClassEndTime.getFullYear()>= (new Date(existingClass.dateInicio)).getFullYear() &&
-                  String((newClassStartTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
-                  String((newClassEndTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
-                  String((newClassStartTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
-                  String((newClassEndTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
-              );
-
-              const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
-                newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
-                newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
-                newClassStartTime.getFullYear()<= (new Date(existingClass.dateFin)).getFullYear() &&
-                newClassEndTime.getFullYear()<= (new Date(existingClass.dateInicio)).getFullYear() &&
-                String((newClassStartTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
-                String((newClassEndTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
-                String((newClassStartTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
-                String((newClassEndTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
-              );
-
-              const hasPermanentConflict = conflictingClasses.some(existingClass =>
-                newClassStartTime < new Date(existingClass.dateFin) &&
-                newClassEndTime > new Date(existingClass.dateInicio)
-              );
-              if (hasPastPermanentConflict || hasPermanentConflict || hasNonPermanentConflict) {
-                  console.error('Ya existe una clase permanente en esta sala para este horario.');
-                  setOpenCircularProgress(false);
-                  setFailureErrors(true);
-                  setTimeout(() => {
-                      setFailureErrors(false);
-                  }, 3000);
-                  return;
-              }
-          }
-
-            
-
-            const newClass = {
-                name: name,
-                dateInicio: newClassStartTime.toISOString(),
-                dateFin: newClassEndTime.toISOString(),
-                hour: hour,
-                day: day(isoDateString),
-                permanent: permanent,
-                owner: userMail,
-                capacity: maxNum,
-                BookedUsers: [],
-                sala: salaAssigned
-            };
-
-            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/create_class', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                body: JSON.stringify(newClass),
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al crear la clase');
-            }
-
-            setOpenCircularProgress(false);
-            setSuccess(true);
-            setTimeout(() => {
-                setSuccess(false);
-                navigate(`/?mail=${userMail}`, { state: { message: 'block' } });
-            }, 3000);
-        } catch (error) {
-            console.error("Error al crear la clase:", error);
-            setOpenCircularProgress(false);
-            setFailure(true);
-            setTimeout(() => {
-                setFailure(false);
-            }, 3000);
+    try {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            console.error('Token no disponible en localStorage');
+            return;
         }
-    } else {
+        if(salaAssigned===null){
+          throw new Error('Select a room');
+        }
+        const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
+        //const response2 = await fetch('http://127.0.0.1:5000/get_classes');
+        if (!response2.ok) {
+            throw new Error('Error al obtener las clases: ' + response2.statusText);
+        }
+        const data = await response2.json();
+        const isoDateString = date; 
+        const newClassStartTime = new Date(`${date}T${hour}:00Z`);
+        const newClassEndTime = new Date(`${date}T${hourFin}:00Z`);
+        const newClassStartTimeInMinutes = timeToMinutes(hour);
+        const newClassEndTimeInMinutes = timeToMinutes(hourFin);
+        const conflictingClasses = data.filter(classItem => 
+            classItem.sala === salaAssigned &&
+            classItem.day === day(isoDateString) 
+        );
+        if (permanent == "No") {
+          const hasPermanentConflict = conflictingClasses.some(existingClass => 
+              existingClass.permanent == "Si" && 
+              newClassStartTime > new Date(existingClass.dateFin) &&
+              newClassEndTime > new Date(existingClass.dateInicio) &&
+              newClassEndTime > new Date(existingClass.dateFin) &&
+              newClassStartTime > new Date(existingClass.dateInicio) &&
+              newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+              newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5))
+          );
+          const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
+              newClassStartTime < new Date(existingClass.dateFin) &&
+              newClassEndTime > new Date(existingClass.dateInicio)
+          );
+          if (hasNonPermanentConflict || hasPermanentConflict) {
+              console.error('Conflicto de horario con clases existentes en esta sala.');
+              setOpenCircularProgress(false);
+              throw new Error('Error al crear la clase: Conflicto de horario con clases existentes en esta sala.');
+          }
+      } 
+      else if (permanent == "Si") {
+          const hasPastPermanentConflict = conflictingClasses.some(existingClass =>
+              existingClass.permanent == "Si" &&
+              newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+              newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
+              newClassStartTime.getFullYear()>= (new Date(existingClass.dateFin)).getFullYear() &&
+              newClassEndTime.getFullYear()>= (new Date(existingClass.dateInicio)).getFullYear() &&
+              String((newClassStartTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
+              String((newClassEndTime.getMonth() + 1)).padStart(2, '0')>= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
+              String((newClassStartTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
+              String((newClassEndTime.getDate())).padStart(2, '0') >= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
+          );
+
+          const hasNonPermanentConflict = conflictingClasses.some(existingClass =>
+            newClassStartTimeInMinutes < timeToMinutes(existingClass.dateFin.split('T')[1].substring(0, 5)) &&
+            newClassEndTimeInMinutes > timeToMinutes(existingClass.dateInicio.split('T')[1].substring(0, 5)) &&
+            newClassStartTime.getFullYear()<= (new Date(existingClass.dateFin)).getFullYear() &&
+            newClassEndTime.getFullYear()<= (new Date(existingClass.dateInicio)).getFullYear() &&
+            String((newClassStartTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateFin).getMonth() + 1)).padStart(2, '0') &&                
+            String((newClassEndTime.getMonth() + 1)).padStart(2, '0')<= String((new Date(existingClass.dateInicio).getMonth() + 1)).padStart(2, '0') &&
+            String((newClassStartTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateFin).getDate())).padStart(2, '0') && 
+            String((newClassEndTime.getDate())).padStart(2, '0') <= String((new Date(existingClass.dateInicio).getDate())).padStart(2, '0')
+          );
+
+          const hasPermanentConflict = conflictingClasses.some(existingClass =>
+            newClassStartTime < new Date(existingClass.dateFin) &&
+            newClassEndTime > new Date(existingClass.dateInicio)
+          );
+          if (hasPastPermanentConflict || hasPermanentConflict || hasNonPermanentConflict) {
+              console.error('Ya existe una clase permanente en esta sala para este horario.');
+              setOpenCircularProgress(false);
+              throw new Error('Error al crear la clase: Ya existe una clase permanente en esta sala para este horario.');
+          }
+      }
+
+        const newClass = {
+            name: name,
+            dateInicio: newClassStartTime.toISOString(),
+            dateFin: newClassEndTime.toISOString(),
+            hour: hour,
+            day: day(isoDateString),
+            permanent: permanent,
+            owner: userMail,
+            capacity: maxNum,
+            BookedUsers: [],
+            sala: salaAssigned
+        };
+
+        const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/create_class', {
+        //const response = await fetch('http://127.0.0.1:5000/create_class', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify(newClass),
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al crear la clase');
+        }
+
         setOpenCircularProgress(false);
-        setFailureErrors(true);
+        setSuccess(true);
         setTimeout(() => {
-            setFailureErrors(false);
+            setSuccess(false);
+            navigate(`/?mail=${userMail}`, { state: { message: 'block' } });
         }, 3000);
+    } catch (error) {
+        console.error("Error al crear la clase:", error);
+        if(salaAssigned==='PmQ2RZJpDXjBetqThVna'){
+          setErrorSala1(true);
+        } else if(salaAssigned==='cuyAhMJE8Mz31eL12aPO') {
+          setErrorSala2(true);
+        } else if(salaAssigned==='jxYcsGUYhW6pVnYmjK8H') {
+          setErrorSala3(true);
+        } else if(salaAssigned==='waA7dE83alk1HXZvlbyK') {
+          setErrorSala4(true);
+        }
+        setOpenCircularProgress(false);
     }
   };
 
-
-  
   const handleSubmit = (e) => {
     e.preventDefault();
     handleCreateClass();
   };
 
+  const handleComeBack = (e) => {
+    setShowSalas(false);
+  };
+
+  const handleSelectSala = (sala) => {
+    if(sala.opacity===1) {
+      setSala(sala.id);
+      setErrorSala1(false);
+      setErrorSala2(false);
+      setErrorSala3(false);
+      setErrorSala4(false);
+    }
+  }
+
   const handleViewRooms = () => {
-    setShowSalas(!showSalas);
+    if(validateForm()){
+      setShowSalas(true);
+      fetchSalas();
+    }
   };
 
   const fetchSalas = async () => {
@@ -230,6 +313,7 @@ export default function CreateClass() {
           return;
         }
         const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_salas`, {
+        //const response = await fetch(`http://127.0.0.1:5000/get_salas`, {
             method: 'GET', 
             headers: {
               'Authorization': `Bearer ${authToken}`
@@ -239,8 +323,13 @@ export default function CreateClass() {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
         const data = await response.json();
-        // const dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
-        setSalas(data);
+        const dataFinal = data.map(room => {
+          return {
+              ...room,
+              opacity: parseInt(room.capacidad) >= maxNum ? 1 : 0.5
+          };
+      });
+        setSalas(dataFinal);
         setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching rutinas:", error);
@@ -279,9 +368,16 @@ export default function CreateClass() {
   useEffect(() => {
     if (userMail) {
       fetchUser();
-      fetchSalas();
     }
   }, [userMail]);
+
+  useEffect(() => {
+    if (isSmallScreen) {
+      setMaxWidthImg('80%')
+    } else {
+      setMaxWidthImg('200px')
+    }
+  }, [isSmallScreen]);
 
   // useEffect(() => {
   //   if (userMail && maxNum) {
@@ -298,6 +394,7 @@ export default function CreateClass() {
       }
       const encodedUserMail = encodeURIComponent(userMail);
       const response = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_unique_user_by_email?mail=${encodedUserMail}`, {
+      //const response = await fetch(`http://127.0.0.1:5000/get_unique_user_by_email?mail=${encodedUserMail}`, {
             method: 'GET', 
             headers: {
               'Authorization': `Bearer ${authToken}`
@@ -344,13 +441,26 @@ export default function CreateClass() {
             <LeftBar/>
             <div className='class-creation-container'>
               <div className='class-creation-content'>
-                <h2 style={{color:'#5e2404'}}>Create class</h2>
-                <form onSubmit={handleViewRooms}>
+                <h2 style={{color:'#424242'}}>Create class</h2>
                   {!isSmallScreen ? (
                     <>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                         <div className="input-small-container">
-                          <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
+                          <label htmlFor="name" style={{color:'#424242'}}>Name:</label>
+                          <input
+                            onClick={handleCloseHourRequirements}
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            value={name} 
+                            onChange={(e) => setName(e.target.value)} 
+                          />
+                           {errorName && (<p style={{color: 'red', margin: '0px'}}>Enter a name</p>)}
+                        </div>
+                      </div>
+                      <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                        <div className="input-small-container" style={{marginBottom: '0px'}}>
+                          <label htmlFor="hour" style={{color:'#424242'}}>Start time:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="time" 
@@ -359,9 +469,10 @@ export default function CreateClass() {
                             value={hour} 
                             onChange={(e) => setHour(e.target.value)} 
                           />
+                          {errorStartTime && (<p style={{color: 'red', margin: '0px'}}>Enter a start time</p>)}
                         </div>
-                        <div className="input-small-container">
-                          <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
+                        <div className="input-small-container" style={{marginBottom: '0px'}}>
+                          <label htmlFor="hour" style={{color:'#424242'}}>End time:</label>
                           <input
                             onClick={handleOpenHourRequirements}
                             type="time" 
@@ -375,22 +486,25 @@ export default function CreateClass() {
                                 <p>Class must last at least 30 minutes</p>
                             </Box>
                           </Popper>
-                        </div>
-                        <div className="input-small-container">
-                          <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
-                          <input
-                            onClick={handleCloseHourRequirements}
-                            type="text" 
-                            id="name" 
-                            name="name" 
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
-                          />
+                          {errorEndTime30 && (<p style={{color: 'red', margin: '0px'}}>Class must last at least 30 minutes</p>)}
+                          {errorEndTime && (<p style={{color: 'red', margin: '0px'}}>Enter an end time</p>)}
                         </div>
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                          <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left', marginBottom: '0px' }}>
+                            <label htmlFor="date" style={{color:'#424242'}}>Date:</label>
+                            <input
+                              onClick={handleCloseHourRequirements}
+                              type="date" 
+                              id="date" 
+                              name="date" 
+                              value={date} 
+                              onChange={(e) => setDate(e.target.value)} 
+                            />
+                            {errorDate && (<p style={{color: 'red', margin: '0px'}}>Select a date</p>)}
+                          </div>
+                          <div className="input-small-container" style={{ flex: 3, textAlign: 'left', marginBottom: '0px' }}>
+                          <label htmlFor="maxNum" style={{color:'#424242'}}>Participants:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="number" 
@@ -403,38 +517,10 @@ export default function CreateClass() {
                             onChange={(e) => setMaxNum(e.target.value)} 
                           />
                         </div>
-                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                          <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
-                          <input
-                            onClick={handleCloseHourRequirements}
-                            type="date" 
-                            id="date" 
-                            name="date" 
-                            value={date} 
-                            onChange={(e) => setDate(e.target.value)} 
-                          />
-                        </div>
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                        {/* <div className="input-small-container">
-                              <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
-                              <select
-                                  id="salaAssigned"
-                                  name="salaAssigned"
-                                  value={salaAssigned}
-                                  onChange={(e) => setSala(e.target.value)}
-                                  style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
-                              >
-                                  <option value="">Select</option>
-                                  {salas.map((sala) => (
-                                      <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
-                                          {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}
-                                      </option>
-                                  ))}
-                              </select>
-                          </div> */}
-                          <div className="input-small-container" style={{width:"100%"}}>
-                            <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                          <div className="input-small-container" style={{width:"100%", marginBottom: '0px'}}>
+                            <label htmlFor="permanent" style={{color:'#424242'}}>Recurrent:</label>
                             <select
                               onClick={handleCloseHourRequirements}
                               id="permanent" 
@@ -446,15 +532,18 @@ export default function CreateClass() {
                               <option value="Si">Yes</option>
                               <option value="No">No</option>
                             </select>
+                            {errorRecurrent && (<p style={{color: 'red', margin: '0px'}}>Select a recurrent value</p>)}
                           </div>
                         </div>
+                        <ComponenteBotonShowGymRoom/>
                     </>
                   ) : (
                     <>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                        <div className="input-small-container">
-                          <label htmlFor="hour" style={{color:'#5e2404'}}>Start time:</label>
+                        <div className="input-small-container" style={{marginBottom: '0px'}}>
+                          <label htmlFor="hour" style={{color:'#424242'}}>Start time:</label>
                           <input
+                            style={{marginBottom: '0px'}}
                             onClick={handleCloseHourRequirements}
                             type="time" 
                             id="hour" 
@@ -462,9 +551,10 @@ export default function CreateClass() {
                             value={hour} 
                             onChange={(e) => setHour(e.target.value)} 
                           />
+                          {errorStartTime && (<p style={{color: 'red', margin: '0px'}}>Enter a start time</p>)}
                         </div>
-                        <div className="input-small-container">
-                          <label htmlFor="hour" style={{color:'#5e2404'}}>End time:</label>
+                        <div className="input-small-container" style={{marginBottom: '0px'}}>
+                          <label htmlFor="hour" style={{color:'#424242'}}>End time:</label>
                           <input
                             onClick={handleOpenHourRequirements}
                             type="time" 
@@ -478,11 +568,13 @@ export default function CreateClass() {
                                 <p>Class must last at least 30 minutes</p>
                             </Box>
                           </Popper>
+                          {errorEndTime30 && (<p style={{color: 'red', margin: '0px'}}>Class must last at least 30 minutes</p>)}
+                          {errorEndTime && (<p style={{color: 'red', margin: '0px'}}>Enter an end time</p>)}
                         </div>
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                        <div className="input-small-container">
-                            <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                        <div className="input-small-container" style={{marginBottom: '0px'}}>
+                            <label htmlFor="name" style={{color:'#424242'}}>Name:</label>
                             <input
                               onClick={handleCloseHourRequirements}
                               type="text" 
@@ -491,9 +583,10 @@ export default function CreateClass() {
                               value={name} 
                               onChange={(e) => setName(e.target.value)} 
                             />
+                            {errorName && (<p style={{color: 'red', margin: '0px'}}>Enter a name</p>)}
                           </div>
-                        <div className="input-small-container" style={{width:"100%"}}>
-                          <label htmlFor="permanent" style={{color:'#5e2404'}}>Recurrent:</label>
+                        <div className="input-small-container" style={{width:"100%", marginBottom: '0px'}}>
+                          <label htmlFor="permanent" style={{color:'#424242'}}>Recurrent:</label>
                           <select
                             onClick={handleCloseHourRequirements}
                             id="permanent" 
@@ -505,11 +598,12 @@ export default function CreateClass() {
                             <option value="Si">Yes</option>
                             <option value="No">No</option>
                           </select>
+                          {errorRecurrent && (<p style={{color: 'red', margin: '0px'}}>Select a recurrent value</p>)}
                         </div>
                       </div>
                       <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                          <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left', marginBottom: '0px' }}>
+                          <label htmlFor="maxNum" style={{color:'#424242'}}>Participants:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="number" 
@@ -522,8 +616,8 @@ export default function CreateClass() {
                             onChange={(e) => setMaxNum(e.target.value)} 
                           />
                         </div>
-                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                          <label htmlFor="date" style={{color:'#5e2404'}}>Date:</label>
+                        <div className="input-small-container" style={{ flex: 3, textAlign: 'left', marginBottom: '0px'}}>
+                          <label htmlFor="date" style={{color:'#424242'}}>Date:</label>
                           <input
                             onClick={handleCloseHourRequirements}
                             type="date" 
@@ -532,42 +626,106 @@ export default function CreateClass() {
                             value={date} 
                             onChange={(e) => setDate(e.target.value)} 
                           />
-                        </div>
+                          {errorDate && (<p style={{color: 'red', margin: '0px'}}>Select a date</p>)}
+                        </div>   
                       </div>
-                      {/* <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                        <div className="input-small-container">
-                              <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
-                              <select
-                                  id="salaAssigned"
-                                  name="salaAssigned"
-                                  value={salaAssigned}
-                                  onChange={(e) => setSala(e.target.value)}
-                                  style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
-                              >
-                                  <option value="">Select</option>
-                                  {salas.map((sala) => (
-                                      <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
-                                          {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}
-                                      </option>
-                                  ))}
-                              </select>
-                          </div>
-                        </div> */}
+                      <button className='button_login' onClick={handleViewRooms}>
+                    Show gymrooms
+                  </button>
                     </>
                   )}
                   
-                  <button type="submit" className='button_login'>
-                    Create class
-                  </button>
-                </form>
               </div>
             </div>
-            {openCircularProgress ? (
+          </>
+      )}
+      </>
+      ) : (
+        <>
+          <LeftBar/>
+            <div className='class-creation-rooms-container'>
+              <div className='class-creation-content'>
+              <button className='button-come-back' onClick={handleComeBack}>come back</button>
+                <h2 style={{color:'#424242'}}>Create class</h2>
+                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                  <div onClick={() => handleSelectSala(salas[0])} className={salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center',borderRadius:'10px' ,backgroundColor: salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
+                    <img 
+                      src={`${process.env.PUBLIC_URL}/salon_pequenio.jpeg`} 
+                      alt={'logo'}
+                      style={{
+                          display: 'block',
+                          margin: '10px auto',
+                          maxWidth: maxWidthImg,
+                          opacity: salas[0]?.opacity,
+                          height: 'auto',
+                          borderRadius: '8px'
+                      }}
+                    />
+                    <p style={{marginBottom: '0px'}}>{salas[0]?.nombre} ({salas[0]?.capacidad})</p>
+                    {errorSala1 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
+                  </div>
+                  <div onClick={() => handleSelectSala(salas[1])} className={salaAssigned==salas[1]?.id && salas[1] ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center', borderRadius:'10px',backgroundColor: salaAssigned==salas[1]?.id && salas[1]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
+                    <img 
+                      src={`${process.env.PUBLIC_URL}/gimnasio.jpeg`} 
+                      alt={'logo'}
+                      style={{
+                          display: 'block',
+                          margin: '10px auto',
+                          maxWidth: maxWidthImg,
+                          opacity: salas[1]?.opacity,
+                          height: 'auto',
+                          borderRadius: '8px'
+                      }}
+                    />
+                    <p style={{marginBottom: '0px'}}>{salas[1]?.nombre} ({salas[1]?.capacidad})</p>
+                    {errorSala2 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
+                  </div>
+                </div>
+                  <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                    <div onClick={() => handleSelectSala(salas[2])} className={salaAssigned==salas[2]?.id && salas[1] ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center', borderRadius:'10px', backgroundColor: salaAssigned==salas[2]?.id && salas[2]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
+                      <img 
+                        src={`${process.env.PUBLIC_URL}/salon_de_functional.jpeg`} 
+                        alt={'logo'}
+                        style={{
+                            display: 'block',
+                            margin: '10px auto',
+                            maxWidth: maxWidthImg,
+                            opacity: salas[2]?.opacity,
+                            height: 'auto',
+                            borderRadius: '8px'
+                        }}
+                      />
+                      <p style={{marginBottom: '0px'}}>{salas[2]?.nombre} ({salas[2]?.capacidad})</p>
+                      {errorSala3 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
+                  </div>
+                  <div onClick={() => handleSelectSala(salas[3])} className={salaAssigned==salas[3]?.id && salas[3  ] ? 'box':'input-small-container'}   style={{ flex: 3, textAlign: 'center', borderRadius:'10px', backgroundColor: salaAssigned==salas[3]?.id && salas[3]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
+                    <img
+                      src={`${process.env.PUBLIC_URL}/salon_de_gimnasio.jpg`} 
+                      alt={'logo'}
+                      style={{
+                          display: 'block',
+                          margin: '10px auto',
+                          maxWidth: maxWidthImg,
+                          opacity: salas[3]?.opacity,
+                          height: 'auto',
+                          borderRadius: '8px'
+                      }}
+                    />
+                    <p style={{marginBottom: '0px'}}>{salas[3]?.nombre} ({salas[3]?.capacidad})</p>
+                    {errorSala4 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
+                  </div>
+                </div>
+                <ComponenteCreateClass/>
+              </div>
+            </div>
+        </>
+      )}
+      {openCircularProgress ? (
                 <Backdrop
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             { success ? (
@@ -636,78 +794,6 @@ export default function CreateClass() {
             ) : (
                 null
             )}
-          </>
-      )}
-      </>
-      ) : (
-        <>
-          <LeftBar/>
-            <div className='class-creation-container'>
-              <div className='class-creation-content'>
-                <h2 style={{color:'#5e2404'}}>Create class</h2>
-                <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                    <img 
-                      src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
-                      alt={'logo'}
-                      style={{
-                          display: 'block',
-                          margin: '10px auto',
-                          maxWidth: '100%',
-                          height: 'auto',
-                          borderRadius: '8px'
-                      }}
-                    />
-                  </div>
-                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                    <img 
-                      src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
-                      alt={'logo'}
-                      style={{
-                          display: 'block',
-                          margin: '10px auto',
-                          maxWidth: '100%',
-                          height: 'auto',
-                          borderRadius: '8px'
-                      }}
-                    />
-                  </div>
-                </div>
-                  <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
-                    <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                      <img 
-                        src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
-                        alt={'logo'}
-                        style={{
-                            display: 'block',
-                            margin: '10px auto',
-                            maxWidth: '100%',
-                            height: 'auto',
-                            borderRadius: '8px'
-                        }}
-                      />
-                  </div>
-                  <div className="input-small-container" style={{ flex: 3, textAlign: 'left', opacity: 0.5 }}>
-                    <img
-                      src={`${process.env.PUBLIC_URL}/LogoGymGeniusIcon.png`} 
-                      alt={'logo'}
-                      style={{
-                          display: 'block',
-                          margin: '10px auto',
-                          maxWidth: '100%',
-                          height: 'auto',
-                          borderRadius: '8px'
-                      }}
-                    />
-                  </div>
-                </div>
-                <button className='button_login' onClick={handleSubmit}>
-                    Create class
-                  </button>
-              </div>
-            </div>
-        </>
-      )}
     </div>
   );
 }

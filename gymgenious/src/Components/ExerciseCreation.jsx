@@ -8,7 +8,9 @@ import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
-
+import { Button } from '@mui/material';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import Loader from '../real_components/loader.jsx'
 export default function ExerciseCreation() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
@@ -111,6 +113,12 @@ export default function ExerciseCreation() {
 
   return (
     <div className='exercise-creation-container'>
+      <button 
+        onClick={() => window.location.reload()} 
+        className="custom-button-go-back-managing"
+      >
+        <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+      </button>
       <div className='class-creation-content'>
         <h2 style={{color:'#14213D'}}>Create exercise</h2>
         <form onSubmit={handleSubmit}>
@@ -162,7 +170,7 @@ export default function ExerciseCreation() {
         sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
         open={openCircularProgress}
         >
-        <CircularProgress color="inherit" />
+        <Loader></Loader>
         </Backdrop>
       ) : null}
       { success ? (

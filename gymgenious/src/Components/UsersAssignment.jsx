@@ -15,7 +15,7 @@ import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import { useMediaQuery } from '@mui/material';
 import Typography from '@mui/material/Typography';
-
+import Loader from '../real_components/loader.jsx'
 function not(a, b) {
   return a.filter((value) => !b.includes(value));
 }
@@ -185,7 +185,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
         <>
         {!routine ? (
           <Grid item>
-            <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+            <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
               Select a routine to assign
             </Typography>
           </Grid>
@@ -193,7 +193,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
           <>
             {left.length===0 ? (
               <Grid item>
-              <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+              <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
                 There are no users
               </Typography>
             </Grid>
@@ -248,7 +248,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
         </Grid>
         {right.length === 0 ? (
           <Grid item>
-            <Typography sx={{ color: '#54311a', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+            <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
               No users were chosen
             </Typography>
           </Grid>
@@ -264,7 +264,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
           open={openCircularProgress}
         >
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
         </Backdrop>
       ) : null}
       {warningFetchingUsers ? (

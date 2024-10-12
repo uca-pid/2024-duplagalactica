@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 export default function ColorToggleButton( {selectedDay, setSelectedDay} ) {
     const [hovered, setHovered] = useState(null);
-
     const handleMouseEnter = (value) => {
         setHovered(value);
     };
@@ -26,7 +25,7 @@ export default function ColorToggleButton( {selectedDay, setSelectedDay} ) {
                 <ToggleButton
                     key={day}
                     style={{
-                        backgroundColor: selectedDay === day || hovered === day ? '#5e2404' : '#b87d48',
+                        backgroundColor: selectedDay === day || hovered === day ? '#48CFCB' : '#424242',
                         color: 'white',
                     }}
                     value={day}

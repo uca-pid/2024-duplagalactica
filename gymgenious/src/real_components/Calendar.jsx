@@ -11,26 +11,28 @@ export default function Calendar({ events, onSelectEvent }) {
 
     let backgroundColor = '';
     if (percentageFilled < 20) {
-      backgroundColor = '#00FF00'; 
+      backgroundColor = '#B2FFB2'; 
     } else if (percentageFilled >= 20 && percentageFilled < 50) {
-      backgroundColor = '#FFFF00'; 
+      backgroundColor = '#FFFFB2'; 
     } else if (percentageFilled >= 50 && percentageFilled < 70) {
-      backgroundColor = '#FFA500'; 
+      backgroundColor = '#FFB2A6';
     } else if (percentageFilled >= 70 && percentageFilled < 100) {
-      backgroundColor = '#FF4500'; 
+      backgroundColor = '#FFB2B2'; 
     } else if (percentageFilled === 100) {
-      backgroundColor = '#FF0000';
+      backgroundColor = '#FFB2B2';
     }
-
+    
     const style = {
       backgroundColor: backgroundColor,
-      borderRadius: '0px',
-      opacity: 0.8,
+      borderRadius: '10px',
+      opacity: 1,
       color: 'black',
       display: 'block',
       padding: '5px',
       border: 'none',
       fontWeight: 'bold',
+      textAlign: 'center', 
+      boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.3)', 
     };
     return {
       style: style,

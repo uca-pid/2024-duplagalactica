@@ -3,6 +3,7 @@ import { Box, useMediaQuery } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
+import { motion } from "framer-motion";
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
@@ -25,7 +26,8 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import Loader from '../real_components/loader.jsx'
 function TopRoutines({ routines }) {
     const [itemNb, setItemNb] = React.useState(20);
 
@@ -35,7 +37,33 @@ function TopRoutines({ routines }) {
     const routineData = orderedRoutines?.map(routine => routine.cant_asignados);
   
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
+      <>
+        
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center', 
+          alignItems: 'center',
+          width: '80%',
+          height: '70%',
+          background: 'rgba(245, 245, 245, 0.7)',
+          position: 'absolute', 
+          top: '50%',
+          borderRadius:'10px',
+          left: '50%', 
+          transform: 'translate(-50%, -50%)', 
+        }}>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="custom-button-go-back-managing"
+          style={{
+            zIndex: '2',
+            position: 'absolute', 
+            top: '-10px',
+            right: '10px', 
+          }}
+        >
+          <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+        </button>
           <BarChart
             height={500}
             series={[{
@@ -44,9 +72,11 @@ function TopRoutines({ routines }) {
             xAxis={[{
               scaleType: 'band',
               data: routineNames.slice(0, itemNb),
+              fill:'red'
             }]}
           />
       </Box>
+    </>
     );
   }
 
@@ -58,7 +88,31 @@ function TopRoutines({ routines }) {
     const classesData = orderedClasses?.map(clase => clase.BookedUsers.length);
   
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center', 
+          alignItems: 'center',
+          width: '80%',
+          height: '70%',
+          background: 'rgba(245, 245, 245, 0.7)',
+          position: 'absolute', 
+          top: '50%',
+          borderRadius:'10px',
+          left: '50%', 
+          transform: 'translate(-50%, -50%)', 
+        }}>
+          <button 
+          onClick={() => window.location.reload()} 
+          className="custom-button-go-back-managing"
+          style={{
+            zIndex: '2',
+            position: 'absolute', 
+            top: '-10px',
+            right: '10px', 
+          }}
+        >
+          <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+        </button>
           <BarChart
             height={500}
             series={[{
@@ -80,7 +134,31 @@ function TopRoutines({ routines }) {
     const classesData = orderedClasses?.map(clase => clase.count);
   
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center', 
+        alignItems: 'center',
+        width: '80%',
+        height: '70%',
+        background: 'rgba(245, 245, 245, 0.7)',
+        position: 'absolute', 
+        top: '50%',
+        borderRadius:'10px',
+        left: '50%', 
+        transform: 'translate(-50%, -50%)', 
+      }}>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="custom-button-go-back-managing"
+          style={{
+            zIndex: '2',
+            position: 'absolute', 
+            top: '-10px',
+            right: '10px', 
+          }}
+        >
+          <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+        </button>
         <BarChart
           height={500}
           series={[{
@@ -360,6 +438,79 @@ function CoachGraphics() {
         throw error;
     }
   };
+  
+  const [activeComponent, setActiveComponent] = useState(null);
+  const handleLinkClick = (component) => {
+    setActiveComponent(component);
+  };
+  
+  const DURATION = 0.25;
+  const STAGGER = 0.065;
+  const FlipLink = ({ children, onClick }) => {
+    return (
+      <motion.a
+        initial="initial"
+        whileHover="hovered"
+        onClick={onClick}
+        className="custom-flip-link"
+        style={{
+          lineHeight: 0.75,
+          position: 'relative', 
+        }}
+      >
+        <div className="text-container">
+          {children.split("").map((l, i) => (
+            <motion.span
+              variants={{
+                initial: {
+                  y: 0,
+                },
+                hovered: {
+                  y: "-110%",
+                },
+              }}
+              transition={{
+                duration: DURATION,
+                ease: "easeInOut",
+                delay: STAGGER * i,
+              }}
+              className="inline-block"
+              key={i}
+            >
+              {l}
+            </motion.span>
+          ))}
+        </div>
+        <div className="text-container">
+          {children.split("").map((l, i) => (
+            <motion.span
+              variants={{
+                initial: {
+                  y: "100%", 
+                },
+                hovered: {
+                  y: "-100%",
+                },
+              }}
+              transition={{
+                duration: DURATION,
+                ease: "easeInOut",
+                delay: STAGGER * i,
+              }}
+              className="inline-block"
+              key={i}
+            >
+              {l}
+            </motion.span>
+          ))}
+        </div>
+      </motion.a>
+    );
+  };
+  
+  
+  
+  
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -435,64 +586,23 @@ function CoachGraphics() {
         ) : (
           <>
             <NewLeftBar/>
-            <div className='stepper-container'>
-                    <Box sx={{ width: '100%' }}>
-                    <Stepper activeStep={activeStep}>
-                        {steps.map((label, index) => {
-                        const stepProps = {};
-                        const labelProps = {};
-                        
-                        if (isStepSkipped(index)) {
-                            stepProps.completed = false;
-                        }
-                        return (
-                            <Step key={label} {...stepProps}>
-                            <StepLabel {...labelProps}>{label}</StepLabel>
-                            </Step>
-                        );
-                        })}
-                    </Stepper>
-                    {activeStep === steps.length ? 
-                        navigate('/')
-                     : (
-                        <React.Fragment>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                            <Button
-                            color="inherit"
-                            disabled={activeStep === 0}
-                            onClick={handleBack}
-                            sx={{ mr: 1 }}
-                            >
-                            Back
-                            </Button>
-                            <Box sx={{ flex: '1 1 auto' }} />
-                            <Button onClick={handleNext}>
-                            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                            </Button>
-                        </Box>
-                        </React.Fragment>
-                    )}
-                    </Box>
-                </div>
-                <div className="graphics-container">
-                    <div className='graphics-content'>
-                        {activeStep===0 && (
-                            <TopRoutines routines={routines}/>
-                        )}
-                        {activeStep===1 && ( 
-                            <TopClasses classes={classes}/>
-                        )}
-                        {activeStep===2 && (
-                            <ExercisesVsUsers exersCoachUsers={exersCoachUsers}/>
-                        )}
-                    </div>
-                </div>
+            {!activeComponent?(
+            <section className="graficos-selector">
+              <FlipLink onClick={() => handleLinkClick(<TopRoutines routines={routines}/>)}>Trend.Routines</FlipLink>
+              <FlipLink onClick={() => handleLinkClick(<TopClasses  classes={classes}/>)}>Trend.Classes</FlipLink>
+              <FlipLink onClick={() => handleLinkClick(<ExercisesVsUsers exersCoachUsers={exersCoachUsers}/>)}>Favourite.Exercises</FlipLink>
+            </section>
+            ): (
+              <>
+              {activeComponent}
+            </>
+            )}
             {openCircularProgress ? (
               <Backdrop
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
               >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
               </Backdrop>
             ) : (
               null
@@ -527,6 +637,7 @@ function CoachGraphics() {
             ) : (
               null
             )}
+            
           </>
         )}
       </div>

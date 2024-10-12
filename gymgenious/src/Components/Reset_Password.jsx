@@ -9,7 +9,7 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function ResetPassword() {
     const [email, setEmail] = useState('');
     const [showNotMatchEmail, setShowNoMatchEmail] = useState(false);
@@ -61,15 +61,15 @@ export default function ResetPassword() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             <div className='reset-password-container'>
                 <div className='reset-password-content'>
-                    <h2 style={{color:'#5e2404'}}>Reset password</h2>
+                    <h2 style={{color:'#424242'}}>Reset password</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="input-container">
-                            <label htmlFor="email" style={{color:'#5e2404'}}>Email:</label>
+                            <label htmlFor="email" style={{color:'#424242'}}>Email:</label>
                             <input 
                                 type="email" 
                                 id="email" 

@@ -18,18 +18,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
-
-
-
+import Loader from '../real_components/loader.jsx'
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
-  const [maxNum,setMaxNum] = useState(1);
+  const [maxNum,setMaxNum] = useState(null);
   const [salas, setSalas] = useState([]);
   const [warningFetchingRoutines, setWarningFetchingRoutines] = useState(false);
   const [salaAssigned, setSala] = useState(null);
-  const [openHourRequirements, setOpenHourRequirements] = useState(false);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -51,6 +48,8 @@ function CouchClasses() {
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
   const [type, setType] = useState(null);
+  const [errorSala, setErrorSala] = useState(false);
+  const [errorEndTime, setErrorEndTime] = useState(false);
 
 
   const [fetchId,setFetchId] = useState('');
@@ -64,6 +63,7 @@ function CouchClasses() {
   const [fetchSala,setFetchSala] = useState('')
   const [fetchCapacity, setFetchCapacity] = useState('')
   const [failureErrors, setFailureErrors] = useState(false);
+  const [errorForm, setErrorForm] = useState(false);
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -79,15 +79,11 @@ function CouchClasses() {
     return `${month}/${day}/${year}`;
   }
 
-  const handleCloseHourRequirements = () => {
-    setOpenHourRequirements(false);
-  }
-
   useEffect(() => {
-    if (userMail && maxNum) {
+    if (userMail && (maxNum || fetchCapacity)) {
       fetchSalas();
     }
-  }, [userMail,maxNum]);
+  }, [userMail,maxNum,fetchCapacity]);
   
   const fetchSalas = async () => {
     setOpenCircularProgress(true);
@@ -107,7 +103,14 @@ function CouchClasses() {
             throw new Error('Error al obtener las rutinas: ' + response.statusText);
         }
         const data = await response.json();
-        const dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
+        let dataFinal=[]
+        if(maxNum!=null){
+          dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
+          console.log(fetchCapacity)
+        } else {
+          dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=fetchCapacity)
+          console.log(fetchCapacity)
+        }
         setSalas(dataFinal);
         setOpenCircularProgress(false);
     } catch (error) {
@@ -166,6 +169,10 @@ function CouchClasses() {
     setPermanent('');
     setDate('');
     setName('');
+    setMaxNum(null);
+    setSala(null);
+    setErrorForm(false);
+    setErrorSala(false);
   } 
 
 
@@ -177,6 +184,7 @@ function CouchClasses() {
 
   const fetchModifyClassInformation = async () => {
     setOpenCircularProgress(true);
+    setErrorSala(false);
     try {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
@@ -188,27 +196,21 @@ function CouchClasses() {
         if (!response2.ok) {
             throw new Error('Error al obtener las clases: ' + response2.statusText);
         }
-        const data2 = await response2.json();
+        const data2 = (await response2.json()).filter((res)=> res.id!=fetchId);
         const isoDateString = date.toString() || fetchDateInicio.split('T')[0]; 
 
-
-
-        
         const newPreviousDate = fetchDateInicio ? fetchDateInicio.split('T')[0] : null;
         const newPreviousDateFin = fetchDateFin ? fetchDateFin.split('T')[0] : null;
         const newPreviousHour = fetchDateInicio ? fetchDateInicio.split('T')[1].split('Z')[0] : "00:00:00";
         const newPreviousHourFin = fetchDateFin ? fetchDateFin.split('T')[1].split('Z')[0] : "00:00:00";
-
 
         const finalDateStart = date || newPreviousDate;
         const finalHourStart = hour || newPreviousHour;
         const finalDateEnd = date || newPreviousDateFin;
         const finalHourEnd = hourFin || newPreviousHourFin;
 
-        
         const newClassStartTime = new Date(`${finalDateStart}T${finalHourStart}Z`);
         const newClassEndTime = new Date(`${finalDateEnd}T${finalHourEnd}Z`);
-        
         
         const newClassStartTimeInMinutes = timeToMinutes(hour);
         const newClassEndTimeInMinutes = timeToMinutes(hourFin);
@@ -234,11 +236,7 @@ function CouchClasses() {
           if (hasNonPermanentConflict || hasPermanentConflict) {
               console.error('Conflicto de horario con clases existentes en esta sala.');
               setOpenCircularProgress(false);
-              setFailureErrors(true);
-              setTimeout(() => {
-                  setFailureErrors(false);
-              }, 3000);
-              return;
+              throw new Error('Error al crear la clase: Conflicto de horario con clases existentes en esta sala.');
           }
         } 
         else if ((permanent || fetchPermanent) == "Si") {
@@ -272,11 +270,7 @@ function CouchClasses() {
             if (hasPastPermanentConflict || hasPermanentConflict || hasNonPermanentConflict) {
                 console.error('Ya existe una clase permanente en esta sala para este horario.');
                 setOpenCircularProgress(false);
-                setFailureErrors(true);
-                setTimeout(() => {
-                    setFailureErrors(false);
-                }, 3000);
-                return;
+                throw new Error('Error al crear la clase: Ya existe una clase permanente en esta sala para este horario.');
             }
         }
         
@@ -316,26 +310,31 @@ function CouchClasses() {
         const data = await response.json();
         await fetchClasses();
         setOpenCircularProgress(false);
+        setEditClass(!editClass);
         handleCloseModal(); 
     } catch (error) {
         console.error("Error updating user:", error);
         setOpenCircularProgress(false);
-        setWarningConnection(true);
-        setTimeout(() => {
-            setWarningConnection(false);
-        }, 3000);
+        setErrorSala(true);
     }
 };
+  const validateForm = () => {
+    let res = true;
+    console.log(name)
+    if (name==='' && hour === '' && hourFin === '' && date=== '') {
+        setErrorForm(true);
+        res = false;
+    } else {
+        setErrorForm(false);
+    }
+    return res;
+  }
 
-  const saveClass = async (event) => {
-    event.preventDefault(); 
-    fetchModifyClassInformation();
-    setEditClass(!editClass);
-    setTimeout(() => {
-      setOpenCircularProgress(false);
-    }, 7000);
-    await fetchClasses();
-    ///window.location.reload()
+  const saveClass = (event) => {
+    if(validateForm()){
+      event.preventDefault(); 
+      fetchModifyClassInformation();
+    }
   };
 
   const handleDeleteClass = async (event) => {
@@ -520,7 +519,7 @@ function CouchClasses() {
         <NewLeftBar/>
         {openCircularProgress ? (
             <Backdrop open={openCircularProgress} sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}>
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
             </Backdrop>
         ) : (
             null
@@ -556,11 +555,11 @@ function CouchClasses() {
             null
         )}
         <div className="Table-Container">
-        <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+        <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
             <Paper
                 sx={{
                 width: '100%',
-                backgroundColor: '#ffe0b5',
+                backgroundColor: '#F5F5F5',
                 borderRadius: '10px'
                 }}
             >
@@ -575,7 +574,7 @@ function CouchClasses() {
                     >
                         <TableHead>
                             <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                         <TableSortLabel active={orderBy === 'name'} direction={orderBy === 'name' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'name')}>
                                             Name
                                             {orderBy === 'name' ? (
@@ -588,7 +587,7 @@ function CouchClasses() {
                                         </TableSortLabel>
                                     </TableCell>
                                     {!isSmallScreen500 && (
-                                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                                    <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                                         <TableSortLabel
                                         active={orderBy === 'hour'}
                                         direction={orderBy === 'hour' ? order : 'asc'}
@@ -604,7 +603,7 @@ function CouchClasses() {
                                     </TableCell>
                                     )}
                                     {!isSmallScreen400 && (
-                                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                                    <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                                         <TableSortLabel
                                         active={orderBy === 'dateInicio'}
                                         direction={orderBy === 'dateInicio' ? order : 'asc'}
@@ -620,7 +619,7 @@ function CouchClasses() {
                                     </TableCell>
                                     )}
                                     {!isSmallScreen600 && (
-                                    <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                                    <TableCell align="right" sx={{ borderBottom: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                                         <TableSortLabel
                                         active={orderBy === 'permanent'}
                                         direction={orderBy === 'permanent' ? order : 'asc'}
@@ -640,25 +639,25 @@ function CouchClasses() {
                             <TableBody>
                             {visibleRows.length===0 ? (
                               <TableRow>
-                              <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                              <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                   There are no created classes
                               </TableCell>
                               </TableRow>
                             ) : (
                               <>
                                 {visibleRows.map((row) => (
-                                    <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #BC6C25' }}>
-                                    <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                                    <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #424242' }}>
+                                    <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                         {row.name}
                                     </TableCell>
                                     {!isSmallScreen500 && (
-                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
+                                        <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{row.hour}</TableCell>
                                     )}
                                     {!isSmallScreen400 && (
-                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
+                                        <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
                                     )}
                                     {!isSmallScreen600 && (
-                                        <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
+                                        <TableCell align="right" sx={{ borderBottom: '1px solid #424242', color: '#424242' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
                                     )}
                                     </TableRow>
                                 ))}
@@ -705,17 +704,16 @@ function CouchClasses() {
                             <p><strong>Sala:</strong> {selectedEvent.salaInfo.nombre}</p>
                             <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
                             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>
-                            <button onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
-                            <button onClick={handleCloseModal}>Close</button>
-                            <button onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
+                            <button style={{marginLeft:'10px'}} onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
+                            <button style={{marginLeft:'10px'}} onClick={handleCloseModal}>Close</button>
+                            <button style={{marginLeft:'10px'}} onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
                         </div>
                     </div>
                 )}
                 {editClass && (
-                    <div className="Modal" onClick={handleEditClass}>
-                        <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                    <div className="Modal">
+                        <div className="Modal-Content-class-creation" onClick={(e) => e.stopPropagation()}>
                             <h2>Class details</h2>
-                            <form autoComplete='off' onSubmit={saveClass}>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                     <div className="input-small-container">
                                         <label htmlFor="hour" style={{color:'#14213D'}}>Start time:</label>
@@ -743,8 +741,9 @@ function CouchClasses() {
                                         type="text" 
                                         id="name" 
                                         name="name" 
-                                        value={name || fetchName} 
-                                        onChange={(e) => setName(e.target.value)}/>
+                                        value={name} 
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder={fetchName}/>
                                     </div>
                                 </div>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
@@ -773,40 +772,39 @@ function CouchClasses() {
                                 </div>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                 <div className="input-small-container">
-                                      <label htmlFor="salaAssigned" style={{ color: '#5e2404' }}>Gymroom:</label>
+                                      <label htmlFor="salaAssigned" style={{ color: '#14213D' }}>Gymroom:</label>
                                       <select
                                           id="salaAssigned"
                                           name="salaAssigned"
-                                          value={salaAssigned}
+                                          value={salaAssigned || selectedEvent.sala}
                                           onChange={(e) => setSala(e.target.value)}
                                           style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
                                       >
-                                          <option value="">Select</option>
                                           {salas.map((sala) => (
                                               <option style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} key={sala.id} value={sala.id}>
                                                   {sala.nombre.length > 50 ? `${sala.nombre.substring(0, 50)}...` : sala.nombre}
                                               </option>
                                           ))}
                                       </select>
+                                      {errorSala && (<p style={{color: 'red', margin: '0px'}}>Room no available</p>)}
                                   </div>
                                 </div>
                                 <div className="input-small-container" style={{ flex: 3, textAlign: 'left' }}>
-                                  <label htmlFor="maxNum" style={{color:'#5e2404'}}>Participants:</label>
+                                  <label htmlFor="maxNum" style={{color:'#14213D'}}>Participants:</label>
                                   <input
-                                    onClick={handleCloseHourRequirements}
                                     type="number" 
                                     id="maxNum" 
                                     name="maxNum"
                                     min='1'
                                     max='500'
                                     step='1'
-                                    value={maxNum} 
-                                    onChange={(e) => setMaxNum(e.target.value)} 
+                                    value={maxNum || fetchCapacity} 
+                                    onChange={(e) => setMaxNum(e.target.value)}
                                   />
+                                  {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
                                 </div>
-                                <button onClick={handleEditClass} className='button_login'>Cancell</button>
-                                <button  type="submit" className='button_login'>Save changes</button>
-                            </form>
+                                <button   onClick={handleEditClass} className='button_login'>Cancell</button>
+                                <button style={{merginTop:'10px'}} type="submit" className='button_login'>Save changes</button>
                         </div>
                     </div>
                 )}

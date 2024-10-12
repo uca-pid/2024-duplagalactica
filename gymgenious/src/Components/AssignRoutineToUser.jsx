@@ -9,6 +9,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import Loader from '../real_components/loader.jsx'
 
 export default function RoutineCreation() {
     const [routineAssigned, setRoutine] = useState(); 
@@ -171,12 +173,18 @@ export default function RoutineCreation() {
 
     return (
         <div className='assign-routine-container'>
+            <button 
+                onClick={() => window.location.reload()} 
+                className="custom-button-go-back-managing"
+            >
+                <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+            </button>
             <div className='class-creation-content'>
-                <h2 style={{ color: '#14213D' }}>Assign users</h2>
+                <h2 style={{ color: '#424242' }}>Assign users</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
-                            <label htmlFor="routineAssigned" style={{ color: '#14213D' }}>Routine:</label>
+                            <label htmlFor="routineAssigned" style={{ color: '#424242' }}>Routine:</label>
                             <select
                                 id="routineAssigned"
                                 name="routineAssigned"
@@ -193,7 +201,7 @@ export default function RoutineCreation() {
                             </select>
                         </div>
                         <div className="input-small-container">
-                            <label htmlFor="day" style={{color:'#14213D'}}>Day:</label>
+                            <label htmlFor="day" style={{color:'#424242'}}>Day:</label>
                             <select
                             id="day" 
                             name="day" 
@@ -213,7 +221,7 @@ export default function RoutineCreation() {
                     </div>
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div className="input-small-container">
-                            <label htmlFor="users" style={{ color: '#14213D' }}>Users:</label>
+                            <label htmlFor="users" style={{ color: '#424242' }}>Users:</label>
                             <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned} routineDay={day}/>
                         </div>
                     </div>
@@ -227,7 +235,7 @@ export default function RoutineCreation() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             { success ? (

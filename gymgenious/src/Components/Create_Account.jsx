@@ -10,7 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function CreateAccount() {
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -22,32 +22,50 @@ export default function CreateAccount() {
     const navigate = useNavigate();
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [failureEmailRepeated, setFailureEmailRepeated] = useState(false);
     const [failure, setFailure] = useState(false);
     const [failureErrors, setFailureErrors] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(true)
     const auth = getAuth();
+    const [errorLastName, setErrorLastName] = useState(false);
+    const [errorMail, setErrorMail] = useState(false);
+    const [errorPassword, setErrorPassword] = useState(false);
+    const [errorName, setErrorName] = useState(false);
+    const [errorDate, setErrorDate] = useState(false);
+    const [errorType, setErrorType] = useState(false);
+    const [errorEmailRepeated, setErrorEmailRepeated] = useState(false);
 
     const validateForm = () => {
         let errors = [];
         
         if (name === '') {
             errors.push('Please enter a valid name.');
+            setErrorName(true);
+        } else {
+            setErrorName(false);
         }
 
         if (lastName === '') {
             errors.push('Please enter a valid last name.');
+            setErrorLastName(true);
+        } else {
+            setErrorLastName(false);
         }
 
         const today = new Date();
         const inputDate = new Date(date);
         if (inputDate >= today || date === '') {
             errors.push('Please enter a valid birthdate.');
+            setErrorDate(true);
+        } else {
+            setErrorDate(false);
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             errors.push('Please enter a valid email.');
+            setErrorMail(true);
+        } else {
+            setErrorMail(false);
         }
 
         const hasNumber = /[0-9]/.test(password);
@@ -56,29 +74,24 @@ export default function CreateAccount() {
         const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
         const isValidLength = password.length > 7;
 
-        if (!isValidLength) {
-            errors.push('The password must be more than 8 characters.');
-        } 
-        if (!hasNumber) {
-            errors.push('The password must contain at least 1 number.');
-        } 
-        if (!hasLowerCase) {
-            errors.push('The password must contain at least 1 lowercase letter.');
-        } 
-        if (!hasUpperCase) {
-            errors.push('The password must contain at least 1 uppercase letter.');
-        } 
-        if (!hasSpecialChar) {
-            errors.push('The password must contain at least 1 special character.');
+        if(!(hasNumber && hasLowerCase && hasUpperCase && hasSpecialChar && isValidLength)){
+            setErrorPassword(true);
+        } else {
+            setErrorPassword(false);
         }
 
+        if(typeAccount===''){
+            setErrorType(true);
+        } else {
+            setErrorType(false);
+        }
         setErrors(errors);
         return errors.length === 0;
     }
 
     const handleCreateAccount = async () => {
+        setErrorEmailRepeated(false);
         setOpenCircularProgress(true);
-        if(validateForm()){
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const firebaseUser = userCredential.user;
@@ -110,10 +123,7 @@ export default function CreateAccount() {
             } catch (error) {
                 setOpenCircularProgress(false);
                 if (error.code === 'auth/email-already-in-use') {
-                    setFailureEmailRepeated(true);
-                    setTimeout(() => {
-                        setFailureEmailRepeated(false);
-                        }, 3000);
+                    setErrorEmailRepeated(true);
                 } else {
                     console.error("Error creating account:", error);
                     setFailure(true);
@@ -122,13 +132,6 @@ export default function CreateAccount() {
                         }, 3000);
                 }
             }
-        } else {
-            setOpenCircularProgress(false);
-            setFailureErrors(true);
-            setTimeout(() => {
-                setFailureErrors(false);
-                }, 3000);
-        }
     };
 
     useEffect(() => {
@@ -141,8 +144,10 @@ export default function CreateAccount() {
       }, []);
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        handleCreateAccount();
+        if(validateForm()){
+            e.preventDefault();
+            handleCreateAccount();
+        }
     };
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -164,12 +169,11 @@ export default function CreateAccount() {
         ) : (
           <>
             <LeftBar value={'profile'}/>
-            <div className='create-account-container'>
+            <div className='create-account-container-new'>
                 <div className='create-account-content'>
-                    <h2 style={{color:'#5e2404'}}>Create account</h2>
-                    <form onSubmit={handleSubmit} autoComplete='off'>
+                    <h2 style={{color:'#424242'}}>Create account</h2>
                         <div className="input-container">
-                            <label htmlFor="name" style={{color:'#5e2404'}}>Name:</label>
+                            <label htmlFor="name" style={{color:'#424242'}}>Name:</label>
                             <input 
                                 type="text" 
                                 id="name" 
@@ -177,9 +181,10 @@ export default function CreateAccount() {
                                 value={name} 
                                 onChange={(e) => setName(e.target.value)} 
                             />
+                            {errorName && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a name</p>)}
                         </div>
                         <div className="input-container">
-                            <label htmlFor="lastName" style={{color:'#5e2404'}}>Last name:</label>
+                            <label htmlFor="lastName" style={{color:'#424242'}}>Last name:</label>
                             <input 
                                 type="text" 
                                 id="lastname" 
@@ -187,9 +192,10 @@ export default function CreateAccount() {
                                 value={lastName} 
                                 onChange={(e) => setLastName(e.target.value)} 
                             />
+                            {errorLastName && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a last name</p>)}
                         </div>
                         <div className="input-container">
-                            <label htmlFor="date" style={{color:'#5e2404'}}>Birthdate:</label>
+                            <label htmlFor="date" style={{color:'#424242'}}>Birthdate:</label>
                             <input 
                                 type="date" 
                                 id="date" 
@@ -197,9 +203,10 @@ export default function CreateAccount() {
                                 value={date} 
                                 onChange={(e) => setDate(e.target.value)} 
                             />
+                            {errorDate && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a date</p>)}
                         </div>
                         <div className="input-container">
-                            <label htmlFor="email" style={{color:'#5e2404'}}>Email:</label>
+                            <label htmlFor="email" style={{color:'#424242'}}>Email:</label>
                             <input 
                                 type="email" 
                                 id="email" 
@@ -207,9 +214,11 @@ export default function CreateAccount() {
                                 value={email} 
                                 onChange={(e) => setEmail(e.target.value)} 
                             />
+                            {errorMail && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a email</p>)}
+                            {errorEmailRepeated && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>An account already exists with this email</p>)}
                         </div>
                         <div className="input-container">
-                            <label htmlFor="password" style={{color:'#5e2404'}}>Password:</label>
+                            <label htmlFor="password" style={{color:'#424242'}}>Password:</label>
                             <input
                                 onClick={handleOpenPasswordRequirements}
                                 type="password"
@@ -218,6 +227,7 @@ export default function CreateAccount() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                            {errorPassword && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a valid password</p>)}
                             <Popper id={id} open={openPasswordRequirements} anchorEl={anchorEl}>
                                 <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements}>
                                     <p>The password must contain more than 8 characters.</p>
@@ -229,7 +239,7 @@ export default function CreateAccount() {
                             </Popper>
                         </div>
                         <div className="input-container">
-                            <label htmlFor="typeAccount" style={{color:'#5e2404'}}>Type of account:</label>
+                            <label htmlFor="typeAccount" style={{color:'#424242'}}>Type of account:</label>
                             <select
                                 type="typeAccount" 
                                 id="typeAccount" 
@@ -241,11 +251,11 @@ export default function CreateAccount() {
                                 <option value="client">client</option>
                                 <option value="coach">coach</option>
                             </select>
+                            {errorType && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a type</p>)}
                         </div>
-                        <button type="submit" className='button_create_account'>
+                        <button className='button_create_account' onClick={handleSubmit}>
                             Create account
                         </button>
-                    </form>
                 </div>
             </div>
             {openCircularProgress ? (
@@ -253,7 +263,7 @@ export default function CreateAccount() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             { success ? (
@@ -294,7 +304,7 @@ export default function CreateAccount() {
             ) : (
                 null
             )}
-            { failureEmailRepeated ? (
+            {/* { failureEmailRepeated ? (
                 <div className='alert-container'>
                     <div className='alert-content'>
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
@@ -306,7 +316,7 @@ export default function CreateAccount() {
             </div>
             ) : (
                 null
-            )}
+            )} */}
             { failure ? (
                 <div className='alert-container'>
                     <div className='alert-content'>

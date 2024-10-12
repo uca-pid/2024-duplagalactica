@@ -21,7 +21,7 @@ import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
-
+import Loader from '../real_components/loader.jsx'
 function BarAnimation({ routines }) {
     const [itemNb, setItemNb] = React.useState(5);
 
@@ -43,8 +43,8 @@ function BarAnimation({ routines }) {
     }));
   
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
-          <BarChart
+        <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%',backgroundColor:'#F5F5F5',marginTop:'10px',borderRadius:'10px',marginLeft:'2px' }}>
+          <BarChart 
             height={250}
             series={[{
               data: routineData.slice(0, itemNb),
@@ -61,7 +61,7 @@ function BarAnimation({ routines }) {
                   innerRadius: 50,
                   arcLabel:(params) => params.label ?? '',
                   arcLabelMinAngle: 20,
-                  valueFormatter: (item) => `${item.value} users`,
+                  valueFormatter: (item) => `${item.value} users`,                  
                 }]}
           />
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: 250 }}>
@@ -209,7 +209,6 @@ const fetchRoutines = async () => {
           };
       });
 
-      console.log("Así queda", routinesWithExercisesData);
 
       const routinesWithAssignedCount = routinesWithExercisesData.map((routine) => {
           const assignedForRoutine = assignedRoutines.filter((assigned) => assigned.id === routine.id);
@@ -303,11 +302,11 @@ const fetchRoutines = async () => {
           <>
             <NewLeftBar/>
             <div className="Table-Container">
-            <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+            <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
               <Paper
                   sx={{
                   width: '100%',
-                  backgroundColor: '#ffe0b5',
+                  backgroundColor: '#F5F5F5',
                   borderRadius: '10px'
                   }}
               >
@@ -322,7 +321,7 @@ const fetchRoutines = async () => {
                       >
                           <TableHead>
                               <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                  <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                  <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                             <TableSortLabel active={orderBy === 'name'} direction={orderBy === 'name' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'name')}>
                               Name
                               {orderBy === 'name' ? (
@@ -335,7 +334,7 @@ const fetchRoutines = async () => {
                             </TableSortLabel>
                           </TableCell>
                           {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
                               <TableSortLabel active={orderBy === 'owner'} direction={orderBy === 'owner' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'owner')}>
                                 Owner
                                 {orderBy === 'owner' ? (
@@ -349,7 +348,7 @@ const fetchRoutines = async () => {
                             </TableCell>
                           )}
                           {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableCell align="right" sx={{borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
                               <TableSortLabel active={orderBy === 'excercises'} direction={orderBy === 'excercises' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises')}>
                                 Exercises
                                 {orderBy === 'excercises' ? (
@@ -363,7 +362,7 @@ const fetchRoutines = async () => {
                             </TableCell>
                           )}
                           {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
                               <TableSortLabel active={orderBy === 'cant_asignados'} direction={orderBy === 'cant_asignados' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'cant_asignados')}>
                                 Users
                                 {orderBy === 'cant_asignados' ? (
@@ -381,7 +380,7 @@ const fetchRoutines = async () => {
                       <TableBody>
                         {visibleRows.length===0 ? (
                             <TableRow>
-                            <TableCell colSpan={isSmallScreen ? 2 : 4} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                            <TableCell colSpan={isSmallScreen ? 2 : 4} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                 There are no created routines
                             </TableCell>
                             </TableRow>
@@ -389,21 +388,21 @@ const fetchRoutines = async () => {
                           <>
                             {visibleRows.map((row) => (
                               <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                   {row.name}
                                 </TableCell>
                                 {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242',color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                     {row.owner}
                                   </TableCell>
                                 )}
                                 {!isSmallScreen250 && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242',color:'#424242' }}>
                                     {row.excercises.length}
                                   </TableCell>
                                 )}
                                 {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242',color:'#424242' }}>
                                     {row.cant_asignados} 
                                   </TableCell>
                                 )}
@@ -485,7 +484,7 @@ const fetchRoutines = async () => {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
               >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
               </Backdrop>
             ) : (
               null

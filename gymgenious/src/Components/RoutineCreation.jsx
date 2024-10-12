@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import ExcersiceAssignment from './ExcersiceAssignment.jsx';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
@@ -15,7 +14,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
-
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import Loader from '../real_components/loader.jsx'
 export default function RoutineCreation() {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
@@ -93,7 +93,7 @@ export default function RoutineCreation() {
               <>
               { (routineExercises?.some(stateExercise => stateExercise.id === exercise.id)) ? (
                 <ListItemButton
-                sx={{backgroundColor:'red'}}
+                sx={{backgroundColor:'#091057'}}
                 key={exercise.id}
                 role="listitem"
                 onClick={() => handleSelectExercise(exercise)}
@@ -278,12 +278,18 @@ export default function RoutineCreation() {
 
   return (
     <div className='routine-creation-container'>
+      <button 
+        onClick={() => window.location.reload()} 
+        className="custom-button-go-back-managing"
+      >
+        <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+      </button>
       <div className='routine-creation-content'>
-        <h2 style={{color:'#14213D'}}>Create routine</h2>
+        <h2 style={{color:'#424242'}}>Create routine</h2>
         <form onSubmit={handleSubmit}>
           <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between'}}>
             <div className="input-small-container">
-              <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+              <label htmlFor="name" style={{color:'#424242'}}>Name:</label>
               <input 
                 type="text" 
                 id="name" 
@@ -295,7 +301,7 @@ export default function RoutineCreation() {
           </div>
           <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between'}}>
           <div className="input-small-container">
-                  <label htmlFor="desc" style={{color:'#14213D'}}>Description:</label>
+                  <label htmlFor="desc" style={{color:'#424242'}}>Description:</label>
                   <input 
                   type="text" 
                   id="desc" 
@@ -305,15 +311,9 @@ export default function RoutineCreation() {
                   />
               </div>
           </div>
-          {/* <div className="grid-create-routine-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
-              <div className="input-small-create-routine-container">
-                  <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
-                  <ExcersiceAssignment onUsersChange={handleExcersiceChange} owner={userMail}/>
-              </div>
-          </div> */}
           <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
             <div className="input-small-container">
-                <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
+                <label htmlFor="users" style={{ color: '#424242' }}>Exercises:</label>
                 {exercises.length!=0 ? (
                   <Grid className='grid-transfer-content' item>{customList(exercises)}</Grid>
                 ) : (
@@ -347,7 +347,7 @@ export default function RoutineCreation() {
                                 </p>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                 <div className="input-small-container">
-                    <label htmlFor="desc" style={{color:'#14213D'}}>Series:</label>
+                    <label htmlFor="desc" style={{color:'#424242'}}>Series:</label>
                     <input 
                     type="number" 
                     id="series" 
@@ -360,7 +360,7 @@ export default function RoutineCreation() {
                     />
                 </div>
                 <div className="input-small-container">
-                    <label htmlFor="timing" style={{color:'#14213D'}}>Timing:</label>
+                    <label htmlFor="timing" style={{color:'#424242'}}>Timing:</label>
                     <input 
                     type="number" 
                     id="timing" 
@@ -375,7 +375,7 @@ export default function RoutineCreation() {
             </div>
             <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
               <div className="input-small-container" style={{ flex: 1, marginRight: '10px' }}>
-                  <label htmlFor='reps' style={{ color: '#14213D' }}>Reps:</label>
+                  <label htmlFor='reps' style={{ color: '#424242' }}>Reps:</label>
                   {reps.map((rep, index) => (
                     <input
                       type="text"
@@ -412,7 +412,7 @@ export default function RoutineCreation() {
                         onClick={() => handleDeleteExercise(selectedExercise)} 
                         style={{ 
                           padding: '8px 16px', 
-                          backgroundColor: '#f44336',
+                          backgroundColor: '#229799',
                           color: '#fff', 
                           border: 'none', 
                           borderRadius: '4px',
@@ -425,7 +425,7 @@ export default function RoutineCreation() {
                         onClick={handleCloseModal} 
                         style={{ 
                           padding: '8px 16px', 
-                          backgroundColor: '#4caf50',
+                          backgroundColor: '#229799',
                           color: '#fff', 
                           border: 'none', 
                           borderRadius: '4px',
@@ -446,7 +446,7 @@ export default function RoutineCreation() {
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
           open={openCircularProgress}
           >
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
           </Backdrop>
         ) : null}
         { success ? (

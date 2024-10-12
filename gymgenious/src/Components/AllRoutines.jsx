@@ -17,7 +17,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
-
+import Loader from '../real_components/loader.jsx'
 
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -274,11 +274,11 @@ const handleSelectEvent = (event) => {
           <>
             <NewLeftBar/>
             <div className="Table-Container">
-            <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+            <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
               <Paper
                   sx={{
                   width: '100%',
-                  backgroundColor: '#ffe0b5',
+                  backgroundColor: '#F5F5F5',
                   borderRadius: '10px'
                   }}
               >
@@ -293,7 +293,7 @@ const handleSelectEvent = (event) => {
                       >
                           <TableHead>
                               <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                  <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                  <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                             <TableSortLabel active={orderBy === 'name'} direction={orderBy === 'name' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'name')}>
                               Name
                               {orderBy === 'name' ? (
@@ -306,7 +306,7 @@ const handleSelectEvent = (event) => {
                             </TableSortLabel>
                           </TableCell>
                           {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
                               <TableSortLabel active={orderBy === 'day'} direction={orderBy === 'day' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'day')}>
                                 Owner
                                 {orderBy === 'day' ? (
@@ -320,7 +320,7 @@ const handleSelectEvent = (event) => {
                             </TableCell>
                           )}
                           {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableCell align="right" sx={{borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
                               <TableSortLabel active={orderBy === 'excercises.length'} direction={orderBy === 'excercises.length' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises.length')}>
                                 Exercises
                                 {orderBy === 'excercises.length' ? (
@@ -334,7 +334,7 @@ const handleSelectEvent = (event) => {
                             </TableCell>
                           )}
                           {!isSmallScreen && (
-                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', fontWeight: 'bold',color:'#54311a' }}>
+                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
                               <TableSortLabel active={orderBy === 'likes'} direction={orderBy === 'likes' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'likes')}>
                                 Likes
                                 {orderBy === 'likes' ? (
@@ -352,7 +352,7 @@ const handleSelectEvent = (event) => {
                       <TableBody>
                         {visibleRows.length===0 ? (
                             <TableRow>
-                            <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                            <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                 There are no created routines
                             </TableCell>
                             </TableRow>
@@ -360,21 +360,21 @@ const handleSelectEvent = (event) => {
                           <>
                             {visibleRows.map((row) => (
                               <TableRow onClick={()=>handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                   {row.name}
                                 </TableCell>
                                 {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242',color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                     {row.owner}
                                   </TableCell>
                                 )}
                                 {!isSmallScreen250 && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25',color:'#54311a' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242',color:'#424242' }}>
                                     {row.excercises.length}
                                   </TableCell>
                                 )}
                                 {!isSmallScreen && (
-                                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',color:'#54311a' }}>
+                                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242',color:'#424242' }}>
                                     {5} 
                                   </TableCell>
                                 )}
@@ -466,7 +466,7 @@ const handleSelectEvent = (event) => {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
               >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
               </Backdrop>
             ) : (
               null

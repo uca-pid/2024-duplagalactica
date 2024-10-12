@@ -80,16 +80,16 @@ export default function TemporaryDrawer() {
   const toggleDrawer = (newOpen) => () => setOpen(newOpen);
 
   const DrawerListNotauthenticated = (
-    <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250, background: '#424242' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
         {['Home', 'Login'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateToNotLogged(index)}>
               <ListItemIcon>
-                {index === 0 && <HomeIcon sx={{ color: '#BC6C25' }} />}
-                {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
+                {index === 0 && <HomeIcon sx={{ color: '#48CFCB' }} />}
+                {index === 1 && <PersonIcon sx={{ color: '#48CFCB' }} />}
               </ListItemIcon>
-              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#48CFCB', fontWeight: 'bold' } }} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -98,25 +98,25 @@ export default function TemporaryDrawer() {
   );
 
   const DrawerListCoach = (
-    <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250, background: '#424242' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
         {['Home', 'Profile', 'Create class', 'My classes', 'Managing', 'Exercises', 'My routines', 'All routines', 'Top routines', 'Graphics', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateTo(index)}>
               <ListItemIcon>
-                {index === 0 && <HomeIcon sx={{ color: '#BC6C25' }} />}
-                {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
-                {index === 2 && <AddIcon sx={{ color: '#BC6C25' }} />}
-                {index === 3 && <SportsGymnasticsIcon sx={{ color: '#BC6C25' }} />}
-                {index === 4 && <SportsIcon sx={{ color: '#BC6C25' }} />}
-                {index === 5 && <FitnessCenterIcon sx={{ color: '#BC6C25' }} />}
-                {index === 6 && <DirectionsRunIcon sx={{ color: '#BC6C25' }} />}
-                {index === 7 && <DirectionsRunIcon sx={{ color: '#BC6C25' }} />}
-                {index === 8 && <DirectionsRunIcon sx={{ color: '#BC6C25' }} />}
-                {index === 9 && <DirectionsRunIcon sx={{ color: '#BC6C25' }} />}
-                {index === 10 && <ExitToApp sx={{ color: '#BC6C25' }} />}
+                {index === 0 && <HomeIcon sx={{ color: '#48CFCB' }} />}
+                {index === 1 && <PersonIcon sx={{ color: '#48CFCB' }} />}
+                {index === 2 && <AddIcon sx={{ color: '#48CFCB' }} />}
+                {index === 3 && <SportsGymnasticsIcon sx={{ color: '#48CFCB' }} />}
+                {index === 4 && <SportsIcon sx={{ color: '#48CFCB' }} />}
+                {index === 5 && <FitnessCenterIcon sx={{ color: '#48CFCB' }} />}
+                {index === 6 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
+                {index === 7 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
+                {index === 8 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
+                {index === 9 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
+                {index === 10 && <ExitToApp sx={{ color: '#48CFCB' }} />}
               </ListItemIcon>
-              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#48CFCB', fontWeight: 'bold' } }} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -126,20 +126,20 @@ export default function TemporaryDrawer() {
 
 
   const DrawerListClient = (
-    <Box sx={{ width: 250, background: '#FEFAE0' }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250, background: '#424242' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
         {['Home', 'Profile', 'Booked classes', 'My routines', 'Top routines', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateFromUserTo(index)}>
               <ListItemIcon>
-                {index === 0 && <HomeIcon sx={{ color: '#BC6C25' }} />}
-                {index === 1 && <PersonIcon sx={{ color: '#BC6C25' }} />}
-                {index === 2 && <CheckIcon sx={{ color: '#BC6C25' }} />}
-                {index === 3 && <SportsIcon sx={{ color: '#BC6C25' }} />}
-                {index === 4 && <SportsIcon sx={{ color: '#BC6C25' }} />}
-                {index === 5 && <ExitToApp sx={{ color: '#BC6C25' }} />}
+                {index === 0 && <HomeIcon sx={{ color: '#48CFCB' }} />}
+                {index === 1 && <PersonIcon sx={{ color: '#48CFCB' }} />}
+                {index === 2 && <CheckIcon sx={{ color: '#48CFCB' }} />}
+                {index === 3 && <SportsIcon sx={{ color: '#48CFCB' }} />}
+                {index === 4 && <SportsIcon sx={{ color: '#48CFCB' }} />}
+                {index === 5 && <ExitToApp sx={{ color: '#48CFCB' }} />}
               </ListItemIcon>
-              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#BC6C25', fontWeight: 'bold' } }} />
+              <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#48CFCB', fontWeight: 'bold' } }} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -189,11 +189,11 @@ export default function TemporaryDrawer() {
 
 
   return (
-    <div className='leftBar'>
+    <div className='leftBar' style={{zIndex:'1000'}}>
       <Button
         onClick={toggleDrawer(true)}
         style={{
-          backgroundColor: '#432818',
+          backgroundColor: '#48CFCB',
           borderRadius: '50%',
           top: '0.5vh',
           left: '0.5vh ',
@@ -207,9 +207,9 @@ export default function TemporaryDrawer() {
           justifyContent: 'center',
         }}
       >
-        <MenuIcon sx={{ color: '#FEFAE0' }} />
+        <MenuIcon sx={{ color: '#424242' }} />
       </Button>
-      <Drawer open={open} PaperProps={{ sx: { backgroundColor: '#FEFAE0' } }} onClose={toggleDrawer(false)}>
+      <Drawer open={open} PaperProps={{ sx: { backgroundColor: '#424242' } }} onClose={toggleDrawer(false)}>
         {isAuthenticated ? (
           <>
           {type ? (
