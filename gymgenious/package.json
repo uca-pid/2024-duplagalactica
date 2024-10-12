@@ -16,6 +16,7 @@
     "firebase-admin": "^12.4.0",
     "flask": "^0.2.10",
     "flask-cors": "^0.0.1",
+    "framer-motion": "^11.11.8",
     "jwt-decode": "^4.0.0",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
