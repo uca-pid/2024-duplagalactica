@@ -283,6 +283,10 @@ export default function CreateClass() {
     handleCreateClass();
   };
 
+  const handleComeBack = (e) => {
+    setShowSalas(false);
+  };
+
   const handleSelectSala = (sala) => {
     if(sala.opacity===1) {
       setSala(sala.id);
@@ -641,6 +645,7 @@ export default function CreateClass() {
           <LeftBar/>
             <div className='class-creation-rooms-container'>
               <div className='class-creation-content'>
+              <button className='button-come-back' onClick={handleComeBack}>come back</button>
                 <h2 style={{color:'#424242'}}>Create class</h2>
                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                   <div onClick={() => handleSelectSala(salas[0])} className={salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center',borderRadius:'10px' ,backgroundColor: salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
