@@ -15,7 +15,7 @@ import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import { useMediaQuery } from '@mui/material';
 import Typography from '@mui/material/Typography';
-
+import Loader from '../real_components/loader.jsx'
 function not(a, b) {
   return a.filter((value) => !b.includes(value));
 }
@@ -264,7 +264,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
           open={openCircularProgress}
         >
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
         </Backdrop>
       ) : null}
       {warningFetchingUsers ? (

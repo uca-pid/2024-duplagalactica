@@ -17,7 +17,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
-
+import Loader from '../real_components/loader.jsx'
 
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -466,7 +466,7 @@ const handleSelectEvent = (event) => {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
               >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
               </Backdrop>
             ) : (
               null

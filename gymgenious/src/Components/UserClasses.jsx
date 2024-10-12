@@ -19,6 +19,7 @@ import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../real_components/loader.jsx'
 
 function UsserClasses() {
   const [order, setOrder] = useState('asc');
@@ -412,7 +413,7 @@ useEffect(() => {
       )}
       {openCircularProgress && (
         <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
         </Backdrop>
       )}
       {errorToken && (

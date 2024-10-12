@@ -18,7 +18,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
-
+import Loader from '../real_components/loader.jsx'
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -519,7 +519,7 @@ function CouchClasses() {
         <NewLeftBar/>
         {openCircularProgress ? (
             <Backdrop open={openCircularProgress} sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}>
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
             </Backdrop>
         ) : (
             null

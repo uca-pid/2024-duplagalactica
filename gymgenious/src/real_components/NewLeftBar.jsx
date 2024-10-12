@@ -189,7 +189,7 @@ export default function TemporaryDrawer() {
 
 
   return (
-    <div className='leftBar'>
+    <div className='leftBar' style={{zIndex:'1000'}}>
       <Button
         onClick={toggleDrawer(true)}
         style={{

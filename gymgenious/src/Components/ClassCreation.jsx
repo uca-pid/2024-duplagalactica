@@ -13,7 +13,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Popper from '@mui/material/Popper';
 import {jwtDecode} from "jwt-decode";
 import { useMediaQuery } from '@mui/material';
-
+import Loader from '../real_components/loader.jsx'
 
 
 
@@ -725,7 +725,7 @@ export default function CreateClass() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             { success ? (

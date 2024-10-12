@@ -8,7 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import Box from '@mui/material/Box';
-
+import Loader from '../real_components/loader.jsx'
 import TextField from '@mui/material/TextField';
 import {
   MDBCol,
@@ -513,7 +513,7 @@ export default function CreateAccount() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={true}
                 >
-                    <CircularProgress color="inherit" />
+                    <Loader></Loader>
                 </Backdrop>
             ) : (
             <>
@@ -522,8 +522,7 @@ export default function CreateAccount() {
                     <Backdrop
                     sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                     open={openCircularProgress}
-                    >
-                    <CircularProgress color="inherit" />
+                    ><Loader></Loader>
                     </Backdrop>
                 ) : null}
                 { errorToken ? (

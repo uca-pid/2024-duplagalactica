@@ -15,7 +15,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-
+import Loader from '../real_components/loader.jsx'
 export default function RoutineCreation() {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
@@ -446,7 +446,7 @@ export default function RoutineCreation() {
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
           open={openCircularProgress}
           >
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
           </Backdrop>
         ) : null}
         { success ? (

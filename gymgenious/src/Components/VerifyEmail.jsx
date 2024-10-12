@@ -7,7 +7,7 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function VerifyEmail() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,7 +67,7 @@ export default function VerifyEmail() {
           open={openCircularProgress}
         >
           <h2>Verifying email...</h2>
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
         </Backdrop>
       ) : null}
       { success ? (
