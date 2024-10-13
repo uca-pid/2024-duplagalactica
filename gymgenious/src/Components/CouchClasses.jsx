@@ -290,7 +290,7 @@ function CouchClasses() {
         formData.append('Permanent',permanent || fetchPermanent);
         formData.append('sala', salaAssigned || fetchSala);
         formData.append('capacity', maxNum || fetchCapacity);
-        const response = await fetch('http://127.0.0.1:5000/update_class_info', {
+        const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_class_info', {
             method: 'PUT', 
             headers: {
                 'Authorization': `Bearer ${authToken}`
