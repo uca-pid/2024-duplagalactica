@@ -200,6 +200,7 @@ export default function CoachExercises() {
     const saveExercise = async (event) => {
         event.preventDefault(); 
         handleSaveEditExer();
+        window.location.reload();
         setEditExercise(!editExercise);
         setTimeout(() => {
           setOpenCircularProgress(false);
@@ -287,7 +288,7 @@ export default function CoachExercises() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={true}
                 >
-                    <CircularProgress color="inherit" />
+                    <Loader></Loader>
                 </Backdrop>
             ) : (
                 <>
@@ -469,7 +470,9 @@ export default function CoachExercises() {
                                         borderRadius: '8px'
                                     }} 
                                 />
-                                <button onClick={()=> handleEditExercise(selectedEvent)}>Edit exercise</button>                            
+                                {selectedEvent.owner==userMail? (
+                                <button onClick={()=> handleEditExercise(selectedEvent)}>Edit exercise</button>
+                                ) :(<></>)}                            
                                 <button onClick={handleCloseModalEvent}>Close</button>
                             </div>
                         </div>

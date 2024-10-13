@@ -40,7 +40,26 @@ def update_class_info():
         token = request.headers.get('Authorization')
         if not token or 'Bearer' not in token:
             return jsonify({'error':'Missing token'})
-        newUser = request.json.get('newUser')
+        cid = request.form.get('cid')
+        name = request.form.get('Name')
+        DateFin = request.form.get('DateFin')
+        DateInicio = request.form.get('DateInicio')  
+        Day = request.form.get('Day')       
+        Hour = request.form.get('Hour')
+        permanent = request.form.get('Permanent')
+        sala = request.form.get('sala')
+        capacity = request.form.get('capacity')
+        newUser = {
+            'cid' : cid,
+            'DateFin': DateFin,
+            'DateInicio': DateInicio,
+            'Day':Day,
+            'Name': name,
+            'Hour':Hour,
+            'Permanent':permanent,
+            'sala':sala,
+            'capacity':capacity
+        }
         print(newUser)
         return update_class_info_route(newUser)
     except Exception as e:
@@ -168,7 +187,7 @@ def update_exer_info():
         description = request.form.get('description')
         image_url = request.form.get('image_url')        
         image = request.files.get('image')
-        image_data = Non
+        image_data = None
         if image:
             image_data = image.read()  
         id = request.form.get('id')
