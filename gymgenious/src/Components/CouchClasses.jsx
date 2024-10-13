@@ -106,10 +106,8 @@ function CouchClasses() {
         let dataFinal=[]
         if(maxNum!=null){
           dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=maxNum)
-          console.log(fetchCapacity)
         } else {
           dataFinal = data.filter((sala)=>parseInt(sala.capacidad)>=fetchCapacity)
-          console.log(fetchCapacity)
         }
         setSalas(dataFinal);
         setOpenCircularProgress(false);
@@ -211,14 +209,12 @@ function CouchClasses() {
 
         const newClassStartTime = new Date(`${finalDateStart}T${finalHourStart}Z`);
         const newClassEndTime = new Date(`${finalDateEnd}T${finalHourEnd}Z`);
-        
-        const newClassStartTimeInMinutes = timeToMinutes(hour);
-        const newClassEndTimeInMinutes = timeToMinutes(hourFin);
+        const newClassStartTimeInMinutes = timeToMinutes(finalHourStart);
+        const newClassEndTimeInMinutes = timeToMinutes(finalHourEnd);
         const conflictingClasses = data2.filter(classItem => 
           classItem.sala === (salaAssigned || fetchSala) &&
           classItem.day === day(isoDateString) 
         );
-        
         if ((permanent || fetchPermanent) == "No") {
           const hasPermanentConflict = conflictingClasses.some(existingClass => 
             existingClass.permanent == "Si" && 
@@ -278,40 +274,37 @@ function CouchClasses() {
         const previousDate = fetchDateInicio ? fetchDateInicio.split('T')[0] : null;
         const previousDateFin = fetchDateFin ? fetchDateFin.split('T')[0] : null;
 
-        const previousHour = fetchDateInicio ? fetchDateInicio.split('T')[1].split('Z')[0].slice(0, -3) : "00:00"; 
-        const previousHourFin = fetchDateFin ? fetchDateFin.split('T')[1].split('Z')[0].slice(0, -3) : "00:00"; 
+        const previousHour = fetchDateInicio ? fetchDateInicio.split('T')[1].split('Z')[0].slice(0, -7) : "00:00"; 
+        const previousHourFin = fetchDateFin ? fetchDateFin.split('T')[1].split('Z')[0].slice(0, -7) : "00:00"; 
 
-        const isoDateStringInicio = `${date || previousDate}T${hour || previousHour}:00Z`;
-        const isoDateStringFin = `${date || previousDateFin}T${hourFin || previousHourFin}:00Z`;
-        const updatedUser = {
-            ...fetchClass,
-            cid: fetchId,
-            DateFin: isoDateStringFin,
-            DateInicio: isoDateStringInicio,
-            Day: day(date.toString()) || fetchDay,
-            Name: name || fetchName,
-            Hour: hour || fetchHour,
-            Permanent: permanent || fetchPermanent,
-            sala: salaAssigned || fetchSala,
-            capacity: maxNum || fetchCapacity
-        };
-        const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_class_info', {
+        const isoDateStringInicio = `${date || previousDate}T${hour || previousHour}:00.000Z`;
+        const isoDateStringFin = `${date || previousDateFin}T${hourFin || previousHourFin}:00.000Z`;
+        
+        const formData = new FormData();
+        formData.append('cid', fetchId);
+        formData.append('DateFin', isoDateStringFin);
+        formData.append('DateInicio', isoDateStringInicio);
+        formData.append('Day', day(date.toString()) || fetchDay);
+        formData.append('Name',name || fetchName);
+        formData.append('Hour', hour || fetchHour);
+        formData.append('Permanent',permanent || fetchPermanent);
+        formData.append('sala', salaAssigned || fetchSala);
+        formData.append('capacity', maxNum || fetchCapacity);
+        const response = await fetch('http://127.0.0.1:5000/update_class_info', {
             method: 'PUT', 
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`
             },
-            body: JSON.stringify({ newUser: updatedUser })
+            body: formData,
         });
 
         if (!response.ok) {
             throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
         }
-        const data = await response.json();
-        await fetchClasses();
-        setOpenCircularProgress(false);
-        setEditClass(!editClass);
-        handleCloseModal(); 
+        setTimeout(() => {
+          setOpenCircularProgress(false);
+        }, 2000);
+        window.location.reload()
     } catch (error) {
         console.error("Error updating user:", error);
         setOpenCircularProgress(false);
@@ -389,7 +382,7 @@ function CouchClasses() {
       }
       const salas = await response2.json();
   
-      const dataWithSala = data.map(clase => {
+      const dataWithSala = filteredClasses.map(clase => {
         const salaInfo = salas.find(sala => sala.id === clase.sala);
         return {
           ...clase,
@@ -512,7 +505,7 @@ function CouchClasses() {
             sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
             open={true}
             >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
             </Backdrop>
         ) : (
           <>
@@ -713,6 +706,7 @@ function CouchClasses() {
                 {editClass && (
                     <div className="Modal">
                         <div className="Modal-Content-class-creation" onClick={(e) => e.stopPropagation()}>
+                          <form autoComplete='off' onSubmit={saveClass}>
                             <h2>Class details</h2>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                     <div className="input-small-container">
@@ -805,6 +799,7 @@ function CouchClasses() {
                                 </div>
                                 <button   onClick={handleEditClass} className='button_login'>Cancell</button>
                                 <button style={{merginTop:'10px'}} type="submit" className='button_login'>Save changes</button>
+                              </form>
                         </div>
                     </div>
                 )}

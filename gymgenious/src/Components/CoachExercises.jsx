@@ -171,7 +171,7 @@ export default function CoachExercises() {
               console.error('Token no disponible en localStorage');
               return;
             }
-            const response = await fetch('http://127.0.0.1:5000/update_exer_info', {
+            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_exer_info', {
                 method: 'PUT', 
                 headers: {
                     'Authorization': `Bearer ${authToken}`
@@ -288,7 +288,7 @@ export default function CoachExercises() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={true}
                 >
-                    <CircularProgress color="inherit" />
+                    <Loader></Loader>
                 </Backdrop>
             ) : (
                 <>
