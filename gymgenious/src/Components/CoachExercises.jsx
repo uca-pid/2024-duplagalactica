@@ -184,7 +184,7 @@ export default function CoachExercises() {
             setTimeout(() => {
                 setOpenCircularProgress(false);
               }, 2000);
-            
+            window.location.reload();
           } catch (error) {
             console.error("Error actualizarndo la rutina:", error);
             setOpenCircularProgress(false);
@@ -200,7 +200,6 @@ export default function CoachExercises() {
     const saveExercise = async (event) => {
         event.preventDefault(); 
         handleSaveEditExer();
-        window.location.reload();
         setEditExercise(!editExercise);
         setTimeout(() => {
           setOpenCircularProgress(false);
