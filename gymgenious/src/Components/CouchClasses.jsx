@@ -314,7 +314,7 @@ function CouchClasses() {
   const validateForm = () => {
     let res = true;
     console.log(name)
-    if (name==='' && hour === '' && hourFin === '' && date=== '') {
+    if (name==='' && hour === '' && hourFin === '' && date=== '' && permanent==='' && salaAssigned==='' && maxNum==='') {
         setErrorForm(true);
         res = false;
     } else {
