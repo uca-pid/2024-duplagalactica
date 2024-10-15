@@ -198,7 +198,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
               </Typography>
             </Grid>
             ) : (
-              <Grid className='grid-transfer-content' item>{customList(left)}</Grid>
+              <Grid className='grid-transfer-content-users' item>{customList(left)}</Grid>
             )}
           </>
         )}
@@ -253,7 +253,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
             </Typography>
           </Grid>
         ) : (
-          <Grid className='grid-transfer-content' item>{customList(right)}</Grid>
+          <Grid className='grid-transfer-content-users' item>{customList(right)}</Grid>
         )}
         </>
       ) : (

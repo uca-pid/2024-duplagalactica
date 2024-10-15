@@ -1045,6 +1045,10 @@ iframe {
   background-color: #96B6C5;
 }
 
+.grid-transfer-content-users {
+  max-width: 100%;
+}
+
 .grid-transfer-content-small-screen-users {
   max-width: 80%;
 }
