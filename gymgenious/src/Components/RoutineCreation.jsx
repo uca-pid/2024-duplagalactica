@@ -227,6 +227,7 @@ export default function RoutineCreation() {
         setSuccess(true);
         setTimeout(() => {
             setSuccess(false);
+            window.location.reload();
         }, 3000);
       } catch (error) {
         console.error("Error al crear la rutina:", error);
@@ -389,7 +390,7 @@ export default function RoutineCreation() {
               </div>
             </div>
             <button onClick={() => handleAddExercise(selectedExercise)}>Add exercise</button>
-            <button onClick={handleCloseModal}>Close</button>
+            <button onClick={handleCloseModal} style={{marginLeft: '10px'}}>Close</button>
           </div>
         </div>
       )}
