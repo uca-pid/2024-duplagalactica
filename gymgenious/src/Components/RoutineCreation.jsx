@@ -98,7 +98,7 @@ export default function RoutineCreation() {
       } else {
         setOpenAddExercise(true);
         setSeries(4);
-        setReps(Array(series).fill(''));
+        setReps(Array(4).fill(''));
         setTiming(0);
         setErrorAddExercise(false);
       }

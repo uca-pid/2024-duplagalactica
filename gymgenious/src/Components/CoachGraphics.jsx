@@ -54,7 +54,8 @@ function TopRoutines({ routines }) {
         }}>
         <button 
           onClick={() => window.location.reload()} 
-          className="custom-button-go-back-managing-graphics"
+          className="custom-button-go-back-managing"
+          style={{zIndex: '2', position: 'absolute', top: '1%', left: '95%',}}
         >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>
@@ -97,8 +98,9 @@ function TopRoutines({ routines }) {
         }}>
         <button 
           onClick={() => window.location.reload()} 
-          className="custom-button-go-back-managing-graphics"
-        >
+          className="custom-button-go-back-managing"
+          style={{zIndex: '2', position: 'absolute', top: '1%', left: '95%',}}
+          >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>
           <BarChart
@@ -137,7 +139,8 @@ function TopRoutines({ routines }) {
       }}>
         <button 
           onClick={() => window.location.reload()} 
-          className="custom-button-go-back-managing-graphics"
+          className="custom-button-go-back-managing"
+          style={{zIndex: '2', position: 'absolute', top: '1%', left: '95%',}}
         >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>
