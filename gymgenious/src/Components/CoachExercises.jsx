@@ -400,8 +400,10 @@ export default function CoachExercises() {
                                                 </TableRow>
                                             ) : (
                                                 <>
-                                                    {visibleRows.map((row) => (
-                                                        <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
+                                                    {visibleRows.map((row) => {
+                                                        const isTransparent = row.owner==userMail;
+                                                        return (
+                                                        <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc', opacity: !isTransparent ? 0.5 : 1,}}>
                                                                 <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                                     {row.name}
                                                                 </TableCell>
@@ -416,7 +418,7 @@ export default function CoachExercises() {
                                                                 </TableCell>
                                                             )}
                                                         </TableRow>
-                                                    ))}
+                                                    )})}
                                                 </>
                                             )}
                                         </TableBody>

@@ -104,18 +104,34 @@ export default function ChangePassword() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [openPasswordRequirements, setOpenPasswordRequirements] = useState(false);
     const handleOpenPasswordRequirements = (event) => {
-      setAnchorEl(anchorEl ? null : event.currentTarget);
-      setOpenPasswordRequirements(!openPasswordRequirements)
-    };    
+      if (openPasswordRequirements) {
+          setAnchorEl(null); // Close popper
+      } else {
+          setAnchorEl(event.currentTarget); // Open popper with the clicked element as anchor
+      }
+      setOpenPasswordRequirements(!openPasswordRequirements);
+  };  
     const id = openPasswordRequirements ? 'simple-popper' : undefined;
 
     const [anchorEl2, setAnchorEl2] = useState(null);
     const [openPasswordRequirements2, setOpenPasswordRequirements2] = useState(false);
     const handleOpenPasswordRequirements2 = (event) => {
-      setAnchorEl2(anchorEl2 ? null : event.currentTarget);
-      setOpenPasswordRequirements2(!openPasswordRequirements2)
-    };    
+      if (openPasswordRequirements2) {
+          setAnchorEl2(null); // Close popper
+      } else {
+          setAnchorEl2(event.currentTarget); // Open popper with the clicked element as anchor
+      }
+      setOpenPasswordRequirements2(!openPasswordRequirements2);
+  };
     const id2 = openPasswordRequirements2 ? 'simple-popper' : undefined;
+
+    const handleClosePasswordRequirements = () => {
+      setOpenPasswordRequirements(false);
+  };
+
+  const handleClosePasswordRequirements2 = () => {
+    setOpenPasswordRequirements2(false);
+};
 
     return (
     <div className='App'>
@@ -133,7 +149,7 @@ export default function ChangePassword() {
           <div className='new-password-content'>
             <h2>Reset password</h2>
             <form onSubmit={handleSubmit}>
-              <div className="input-container">
+              <div className="input-container" onClick={handleClosePasswordRequirements2}>
                   <label htmlFor="password">Password:</label>
                   <input
                       onClick={handleOpenPasswordRequirements}
@@ -152,25 +168,25 @@ export default function ChangePassword() {
                         <p>The password must contain at least 1 special character.</p>
                     </Box>
                 </Popper>
-                {errorPassword && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a type</p>)}
+                {errorPassword && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a valid password</p>)}
               </div>
-              <div className="input-container">
-                  <label htmlFor="password">Confirm password:</label>
+              <div className="input-container" onClick={handleClosePasswordRequirements}>
+                  <label htmlFor="passwordAgain">Confirm password:</label>
                   <input
                       onClick={handleOpenPasswordRequirements2}
                       type="password" 
-                      id="password" 
-                      name="password" 
+                      id="passwordAgain" 
+                      name="passwordAgain" 
                       value={passwordAgain} 
                       onChange={(e) => setPasswordAgain(e.target.value)} 
                   />
-                  {errorPasswordRepeated && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a type</p>)}
-              </div>
-              <Popper id={id2} open={openPasswordRequirements2} anchorEl={anchorEl2}>
-                    <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements2}>
-                        <p>Passwords must be the same</p>
-                    </Box>
-                </Popper>
+                  <Popper id={id2} open={openPasswordRequirements2} anchorEl={anchorEl2}>
+                        <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements2}>
+                            <p>Passwords must be the same</p>
+                        </Box>
+                    </Popper>
+                    {errorPasswordRepeated && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Passwords are not equal</p>)}
+                </div>
               <button type="submit" className='button_create_account'>
                   Confirm new password
               </button>

@@ -15,10 +15,9 @@ import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import { useMediaQuery } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import Loader from '../real_components/loader.jsx'
-function not(a, b) {
-  return a.filter((value) => !b.includes(value));
-}
+import Loader from '../real_components/loader.jsx';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
 
 function intersection(a, b) {
   return a.filter((value) => b.includes(value));
@@ -27,18 +26,14 @@ function intersection(a, b) {
 export default function UserAssignment({ onUsersChange, routine,routineDay }) {
   const [users, setUsers] = useState([]);
   const [checked, setChecked] = useState([]);
-  const [left, setLeft] = useState([]);
-  const [right, setRight] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingUsers, setWarningFetchingUsers] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:950px)');
-
-  const leftChecked = intersection(checked, left);
-  const rightChecked = intersection(checked, right);
   
   useEffect(() => {
-    onUsersChange(right); 
-  }, [right, onUsersChange]);
+    onUsersChange(selectedUsers); 
+  }, [selectedUsers, onUsersChange]);
 
   const fetchUsers = async () => {
     setOpenCircularProgress(true);
@@ -72,11 +67,10 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
         throw new Error('Error al obtener los usuarios: ' + allUsersResponse.statusText);
       }
       const allUsers = await allUsersResponse.json();
-      const filteredRows = allUsers.filter(user => !assignedUsers.includes(user.Mail) && user.type=='client');
+      const filteredRows = allUsers.filter(user => user.type=='client');
       const filteredRowsRight = allUsers.filter(user => assignedUsers.includes(user.Mail));
       setUsers(filteredRows);
-      setLeft(filteredRows);
-      setRight(filteredRowsRight)
+      setSelectedUsers(filteredRowsRight);
       setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -92,97 +86,56 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
     if (routine && routineDay) {
       fetchUsers();
     } else {
-      setLeft([]);
-      setRight([]);
+      setUsers([]);
+      setSelectedUsers([]);
     }
   }, [routine,routineDay]);
 
-  const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
+  const handleAddUser = (user) => {
+      setSelectedUsers([...selectedUsers, user]);
   };
 
-  const handleAllRight = () => {
-    const newRight = right.concat(left);
-    setRight(newRight);
-    setLeft([]);
-    onUsersChange(newRight);
-  };
-
-  const handleCheckedRight = () => {
-    const newRight = right.concat(leftChecked);
-    setRight(newRight);
-    setLeft(not(left, leftChecked));
-    setChecked(not(checked, leftChecked));
-    onUsersChange(newRight);
-  };
-
-  const handleCheckedLeft = () => {
-    const newLeft = left.concat(rightChecked);
-    setLeft(newLeft);
-    setRight(not(right, rightChecked));
-    setChecked(not(checked, rightChecked));
-    onUsersChange(newLeft); 
-  };
-
-  const handleAllLeft = () => {
-    const newLeft = left.concat(right);
-    setLeft(newLeft);
-    setRight([]);
-    onUsersChange(newLeft); 
-  };
+  const handleDeleteUser = (user) => {
+    const updatedSelectedUsers = selectedUsers.filter(stateUser => stateUser.Mail !== user.Mail);
+    setSelectedUsers(updatedSelectedUsers);
+  }
 
   const customList = (items) => (
-    <Paper className='transfer-list'>
+    <div className='transfer-list'>
       <List dense component="div" role="list">
         {items.map((user) => {
           const labelId = `transfer-list-item-${user.Mail}-label`;
-
           return (
-            <ListItemButton
+            <>
+            { (selectedUsers?.some(stateUser => stateUser.Mail === user.Mail)) ? (
+              <ListItemButton
+              sx={{backgroundColor:'#091057'}}
               key={user.Mail}
               role="listitem"
-              onClick={handleToggle(user)}
+              onClick={() => handleDeleteUser(user)}
             >
-              <ListItemIcon>
-                <Checkbox
-                  checked={checked.includes(user)}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{
-                    'aria-labelledby': labelId,
-                  }}
-                />
-              </ListItemIcon>
-              {isSmallScreen ? (
-                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{user.Mail}</p></ListItemText>
-              ) : (
-                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.Mail}</p></ListItemText>
-              )}
+              <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'white' }}>{user.Mail}</p></ListItemText>
+              <DeleteIcon sx={{color:'white'}}/>
             </ListItemButton>
+            ) : (
+              <ListItemButton
+              key={user.Mail}
+              role="listitem"
+              onClick={() => handleAddUser(user)}
+            >
+              <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{user.Mail}</p></ListItemText>
+              <AddCircleOutlineSharpIcon/>
+            </ListItemButton>
+            )}
+            </>
           );
         })}
       </List>
-    </Paper>
+    </div>
   );
 
   return (
-    <Grid
-      container
-      spacing={2}
-      sx={{ justifyContent: 'center', alignItems: 'center', maxWidth: '100%' }}
-      className='grid-transfer-container'
-    >
-      {!isSmallScreen ? (
-        <>
+    <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
         {!(routine && routineDay) ? (
           <Grid item>
             <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
@@ -191,74 +144,19 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
           </Grid>
         ) : (
           <>
-            {left.length===0 ? (
+            {users.length===0 ? (
               <Grid item>
               <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
                 There are no users
               </Typography>
             </Grid>
             ) : (
-              <Grid className='grid-transfer-content-users' item>{customList(left)}</Grid>
+              <div className="input-small-container">
+              <Grid className='grid-transfer-content-users' item>{customList(users)}</Grid>
+              </div>
             )}
           </>
         )}
-        <Grid item>
-          <Grid container direction="column" sx={{ alignItems: 'center' }}>
-            <Button
-              sx={{ my: 0.5 }}
-              variant="outlined"
-              size="small"
-              onClick={handleAllRight}
-              disabled={left.length === 0}
-              aria-label="move all right"
-            >
-              ≫
-            </Button>
-            <Button
-              sx={{ my: 0.5 }}
-              variant="outlined"
-              size="small"
-              onClick={handleCheckedRight}
-              disabled={leftChecked.length === 0}
-              aria-label="move selected right"
-            >
-              &gt;
-            </Button>
-            <Button
-              sx={{ my: 0.5 }}
-              variant="outlined"
-              size="small"
-              onClick={handleCheckedLeft}
-              disabled={rightChecked.length === 0}
-              aria-label="move selected left"
-            >
-              &lt;
-            </Button>
-            <Button
-              sx={{ my: 0.5 }}
-              variant="outlined"
-              size="small"
-              onClick={handleAllLeft}
-              disabled={right.length === 0}
-              aria-label="move all left"
-            >
-              ≪
-            </Button>
-          </Grid>
-        </Grid>
-        {right.length === 0 ? (
-          <Grid item>
-            <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
-              No users were chosen
-            </Typography>
-          </Grid>
-        ) : (
-          <Grid className='grid-transfer-content-users' item>{customList(right)}</Grid>
-        )}
-        </>
-      ) : (
-        <Grid sx={{width:'90%', marginRight:'5%'}} className='grid-transfer-content-small-screen' item>{customList(left)}</Grid>
-      )}
       {openCircularProgress ? (
         <Backdrop
           sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
@@ -280,6 +178,6 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
           </div>
         </div>
       ) : null}
-    </Grid>
+    </div>
   );
 }

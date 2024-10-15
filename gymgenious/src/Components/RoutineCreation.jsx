@@ -98,7 +98,7 @@ export default function RoutineCreation() {
       } else {
         setOpenAddExercise(true);
         setSeries(4);
-        setReps(Array(series).fill(''));
+        setReps(Array(4).fill(''));
         setTiming(0);
         setErrorAddExercise(false);
       }
@@ -137,27 +137,7 @@ export default function RoutineCreation() {
         </List>
       </div>
     );
-
-    const correctExercisesData = async (exercisesData) => {
-      let autoIncrementId=0;
-      return exercisesData.map(element => {
-          if (!element.series) {
-              autoIncrementId++;
-              return {
-                  id: element.id || autoIncrementId,
-                  name: element.name,
-                  series: 4,
-                  reps: [12, 12, 10, 10],
-                  timing: '60',
-                  description: 'aaaa',
-                  owner: 'Train-Mate'
-              };
-          }
-          return element;
-      });
-  };
-  
-    const fetchExercises = async () => {
+      const fetchExercises = async () => {
       setOpenCircularProgress(true);
       try {
         const authToken = localStorage.getItem('authToken');
@@ -184,8 +164,7 @@ export default function RoutineCreation() {
         });
         const exercisesDataFromTrainMate = await response2.json();
         const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
-        const totalExercisesCorrected = await correctExercisesData(totalExercises);
-        setExercises(totalExercisesCorrected);
+        setExercises(totalExercises);
         setOpenCircularProgress(false);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -248,6 +227,7 @@ export default function RoutineCreation() {
         setSuccess(true);
         setTimeout(() => {
             setSuccess(false);
+            window.location.reload();
         }, 3000);
       } catch (error) {
         console.error("Error al crear la rutina:", error);
@@ -410,7 +390,7 @@ export default function RoutineCreation() {
               </div>
             </div>
             <button onClick={() => handleAddExercise(selectedExercise)}>Add exercise</button>
-            <button onClick={handleCloseModal}>Close</button>
+            <button onClick={handleCloseModal} style={{marginLeft: '10px'}}>Close</button>
           </div>
         </div>
       )}
