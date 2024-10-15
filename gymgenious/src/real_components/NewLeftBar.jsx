@@ -22,6 +22,9 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import CheckIcon from '@mui/icons-material/Check';
 import SportsIcon from '@mui/icons-material/Sports';
+import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import ViewListIcon from '@mui/icons-material/ViewList';
 
 export default function TemporaryDrawer() {
   const [open, setOpen] = React.useState(false);
@@ -110,10 +113,10 @@ export default function TemporaryDrawer() {
                 {index === 3 && <SportsGymnasticsIcon sx={{ color: '#48CFCB' }} />}
                 {index === 4 && <SportsIcon sx={{ color: '#48CFCB' }} />}
                 {index === 5 && <FitnessCenterIcon sx={{ color: '#48CFCB' }} />}
-                {index === 6 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
+                {index === 6 && <ViewListIcon sx={{ color: '#48CFCB' }} />}
                 {index === 7 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
-                {index === 8 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
-                {index === 9 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
+                {index === 8 && <TimelineIcon sx={{ color: '#48CFCB' }} />}
+                {index === 9 && <SignalCellularAltIcon sx={{ color: '#48CFCB' }} />}
                 {index === 10 && <ExitToApp sx={{ color: '#48CFCB' }} />}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#48CFCB', fontWeight: 'bold' } }} />
@@ -136,7 +139,7 @@ export default function TemporaryDrawer() {
                 {index === 1 && <PersonIcon sx={{ color: '#48CFCB' }} />}
                 {index === 2 && <CheckIcon sx={{ color: '#48CFCB' }} />}
                 {index === 3 && <SportsIcon sx={{ color: '#48CFCB' }} />}
-                {index === 4 && <SportsIcon sx={{ color: '#48CFCB' }} />}
+                {index === 4 && <TimelineIcon sx={{ color: '#48CFCB' }} />}
                 {index === 5 && <ExitToApp sx={{ color: '#48CFCB' }} />}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#48CFCB', fontWeight: 'bold' } }} />

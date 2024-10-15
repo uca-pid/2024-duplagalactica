@@ -247,9 +247,7 @@ export default function Main_Page() {
           });
         }
       });
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-      }, 3000);
+      setOpenCircularProgress(false);
       setEvents(calendarEvents);
       setClasses(dataWithSala)
     } catch (error) {
@@ -328,9 +326,7 @@ export default function Main_Page() {
       }, 3000);
     } catch (error) {
       console.error("Error fetching classes:", error);
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-      }, 3000);
+      setOpenCircularProgress(false);
       setWarningConnection(true);
       setTimeout(() => {
         setWarningConnection(false);
@@ -391,9 +387,7 @@ export default function Main_Page() {
         }
         const data = await response.json();
         setType(data.type);
-        setTimeout(() => {
-          setOpenCircularProgress(false);
-        }, 3000);
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching user:", error);
     }
