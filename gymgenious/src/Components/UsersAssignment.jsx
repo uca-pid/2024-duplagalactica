@@ -183,10 +183,10 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
     >
       {!isSmallScreen ? (
         <>
-        {!routine ? (
+        {!(routine && routineDay) ? (
           <Grid item>
             <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
-              Select a routine to assign
+              Select a routine and a day to assign
             </Typography>
           </Grid>
         ) : (

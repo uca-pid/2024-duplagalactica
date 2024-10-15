@@ -56,7 +56,7 @@ export default function Main_Page() {
       <div className="vh-100" style={{position:'fixed',zIndex:1000,display:'flex',flex:1,width:'100%',height:'100%',opacity: 1,
         visibility: 'visible',backgroundColor: 'rgba(0, 0, 0, 0.5)'}} onClick={handleCloseModal}>
           <MDBContainer>
-            <MDBRow className="justify-content-center">
+            <MDBRow className="justify-content-center" onClick={(e) => e.stopPropagation()}>
               <MDBCol md="9" lg="7" xl="5" className="mt-5">
                 <MDBCard style={{ borderRadius: '15px', backgroundColor: '#F5F5F5' }}>
                   <MDBCardBody className="p-4 text-black">
@@ -136,8 +136,8 @@ export default function Main_Page() {
                           style={{
                             zIndex: '2',
                             position: 'absolute', 
-                            top: '0px',
-                            right: '10px', 
+                            top: '1%',
+                            left: '90%', 
                           }}
                         >
                           <CloseIcon sx={{ color: '#F5F5F5' }} />
@@ -150,8 +150,8 @@ export default function Main_Page() {
                             style={{
                               zIndex: '2',
                               position: 'absolute', 
-                              top: '0px',
-                              right: '10px', 
+                              top: '1%',
+                              left: '90%', 
                             }}
                           >
                             <CloseIcon sx={{ color: '#F5F5F5' }} />
@@ -247,9 +247,7 @@ export default function Main_Page() {
           });
         }
       });
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-      }, 3000);
+      setOpenCircularProgress(false);
       setEvents(calendarEvents);
       setClasses(dataWithSala)
     } catch (error) {
@@ -328,9 +326,7 @@ export default function Main_Page() {
       }, 3000);
     } catch (error) {
       console.error("Error fetching classes:", error);
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-      }, 3000);
+      setOpenCircularProgress(false);
       setWarningConnection(true);
       setTimeout(() => {
         setWarningConnection(false);
@@ -391,9 +387,7 @@ export default function Main_Page() {
         }
         const data = await response.json();
         setType(data.type);
-        setTimeout(() => {
-          setOpenCircularProgress(false);
-        }, 3000);
+        setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching user:", error);
     }
