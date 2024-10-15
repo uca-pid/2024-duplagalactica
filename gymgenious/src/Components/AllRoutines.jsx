@@ -352,7 +352,7 @@ const handleSelectEvent = (event) => {
                       <TableBody>
                         {visibleRows.length===0 ? (
                             <TableRow>
-                            <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
+                            <TableCell colSpan={isSmallScreen ? 2 : 4} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                 There are no created routines
                             </TableCell>
                             </TableRow>
