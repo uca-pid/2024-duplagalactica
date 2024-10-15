@@ -14,7 +14,7 @@ import Popper from '@mui/material/Popper';
 import {jwtDecode} from "jwt-decode";
 import { useMediaQuery } from '@mui/material';
 import Loader from '../real_components/loader.jsx'
-
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 
 export default function CreateClass() {
@@ -645,7 +645,12 @@ export default function CreateClass() {
           <LeftBar/>
             <div className='class-creation-rooms-container'>
               <div className='class-creation-content'>
-              <button className='button-come-back' onClick={handleComeBack}>come back</button>
+              <button 
+                onClick={handleComeBack} 
+                className="custom-button-go-back-managing"
+              >
+                <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
+              </button>
                 <h2 style={{color:'#424242'}}>Create class</h2>
                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                   <div onClick={() => handleSelectSala(salas[0])} className={salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center',borderRadius:'10px' ,backgroundColor: salaAssigned==salas[0]?.id && salas[0]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
