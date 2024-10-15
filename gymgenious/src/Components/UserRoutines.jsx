@@ -430,7 +430,7 @@ export default function StickyHeadTable() {
                         <p><strong>Exercises:</strong> {routine.excercises ? routine.excercises.length : 0}</p>
                         <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Owner:</strong> {routine.owner}</p>
                         <button onClick={handleViewExercises}>View exercises</button>
-                        <button onClick={handleCloseModal}>Close</button>
+                        <button onClick={handleCloseModal} style={{marginLeft:'10px'}}>Close</button>
                     </div>
                 </div>
             )}
@@ -462,7 +462,7 @@ export default function StickyHeadTable() {
                                 </Table>
                             </TableContainer>
                         </Paper>
-                        <button onClick={handleViewExercises}>Close</button>
+                        <button onClick={handleViewExercises} style={{marginTop:'10px'}}>Close</button>
                     </div>
                 </div>
             )}

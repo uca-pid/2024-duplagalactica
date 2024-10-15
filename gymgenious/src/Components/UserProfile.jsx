@@ -203,10 +203,178 @@ export default function CreateAccount() {
                 setWarningFetchingUserInformation(false);
             }, 3000);
         }
+    };      
+
+    const fetchModifyUserInformation = async () => {
+        setOpenCircularProgress(true);
+        try {
+            const updatedUser = {
+                ...user,
+                Name: name || nameFetch,
+                Lastname: lastName || lastNameFetch,
+                Birthday: date || dateFetch,
+                Mail: email || emailFetch
+            };
+
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+              console.error('Token no disponible en localStorage');
+              return;
+            }
+            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_users_info', {
+                method: 'PUT', 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ newUser: updatedUser })
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
+            }
+            const data = await response.json();
+            fetchUserInformation();
+            setOpenCircularProgress(false);
+        } catch (error) {
+            console.error("Error updating user:", error);
+            setOpenCircularProgress(false);
+            setWarningModifyingData(true);
+            setTimeout(() => {
+                setWarningModifyingData(false);
+            }, 3000);
+        }
     };
-    function ProfilePage() {
-        return (
-          <section style={{ backgroundColor: '#eee' }}>
+
+    const handleChangeModify = () => {
+        setIsDisabled(!isDisabled);
+        setName('');
+        setLastName('');
+        setDate('');
+        setErrorForm(false);
+    };
+
+    const goToChangePassword = () => {
+        navigate('/reset-password');
+    };
+
+    const validateForm = () => {
+        let res = true;
+        if (name === '' && lastName === '' && date === '') {
+            setErrorForm(true);
+            res = false;
+        } else {
+            setErrorForm(false);
+        }
+        return res;
+    }
+
+    const handleSave = (event) => {
+        if(validateForm()){
+            event.preventDefault(); 
+            fetchModifyUserInformation();
+            setIsDisabled(!isDisabled);
+        }
+    };
+    const verifyToken = async (token) => {
+        setOpenCircularProgress(true);
+        try {
+            const decodedToken = jwtDecode(token);
+            setUserMail(decodedToken.email);
+            setOpenCircularProgress(false);
+        } catch (error) {
+            console.error('Error al verificar el token:', error);
+            setOpenCircularProgress(false);
+            setErrorToken(true);
+            setTimeout(() => {
+              setErrorToken(false);
+            }, 3000);
+            throw error;
+        }
+      };
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            verifyToken(token);
+        } else {
+            navigate('/');
+            console.error('No token found');
+        }
+    }, []);
+
+    useEffect(() => {
+        if(userMail){
+            fetchUserInformation();
+        }
+    }, [userMail]);
+
+    return (
+        <div className='App'>
+            {!userMail ? (
+                <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={true}
+                >
+                    <Loader></Loader>
+                </Backdrop>
+            ) : (
+            <>
+                <LeftBar/>
+                {openCircularProgress ? (
+                    <Backdrop
+                    sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                    open={openCircularProgress}
+                    ><Loader></Loader>
+                    </Backdrop>
+                ) : null}
+                { errorToken ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
+                                    Invalid Token!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                { warningFetchingUserInformation ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningFetchingUserInformation} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Error fetching user information. Try again!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                { warningModifyingData ? (
+                    <div className='alert-container'>
+                        <div className='alert-content'>
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            <Slide direction="up" in={warningModifyingData} mountOnEnter unmountOnExit >
+                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
+                                    Error modifying user information. Try again!
+                                </Alert>
+                            </Slide>
+                            </Box>
+                        </div>
+                    </div>
+                ) : (
+                    null
+                )}
+                <div className='user-profile-container'>
+                <section style={{ backgroundColor: '#eee' }}>
             <MDBContainer className="py-5">
               <MDBRow>
                 <MDBCol>
@@ -399,179 +567,6 @@ export default function CreateAccount() {
               </MDBRow>
             </MDBContainer>
           </section>
-        );
-      }
-      
-
-    const fetchModifyUserInformation = async () => {
-        setOpenCircularProgress(true);
-        try {
-            const updatedUser = {
-                ...user,
-                Name: name || nameFetch,
-                Lastname: lastName || lastNameFetch,
-                Birthday: date || dateFetch,
-                Mail: email || emailFetch
-            };
-
-            const authToken = localStorage.getItem('authToken');
-            if (!authToken) {
-              console.error('Token no disponible en localStorage');
-              return;
-            }
-            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_users_info', {
-                method: 'PUT', 
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
-                },
-                body: JSON.stringify({ newUser: updatedUser })
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
-            }
-            const data = await response.json();
-            fetchUserInformation();
-            setOpenCircularProgress(false);
-        } catch (error) {
-            console.error("Error updating user:", error);
-            setOpenCircularProgress(false);
-            setWarningModifyingData(true);
-            setTimeout(() => {
-                setWarningModifyingData(false);
-            }, 3000);
-        }
-    };
-
-    const handleChangeModify = () => {
-        setIsDisabled(!isDisabled);
-        setName('');
-        setLastName('');
-        setDate('')
-    };
-
-    const goToChangePassword = () => {
-        navigate('/reset-password');
-    };
-
-    const validateForm = () => {
-        let res = true;
-        if (name === '' && lastName === '' && date === '') {
-            setErrorForm(true);
-            res = false;
-        } else {
-            setErrorForm(false);
-        }
-        return res;
-    }
-
-    const handleSave = (event) => {
-        if(validateForm()){
-            event.preventDefault(); 
-            fetchModifyUserInformation();
-            setIsDisabled(!isDisabled);
-        }
-    };
-    const verifyToken = async (token) => {
-        setOpenCircularProgress(true);
-        try {
-            const decodedToken = jwtDecode(token);
-            setUserMail(decodedToken.email);
-            setOpenCircularProgress(false);
-        } catch (error) {
-            console.error('Error al verificar el token:', error);
-            setOpenCircularProgress(false);
-            setErrorToken(true);
-            setTimeout(() => {
-              setErrorToken(false);
-            }, 3000);
-            throw error;
-        }
-      };
-
-    useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            verifyToken(token);
-        } else {
-            navigate('/');
-            console.error('No token found');
-        }
-    }, []);
-
-    useEffect(() => {
-        if(userMail){
-            fetchUserInformation();
-        }
-    }, [userMail]);
-
-    return (
-        <div className='App'>
-            {!userMail ? (
-                <Backdrop
-                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                open={true}
-                >
-                    <Loader></Loader>
-                </Backdrop>
-            ) : (
-            <>
-                <LeftBar/>
-                {openCircularProgress ? (
-                    <Backdrop
-                    sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                    open={openCircularProgress}
-                    ><Loader></Loader>
-                    </Backdrop>
-                ) : null}
-                { errorToken ? (
-                    <div className='alert-container'>
-                        <div className='alert-content'>
-                            <Box sx={{ position: 'relative', zIndex: 1 }}>
-                            <Slide direction="up" in={errorToken} mountOnEnter unmountOnExit >
-                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="error">
-                                    Invalid Token!
-                                </Alert>
-                            </Slide>
-                            </Box>
-                        </div>
-                    </div>
-                ) : (
-                    null
-                )}
-                { warningFetchingUserInformation ? (
-                    <div className='alert-container'>
-                        <div className='alert-content'>
-                            <Box sx={{ position: 'relative', zIndex: 1 }}>
-                            <Slide direction="up" in={warningFetchingUserInformation} mountOnEnter unmountOnExit >
-                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                    Error fetching user information. Try again!
-                                </Alert>
-                            </Slide>
-                            </Box>
-                        </div>
-                    </div>
-                ) : (
-                    null
-                )}
-                { warningModifyingData ? (
-                    <div className='alert-container'>
-                        <div className='alert-content'>
-                            <Box sx={{ position: 'relative', zIndex: 1 }}>
-                            <Slide direction="up" in={warningModifyingData} mountOnEnter unmountOnExit >
-                                <Alert style={{fontSize:'100%', fontWeight:'bold'}} severity="info">
-                                    Error modifying user information. Try again!
-                                </Alert>
-                            </Slide>
-                            </Box>
-                        </div>
-                    </div>
-                ) : (
-                    null
-                )}
-                <div className='user-profile-container'>
-                    <ProfilePage></ProfilePage>
                 </div>
             </>
             )}
