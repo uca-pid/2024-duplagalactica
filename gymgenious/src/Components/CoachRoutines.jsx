@@ -70,6 +70,7 @@ function CoachRoutines() {
   const [reps, setReps] = useState(Array(series).fill(''));
   const [timing, setTiming] = useState(0);
   const [errorAddExercise, setErrorAddExercise] = useState(false);
+  const [errorEditRoutine, setErrorEditRoutine] = useState(false);
 
   const handleSeriesChange = (e) => {
     const newSeries = parseInt(e.target.value);
@@ -141,6 +142,7 @@ function CoachRoutines() {
     };
 
     const handleCloseEditRoutine = () => {
+      setErrorEditRoutine(false);
       setEditClass(false);
       setName('');
       setDesc('');
@@ -206,7 +208,7 @@ function CoachRoutines() {
             ...routineFetch,
             rid: id,
             description: desc || descFetch,
-            excers: exercises || exersFetch,
+            excers: routineExercises || exersFetch,
             name: name || fetchName,
         };
         const authToken = localStorage.getItem('authToken');
@@ -240,15 +242,30 @@ function CoachRoutines() {
       }
   }
 
+  const validateEditRoutine = () => {
+    let res=true;
+    if(name==='' && desc==='' && routineExercises.length===exersFetch.length){
+      if(routineExercises.every((elemento, indice) => elemento === exersFetch[indice])) {
+        res=false;
+        setErrorEditRoutine(true);
+      } else {
+        setErrorEditRoutine(false);
+      }
+    }
+    return res
+  }
+
   const saveRoutine = async (event) => {
+    if(validateEditRoutine()){
       event.preventDefault(); 
       handleSaveEditRoutine();
       setEditClass(!editClass);
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-      }, 7000);
+      // setTimeout(() => {
+      //   setOpenCircularProgress(false);
+      // }, 7000);
       await fetchRoutines();
       window.location.reload()
+    }
   }
 
   const handleEditRoutine = (event) => {
@@ -680,7 +697,6 @@ const fetchExercises = async () => {
               <div className="Modal-edit-routine" onClick={handleCloseModal}>
                 <div className="Modal-Content-edit-routine" onClick={(e) => e.stopPropagation()}>
                   <h2>Routine details</h2>
-                  <form autoComplete='off' onSubmit={saveRoutine}>
                     <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                       <div className="input-small-container">
                         <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
@@ -688,8 +704,9 @@ const fetchExercises = async () => {
                         type="text" 
                         id="name" 
                         name="name" 
-                        value={name || fetchName} 
-                        onChange={(e) => setName(e.target.value)} 
+                        value={name} 
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder={fetchName}
                         />
                       </div>
                     </div>
@@ -699,9 +716,10 @@ const fetchExercises = async () => {
                         <input 
                         type="text" 
                         id="desc" 
-                        name="desc" 
-                        value={desc || descFetch} 
-                        onChange={(e) => setDesc(e.target.value)} 
+                        name="desc"
+                        value={desc} 
+                        onChange={(e) => setDesc(e.target.value)}
+                        placeholder={descFetch}
                         />
                       </div>
                     </div>
@@ -715,11 +733,11 @@ const fetchExercises = async () => {
                               There are not exercices
                             </div>
                           )}
+                          {errorEditRoutine && (<p style={{color: 'red', margin: '0px'}}>No changes were done</p>)}
                       </div>
                     </div>
                     <button onClick={handleCloseEditRoutine} className='button_login'>Cancel</button>
-                    <button type="submit" className='button_login'>Save changes</button>
-                  </form>
+                    <button onClick={saveRoutine} className='button_login'>Save changes</button>
                 </div>
               </div>
             )}
