@@ -670,8 +670,8 @@ const fetchExercises = async () => {
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                   <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
                   <button onClick={()=> handleEditRoutine(selectedEvent)}>Edit routine</button>
-                  <button onClick={handleCloseModalEvent}>Close</button>
-                  <button onClick={()=> handeDeleteRoutine(selectedEvent)}>Delete routine</button>
+                  <button onClick={handleCloseModalEvent} style={{marginLeft:'10px'}}>Close</button>
+                  <button onClick={()=> handeDeleteRoutine(selectedEvent)} style={{marginLeft:'10px'}}>Delete routine</button>
                 </div>
               </div>
             )}
@@ -782,7 +782,7 @@ const fetchExercises = async () => {
                     </div>
                   </div>
                   <button onClick={() => handleAddExercise(selectedExercise)}>Add exercise</button>
-                  <button onClick={handleCloseModal}>Close</button>
+                  <button onClick={handleCloseModal} style={{marginLeft:'10px'}}>Close</button>
                 </div>
               </div>
             )}

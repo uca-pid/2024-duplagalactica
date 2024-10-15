@@ -473,7 +473,7 @@ export default function CoachExercises() {
                                 {selectedEvent.owner==userMail? (
                                 <button onClick={()=> handleEditExercise(selectedEvent)}>Edit exercise</button>
                                 ) :(<></>)}                            
-                                <button onClick={handleCloseModalEvent}>Close</button>
+                                <button onClick={handleCloseModalEvent} style={{marginLeft:'10px'}}>Close</button>
                             </div>
                         </div>
                     )}
@@ -521,7 +521,7 @@ export default function CoachExercises() {
                                         </div>
                                     </div>
                                     <button type="submit" className='button_login'>Save</button>                            
-                                    <button onClick={handleCloseModal}>Cancel</button>
+                                    <button onClick={handleCloseModal} style={{merginTop:'10px'}} className='button_login'>Cancel</button>
                                 </form>
                             </div>
                         </div>
