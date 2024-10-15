@@ -54,13 +54,7 @@ function TopRoutines({ routines }) {
         }}>
         <button 
           onClick={() => window.location.reload()} 
-          className="custom-button-go-back-managing"
-          style={{
-            zIndex: '2',
-            position: 'absolute', 
-            top: '-10px',
-            right: '10px', 
-          }}
+          className="custom-button-go-back-managing-graphics"
         >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>
@@ -101,15 +95,9 @@ function TopRoutines({ routines }) {
           left: '50%', 
           transform: 'translate(-50%, -50%)', 
         }}>
-          <button 
+        <button 
           onClick={() => window.location.reload()} 
-          className="custom-button-go-back-managing"
-          style={{
-            zIndex: '2',
-            position: 'absolute', 
-            top: '-10px',
-            right: '10px', 
-          }}
+          className="custom-button-go-back-managing-graphics"
         >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>
@@ -149,13 +137,7 @@ function TopRoutines({ routines }) {
       }}>
         <button 
           onClick={() => window.location.reload()} 
-          className="custom-button-go-back-managing"
-          style={{
-            zIndex: '2',
-            position: 'absolute', 
-            top: '-10px',
-            right: '10px', 
-          }}
+          className="custom-button-go-back-managing-graphics"
         >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>

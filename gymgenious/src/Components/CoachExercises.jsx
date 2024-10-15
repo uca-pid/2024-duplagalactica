@@ -455,6 +455,9 @@ export default function CoachExercises() {
                         <div className="Modal" onClick={handleCloseModalEvent}>
                             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                                 <h2 style={{marginBottom: '0px'}}>Exercise:</h2>
+                                <h5 style={{ marginTop: '5px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
+                                    {selectedEvent.name}
+                                </h5>
                                 <p style={{ marginTop: '5px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
                                     {selectedEvent.description}
                                 </p>
@@ -472,7 +475,7 @@ export default function CoachExercises() {
                                 {selectedEvent.owner==userMail? (
                                 <button onClick={()=> handleEditExercise(selectedEvent)}>Edit exercise</button>
                                 ) :(<></>)}                            
-                                <button onClick={handleCloseModalEvent}>Close</button>
+                                <button onClick={handleCloseModalEvent} style={{marginLeft:'10px'}}>Close</button>
                             </div>
                         </div>
                     )}
@@ -520,7 +523,7 @@ export default function CoachExercises() {
                                         </div>
                                     </div>
                                     <button type="submit" className='button_login'>Save</button>                            
-                                    <button onClick={handleCloseModal}>Cancell</button>
+                                    <button onClick={handleCloseModal} style={{merginTop:'10px'}} className='button_login'>Cancel</button>
                                 </form>
                             </div>
                         </div>

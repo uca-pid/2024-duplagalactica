@@ -16,6 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import Loader from '../real_components/loader.jsx'
+
 export default function RoutineCreation() {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
@@ -36,6 +37,7 @@ export default function RoutineCreation() {
     const [series, setSeries] = useState(4);
     const [reps, setReps] = useState(Array(series).fill(''));
     const [timing, setTiming] = useState(0);
+    const [errorAddExercise, setErrorAddExercise] = useState(false);
 
     const handleSeriesChange = (e) => {
       const newSeries = parseInt(e.target.value);
@@ -51,16 +53,30 @@ export default function RoutineCreation() {
       setReps(newReps);
     };
 
-    const handleAddExercise = (exercise) => {
-      let exerciseWithParams = {
-        id: exercise.id,
-        owner: exercise.owner,
-        reps: reps,
-        series: series,
-        timing: timing,
+    const validateExerciseData = () => {
+      let res=false;
+      console.log(reps)
+      if(reps.some(item => item === '')) {
+        setErrorAddExercise(true);
+      } else {
+        res=true;
+        setErrorAddExercise(false);
       }
-      setRoutineExercises([...routineExercises, exerciseWithParams]);
-      handleCloseModal();
+      return res
+    }
+
+    const handleAddExercise = (exercise) => {
+      if(validateExerciseData()){
+        let exerciseWithParams = {
+          id: exercise.id,
+          owner: exercise.owner,
+          reps: reps,
+          series: series,
+          timing: timing,
+        }
+        setRoutineExercises([...routineExercises, exerciseWithParams]);
+        handleCloseModal();
+      }
     };
 
     const handleDeleteExercise = (exercise) => {
@@ -81,6 +97,10 @@ export default function RoutineCreation() {
         setOpenAdvise(true);
       } else {
         setOpenAddExercise(true);
+        setSeries(4);
+        setReps(Array(series).fill(''));
+        setTiming(0);
+        setErrorAddExercise(false);
       }
     };
 
@@ -386,6 +406,7 @@ export default function RoutineCreation() {
                       style={{ width: `${100 / series}%` }}
                     />
                 ))}
+                {errorAddExercise && (<p style={{color: 'red', margin: '0px'}}>Complete all fields</p>)}
               </div>
             </div>
             <button onClick={() => handleAddExercise(selectedExercise)}>Add exercise</button>
@@ -424,6 +445,7 @@ export default function RoutineCreation() {
                       <button 
                         onClick={handleCloseModal} 
                         style={{ 
+                          marginLeft: '10px',
                           padding: '8px 16px', 
                           backgroundColor: '#229799',
                           color: '#fff', 

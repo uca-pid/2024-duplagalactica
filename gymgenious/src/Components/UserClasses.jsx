@@ -48,7 +48,7 @@ function UsserClasses() {
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     
-    return `${month}/${day}/${year}`;
+    return `${year}-${month}-${day}`;
   }
 
   const handleRequestSort = (event, property) => {
@@ -407,7 +407,7 @@ useEffect(() => {
             <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
             <p><strong>Coach:</strong> {selectedEvent.owner}</p>
             <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
-            <button onClick={handleCloseModal}>Close</button>
+            <button onClick={handleCloseModal} style={{marginLeft:'10px'}}>Close</button>
           </div>
         </div>
       )}

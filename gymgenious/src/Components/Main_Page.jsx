@@ -48,102 +48,88 @@ export default function Main_Page() {
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     
-    return `${month}/${day}/${year}`;
+    return `${year}-${month}-${day}`;
   }
 
   function ECommerce({event}) {
     return (
       <div className="vh-100" style={{position:'fixed',zIndex:1000,display:'flex',flex:1,width:'100%',height:'100%',opacity: 1,
         visibility: 'visible',backgroundColor: 'rgba(0, 0, 0, 0.5)'}} onClick={handleCloseModal}>
-        <MDBContainer>
-          <MDBRow className="justify-content-center">
-            <MDBCol md="9" lg="7" xl="5" className="mt-5">
-              <MDBCard style={{ borderRadius: '15px', backgroundColor: '#F5F5F5' }}>
-                <MDBCardBody className="p-4 text-black">
-                  <div>
-                    <MDBTypography tag='h6' style={{color: '#424242',fontWeight:'bold' }}>{event.name}</MDBTypography>
-                    <div className="d-flex align-items-center justify-content-between mb-3">
-                      <p className="small mb-0" style={{color: '#424242' }}><AccessAlarmsIcon sx={{ color: '#48CFCB'}} />{event.dateInicio.split('T')[1].split(':').slice(0, 2).join(':')} - {event.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
-                      <p className="fw-bold mb-0" style={{color: '#424242' }}>{formatDate(new Date(event.start))}</p>
-                    </div>
-                  </div>
-                  <div className="d-flex align-items-center mb-4">
-                    <div className="flex-shrink-0">
-                      <MDBCardImage
-                        style={{ width: '70px' }}
-                        className="img-fluid rounded-circle border border-dark border-3"
-                        src={event.sala=='cuyAhMJE8Mz31eL12aPO' ? `${process.env.PUBLIC_URL}/gimnasio.jpeg` : (event.sala=='PmQ2RZJpDXjBetqThVna' ? `${process.env.PUBLIC_URL}/salon_pequenio.jpeg` : (event.sala=='jxYcsGUYhW6pVnYmjK8H' ? `${process.env.PUBLIC_URL}/salon_de_functional.jpeg` : `${process.env.PUBLIC_URL}/salon_de_gimnasio.jpg`)) }
-                        alt='Generic placeholder image'
-                        fluid />
-                    </div>
-                    <div className="flex-grow-1 ms-3">
-                      <div className="d-flex flex-row align-items-center mb-2">
-                        <p className="mb-0 me-2" style={{color: '#424242' }}>{selectedEvent.salaInfo.nombre}</p>
-                      </div>
-                      <div>
-                        <MDBBtn outline color="dark" rounded size="sm" className="mx-1"  style={{color: '#424242' }}>Capacity {event.capacity}</MDBBtn>
-                        <MDBBtn outline color="dark" rounded size="sm" className="mx-1" style={{color: '#424242' }}>{event.permanent==='Si' ? 'Every week' : 'Just this day'}</MDBBtn>
-                        <MDBBtn outline color="dark" floating size="sm" style={{color: '#424242' }}><MDBIcon fas icon="comment" /></MDBBtn>
+          <MDBContainer>
+            <MDBRow className="justify-content-center">
+              <MDBCol md="9" lg="7" xl="5" className="mt-5">
+                <MDBCard style={{ borderRadius: '15px', backgroundColor: '#F5F5F5' }}>
+                  <MDBCardBody className="p-4 text-black">
+                    <div>
+                      <MDBTypography tag='h6' style={{color: '#424242',fontWeight:'bold' }}>{event.name}</MDBTypography>
+                      <div className="d-flex align-items-center justify-content-between mb-3">
+                        <p className="small mb-0" style={{color: '#424242' }}><AccessAlarmsIcon sx={{ color: '#48CFCB'}} />{event.dateInicio.split('T')[1].split(':').slice(0, 2).join(':')} - {event.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
+                        <p className="fw-bold mb-0" style={{color: '#424242' }}>{formatDate(new Date(event.dateInicio))}</p>
                       </div>
                     </div>
-                  </div>
-                  <hr />
-                  <MDBCardText><CollectionsBookmarkIcon sx={{ color: '#48CFCB'}} /> {event.BookedUsers.length} booked users</MDBCardText>
-                  <MDBCardText><EmailIcon sx={{ color: '#48CFCB'}} /> For any doubt ask "{event.owner}"</MDBCardText>
-                  {userMail && type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-                    (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
-                    ? (
-                      <>
-                      {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
-                            <MDBBtn
-                            style={{ backgroundColor: '#48CFCB', color: 'white' }} 
-                            rounded
-                            block
-                            size="lg"
-                            onClick={() => handleUnbookClass(event.id)}
-                          >
-                            Unbook
-                          </MDBBtn>
-                          ) : (
-                            <>
-                            {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
-                            <MDBBtn
+                    <div className="d-flex align-items-center mb-4">
+                      <div className="flex-shrink-0">
+                        <MDBCardImage
+                          style={{ width: '70px' }}
+                          className="img-fluid rounded-circle border border-dark border-3"
+                          src={event.sala=='cuyAhMJE8Mz31eL12aPO' ? `${process.env.PUBLIC_URL}/gimnasio.jpeg` : (event.sala=='PmQ2RZJpDXjBetqThVna' ? `${process.env.PUBLIC_URL}/salon_pequenio.jpeg` : (event.sala=='jxYcsGUYhW6pVnYmjK8H' ? `${process.env.PUBLIC_URL}/salon_de_functional.jpeg` : `${process.env.PUBLIC_URL}/salon_de_gimnasio.jpg`)) }
+                          alt='Generic placeholder image'
+                          fluid />
+                      </div>
+                      <div className="flex-grow-1 ms-3">
+                        <div className="d-flex flex-row align-items-center mb-2">
+                          <p className="mb-0 me-2" style={{color: '#424242' }}>{selectedEvent.salaInfo.nombre}</p>
+                        </div>
+                        <div>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1"  style={{color: '#424242' }}>Capacity {event.capacity}</MDBBtn>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1" style={{color: '#424242' }}>{event.permanent==='Si' ? 'Every week' : 'Just this day'}</MDBBtn>
+                          <MDBBtn outline color="dark" floating size="sm" style={{color: '#424242' }}><MDBIcon fas icon="comment" /></MDBBtn>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                    <MDBCardText><CollectionsBookmarkIcon sx={{ color: '#48CFCB'}} /> {event.BookedUsers.length} booked users</MDBCardText>
+                    <MDBCardText><EmailIcon sx={{ color: '#48CFCB'}} /> For any doubt ask "{event.owner}"</MDBCardText>
+                    {userMail && type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+                      (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
+                      ? (
+                        <>
+                        {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
+                              <MDBBtn
                               style={{ backgroundColor: '#48CFCB', color: 'white' }} 
                               rounded
                               block
                               size="lg"
-                              onClick={() => handleBookClass(event.id)}
+                              onClick={() => handleUnbookClass(event.id)}
                             >
-                              Book now
+                              Unbook
                             </MDBBtn>
-                            ) :
-                            (<>
-                            <MDBBtn
-                              style={{ backgroundColor: '#48CFCB', color: 'white' }} 
-                              rounded
-                              block
-                              size="lg"
-                            >
-                              FULL
-                            </MDBBtn>
-                            </>)
-                            }
-                            </>
-                      )}
-                      <button 
-                        onClick={handleCloseModal}
-                        className="custom-button-go-back-managing"
-                        style={{
-                          zIndex: '2',
-                          position: 'absolute', 
-                          top: '0px',
-                          right: '10px', 
-                        }}
-                      >
-                        <CloseIcon sx={{ color: '#F5F5F5' }} />
-                      </button>
-                      </>
-                      ) : (
+                            ) : (
+                              <>
+                              {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
+                              <MDBBtn
+                                style={{ backgroundColor: '#48CFCB', color: 'white' }} 
+                                rounded
+                                block
+                                size="lg"
+                                onClick={() => handleBookClass(event.id)}
+                              >
+                                Book now
+                              </MDBBtn>
+                              ) :
+                              (<>
+                              <MDBBtn
+                                style={{ backgroundColor: '#48CFCB', color: 'white' }} 
+                                rounded
+                                block
+                                size="lg"
+                              >
+                                FULL
+                              </MDBBtn>
+                              </>)
+                              }
+                              </>
+                        )}
                         <button 
                           onClick={handleCloseModal}
                           className="custom-button-go-back-managing"
@@ -156,12 +142,26 @@ export default function Main_Page() {
                         >
                           <CloseIcon sx={{ color: '#F5F5F5' }} />
                         </button>
-                      )}
-                </MDBCardBody>
-              </MDBCard>
-            </MDBCol>
-          </MDBRow>
-        </MDBContainer>
+                        </>
+                        ) : (
+                          <button 
+                            onClick={handleCloseModal}
+                            className="custom-button-go-back-managing"
+                            style={{
+                              zIndex: '2',
+                              position: 'absolute', 
+                              top: '0px',
+                              right: '10px', 
+                            }}
+                          >
+                            <CloseIcon sx={{ color: '#F5F5F5' }} />
+                          </button>
+                        )}
+                  </MDBCardBody>
+                </MDBCard>
+              </MDBCol>
+            </MDBRow>
+          </MDBContainer>
       </div>
     );
   }
@@ -435,13 +435,13 @@ export default function Main_Page() {
         </div>
         ) : (
         <div className="Table-Container">
-          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
+          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>
         </div>
       )}
       </>
   ) : (
     <div className="Table-Container">
-          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
+          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>
     </div>
   )}
   {selectedEvent && (

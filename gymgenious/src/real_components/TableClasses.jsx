@@ -11,8 +11,17 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
+import WarningConnectionAlert from '../real_components/WarningConnectionAlert.jsx';
+import ErrorTokenAlert from '../real_components/ErrorTokenAlert.jsx';
+import SuccessAlert from '../real_components/SuccessAlert.jsx';
+import EmailIcon from '@mui/icons-material/Email';
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import CloseIcon from '@mui/icons-material/Close';
 
-function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClass }) {
+function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClass, handleSelectEvent }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
@@ -30,7 +39,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     
-    return `${month}/${day}/${year}`;
+    return `${year}-${month}-${day}`;
   }
 
   const handleRequestSort = (event, property) => {
@@ -46,10 +55,6 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const handleSelectEvent = (event) => {
-    setSelectedEvent(event);
   };
 
   const handleCloseModal = () => {
@@ -85,6 +90,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [order, orderBy, page, rowsPerPage, rows]
   );
+
   return (
     <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
       <Paper
@@ -245,41 +251,6 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
           null
         )}
       </Paper>
-      {selectedEvent && (
-        <div className="Modal" onClick={handleCloseModal}>
-          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-            <h2>Class details:</h2>
-            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
-            <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.dateInicio))}</p>
-            <p><strong>Start time:</strong> {new Date(new Date(selectedEvent.dateInicio).getTime() + 3 * 60 * 60 * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
-            <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
-            <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
-            <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Coach:</strong> {selectedEvent.owner}</p>
-            {user && userType==='client' && (new Date(selectedEvent.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-            (new Date(selectedEvent.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0))
-            ? (
-            <>
-            {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(user)  ? (
-                  <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
-                ) : (
-                  <>
-                  {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
-                  <button onClick={() => handleBookClass(selectedEvent.id)}>Book</button>
-                  ) :
-                  (<>
-                  <button style={{background:'red'}}>Full</button>
-                  </>)
-                  }
-                  </>
-            )}
-            <button onClick={handleCloseModal}>Close</button>
-            </>) : (
-            <button onClick={handleCloseModal}>Close</button>
-          )}
-          </div>
-        </div>
-      )}
     </Box>
   );
 }

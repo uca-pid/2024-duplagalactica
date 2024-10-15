@@ -18,7 +18,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
-import Loader from '../real_components/loader.jsx'
+import Loader from '../real_components/loader.jsx';
+import moment from 'moment'
+
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -49,11 +51,11 @@ function CouchClasses() {
   const [maxHeight, setMaxHeight] = useState('600px');
   const [type, setType] = useState(null);
   const [errorSala, setErrorSala] = useState(false);
-  const [errorEndTime, setErrorEndTime] = useState(false);
+  const [errorHour, setErrorHour] = useState(false);
 
 
   const [fetchId,setFetchId] = useState('');
-  const [fetchDateFin,setFetchDateFin]= useState('¿');
+  const [fetchDateFin,setFetchDateFin]= useState('');
   const [fetchDateInicio,setFetchDateInicio]=useState('');
   const [fetchDay,setFetchDay]=useState('');
   const [fetchName,setFetchName]=useState('');
@@ -76,7 +78,7 @@ function CouchClasses() {
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     
-    return `${month}/${day}/${year}`;
+    return `${year}-${month}-${day}`;
   }
 
   useEffect(() => {
@@ -313,12 +315,22 @@ function CouchClasses() {
 };
   const validateForm = () => {
     let res = true;
-    console.log(name)
-    if (name==='' && hour === '' && hourFin === '' && date=== '' && permanent==='' && salaAssigned==='' && maxNum==='') {
+    if (name==='' && hour === '' && hourFin === '' && date=== '' && salaAssigned===null && maxNum===null && permanent==='') {
         setErrorForm(true);
         res = false;
     } else {
         setErrorForm(false);
+    }
+
+    const format= "HH:mm";
+    const hourFinForm = hourFin || fetchDateFin.split('T')[1].split(':').slice(0, 2).join(':');
+    const hourForm = hour || fetchHour;
+    const realHourEnd = moment(hourFinForm, format).subtract(30, 'minutes').format(format);
+    if(moment(realHourEnd, format).isBefore(moment(hourForm, format)) && hourFinForm!=''){
+      setErrorHour(true);
+      res = false;
+    } else {
+      setErrorHour(false);
     }
     return res;
   }
@@ -706,7 +718,6 @@ function CouchClasses() {
                 {editClass && (
                     <div className="Modal">
                         <div className="Modal-Content-class-creation" onClick={(e) => e.stopPropagation()}>
-                          <form autoComplete='off' onSubmit={saveClass}>
                             <h2>Class details</h2>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
                                     <div className="input-small-container">
@@ -728,6 +739,7 @@ function CouchClasses() {
                                             value={hourFin || selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')} 
                                             onChange={(e) => setHourFin(e.target.value)}
                                         />
+                                        {errorHour && (<p style={{color: 'red', margin: '0px'}}>30 minutes at least</p>)}
                                     </div>
                                     <div className="input-small-container">
                                         <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
@@ -797,9 +809,8 @@ function CouchClasses() {
                                   />
                                   {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
                                 </div>
-                                <button   onClick={handleEditClass} className='button_login'>Cancell</button>
-                                <button style={{merginTop:'10px'}} type="submit" className='button_login'>Save changes</button>
-                              </form>
+                                <button onClick={handleEditClass} className='button_login'>Cancel</button>
+                                <button onClick={saveClass} style={{merginTop:'10px'}} className='button_login'>Save changes</button>
                         </div>
                     </div>
                 )}
