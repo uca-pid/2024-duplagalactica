@@ -39,7 +39,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     
-    return `${month}/${day}/${year}`;
+    return `${year}-${month}-${day}`;
   }
 
   const handleRequestSort = (event, property) => {
@@ -90,7 +90,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [order, orderBy, page, rowsPerPage, rows]
   );
-  
+
   return (
     <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
       <Paper
