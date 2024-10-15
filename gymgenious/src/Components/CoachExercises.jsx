@@ -521,7 +521,7 @@ export default function CoachExercises() {
                                         </div>
                                     </div>
                                     <button type="submit" className='button_login'>Save</button>                            
-                                    <button onClick={handleCloseModal}>Cancell</button>
+                                    <button onClick={handleCloseModal}>Cancel</button>
                                 </form>
                             </div>
                         </div>

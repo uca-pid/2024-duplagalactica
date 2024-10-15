@@ -716,7 +716,7 @@ const fetchExercises = async () => {
                           )}
                       </div>
                     </div>
-                    <button onClick={handleCloseEditRoutine} className='button_login'>Cancell</button>
+                    <button onClick={handleCloseEditRoutine} className='button_login'>Cancel</button>
                     <button type="submit" className='button_login'>Save changes</button>
                   </form>
                 </div>

@@ -809,7 +809,7 @@ function CouchClasses() {
                                   />
                                   {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
                                 </div>
-                                <button onClick={handleEditClass} className='button_login'>Cancell</button>
+                                <button onClick={handleEditClass} className='button_login'>Cancel</button>
                                 <button onClick={saveClass} style={{merginTop:'10px'}} className='button_login'>Save changes</button>
                         </div>
                     </div>
