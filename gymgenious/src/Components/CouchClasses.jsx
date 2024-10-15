@@ -374,6 +374,7 @@ function CouchClasses() {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
       setWarningConnection(true);
+      handleCloseModal();
       setTimeout(() => {
         setWarningConnection(false);
       }, 3000);
@@ -581,7 +582,7 @@ function CouchClasses() {
                           rounded
                           block
                           size="lg"
-                          onClick={()=>handleDeleteClass(event)}
+                          onClick={()=>handleDeleteClass(event.id)}
                         >
                           Delete class
                         </MDBBtn>

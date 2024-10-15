@@ -416,9 +416,13 @@ export default function CreateClass() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openHourRequirements, setOpenHourRequirements] = useState(false);
   const handleOpenHourRequirements = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpenHourRequirements(!openHourRequirements)
-  };
+    if (openHourRequirements) {
+        setAnchorEl(null); // Close popper
+    } else {
+        setAnchorEl(event.currentTarget); // Open popper with the clicked element as anchor
+    }
+    setOpenHourRequirements(!openHourRequirements);
+};
   const id = 'simple-popper';
 
   const handleCloseHourRequirements = () => {

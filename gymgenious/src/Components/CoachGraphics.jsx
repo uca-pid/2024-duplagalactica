@@ -245,7 +245,6 @@ function CoachGraphics() {
         });
 
         setRoutines(routinesWithAssignedCount);
-        setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching rutinas:", error);
         setOpenCircularProgress(false);
@@ -266,7 +265,6 @@ function CoachGraphics() {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      setOpenCircularProgress(false);
       setClasses(data);
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -395,7 +393,6 @@ function CoachGraphics() {
         console.log("Ejercicios y conteo:", resultArray);
 
         setExersCoachUsers(resultArray);
-        setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching classes:", error);
         setOpenCircularProgress(false);
@@ -412,7 +409,6 @@ function CoachGraphics() {
     try {
         const decodedToken = jwtDecode(token);
         setUserMail(decodedToken.email);
-        setOpenCircularProgress(false);
     } catch (error) {
         console.error('Error al verificar el token:', error);
         setOpenCircularProgress(false);
@@ -518,6 +514,9 @@ function CoachGraphics() {
             fetchRoutines();
             fetchClasses();
             fetchExcersicesCoachUsers();
+            setTimeout(() => {
+              setOpenCircularProgress(false);
+            }, 3000)
         }
     }, [userMail]);
 
