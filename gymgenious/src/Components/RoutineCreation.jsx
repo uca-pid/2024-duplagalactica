@@ -99,7 +99,8 @@ export default function RoutineCreation() {
         setOpenAddExercise(true);
         setSeries(4);
         setReps(Array(series).fill(''));
-        setTiming(0)
+        setTiming(0);
+        setErrorAddExercise(false);
       }
     };
 
@@ -444,6 +445,7 @@ export default function RoutineCreation() {
                       <button 
                         onClick={handleCloseModal} 
                         style={{ 
+                          marginLeft: '10px',
                           padding: '8px 16px', 
                           backgroundColor: '#229799',
                           color: '#fff', 

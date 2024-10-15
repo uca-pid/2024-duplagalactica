@@ -69,6 +69,7 @@ function CoachRoutines() {
   const [series, setSeries] = useState(4);
   const [reps, setReps] = useState(Array(series).fill(''));
   const [timing, setTiming] = useState(0);
+  const [errorAddExercise, setErrorAddExercise] = useState(false);
 
   const handleSeriesChange = (e) => {
     const newSeries = parseInt(e.target.value);
@@ -78,40 +79,36 @@ function CoachRoutines() {
     }
   };
 
-  const correctExercisesData = async (exercisesData) => {
-    let autoIncrementId=0;
-    return exercisesData.map(element => {
-        if (!element.series) {
-            autoIncrementId++;
-            return {
-                id: autoIncrementId,
-                name: element.name,
-                series: 4,
-                reps: [12, 12, 10, 10],
-                timing: '60',
-                description: 'aaaa',
-                owner: 'Train-Mate'
-            };
-        }
-        return element;
-    });
-};
-
   const handleRepsChange = (index, value) => {
     const newReps = [...reps];
     newReps[index] = value;
     setReps(newReps);
   };
 
-  const handleAddExercise = (exercise) => {
-    let exerciseWithParams = {
-      exercise: exercise,
-      series: series,
-      reps: reps,
-      timing: timing,
+  const validateExerciseData = () => {
+    let res=false;
+    console.log(reps)
+    if(reps.some(item => item === '')) {
+      setErrorAddExercise(true);
+    } else {
+      res=true;
+      setErrorAddExercise(false);
     }
-    setRoutineExercises([...routineExercises, exerciseWithParams]);
-    handleCloseModal();
+    return res
+  }
+
+  const handleAddExercise = (exercise) => {
+    if(validateExerciseData()){
+      let exerciseWithParams = {
+        id: exercise.id,
+        owner: exercise.owner,
+        reps: reps,
+        series: series,
+        timing: timing,
+      }
+      setRoutineExercises([...routineExercises, exerciseWithParams]);
+      handleCloseModal();
+    }
   };
 
   const handleDeleteExercise = (exercise) => {
@@ -132,6 +129,10 @@ function CoachRoutines() {
       setOpenAdvise(true);
     } else {
       setOpenAddExercise(true);
+      setSeries(4);
+      setReps(Array(series).fill(''));
+      setTiming(0);
+      setErrorAddExercise(false);
     }
   };
 
@@ -152,7 +153,7 @@ function CoachRoutines() {
             const labelId = `transfer-list-item-${exercise.name}-label`;
             return (
               <>
-              { (routineExercises?.some(stateExercise => stateExercise?.exercise?.id === exercise.id)) ? (
+              { (routineExercises?.some(stateExercise => stateExercise?.id === exercise.id)) ? (
                 <ListItemButton
                 sx={{backgroundColor:'#091057'}}
                 key={exercise.id}
@@ -420,9 +421,9 @@ const fetchExercises = async () => {
       }
     });
     const exercisesDataFromTrainMate = await response2.json();
-    const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
-    const totalExercisesCorrected = await correctExercisesData(totalExercises);
-    setExercises(totalExercisesCorrected);
+    const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises);
+    console.log(totalExercises)
+    setExercises(totalExercises);
     setOpenCircularProgress(false);
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -779,6 +780,7 @@ const fetchExercises = async () => {
                             style={{ width: `${100 / series}%` }}
                           />
                       ))}
+                      {errorAddExercise && (<p style={{color: 'red', margin: '0px'}}>Complete all fields</p>)}
                     </div>
                   </div>
                   <button onClick={() => handleAddExercise(selectedExercise)}>Add exercise</button>
@@ -788,51 +790,52 @@ const fetchExercises = async () => {
             )}
             { openAdvise && selectedExercise && (
               <div className='alert-container' onClick={handleCloseModal}>
-                <div className='alert-content' onClick={(e) => e.stopPropagation()}>
-                <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={openAdvise} mountOnEnter unmountOnExit>
-                    <Alert 
-                      style={{ 
-                        fontSize: '100%', 
-                        fontWeight: 'bold', 
-                        alignItems: 'center', 
-                      }} 
-                      severity="info"
-                    >
-                      Are you sure you want to delete the exercise?
-                      <div style={{ justifyContent: 'center', marginTop: '10px' }}>
-                        <button 
-                          onClick={() => handleDeleteExercise(selectedExercise)} 
-                          style={{ 
-                            padding: '8px 16px', 
-                            backgroundColor: '#f44336',
-                            color: '#fff', 
-                            border: 'none', 
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          Delete exercise
-                        </button>
-                        <button 
-                          onClick={handleCloseModal} 
-                          style={{ 
-                            padding: '8px 16px', 
-                            backgroundColor: '#4caf50',
-                            color: '#fff', 
-                            border: 'none', 
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </Alert>
-                  </Slide>
-                </Box>
-              </div>
+              <div className='alert-content' onClick={(e) => e.stopPropagation()}>
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Slide direction="up" in={openAdvise} mountOnEnter unmountOnExit>
+                  <Alert 
+                    style={{ 
+                      fontSize: '100%', 
+                      fontWeight: 'bold', 
+                      alignItems: 'center', 
+                    }} 
+                    severity="info"
+                  >
+                    Are you sure you want to delete the exercise?
+                    <div style={{ justifyContent: 'center', marginTop: '10px' }}>
+                      <button 
+                        onClick={() => handleDeleteExercise(selectedExercise)} 
+                        style={{ 
+                          padding: '8px 16px', 
+                          backgroundColor: '#229799',
+                          color: '#fff', 
+                          border: 'none', 
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Delete exercise
+                      </button>
+                      <button 
+                        onClick={handleCloseModal} 
+                        style={{
+                          marginLeft: '10px',
+                          padding: '8px 16px', 
+                          backgroundColor: '#229799',
+                          color: '#fff', 
+                          border: 'none', 
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </Alert>
+                </Slide>
+              </Box>
             </div>
+          </div>
           )}
             {openCircularProgress ? (
               <Backdrop
