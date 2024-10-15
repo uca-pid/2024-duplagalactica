@@ -19,7 +19,13 @@ import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
 import Loader from '../real_components/loader.jsx';
-import moment from 'moment'
+import moment from 'moment';
+import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
+import EmailIcon from '@mui/icons-material/Email';
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import CloseIcon from '@mui/icons-material/Close';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
 
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
@@ -510,6 +516,86 @@ function CouchClasses() {
     [order, orderBy, page, rowsPerPage, classes]
   );
 
+  function ECommerce({event}) {
+    return (
+      <div className="vh-100" style={{position:'fixed',zIndex:1000,display:'flex',flex:1,width:'100%',height:'100%',opacity: 1,
+        visibility: 'visible',backgroundColor: 'rgba(0, 0, 0, 0.5)'}} onClick={handleCloseModal}>
+          <MDBContainer>
+            <MDBRow className="justify-content-center" onClick={(e) => e.stopPropagation()}>
+              <MDBCol md="9" lg="7" xl="5" className="mt-5">
+                <MDBCard style={{ borderRadius: '15px', backgroundColor: '#F5F5F5' }}>
+                  <MDBCardBody className="p-4 text-black">
+                    <div>
+                      <MDBTypography tag='h6' style={{color: '#424242',fontWeight:'bold' }}>{event.name}</MDBTypography>
+                      <div className="d-flex align-items-center justify-content-between mb-3">
+                        <p className="small mb-0" style={{color: '#424242' }}><AccessAlarmsIcon sx={{ color: '#48CFCB'}} />{event.dateInicio.split('T')[1].split(':').slice(0, 2).join(':')} - {event.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
+                        <p className="fw-bold mb-0" style={{color: '#424242' }}>{formatDate(new Date(event.dateInicio))}</p>
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-center mb-4">
+                      <div className="flex-shrink-0">
+                        <MDBCardImage
+                          style={{ width: '70px' }}
+                          className="img-fluid rounded-circle border border-dark border-3"
+                          src={event.sala=='cuyAhMJE8Mz31eL12aPO' ? `${process.env.PUBLIC_URL}/gimnasio.jpeg` : (event.sala=='PmQ2RZJpDXjBetqThVna' ? `${process.env.PUBLIC_URL}/salon_pequenio.jpeg` : (event.sala=='jxYcsGUYhW6pVnYmjK8H' ? `${process.env.PUBLIC_URL}/salon_de_functional.jpeg` : `${process.env.PUBLIC_URL}/salon_de_gimnasio.jpg`)) }
+                          alt='Generic placeholder image'
+                          fluid />
+                      </div>
+                      <div className="flex-grow-1 ms-3">
+                        <div className="d-flex flex-row align-items-center mb-2">
+                          <p className="mb-0 me-2" style={{color: '#424242' }}>{selectedEvent.salaInfo.nombre}</p>
+                        </div>
+                        <div>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1"  style={{color: '#424242' }}>Capacity {event.capacity}</MDBBtn>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1" style={{color: '#424242' }}>{event.permanent==='Si' ? 'Every week' : 'Just this day'}</MDBBtn>
+                          <MDBBtn outline color="dark" floating size="sm" style={{color: '#424242' }}><MDBIcon fas icon="comment" /></MDBBtn>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                    <MDBCardText><CollectionsBookmarkIcon sx={{ color: '#48CFCB'}} /> {event.BookedUsers.length} booked users</MDBCardText>
+                    <MDBCardText><EmailIcon sx={{ color: '#48CFCB'}} /> For any doubt ask "{event.owner}"</MDBCardText>
+                      <button 
+                        onClick={handleCloseModal}
+                        className="custom-button-go-back-managing"
+                        style={{
+                          zIndex: '2',
+                          position: 'absolute', 
+                          top: '1%',
+                          left: '90%', 
+                        }}
+                      >
+                        <CloseIcon sx={{ color: '#F5F5F5' }} />
+                      </button>
+                      <MDBBtn
+                          style={{ backgroundColor: '#48CFCB', color: 'white' }} 
+                          rounded
+                          block
+                          size="lg"
+                          onClick={()=>handleEditClass(event)}
+                        >
+                          Edit class
+                        </MDBBtn>
+                        <MDBBtn
+                          style={{ backgroundColor: '#48CFCB', color: 'white' }} 
+                          rounded
+                          block
+                          size="lg"
+                          onClick={()=>handleDeleteClass(event)}
+                        >
+                          Delete class
+                        </MDBBtn>
+                      {/* <button style={{marginLeft:'10px'}} onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
+                      <button style={{marginLeft:'10px'}} onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button> */}
+                  </MDBCardBody>
+                </MDBCard>
+              </MDBCol>
+            </MDBRow>
+          </MDBContainer>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
         {type!='coach' ? (
@@ -698,25 +784,9 @@ function CouchClasses() {
                       null
                     )}
                 </Paper>
-                {selectedEvent && (
-                    <div className="Modal" onClick={handleCloseModal}>
-                        <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                            <h2>Class details</h2>
-                            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
-                            <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.dateInicio))}</p>
-                            <p><strong>Start time:</strong> {selectedEvent.hour}</p>
-                            <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
-                            <p><strong>Sala:</strong> {selectedEvent.salaInfo.nombre}</p>
-                            <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-                            <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>
-                            <button style={{marginLeft:'10px'}} onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
-                            <button style={{marginLeft:'10px'}} onClick={handleCloseModal}>Close</button>
-                            <button style={{marginLeft:'10px'}} onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
-                        </div>
-                    </div>
-                )}
+
                 {editClass && (
-                    <div className="Modal">
+                    <div className="Modal" style={{zIndex:'1001'}}>
                         <div className="Modal-Content-class-creation" onClick={(e) => e.stopPropagation()}>
                             <h2>Class details</h2>
                                 <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
@@ -818,6 +888,25 @@ function CouchClasses() {
         </div>
         </>
         )}
+
+{selectedEvent && (
+                    // <div className="Modal" onClick={handleCloseModal}>
+                    //     <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+                    //         <h2>Class details</h2>
+                    //         <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
+                    //         <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.dateInicio))}</p>
+                    //         <p><strong>Start time:</strong> {selectedEvent.hour}</p>
+                    //         <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
+                    //         <p><strong>Sala:</strong> {selectedEvent.salaInfo.nombre}</p>
+                    //         <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
+                    //         <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}</p>
+                    //         <button style={{marginLeft:'10px'}} onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
+                    //         <button style={{marginLeft:'10px'}} onClick={handleCloseModal}>Close</button>
+                    //         <button style={{marginLeft:'10px'}} onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button>
+                    //     </div>
+                    // </div>
+                    <ECommerce event={selectedEvent}/>
+                )}
     </div>
     
   );
