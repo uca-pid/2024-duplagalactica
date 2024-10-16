@@ -6,6 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
+import { useMediaQuery } from '@mui/material';
 import Slide from '@mui/material/Slide';
 import {jwtDecode} from "jwt-decode";
 import Grid from '@mui/material/Grid';
@@ -33,6 +34,7 @@ export default function RoutineCreation() {
     const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
     const [openAdvise, setOpenAdvise] = useState(false);
     const [openAddExercise, setOpenAddExercise] = useState(false);
+    const isSmallScreen = useMediaQuery('(max-width:700px)');
 
     const [series, setSeries] = useState(4);
     const [reps, setReps] = useState(Array(series).fill(''));
@@ -118,7 +120,12 @@ export default function RoutineCreation() {
                 role="listitem"
                 onClick={() => handleSelectExercise(exercise)}
               >
-                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'white' }}>{exercise.name}</p></ListItemText>
+                {isSmallScreen ? (
+                  <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '20W0px', color: 'white' }}>{exercise.name}</p></ListItemText>
+                ) : (
+                  <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '80%', color: 'white' }}>{exercise.name}</p></ListItemText>
+                )}
+                
                 <DeleteIcon sx={{color:'white'}}/>
               </ListItemButton>
               ) : (
@@ -127,7 +134,12 @@ export default function RoutineCreation() {
                 role="listitem"
                 onClick={() => handleSelectExercise(exercise)}
               >
-                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{exercise.name}</p></ListItemText>
+                {isSmallScreen ? (
+                  <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{exercise.name}</p></ListItemText>
+                ) : (
+                  <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '80%' }}>{exercise.name}</p></ListItemText>
+                )}
+                
                 <AddCircleOutlineSharpIcon/>
               </ListItemButton>
               )}
