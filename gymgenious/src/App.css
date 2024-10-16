@@ -1541,6 +1541,16 @@ iframe {
   color: #48CFCB;
 }
 
+@media (max-width: 768px) { 
+  .graficos-selector {
+    height: 50%;
+    margin-top: 25%;
+  }
+  .text-container {
+    font-size: 80%;
+  }
+
+}
 
 
 .custom-flip-link {

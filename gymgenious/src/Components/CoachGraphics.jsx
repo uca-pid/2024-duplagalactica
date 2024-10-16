@@ -28,8 +28,8 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import Loader from '../real_components/loader.jsx'
-function TopRoutines({ routines }) {
-    const [itemNb, setItemNb] = React.useState(20);
+function TopRoutines({ routines, isSmallScreen }) {
+    const [itemNb, setItemNb] = React.useState(5);
 
     const orderedRoutines = routines.sort((a, b) => b.cant_asignados - a.cant_asignados);
   
@@ -55,7 +55,7 @@ function TopRoutines({ routines }) {
         <button 
           onClick={() => window.location.reload()} 
           className="custom-button-go-back-managing"
-          style={{zIndex: '2', position: 'absolute', top: '1%', left: '95%',}}
+          style={{zIndex: '2', position: 'absolute', top: '1%', left: isSmallScreen ? '86%' : '95%',}}
         >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>
@@ -75,8 +75,8 @@ function TopRoutines({ routines }) {
     );
   }
 
-  function TopClasses({classes}) {
-    const [itemNb, setItemNb] = React.useState(20);
+  function TopClasses({classes, isSmallScreen}) {
+    const [itemNb, setItemNb] = React.useState(5);
 
     const orderedClasses = classes.sort((a, b) => b.BookedUsers.length - a.BookedUsers.length);
     const classesNames = orderedClasses?.map(clase => clase.name);
@@ -99,7 +99,7 @@ function TopRoutines({ routines }) {
         <button 
           onClick={() => window.location.reload()} 
           className="custom-button-go-back-managing"
-          style={{zIndex: '2', position: 'absolute', top: '1%', left: '95%',}}
+          style={{zIndex: '2', position: 'absolute', top: '1%', left:  isSmallScreen ? '86%' : '95%',}}
           >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>
@@ -117,8 +117,8 @@ function TopRoutines({ routines }) {
     );
   }
 
-  function ExercisesVsUsers({exersCoachUsers}) {
-    const [itemNb, setItemNb] = React.useState(20);
+  function ExercisesVsUsers({exersCoachUsers, isSmallScreen}) {
+    const [itemNb, setItemNb] = React.useState(5);
     const orderedClasses = exersCoachUsers.sort((a, b) => b.amount - a.amount);
     const classesNames = orderedClasses?.map(clase => clase.exercise);
     const classesData = orderedClasses?.map(clase => clase.count);
@@ -140,7 +140,7 @@ function TopRoutines({ routines }) {
         <button 
           onClick={() => window.location.reload()} 
           className="custom-button-go-back-managing"
-          style={{zIndex: '2', position: 'absolute', top: '1%', left: '95%',}}
+          style={{zIndex: '2', position: 'absolute', top: '1%', left:  isSmallScreen ? '86%' : '95%',}}
         >
           <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
         </button>
@@ -572,9 +572,9 @@ function CoachGraphics() {
             <NewLeftBar/>
             {!activeComponent?(
             <section className="graficos-selector">
-              <FlipLink onClick={() => handleLinkClick(<TopRoutines routines={routines}/>)}>Trend.Routines</FlipLink>
-              <FlipLink onClick={() => handleLinkClick(<TopClasses  classes={classes}/>)}>Trend.Classes</FlipLink>
-              <FlipLink onClick={() => handleLinkClick(<ExercisesVsUsers exersCoachUsers={exersCoachUsers}/>)}>Favourite.Exercises</FlipLink>
+              <FlipLink onClick={() => handleLinkClick(<TopRoutines routines={routines} isSmallScreen={isSmallScreen}/>)}>Trend.Routines</FlipLink>
+              <FlipLink onClick={() => handleLinkClick(<TopClasses  classes={classes} isSmallScreen={isSmallScreen}/>)}>Trend.Classes</FlipLink>
+              <FlipLink onClick={() => handleLinkClick(<ExercisesVsUsers exersCoachUsers={exersCoachUsers} isSmallScreen={isSmallScreen}/>)} >Favourite.Exercises</FlipLink>
             </section>
             ): (
               <>
