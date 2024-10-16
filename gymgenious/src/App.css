@@ -1704,3 +1704,76 @@ iframe {
 		transform: rotate(1turn);
 	}
 }
+
+.draw-outline-button-small {
+  position: relative;
+  padding: 8px 20px;
+  font-weight: 500;
+  font-weight: bold;
+  font-size: 20px;
+  color: #F5F5F5;
+  background: #229799;
+  border: none;
+  cursor: pointer;
+  transition: color 0.4s;
+}
+
+.draw-outline-button-small:hover {
+  color: #424242;
+}
+
+.draw-outline-button-small .top,
+.draw-outline-button-small .right,
+.draw-outline-button-small .bottom,
+.draw-outline-button-small .left {
+  position: absolute;
+  background-color: #424242; /* Color similar a bg-indigo-300 */
+  transition: all 0.1s;
+}
+
+.draw-outline-button-small .top {
+  left: 0;
+  top: 0;
+  height: 4px;
+  width: 0;
+}
+
+.draw-outline-button-small .right {
+  right: 0;
+  top: 0;
+  height: 0;
+  width: 4px;
+}
+
+.draw-outline-button-small .bottom {
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  width: 0;
+}
+
+.draw-outline-button-small .left {
+  left: 0;
+  bottom: 0;
+  height: 0;
+  width: 4px;
+}
+
+.draw-outline-button-small:hover .top {
+  width: 100%;
+}
+
+.draw-outline-button-small:hover .right {
+  height: 100%;
+  transition-delay: 100ms;
+}
+
+.draw-outline-button-small:hover .bottom {
+  width: 100%;
+  transition-delay: 200ms;
+}
+
+.draw-outline-button-small:hover .left {
+  height: 100%;
+  transition-delay: 300ms;
+}

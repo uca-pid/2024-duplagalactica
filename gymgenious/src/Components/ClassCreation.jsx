@@ -42,7 +42,8 @@ export default function CreateClass() {
   const [errorSala1, setErrorSala1] = useState(false);
   const [errorSala2, setErrorSala2] = useState(false);
   const [errorSala3, setErrorSala3] = useState(false);
-  const [errorSala4, setErrorSala4] = useState(false);
+  const [errorSala4, setErrorSala4] = useState(false); 
+  const [errorSalas, setErrorSalas] = useState(false);
   const [errorStartTime, setErrorStartTime] = useState(false);
   const [errorEndTime, setErrorEndTime] = useState(false);
   const [errorEndTime30, setErrorEndTime30] = useState(false);
@@ -77,9 +78,20 @@ export default function CreateClass() {
 
   const ComponenteCreateClass = () => {
     return (
-      <div className="grid-container">
-        <CreateClass>Create class</CreateClass>
-      </div>
+      <>
+      {isSmallScreen ? (
+          <div className="grid-container">
+            <button onClick={handleCreateClass} className="draw-outline-button-small">Create class</button>
+          </div>
+        
+      ) : (
+        
+          <div className="grid-container">
+            <CreateClass>Create class</CreateClass>
+          </div>
+        
+      )}
+      </>
     );
   };
   
@@ -151,6 +163,7 @@ export default function CreateClass() {
 
   const handleCreateClass = async () => {
     setOpenCircularProgress(true);
+    setErrorSalas(false);
     try {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
@@ -273,6 +286,9 @@ export default function CreateClass() {
           setErrorSala3(true);
         } else if(salaAssigned==='waA7dE83alk1HXZvlbyK') {
           setErrorSala4(true);
+        }
+        if(salaAssigned===null){
+          setErrorSalas(true);
         }
         setOpenCircularProgress(false);
     }
@@ -671,7 +687,7 @@ export default function CreateClass() {
                       }}
                     />
                     <p style={{marginBottom: '0px'}}>{salas[0]?.nombre} ({salas[0]?.capacidad})</p>
-                    {errorSala1 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
+                    {errorSala1 && (<p style={{color: 'red', margin: '0px'}}>Not available</p>)}
                   </div>
                   <div onClick={() => handleSelectSala(salas[1])} className={salaAssigned==salas[1]?.id && salas[1] ? 'box':'input-small-container'} style={{ flex: 3, textAlign: 'center', borderRadius:'10px',backgroundColor: salaAssigned==salas[1]?.id && salas[1]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
                     <img 
@@ -687,7 +703,7 @@ export default function CreateClass() {
                       }}
                     />
                     <p style={{marginBottom: '0px'}}>{salas[1]?.nombre} ({salas[1]?.capacidad})</p>
-                    {errorSala2 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
+                    {errorSala2 && (<p style={{color: 'red', margin: '0px'}}>Not available</p>)}
                   </div>
                 </div>
                   <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
@@ -705,7 +721,7 @@ export default function CreateClass() {
                         }}
                       />
                       <p style={{marginBottom: '0px'}}>{salas[2]?.nombre} ({salas[2]?.capacidad})</p>
-                      {errorSala3 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
+                      {errorSala3 && (<p style={{color: 'red', margin: '0px'}}>Not available</p>)}
                   </div>
                   <div onClick={() => handleSelectSala(salas[3])} className={salaAssigned==salas[3]?.id && salas[3  ] ? 'box':'input-small-container'}   style={{ flex: 3, textAlign: 'center', borderRadius:'10px', backgroundColor: salaAssigned==salas[3]?.id && salas[3]?.opacity===1 ? 'rgba(34, 151, 153, 0.2)' : '' }}>
                     <img
@@ -721,9 +737,10 @@ export default function CreateClass() {
                       }}
                     />
                     <p style={{marginBottom: '0px'}}>{salas[3]?.nombre} ({salas[3]?.capacidad})</p>
-                    {errorSala4 && (<p style={{color: 'red', margin: '0px'}}>No disponible</p>)}
+                    {errorSala4 && (<p style={{color: 'red', margin: '0px'}}>Not available</p>)}
                   </div>
                 </div>
+                {errorSalas && (<p style={{color: 'red', margin: '0px'}}>Select a room</p>)}
                 <ComponenteCreateClass/>
               </div>
             </div>
