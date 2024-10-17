@@ -155,7 +155,7 @@ export default function Main_Page() {
                               zIndex: '2',
                               position: 'absolute', 
                               top: '1%',
-                              left: '90%', 
+                              left: isSmallScreen700 ? '88%' : '90%', 
                             }}
                           >
                             <CloseIcon sx={{ color: '#F5F5F5' }} />
