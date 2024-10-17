@@ -114,7 +114,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
               role="listitem"
               onClick={() => handleDeleteUser(user)}
             >
-              <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'white' }}>{user.Mail}</p></ListItemText>
+              <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '98%', color: 'white' }}>{user.Mail}</p></ListItemText>
               <DeleteIcon sx={{color:'white'}}/>
             </ListItemButton>
             ) : (
@@ -123,7 +123,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
               role="listitem"
               onClick={() => handleAddUser(user)}
             >
-              <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{user.Mail}</p></ListItemText>
+              <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '98%' }}>{user.Mail}</p></ListItemText>
               <AddCircleOutlineSharpIcon/>
             </ListItemButton>
             )}

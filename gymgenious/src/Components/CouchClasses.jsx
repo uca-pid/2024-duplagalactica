@@ -58,6 +58,7 @@ function CouchClasses() {
   const [type, setType] = useState(null);
   const [errorSala, setErrorSala] = useState(false);
   const [errorHour, setErrorHour] = useState(false);
+  const isSmallScreen700 = useMediaQuery('(max-width:700px)');
 
 
   const [fetchId,setFetchId] = useState('');
@@ -563,7 +564,7 @@ function CouchClasses() {
                           zIndex: '2',
                           position: 'absolute', 
                           top: '1%',
-                          left: '90%', 
+                          left: isSmallScreen700 ? '88%' : '90%',
                         }}
                       >
                         <CloseIcon sx={{ color: '#F5F5F5' }} />

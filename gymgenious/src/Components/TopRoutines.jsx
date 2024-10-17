@@ -22,7 +22,7 @@ import Slider from '@mui/material/Slider';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
 import Loader from '../real_components/loader.jsx'
-function BarAnimation({ routines }) {
+function BarAnimation({ routines, isSmallScreen }) {
     const [itemNb, setItemNb] = React.useState(5);
 
     const orderedRoutines = routines.sort((a, b) => b.cant_asignados - a.cant_asignados);
@@ -54,6 +54,7 @@ function BarAnimation({ routines }) {
               data: routineNames.slice(0, itemNb),
             }]}
           />
+          {!isSmallScreen && (
           <PieChart
             height={250}
              legend= {{ hidden: true }}
@@ -64,6 +65,7 @@ function BarAnimation({ routines }) {
                   valueFormatter: (item) => `${item.value} users`,                  
                 }]}
           />
+        )}
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: 250 }}>
             <Typography id="input-item-number" gutterBottom>
               Routines number
@@ -430,7 +432,7 @@ const fetchRoutines = async () => {
                 </Paper>
               </Box> 
               <div className='graphic-container'>
-              <BarAnimation routines={routines}/>
+              <BarAnimation routines={routines} isSmallScreen={isSmallScreen}/>
             </div>
             </div>
             {selectedEvent && (

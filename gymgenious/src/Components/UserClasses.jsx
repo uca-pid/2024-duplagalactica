@@ -40,6 +40,7 @@ function UsserClasses() {
   const isSmallScreen400 = useMediaQuery('(max-width:400px)');
   const isSmallScreen500 = useMediaQuery('(max-width:500px)');
   const isSmallScreen600 = useMediaQuery('(max-width:600px)');
+  const isSmallScreen700 = useMediaQuery('(max-width:700px)');
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [errorToken, setErrorToken] = useState(false);
   const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
@@ -301,7 +302,7 @@ useEffect(() => {
                           zIndex: '2',
                           position: 'absolute', 
                           top: '1%',
-                          left: '90%', 
+                          left: isSmallScreen700 ? '88%' : '90%',
                         }}
                       >
                         <CloseIcon sx={{ color: '#F5F5F5' }} />

@@ -187,7 +187,7 @@ export default function ChangePassword() {
                     </Popper>
                     {errorPasswordRepeated && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Passwords are not equal</p>)}
                 </div>
-              <button type="submit" className='button_create_account'>
+              <button type="submit" className='button_create_account' style={{width: '80%'}}>
                   Confirm new password
               </button>
             </form>

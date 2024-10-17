@@ -179,7 +179,7 @@ export default function RoutineCreation() {
             >
                 <KeyboardBackspaceIcon sx={{ color: '#F5F5F5' }} />
             </button>
-            <div className='class-creation-content'>
+            <div className='assign-routine-content'>
                 <h2 style={{ color: '#424242' }}>Assign users</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="input-container" style={{ display: 'flex', justifyContent: 'space-between' }}>
