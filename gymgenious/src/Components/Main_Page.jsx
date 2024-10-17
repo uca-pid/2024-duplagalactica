@@ -39,6 +39,7 @@ export default function Main_Page() {
   const [successBook,setSuccessBook] = useState(false);
   const [successUnbook,setSuccessUnbook] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:250px)');
+  const isSmallScreen700 = useMediaQuery('(max-width:700px)');
   const [type, setType] = useState(null);
 
 
@@ -52,6 +53,7 @@ export default function Main_Page() {
   }
 
   function ECommerce({event}) {
+    
     return (
       <div className="vh-100" style={{position:'fixed',zIndex:1000,display:'flex',flex:1,width:'100%',height:'100%',opacity: 1,
         visibility: 'visible',backgroundColor: 'rgba(0, 0, 0, 0.5)'}} onClick={handleCloseModal}>
@@ -90,8 +92,10 @@ export default function Main_Page() {
                     <hr />
                     <MDBCardText><CollectionsBookmarkIcon sx={{ color: '#48CFCB'}} /> {event.BookedUsers.length} booked users</MDBCardText>
                     <MDBCardText><EmailIcon sx={{ color: '#48CFCB'}} /> For any doubt ask "{event.owner}"</MDBCardText>
-                    {userMail && type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-                      (new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
+                    {userMail && type === 'client' &&
+                      (new Date(event.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+                      (new Date(event.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0)) &&
+                      (event.BookedUsers.length<event.capacity)
                       ? (
                         <>
                         {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
@@ -137,7 +141,7 @@ export default function Main_Page() {
                             zIndex: '2',
                             position: 'absolute', 
                             top: '1%',
-                            left: '90%', 
+                            left: isSmallScreen700 ? '88%' : '90%', 
                           }}
                         >
                           <CloseIcon sx={{ color: '#F5F5F5' }} />
