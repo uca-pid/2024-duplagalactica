@@ -79,7 +79,7 @@ export default function ResetPassword() {
                                 required
                             />
                         </div>
-                        <button type="submit" className='button_create_account'>
+                        <button type="submit" className='button_create_account' style={{width: '80%'}}>
                             Send recovery email
                         </button>
                          { success ? (

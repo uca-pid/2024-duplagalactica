@@ -253,7 +253,7 @@ export default function CreateAccount() {
                             </select>
                             {errorType && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a type</p>)}
                         </div>
-                        <button className='button_create_account' onClick={handleSubmit}>
+                        <button className='button_create_account' onClick={handleSubmit} style={{width: '80%'}}>
                             Create account
                         </button>
                 </div>
