@@ -10,6 +10,7 @@ import Slide from '@mui/material/Slide';
 import Box from '@mui/material/Box';
 import Loader from '../real_components/loader.jsx'
 import TextField from '@mui/material/TextField';
+import { useMediaQuery } from '@mui/material';
 import {
   MDBCol,
   MDBContainer,
@@ -64,7 +65,8 @@ export default function CreateAccount() {
     const [permanentClasses, setPermanentClasses] = useState(0)
     const [permanentClassesCreated, setPermanentClassesCreated] = useState(0)
     const [type,setType] = useState('')
-    const [createdClassesDays,setCreatedClassesDays] = useState(0)
+    const [createdClassesDays,setCreatedClassesDays] = useState(0);
+    const isSmallScreen = useMediaQuery('(max-width:700px)');
     const fetchUserInformation = async () => {
         setOpenCircularProgress(true);
         try {
@@ -452,19 +454,19 @@ export default function CreateAccount() {
                     <hr style={{color:'#14213D'}}/>
                     {isDisabled ? (
                                 <>
-                                    <button className='button_create_account' type="button" onClick={handleChangeModify}>
+                                    <button className='button_create_account' style={{width:'70%'}} type="button" onClick={handleChangeModify}>
                                         Modify data
                                     </button>
                                 </>
                             ) : (
                                 <>
-                                    <button className='button_create_account2' type="button" onClick={goToChangePassword}>
+                                    <button className='button_create_account2' style={{width: isSmallScreen ? '37%' : ''}} type="button" onClick={goToChangePassword}>
                                         Change password
                                     </button>
-                                    <button onClick={handleSave} className='button_create_account2'>
+                                    <button onClick={handleSave} className='button_create_account2' style={{width: isSmallScreen ? '18%' : ''}}>
                                         Save
                                     </button>
-                                    <button className='button_create_account2' type="button" onClick={handleChangeModify}>
+                                    <button className='button_create_account2' style={{width: isSmallScreen ? '25%' : ''}} type="button" onClick={handleChangeModify}>
                                         Cancel
                                     </button>
                                 </>

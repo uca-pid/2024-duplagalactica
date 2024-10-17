@@ -162,7 +162,12 @@ function CoachRoutines() {
                 role="listitem"
                 onClick={() => handleSelectExercise(exercise)}
               >
-                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'white' }}>{exercise.name}</p></ListItemText>
+                {isSmallScreen ? (
+                  <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '220px', color: 'white' }}>{exercise.name}</p></ListItemText>
+                ) : (
+                  <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '90%', color: 'white' }}>{exercise.name}</p></ListItemText>
+                )}
+                
                 <DeleteIcon sx={{color:'white'}}/>
               </ListItemButton>
               ) : (
@@ -171,7 +176,12 @@ function CoachRoutines() {
                 role="listitem"
                 onClick={() => handleSelectExercise(exercise)}
               >
-                <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{exercise.name}</p></ListItemText>
+                {isSmallScreen ? (
+                  <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '220px' }}>{exercise.name}</p></ListItemText>
+                ) : (
+                  <ListItemText id={labelId}><p style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '90%' }}>{exercise.name}</p></ListItemText>
+                )}
+                
                 <AddCircleOutlineSharpIcon/>
               </ListItemButton>
               )}
@@ -687,9 +697,20 @@ const fetchExercises = async () => {
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                   <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
-                  <button onClick={()=> handleEditRoutine(selectedEvent)}>Edit routine</button>
-                  <button onClick={handleCloseModalEvent} style={{marginLeft:'10px'}}>Close</button>
-                  <button onClick={()=> handeDeleteRoutine(selectedEvent)} style={{marginLeft:'10px'}}>Delete routine</button>
+                  {isSmallScreen ? (
+                    <>
+                      <button onClick={()=> handleEditRoutine(selectedEvent)} style={{width: '75%'}}>Edit routine</button>
+                      <button onClick={handleCloseModalEvent} style={{marginTop:'10px', width: '75%'}}>Close</button>
+                      <button onClick={()=> handeDeleteRoutine(selectedEvent)} style={{marginTop:'10px', width: '75%'}}>Delete routine</button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={()=> handleEditRoutine(selectedEvent)}>Edit routine</button>
+                      <button onClick={handleCloseModalEvent} style={{marginLeft:'10px'}}>Close</button>
+                      <button onClick={()=> handeDeleteRoutine(selectedEvent)} style={{marginLeft:'10px'}}>Delete routine</button>
+                    </>
+                  )}
+
                 </div>
               </div>
             )}

@@ -16,7 +16,7 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  
+  background-image: url('../public/marron3.png');
   background-color: #F5F5F5;
   background-size: cover; 
   background-position: center; 
@@ -164,7 +164,7 @@
   align-items: stretch;
   justify-content: center;
   width: 100%; 
-  height: 95%;
+  height: 93%;
   box-sizing: border-box;
   margin-top: 3.3%;
 }
@@ -172,7 +172,7 @@
 @media screen and (max-width: 768px) {
   .WebApp-Body {
     width: 98%;
-    height: 93%;
+    height: 90%;
     left: 1%;
     top: 6.5%;
     position: absolute;
@@ -585,6 +585,11 @@ iframe {
 
 @media screen and (max-width: 768px) {
   .create-account-container {
+    left: 10%;
+    width: 80%;
+    top:10%;
+  }
+  .create-account-container-new {
     left: 10%;
     width: 80%;
     top:10%;
@@ -1095,8 +1100,8 @@ iframe {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
   left: 10%;
-  top: 20%;
-  height: 78%;
+  top: 10%;
+  height: 80%;
   text-align: center;
   position:absolute;
 }
@@ -1121,6 +1126,7 @@ iframe {
   padding-left:20px;
   padding-right:20px;
   padding-bottom: 20px;
+  padding-top: 10px;
 }
 
 .input-create-routine-container {
@@ -1220,11 +1226,18 @@ iframe {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
   left: 10%;
-  top: 18%;
-  height: 78%;
+  top: 10%;
+  height: 80%;
   text-align: center;
   position: absolute;
   overflow-y: auto;
+}
+
+.assign-routine-content {
+  padding-left:20px;
+  padding-right:20px;
+  padding-bottom: 20px;
+  padding-top: 10px;
 }
 
 @media screen and (max-width: 500px) {
@@ -1249,6 +1262,13 @@ iframe {
   overflow-y: auto;
 }
 
+.exercise-creation-content {
+  padding-left:20px;
+  padding-right:20px;
+  padding-bottom: 20px;
+  padding-top: 10px;
+}
+
 .user-profile-container {
   background-color: #F5F5F5;
   border-color: #229799;
@@ -1257,8 +1277,8 @@ iframe {
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
-  height: 95%;
-  top: 2.5%;
+  height: 90%;
+  top: 5%;
   overflow-y: auto;
   left: 10%;
   text-align: center;
@@ -1526,6 +1546,16 @@ iframe {
   color: #48CFCB;
 }
 
+@media (max-width: 768px) { 
+  .graficos-selector {
+    height: 50%;
+    margin-top: 25%;
+  }
+  .text-container {
+    font-size: 80%;
+  }
+
+}
 
 
 .custom-flip-link {
@@ -1703,4 +1733,77 @@ iframe {
 		stroke-dashoffset: -56.549;
 		transform: rotate(1turn);
 	}
+}
+
+.draw-outline-button-small {
+  position: relative;
+  padding: 8px 20px;
+  font-weight: 500;
+  font-weight: bold;
+  font-size: 20px;
+  color: #F5F5F5;
+  background: #229799;
+  border: none;
+  cursor: pointer;
+  transition: color 0.4s;
+}
+
+.draw-outline-button-small:hover {
+  color: #424242;
+}
+
+.draw-outline-button-small .top,
+.draw-outline-button-small .right,
+.draw-outline-button-small .bottom,
+.draw-outline-button-small .left {
+  position: absolute;
+  background-color: #424242; /* Color similar a bg-indigo-300 */
+  transition: all 0.1s;
+}
+
+.draw-outline-button-small .top {
+  left: 0;
+  top: 0;
+  height: 4px;
+  width: 0;
+}
+
+.draw-outline-button-small .right {
+  right: 0;
+  top: 0;
+  height: 0;
+  width: 4px;
+}
+
+.draw-outline-button-small .bottom {
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  width: 0;
+}
+
+.draw-outline-button-small .left {
+  left: 0;
+  bottom: 0;
+  height: 0;
+  width: 4px;
+}
+
+.draw-outline-button-small:hover .top {
+  width: 100%;
+}
+
+.draw-outline-button-small:hover .right {
+  height: 100%;
+  transition-delay: 100ms;
+}
+
+.draw-outline-button-small:hover .bottom {
+  width: 100%;
+  transition-delay: 200ms;
+}
+
+.draw-outline-button-small:hover .left {
+  height: 100%;
+  transition-delay: 300ms;
 }
