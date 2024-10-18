@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, useMediaQuery } from '@mui/material';
+import { Box, fabClasses, useMediaQuery } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -19,9 +19,10 @@ import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from 'react-router-dom';
-
+import Loader from '../real_components/loader.jsx'
 export default function CoachExercises() {
     const [order, setOrder] = useState('asc');
+    const [id,setId] = useState()
     const [orderBy, setOrderBy] = useState('name');
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
@@ -38,6 +39,16 @@ export default function CoachExercises() {
     const [type, setType] = useState(null);
     const isMobileScreen = useMediaQuery('(min-height:750px)');
     const [maxHeight, setMaxHeight] = useState('600px');
+    const [editExercise, setEditExercise] = useState(false);
+    const [name, setName] = useState('');
+    const [desc, setDesc] = useState('');
+    const [image, setImage] = useState();
+    const[fetchImg, setImageFetch] = useState('')
+    const[fetchName,setNameFetch] = useState('')
+    const[fetchDes,setDescFetch] = useState('')
+    const[fetchOwner,setOwnerFetch] = useState('')
+    const[fetchExer,setExercise] = useState({})
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -58,18 +69,33 @@ export default function CoachExercises() {
         setSelectedEvent(event);
     };
 
-    const handleCloseModal = () => {
+    const handleCloseModalEvent = () => {
         setSelectedEvent(null);
+      };
+
+    const handleEditExercise = (event) => {
+        setEditExercise(!editExercise);
+        setImageFetch(event.image_url);
+        setNameFetch(event.name);
+        setDescFetch(event.description);
+        setOwnerFetch(event.owner);
+        setExercise(event);
+        setId(event.id)
+    } 
+
+    const handleCloseModal = () => {
+        setEditExercise(false);
     };
+
+    const handleSaveChanges = () => {
+        handleCloseModal();
+    }
 
     const correctExercisesData = async (exercisesData) => {
         return exercisesData.map(element => {
-            if (!element.series) {
+            if (!element.owner) {
                 return {
                     name: element.name,
-                    series: 4,
-                    reps: [12, 12, 10, 10],
-                    timing: '60',
                     description: 'aaaa',
                     owner: 'Train-Mate'
                 };
@@ -97,7 +123,6 @@ export default function CoachExercises() {
                 throw new Error('Error al obtener los ejercicios: ' + response.statusText);
             }
             const exercisesData = await response.json();
-
             const response2 = await fetch(`https://train-mate-api.onrender.com/api/exercise/get-all-exercises`, {
                 method: 'GET',
                 headers: {
@@ -133,9 +158,57 @@ export default function CoachExercises() {
         }
     };
 
+    const handleSaveEditExer = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('name', name || fetchName);
+            formData.append('description', desc || fetchDes);
+            formData.append('image_url', fetchImg);
+            formData.append('id',id);
+            formData.append('image', image);
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+              console.error('Token no disponible en localStorage');
+              return;
+            }
+            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_exer_info', {
+                method: 'PUT', 
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error('Error al actualizar la rutina: ' + response.statusText);
+            }
+            setTimeout(() => {
+                setOpenCircularProgress(false);
+              }, 2000);
+            window.location.reload();
+          } catch (error) {
+            console.error("Error actualizarndo la rutina:", error);
+            setOpenCircularProgress(false);
+            setWarningConnection(true);
+            setTimeout(() => {
+              setWarningConnection(false);
+            }, 3000);
+            setEditExercise(!editExercise);
+          }
+    }
+
+
+    const saveExercise = async (event) => {
+        event.preventDefault(); 
+        handleSaveEditExer();
+        setEditExercise(!editExercise);
+        setTimeout(() => {
+          setOpenCircularProgress(false);
+        }, 7000);
+        await fetchExercises();
+    }
+
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {
@@ -214,14 +287,14 @@ export default function CoachExercises() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={true}
                 >
-                    <CircularProgress color="inherit" />
+                    <Loader></Loader>
                 </Backdrop>
             ) : (
                 <>
                     <NewLeftBar />
                     {openCircularProgress && (
                         <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
-                            <CircularProgress color="inherit" />
+                            <Loader></Loader>
                         </Backdrop>
                     )}
                     {warningConnection && (
@@ -251,11 +324,11 @@ export default function CoachExercises() {
                         </div>
                     )}
                     <div className="Table-Container">
-                    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+                    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
                         <Paper
                             sx={{
                             width: '100%',
-                            backgroundColor: '#ffe0b5',
+                            backgroundColor: '#F5F5F5',
                             borderRadius: '10px'
                             }}
                         >
@@ -270,7 +343,7 @@ export default function CoachExercises() {
                                 >
                                     <TableHead>
                                         <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                            <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                            <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                                 <TableSortLabel
                                                 active={orderBy === 'name'}
                                                 direction={orderBy === 'name' ? order : 'asc'}
@@ -285,7 +358,7 @@ export default function CoachExercises() {
                                                 </TableSortLabel>
                                             </TableCell>
                                             {!isSmallScreen650 && (
-                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                                                <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                                                 <TableSortLabel
                                                     active={orderBy === 'description'}
                                                     direction={orderBy === 'description' ? order : 'asc'}
@@ -301,13 +374,13 @@ export default function CoachExercises() {
                                                 </TableCell>
                                             )}
                                             {!isSmallScreen && (
-                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                                                <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                                                 <TableSortLabel
                                                     active={orderBy === 'owner'}
                                                     direction={orderBy === 'owner' ? order : 'asc'}
                                                     onClick={(event) => handleRequestSort(event, 'owner')}
                                                 >
-                                                    Teacher
+                                                    Owner
                                                     {orderBy === 'owner' && (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -321,29 +394,31 @@ export default function CoachExercises() {
                                         <TableBody>
                                             {visibleRows.length===0 ? (
                                                 <TableRow>
-                                                <TableCell colSpan={isSmallScreen650 ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                                                <TableCell colSpan={isSmallScreen650 ? 2 : 3} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                                     There are no created exercises
                                                 </TableCell>
                                                 </TableRow>
                                             ) : (
                                                 <>
-                                                    {visibleRows.map((row) => (
-                                                        <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                    {visibleRows.map((row) => {
+                                                        const isTransparent = row.owner==userMail;
+                                                        return (
+                                                        <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc', opacity: !isTransparent ? 0.5 : 1,}}>
+                                                                <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                                     {row.name}
                                                                 </TableCell>
                                                             {!isSmallScreen650 && (
-                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                                     {row.description}
                                                                 </TableCell>
                                                             )}
                                                             {!isSmallScreen && (
-                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
+                                                                <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
                                                                     {row.owner}
                                                                 </TableCell>
                                                             )}
                                                         </TableRow>
-                                                    ))}
+                                                    )})}
                                                 </>
                                             )}
                                         </TableBody>
@@ -379,42 +454,79 @@ export default function CoachExercises() {
                         </Box>
                     </div>
                     {selectedEvent && (
-                        <div className="Modal" onClick={handleCloseModal}>
+                        <div className="Modal" onClick={handleCloseModalEvent}>
                             <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-                                <h2 style={{marginBottom: '0px'}}>Exercise</h2>
-                                <p style={{
-                                    marginTop: '5px',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    maxWidth: '100%',
-                                    textAlign: 'center',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}>
+                                <h2 style={{marginBottom: '0px'}}>Exercise:</h2>
+                                <h5 style={{ marginTop: '5px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
                                     {selectedEvent.name}
+                                </h5>
+                                <p style={{ marginTop: '5px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}>
+                                    {selectedEvent.description}
                                 </p>
-                                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                                    <TableContainer sx={{ maxHeight: 440 }}>
-                                        <Table stickyHeader aria-label="sticky table">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Series</TableCell>
-                                                    <TableCell>Reps</TableCell>
-                                                    <TableCell>Timing</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                <TableRow key={selectedEvent.id}>
-                                                    <TableCell>{selectedEvent.series} x</TableCell>
-                                                    <TableCell>{selectedEvent.reps.join(', ')}</TableCell>
-                                                    <TableCell>{selectedEvent.timing}</TableCell>
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                </Paper>
-                                <button onClick={handleCloseModal}>Close</button>
+                                <img 
+                                    src={selectedEvent.image_url} 
+                                    alt={selectedEvent.name}
+                                    style={{
+                                        display: 'block',
+                                        margin: '10px auto',
+                                        maxWidth: '100%',
+                                        height: 'auto',
+                                        borderRadius: '8px'
+                                    }} 
+                                />
+                                {selectedEvent.owner==userMail? (
+                                <button onClick={()=> handleEditExercise(selectedEvent)}>Edit exercise</button>
+                                ) :(<></>)}                            
+                                <button onClick={handleCloseModalEvent} style={{marginLeft:'10px'}}>Close</button>
+                            </div>
+                        </div>
+                    )}
+                    {editExercise && (
+                        <div className="Modal-edit-routine" onClick={handleCloseModal}>
+                            <div className="Modal-Content-edit-routine" onClick={(e) => e.stopPropagation()}>
+                                <form autoComplete='off' onSubmit={saveExercise}>
+                                    <h2>Routine details</h2>
+                                    <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                        <div className="input-small-container">
+                                        <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
+                                        <input 
+                                            type="text" 
+                                            id="name" 
+                                            name="name" 
+                                            value={name || selectedEvent.name} 
+                                            onChange={(e) => setName(e.target.value)} 
+                                        />
+                                        </div>
+                                    </div>
+                                    <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                        <div className="input-small-container">
+                                            <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
+                                            <input 
+                                            type="text" 
+                                            id="desc" 
+                                            name="desc" 
+                                            value={desc || selectedEvent.description}
+                                            onChange={(e) => setDesc(e.target.value)} 
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                                        <div className="input-small-container">
+                                        <label htmlFor="image" style={{ color: '#14213D' }}>Image:</label>
+                                        <input
+                                            type="file"
+                                            id="image"
+                                            name="image"
+                                            accept="image/*"
+                                            className='input-image'
+                                            onChange={(e) => setImage(e.target.files[0])                  
+                                            }  
+                                        />
+                                        </div>
+                                    </div>
+                                    <button type="submit" className='button_login'>Save</button>                            
+                                    <button onClick={handleCloseModal} style={{merginTop:'10px'}} className='button_login'>Cancel</button>
+                                </form>
                             </div>
                         </div>
                     )}

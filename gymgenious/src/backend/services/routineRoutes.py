@@ -17,12 +17,43 @@ def create_routine(newRoutine):
 
 def assign_routine_to_user(newAssignRoutine):
     try:
-        class_ref = db.collection('assigned_routines').add(newAssignRoutine)
-        created_routine = {**newAssignRoutine}
-        return created_routine
+        mails = [user['Mail'] for user in newAssignRoutine['user']]
+        
+        users_ref = db.collection('assigned_routines')
+        
+        query = users_ref.where('assigner', '==', newAssignRoutine['assigner']) \
+                        .where('day', '==', newAssignRoutine['day']) \
+                        .where('id', '==', newAssignRoutine['id'])
+        docs = query.stream()
+        doc_found = False
+
+        for doc in docs:
+            doc_found = True  
+            doc_ref = users_ref.document(doc.id)             
+            doc_ref.update({
+                'users': mails
+            })
+
+        print("hola llego")
+        if doc_found:
+            return {"message": "Actualización realizada"}
+        else:            
+            new_doc_ref = users_ref.add({
+                'assigner': newAssignRoutine['assigner'],
+                'day': newAssignRoutine['day'],
+                'id': newAssignRoutine['id'],
+                'owner': newAssignRoutine['owner'],
+                'routine': newAssignRoutine['routine'],
+                'users': mails  
+            })
+            return new_doc_ref
+        return {"message": "Nuevo documento creado"}
     except Exception as e:
-        print(f"Error al asignar la rutine: {e}")
+        print(f"Error al asignar la rutina: {e}")
         raise RuntimeError("No se pudo asignar la rutina")
+
+
+
     
 
 def get_routines():
@@ -49,12 +80,11 @@ def get_assigned_routines():
 def update_routine_info(newRoutine):
     try:
         users_ref = db.collection('routines')
-        doc_ref = users_ref.document(newRoutine['rid'])
+        doc_ref = users_ref.document(newRoutine['id'])
         doc = doc_ref.get()
         print("rutina nueva",newRoutine)
         if doc.exists:        
             doc_ref.update({
-                'day': newRoutine['day'],
                 'description': newRoutine['description'],
                 'name': newRoutine['name'],
                 'excercises': newRoutine['excers']
@@ -71,9 +101,7 @@ def update_routine_info(newRoutine):
 
 def delete_routine(event):
     try:
-        print("uionbviusunhisfujn")
         users_ref = db.collection('routines')
-        print("aaaaa",event)
         doc_ref = users_ref.document(event['id'])
         doc = doc_ref.get()
         if doc.exists:

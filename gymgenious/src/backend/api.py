@@ -5,8 +5,9 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from Controllers.classesController import get_classes_route, create_class_route,book_class_route,unbook_class_route,delete_class_route,update_class_info_route
 from Controllers.usersController import get_unique_user_by_email_route ,get_user_route, send_email_route, create_user_route,get_users_route,get_coach_users_route,get_clients_users_route,get_client_users_no_match_routine_route,update_users_info_route
-from Controllers.excersicesController import create_exersice_route,get_excersice_by_owner_route,get_excersices_route
+from Controllers.excersicesController import create_exersice_route,get_excersice_by_owner_route,get_excersices_route,update_exer_info_route
 from Controllers.routineController import create_routine_route,assign_routine_to_user_route,get_routines_route,get_assigned_routines_route,update_routine_info_route,delete_routine_route
+from Controllers.salasController import get_salas_route
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -17,6 +18,9 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def get_classes():
     return get_classes_route()
 
+@app.route('/get_salas', methods=['GET'])
+def get_salas():
+    return get_salas_route()
 
 @app.route('/create_class', methods=['POST'])
 def create_class():
@@ -36,7 +40,26 @@ def update_class_info():
         token = request.headers.get('Authorization')
         if not token or 'Bearer' not in token:
             return jsonify({'error':'Missing token'})
-        newUser = request.json.get('newUser')
+        cid = request.form.get('cid')
+        name = request.form.get('Name')
+        DateFin = request.form.get('DateFin')
+        DateInicio = request.form.get('DateInicio')  
+        Day = request.form.get('Day')       
+        Hour = request.form.get('Hour')
+        permanent = request.form.get('Permanent')
+        sala = request.form.get('sala')
+        capacity = request.form.get('capacity')
+        newUser = {
+            'cid' : cid,
+            'DateFin': DateFin,
+            'DateInicio': DateInicio,
+            'Day':Day,
+            'Name': name,
+            'Hour':Hour,
+            'Permanent':permanent,
+            'sala':sala,
+            'capacity':capacity
+        }
         print(newUser)
         return update_class_info_route(newUser)
     except Exception as e:
@@ -154,6 +177,33 @@ def update_routine_info():
         print("Error")
         return jsonify({'error':'Something went wrong'})
 
+@app.route('/update_exer_info', methods=['PUT'])
+def update_exer_info():
+    try :
+        token = request.headers.get('Authorization')
+        if not token or 'Bearer' not in token:
+            return jsonify({'error':'Missing token'})
+        name = request.form.get('name')
+        description = request.form.get('description')
+        image_url = request.form.get('image_url')        
+        image = request.files.get('image')
+        image_data = None
+        if image:
+            image_data = image.read()  
+        id = request.form.get('id')
+        newExersice = {
+            'id' : id,
+            'name': name,
+            'description': description,
+            'image_url': image_url,
+            'image': image_data 
+        }
+        return update_exer_info_route(newExersice)
+    except Exception as e:
+        print("Error")
+        return jsonify({'error':'Something went wrong'})
+
+
 
 @app.route('/get_users', methods=['GET'])
 def get_users():
@@ -235,10 +285,25 @@ def create_exersice():
         token = request.headers.get('Authorization')
         if not token or 'Bearer' not in token:
             return jsonify({'error':'Missing token'})
-        newExersice = request.json
+        name = request.form.get('name')
+        description = request.form.get('description')
+        owner = request.form.get('owner')        
+        image = request.files.get('image')
+        print("asi se ve la imagen",image)
+        image_data = None
+        if image:
+            image_data = image.read()  
+
+        newExersice = {
+            'name': name,
+            'description': description,
+            'owner': owner,
+            'image': image_data 
+        }
+        print(f'Datos recibidos: {name}, {description}, {owner}, {image}')
         return create_exersice_route(newExersice)
     except Exception as e:
-        print("Error")
+        print("Error a")
         return jsonify({'error':'Something went wrong'})
 
 @app.route('/create_routine', methods=['POST'])
@@ -265,7 +330,7 @@ def get_routines():
         print("Error")
         return jsonify({'error':'Something went wrong'})
 
-@app.route('/assign_routine_to_user', methods=['POST'])
+@app.route('/assign_routine_to_user', methods=['PUT'])
 def assign_routine_to_user():
     try :
         token = request.headers.get('Authorization')

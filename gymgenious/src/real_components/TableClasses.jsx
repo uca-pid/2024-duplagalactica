@@ -11,8 +11,17 @@ import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
+import WarningConnectionAlert from '../real_components/WarningConnectionAlert.jsx';
+import ErrorTokenAlert from '../real_components/ErrorTokenAlert.jsx';
+import SuccessAlert from '../real_components/SuccessAlert.jsx';
+import EmailIcon from '@mui/icons-material/Email';
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import CloseIcon from '@mui/icons-material/Close';
 
-function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClass }) {
+function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClass, handleSelectEvent }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [page, setPage] = useState(0);
@@ -24,6 +33,14 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
   const isSmallScreen600 = useMediaQuery('(max-width:600px)');
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
+
+  function formatDate(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${year}-${month}-${day}`;
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -40,23 +57,10 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
     setPage(0);
   };
 
-  const handleSelectEvent = (event) => {
-    setSelectedEvent(event);
-  };
-
   const handleCloseModal = () => {
     setSelectedEvent(null);
   };
 
-  const handleBookClassModal = (event) => {
-    handleBookClass(event);
-    handleCloseModal();
-  };
-
-  const handleUnbookClassModal = (event) => {
-    handleUnbookClass(event);
-    handleCloseModal();
-  };
 
   useEffect(() => {
     if(isSmallScreen400 || isSmallScreen500) {
@@ -88,11 +92,11 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
   );
 
   return (
-    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+    <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
       <Paper
         sx={{
           width: '100%',
-          backgroundColor: '#ffe0b5',
+          backgroundColor: '#F5F5F5',
           borderRadius: '10px'
         }}
       >
@@ -107,7 +111,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
           >
             <TableHead>
               <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold',color: '#424242' }}>
                   <TableSortLabel
                     active={orderBy === 'name'}
                     direction={orderBy === 'name' ? order : 'asc'}
@@ -122,7 +126,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                   </TableSortLabel>
                 </TableCell>
                 {!isSmallScreen500 && (
-                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                     <TableSortLabel
                       active={orderBy === 'hour'}
                       direction={orderBy === 'hour' ? order : 'asc'}
@@ -138,7 +142,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                   </TableCell>
                 )}
                 {!isSmallScreen400 && (
-                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                     <TableSortLabel
                       active={orderBy === 'dateInicio'}
                       direction={orderBy === 'dateInicio' ? order : 'asc'}
@@ -154,7 +158,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                   </TableCell>
                 )}
                 {!isSmallScreen600 && (
-                  <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                  <TableCell align="right" sx={{ borderBottom: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                     <TableSortLabel
                       active={orderBy === 'permanent'}
                       direction={orderBy === 'permanent' ? order : 'asc'}
@@ -174,7 +178,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
             <TableBody>
               {visibleRows.length===0 ? (
                 <TableRow>
-                <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                     There are no classes
                 </TableCell>
                 </TableRow>
@@ -194,21 +198,21 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                         key={row.id}
                         sx={{
                           cursor: 'pointer',
-                          borderBottom: '1px solid #BC6C25',
-                          opacity: !isTransparent ? 0.5 : 1,  // Aplica opacidad cuando la condición es verdadera
+                          borderBottom: '1px solid #424242',
+                          opacity: !isTransparent ? 0.5 : 1,
                         }}
                       >
-                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                        <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                           {row.name}
                         </TableCell>
                         {!isSmallScreen500 && (
-                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{row.hour}</TableCell>
                         )}
                         {!isSmallScreen400 && (
-                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
                         )}
                         {!isSmallScreen600 && (
-                          <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                          <TableCell align="right" sx={{ borderBottom: '1px solid #424242', color: '#424242' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
                         )}
                       </TableRow>
                     );
@@ -227,6 +231,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
+                sx={{color:'#424242'}}
                 onPageChange={handleChangePage}
               />
             ) : (
@@ -236,6 +241,7 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
                 count={rows.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
+                sx={{color:'#424242'}}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
@@ -245,39 +251,6 @@ function EnhancedTable({ rows, user, userType, handleBookClass, handleUnbookClas
           null
         )}
       </Paper>
-      {selectedEvent && (
-        <div className="Modal" onClick={handleCloseModal}>
-          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-            <h2>Classes details:</h2>
-            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
-            <p><strong>Date:</strong> {new Date(selectedEvent.dateInicio).toLocaleDateString()}</p>
-            <p><strong>Start time:</strong> {new Date(new Date(selectedEvent.dateInicio).getTime() + 3 * 60 * 60 * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
-            <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
-            <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-            {user && userType==='client' && (new Date(selectedEvent.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-            (new Date(selectedEvent.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0))
-            ? (
-            <>
-            {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(user)  ? (
-                  <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
-                ) : (
-                  <>
-                  {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
-                  <button onClick={() => handleBookClass(selectedEvent.id)}>Book</button>
-                  ) :
-                  (<>
-                  <button style={{background:'red'}}>Full</button>
-                  </>)
-                  }
-                  </>
-            )}
-            <button onClick={handleCloseModal}>Close</button>
-            </>) : (
-            <button onClick={handleCloseModal}>Close</button>
-          )}
-          </div>
-        </div>
-      )}
     </Box>
   );
 }

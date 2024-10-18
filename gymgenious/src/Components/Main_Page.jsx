@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress, { circularProgressClasses } from '@mui/material/CircularProgress';
 import NewLeftBar from '../real_components/NewLeftBar.jsx';
 import {jwtDecode} from "jwt-decode";
 import Alert from '@mui/material/Alert';
@@ -9,10 +9,22 @@ import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import CheckIcon from '@mui/icons-material/Check';
 import Calendar from '../real_components/Calendar.jsx';
+import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
 import EnhancedTable from '../real_components/TableClasses.jsx';
 import WarningConnectionAlert from '../real_components/WarningConnectionAlert.jsx';
 import ErrorTokenAlert from '../real_components/ErrorTokenAlert.jsx';
 import SuccessAlert from '../real_components/SuccessAlert.jsx';
+import EmailIcon from '@mui/icons-material/Email';
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import CloseIcon from '@mui/icons-material/Close';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+import Loader from '../real_components/loader.jsx'
+
+    
+
+
+
 
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
@@ -27,7 +39,136 @@ export default function Main_Page() {
   const [successBook,setSuccessBook] = useState(false);
   const [successUnbook,setSuccessUnbook] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:250px)');
+  const isSmallScreen700 = useMediaQuery('(max-width:700px)');
   const [type, setType] = useState(null);
+
+
+  
+  function formatDate(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${year}-${month}-${day}`;
+  }
+
+  function ECommerce({event}) {
+    
+    return (
+      <div className="vh-100" style={{position:'fixed',zIndex:1000,display:'flex',flex:1,width:'100%',height:'100%',opacity: 1,
+        visibility: 'visible',backgroundColor: 'rgba(0, 0, 0, 0.5)'}} onClick={handleCloseModal}>
+          <MDBContainer>
+            <MDBRow className="justify-content-center" onClick={(e) => e.stopPropagation()}>
+              <MDBCol md="9" lg="7" xl="5" className="mt-5">
+                <MDBCard style={{ borderRadius: '15px', backgroundColor: '#F5F5F5' }}>
+                  <MDBCardBody className="p-4 text-black">
+                    <div>
+                      <MDBTypography tag='h6' style={{color: '#424242',fontWeight:'bold' }}>{event.name}</MDBTypography>
+                      <div className="d-flex align-items-center justify-content-between mb-3">
+                        <p className="small mb-0" style={{color: '#424242' }}><AccessAlarmsIcon sx={{ color: '#48CFCB'}} />{event.dateInicio.split('T')[1].split(':').slice(0, 2).join(':')} - {event.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
+                        <p className="fw-bold mb-0" style={{color: '#424242' }}>{formatDate(new Date(event.dateInicio))}</p>
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-center mb-4">
+                      <div className="flex-shrink-0">
+                        <MDBCardImage
+                          style={{ width: '70px' }}
+                          className="img-fluid rounded-circle border border-dark border-3"
+                          src={event.sala=='cuyAhMJE8Mz31eL12aPO' ? `${process.env.PUBLIC_URL}/gimnasio.jpeg` : (event.sala=='PmQ2RZJpDXjBetqThVna' ? `${process.env.PUBLIC_URL}/salon_pequenio.jpeg` : (event.sala=='jxYcsGUYhW6pVnYmjK8H' ? `${process.env.PUBLIC_URL}/salon_de_functional.jpeg` : `${process.env.PUBLIC_URL}/salon_de_gimnasio.jpg`)) }
+                          alt='Generic placeholder image'
+                          fluid />
+                      </div>
+                      <div className="flex-grow-1 ms-3">
+                        <div className="d-flex flex-row align-items-center mb-2">
+                          <p className="mb-0 me-2" style={{color: '#424242' }}>{selectedEvent.salaInfo.nombre}</p>
+                        </div>
+                        <div>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1"  style={{color: '#424242' }}>Capacity {event.capacity}</MDBBtn>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1" style={{color: '#424242' }}>{event.permanent==='Si' ? 'Every week' : 'Just this day'}</MDBBtn>
+                          <MDBBtn outline color="dark" floating size="sm" style={{color: '#424242' }}><MDBIcon fas icon="comment" /></MDBBtn>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                    <MDBCardText><CollectionsBookmarkIcon sx={{ color: '#48CFCB'}} /> {event.BookedUsers.length} booked users</MDBCardText>
+                    <MDBCardText><EmailIcon sx={{ color: '#48CFCB'}} /> For any doubt ask "{event.owner}"</MDBCardText>
+                    {userMail && type === 'client' &&
+                      (new Date(event.dateInicio).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
+                      (new Date(event.dateInicio).getTime() >= new Date().setHours(0, 0, 0, 0)) &&
+                      (event.BookedUsers.length<event.capacity)
+                      ? (
+                        <>
+                        {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
+                              <MDBBtn
+                              style={{ backgroundColor: '#48CFCB', color: 'white' }} 
+                              rounded
+                              block
+                              size="lg"
+                              onClick={() => handleUnbookClass(event.id)}
+                            >
+                              Unbook
+                            </MDBBtn>
+                            ) : (
+                              <>
+                              {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
+                              <MDBBtn
+                                style={{ backgroundColor: '#48CFCB', color: 'white' }} 
+                                rounded
+                                block
+                                size="lg"
+                                onClick={() => handleBookClass(event.id)}
+                              >
+                                Book now
+                              </MDBBtn>
+                              ) :
+                              (<>
+                              <MDBBtn
+                                style={{ backgroundColor: '#48CFCB', color: 'white' }} 
+                                rounded
+                                block
+                                size="lg"
+                              >
+                                FULL
+                              </MDBBtn>
+                              </>)
+                              }
+                              </>
+                        )}
+                        <button 
+                          onClick={handleCloseModal}
+                          className="custom-button-go-back-managing"
+                          style={{
+                            zIndex: '2',
+                            position: 'absolute', 
+                            top: '1%',
+                            left: isSmallScreen700 ? '88%' : '90%', 
+                          }}
+                        >
+                          <CloseIcon sx={{ color: '#F5F5F5' }} />
+                        </button>
+                        </>
+                        ) : (
+                          <button 
+                            onClick={handleCloseModal}
+                            className="custom-button-go-back-managing"
+                            style={{
+                              zIndex: '2',
+                              position: 'absolute', 
+                              top: '1%',
+                              left: isSmallScreen700 ? '88%' : '90%', 
+                            }}
+                          >
+                            <CloseIcon sx={{ color: '#F5F5F5' }} />
+                          </button>
+                        )}
+                  </MDBCardBody>
+                </MDBCard>
+              </MDBCol>
+            </MDBRow>
+          </MDBContainer>
+      </div>
+    );
+  }
 
   const changeShowCalendar = () => {
     setShowCalendar(prevState => !prevState);
@@ -36,7 +177,6 @@ export default function Main_Page() {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
-    console.log(event)
   };
 
   const handleCloseModal = () => {
@@ -51,23 +191,37 @@ export default function Main_Page() {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
-      setClasses(data);
+      
+      const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_salas');
+      if (!response2.ok) {
+        throw new Error('Error al obtener las salas: ' + response2.statusText);
+      }
+      const salas = await response2.json();
+  
+      const dataWithSala = data.map(clase => {
+        const salaInfo = salas.find(sala => sala.id === clase.sala);
+        return {
+          ...clase,
+          salaInfo, 
+        };
+      });
+  
       const calendarEvents = [];
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-    
-      data.forEach(clase => {
+  
+      dataWithSala.forEach(clase => {
         const startDate = new Date(clase.dateInicio);
-        const CorrectStarDate = new Date(startDate.getTime() + 60 * 3 * 60 * 1000); 
+        const CorrectStarDate = new Date(startDate.getTime() + 60 * 3 * 60 * 1000);
         const endDate = new Date(clase.dateFin);
         const CorrectEndDate = new Date(endDate.getTime() + 60 * 3 * 60 * 1000);
-    
+  
         if (clase.permanent === "Si") {
           let nextStartDate = new Date(CorrectStarDate);
           let nextEndDate = new Date(CorrectEndDate);
-    
+  
           if (nextStartDate < today) {
-            const dayOfWeek = CorrectStarDate.getDay(); 
+            const dayOfWeek = CorrectStarDate.getDay();
             let daysUntilNextClass = (dayOfWeek - today.getDay() + 7) % 7;
             if (daysUntilNextClass === 0 && today > CorrectStarDate) {
               daysUntilNextClass = 7;
@@ -75,7 +229,7 @@ export default function Main_Page() {
             nextStartDate.setDate(today.getDate() + daysUntilNextClass);
             nextEndDate = new Date(nextStartDate.getTime() + (CorrectEndDate.getTime() - CorrectStarDate.getTime()));
           }
-    
+  
           for (let i = 0; i < 4; i++) {
             calendarEvents.push({
               title: clase.name,
@@ -99,7 +253,7 @@ export default function Main_Page() {
       });
       setOpenCircularProgress(false);
       setEvents(calendarEvents);
-      console.log(calendarEvents);
+      setClasses(dataWithSala)
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
@@ -109,6 +263,7 @@ export default function Main_Page() {
       }, 3000);
     }
   };
+  
 
   const handleBookClass = async (event) => {
     setOpenCircularProgress(true);
@@ -244,6 +399,7 @@ export default function Main_Page() {
   
   return (
     <div className="App">
+      {circularProgressClasses ? (<><loader></loader></>):(<></>)}
       <SuccessAlert successAlert={successBook} message={'Successfully Booked!'}/>
       <SuccessAlert successAlert={successUnbook} message={'Successfully Unbooked!'}/>
       <WarningConnectionAlert warningConnection={warningConnection}/>
@@ -254,7 +410,7 @@ export default function Main_Page() {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
             >
-              <CircularProgress color="inherit" />
+              <Loader></Loader>
           </Backdrop>
       ) : null}
 
@@ -277,47 +433,17 @@ export default function Main_Page() {
         </div>
         ) : (
         <div className="Table-Container">
-          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
+          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>
         </div>
       )}
       </>
   ) : (
     <div className="Table-Container">
-          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass}/>
+          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>
     </div>
   )}
   {selectedEvent && (
-    <div className="Modal" onClick={handleCloseModal}>
-      <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-        <h2>Classes details:</h2>
-        <p><strong>Name:</strong> {selectedEvent.name}</p>
-        <p><strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString()}</p>
-        <p><strong>Start time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
-        <p><strong>Recurrent:</strong> {selectedEvent.permanent==='Si' ? 'Yes' : 'No'}</p>
-        <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-        {userMail && type==='client' && (new Date(selectedEvent.start).getTime() - new Date().getTime() <= 7 * 24 * 60 * 60 * 1000) &&
-(new Date(selectedEvent.start).getTime() >= new Date().setHours(0, 0, 0, 0))
- ? (
-          <>
-          {selectedEvent.BookedUsers && selectedEvent.BookedUsers.includes(userMail)  ? (
-                <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
-              ) : (
-                <>
-                {selectedEvent.BookedUsers.length<selectedEvent.capacity ? (
-                <button onClick={() => handleBookClass(selectedEvent.id)}>Book</button>
-                ) :
-                (<>
-                <button style={{background:'red'}}>Full</button>
-                </>)
-                }
-                </>
-          )}
-          <button onClick={handleCloseModal}>Close</button>
-          </>) : (
-          <button onClick={handleCloseModal}>Close</button>
-        )}
-      </div>
-    </div>
+    <ECommerce event={selectedEvent}/>
   )}
     </div>
   );

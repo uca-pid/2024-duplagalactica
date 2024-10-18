@@ -19,6 +19,14 @@ import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../real_components/loader.jsx';
+import moment from 'moment';
+import AccessAlarmsIcon from '@mui/icons-material/AccessAlarms';
+import EmailIcon from '@mui/icons-material/Email';
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import CloseIcon from '@mui/icons-material/Close';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
 
 function UsserClasses() {
   const [order, setOrder] = useState('asc');
@@ -32,6 +40,7 @@ function UsserClasses() {
   const isSmallScreen400 = useMediaQuery('(max-width:400px)');
   const isSmallScreen500 = useMediaQuery('(max-width:500px)');
   const isSmallScreen600 = useMediaQuery('(max-width:600px)');
+  const isSmallScreen700 = useMediaQuery('(max-width:700px)');
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [errorToken, setErrorToken] = useState(false);
   const [warningFetchingClasses, setWarningFetchingClasses] = useState(false);
@@ -41,6 +50,15 @@ function UsserClasses() {
   const [type, setType] = useState(null);
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
+  const [warningConnection, setWarningConnection] = useState(false);
+
+  function formatDate(date) {
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${year}-${month}-${day}`;
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -94,6 +112,7 @@ function UsserClasses() {
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
+      handleCloseModal();
       setWarningUnbookingClass(true);
       setTimeout(() => {
         setWarningUnbookingClass(false);
@@ -104,32 +123,38 @@ function UsserClasses() {
   const fetchClasses = async () => {
     setOpenCircularProgress(true);
     try {
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) {
-        console.error('Token no disponible en localStorage');
-        return;
-      }
-      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes', {
-        method: 'GET', 
-        headers: {
-          'Authorization': `Bearer ${authToken}`
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+          console.error('Token no disponible en localStorage');
+          return;
         }
-    });
+      const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes');
       if (!response.ok) {
         throw new Error('Error al obtener las clases: ' + response.statusText);
       }
       const data = await response.json();
       const filteredClasses = data.filter(event => event.BookedUsers.includes(userMail));
-      setClasses(filteredClasses);
-      setTimeout(() => {
-        setOpenCircularProgress(false);
-      }, 2000);
+      const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_salas');
+      if (!response2.ok) {
+        throw new Error('Error al obtener las salas: ' + response2.statusText);
+      }
+      const salas = await response2.json();
+  
+      const dataWithSala = filteredClasses.map(clase => {
+        const salaInfo = salas.find(sala => sala.id === clase.sala);
+        return {
+          ...clase,
+          salaInfo, 
+        };
+      });
+      setClasses(dataWithSala);
+      setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
-      setWarningFetchingClasses(true);
+      setWarningConnection(true);
       setTimeout(() => {
-        setWarningFetchingClasses(false);
+        setWarningConnection(false);
       }, 3000);
     }
   };
@@ -153,7 +178,6 @@ function UsserClasses() {
 
 useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
     if (token) {
         verifyToken(token);
     } else {
@@ -232,6 +256,77 @@ useEffect(() => {
     [order, orderBy, page, rowsPerPage, classes]
   );
 
+  function ECommerce({event}) {
+    return (
+      <div className="vh-100" style={{position:'fixed',zIndex:1000,display:'flex',flex:1,width:'100%',height:'100%',opacity: 1,
+        visibility: 'visible',backgroundColor: 'rgba(0, 0, 0, 0.5)'}} onClick={handleCloseModal}>
+          <MDBContainer>
+            <MDBRow className="justify-content-center" onClick={(e) => e.stopPropagation()}>
+              <MDBCol md="9" lg="7" xl="5" className="mt-5">
+                <MDBCard style={{ borderRadius: '15px', backgroundColor: '#F5F5F5' }}>
+                  <MDBCardBody className="p-4 text-black">
+                    <div>
+                      <MDBTypography tag='h6' style={{color: '#424242',fontWeight:'bold' }}>{event.name}</MDBTypography>
+                      <div className="d-flex align-items-center justify-content-between mb-3">
+                        <p className="small mb-0" style={{color: '#424242' }}><AccessAlarmsIcon sx={{ color: '#48CFCB'}} />{event.dateInicio.split('T')[1].split(':').slice(0, 2).join(':')} - {event.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
+                        <p className="fw-bold mb-0" style={{color: '#424242' }}>{formatDate(new Date(event.dateInicio))}</p>
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-center mb-4">
+                      <div className="flex-shrink-0">
+                        <MDBCardImage
+                          style={{ width: '70px' }}
+                          className="img-fluid rounded-circle border border-dark border-3"
+                          src={event.sala=='cuyAhMJE8Mz31eL12aPO' ? `${process.env.PUBLIC_URL}/gimnasio.jpeg` : (event.sala=='PmQ2RZJpDXjBetqThVna' ? `${process.env.PUBLIC_URL}/salon_pequenio.jpeg` : (event.sala=='jxYcsGUYhW6pVnYmjK8H' ? `${process.env.PUBLIC_URL}/salon_de_functional.jpeg` : `${process.env.PUBLIC_URL}/salon_de_gimnasio.jpg`)) }
+                          alt='Generic placeholder image'
+                          fluid />
+                      </div>
+                      <div className="flex-grow-1 ms-3">
+                        <div className="d-flex flex-row align-items-center mb-2">
+                          <p className="mb-0 me-2" style={{color: '#424242' }}>{selectedEvent.salaInfo.nombre}</p>
+                        </div>
+                        <div>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1"  style={{color: '#424242' }}>Capacity {event.capacity}</MDBBtn>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1" style={{color: '#424242' }}>{event.permanent==='Si' ? 'Every week' : 'Just this day'}</MDBBtn>
+                          <MDBBtn outline color="dark" floating size="sm" style={{color: '#424242' }}><MDBIcon fas icon="comment" /></MDBBtn>
+                        </div>
+                      </div>
+                    </div>
+                    <hr />
+                    <MDBCardText><CollectionsBookmarkIcon sx={{ color: '#48CFCB'}} /> {event.BookedUsers.length} booked users</MDBCardText>
+                    <MDBCardText><EmailIcon sx={{ color: '#48CFCB'}} /> For any doubt ask "{event.owner}"</MDBCardText>
+                      <button 
+                        onClick={handleCloseModal}
+                        className="custom-button-go-back-managing"
+                        style={{
+                          zIndex: '2',
+                          position: 'absolute', 
+                          top: '1%',
+                          left: isSmallScreen700 ? '88%' : '90%',
+                        }}
+                      >
+                        <CloseIcon sx={{ color: '#F5F5F5' }} />
+                      </button>
+                      <MDBBtn
+                          style={{ backgroundColor: '#48CFCB', color: 'white' }} 
+                          rounded
+                          block
+                          size="lg"
+                          onClick={()=>handleUnbookClass(event.id)}
+                        >
+                          Unbook
+                        </MDBBtn>
+                      {/* <button style={{marginLeft:'10px'}} onClick={()=>handleEditClass(selectedEvent)}>Edit class</button>
+                      <button style={{marginLeft:'10px'}} onClick={() => handleDeleteClass(selectedEvent.id)}>Delete class</button> */}
+                  </MDBCardBody>
+                </MDBCard>
+              </MDBCol>
+            </MDBRow>
+          </MDBContainer>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       {type!='client' ? (
@@ -245,11 +340,11 @@ useEffect(() => {
           <>
       <NewLeftBar />
       <div className="Table-Container">
-        <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+        <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
             <Paper
                 sx={{
                 width: '100%',
-                backgroundColor: '#ffe0b5',
+                backgroundColor: '#F5F5F5',
                 borderRadius: '10px'
                 }}
             >
@@ -264,7 +359,7 @@ useEffect(() => {
                     >
                         <TableHead>
                             <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                       <TableSortLabel
                         active={orderBy === 'name'}
                         direction={orderBy === 'name' ? order : 'asc'}
@@ -279,7 +374,7 @@ useEffect(() => {
                       </TableSortLabel>
                     </TableCell>
                     {!isSmallScreen500 && (
-                      <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                      <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                         <TableSortLabel
                           active={orderBy === 'hour'}
                           direction={orderBy === 'hour' ? order : 'asc'}
@@ -295,7 +390,7 @@ useEffect(() => {
                       </TableCell>
                     )}
                     {!isSmallScreen400 && (
-                      <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                      <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                         <TableSortLabel
                           active={orderBy === 'dateInicio'}
                           direction={orderBy === 'dateInicio' ? order : 'asc'}
@@ -311,7 +406,7 @@ useEffect(() => {
                       </TableCell>
                     )}
                     {!isSmallScreen600 && (
-                      <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', fontWeight: 'bold', color: '#54311a' }}>
+                      <TableCell align="right" sx={{ borderBottom: '1px solid #424242', fontWeight: 'bold', color: '#424242' }}>
                         <TableSortLabel
                           active={orderBy === 'permanent'}
                           direction={orderBy === 'permanent' ? order : 'asc'}
@@ -331,25 +426,25 @@ useEffect(() => {
                 <TableBody>
                   {visibleRows.length===0 ? (
                       <TableRow>
-                      <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                      <TableCell colSpan={isSmallScreen500 ? 2 : 4} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                           There are no booked classes
                       </TableCell>
                       </TableRow>
                   ) : (
                     <>
                       {visibleRows.map((row) => (
-                          <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #BC6C25' }}>
-                          <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25',borderRight: '1px solid #BC6C25', color:'#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                          <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #424242' }}>
+                          <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', color:'#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                               {row.name}
                           </TableCell>
                           {!isSmallScreen500 && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{row.hour}</TableCell>
+                              <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{row.hour}</TableCell>
                           )}
                           {!isSmallScreen400 && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>{new Date(row.dateInicio).toLocaleDateString()}</TableCell>
+                              <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>{formatDate(new Date(row.dateInicio))}</TableCell>
                           )}
                           {!isSmallScreen600 && (
-                              <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a' }}>{row.permanent === 'Si' ? 'Sí' : 'No'}</TableCell>
+                              <TableCell align="right" sx={{ borderBottom: '1px solid #424242', color: '#424242' }}>{row.permanent === 'Si' ? 'Yes' : 'No'}</TableCell>
                           )}
                           </TableRow>
                       ))}
@@ -387,37 +482,9 @@ useEffect(() => {
           </Paper>
         </Box>
       </div>
-      {selectedEvent && (
-        <div className="Modal" onClick={handleCloseModal}>
-          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-            <h2>Classes details:</h2>
-            <p><strong>Name:</strong> {selectedEvent.name}</p>
-            <p>
-              <strong>Start time:</strong> 
-              {(() => {
-                const startTime = new Date(selectedEvent.dateInicio);
-                startTime.setHours(startTime.getHours() + 3);
-                return startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-              })()}
-            </p>
-            <p>
-              <strong>End time:</strong> 
-              {(() => {
-                const endTime = new Date(selectedEvent.dateFin);
-                endTime.setHours(endTime.getHours() + 3);
-                return endTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-              })()}
-            </p>
-            <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
-            <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-            <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
-            <button onClick={handleCloseModal}>Close</button>
-          </div>
-        </div>
-      )}
       {openCircularProgress && (
         <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
-          <CircularProgress color="inherit" />
+          <Loader></Loader>
         </Backdrop>
       )}
       {errorToken && (
@@ -473,6 +540,23 @@ useEffect(() => {
         </div>
       )}
       </>
+      )}
+            {selectedEvent && (
+        // <div className="Modal" onClick={handleCloseModal}>
+        //   <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+        //     <h2>Class details:</h2>
+        //     <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
+        //     <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.dateInicio))}</p>
+        //     <p><strong>Start time:</strong> {selectedEvent.hour}</p>
+        //     <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
+        //     <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
+        //     <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
+        //     <p><strong>Coach:</strong> {selectedEvent.owner}</p>
+        //     <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
+        //     <button onClick={handleCloseModal} style={{marginLeft:'10px'}}>Close</button>
+        //   </div>
+        // </div>
+        <ECommerce event={selectedEvent}/>
       )}
     </div>
   );

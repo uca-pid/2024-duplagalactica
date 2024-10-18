@@ -10,7 +10,7 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +19,8 @@ export default function Login() {
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
   const [verifyEmail, setVerifyEmail] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [errorLogin, setErrorLogin] = useState(false);
 
   const goToCreateAccount = () => {
     navigate('/create-account');
@@ -30,6 +31,7 @@ export default function Login() {
   };
 
   const loginUser = async (e) => {
+    setErrorLogin(false)
     setOpenCircularProgress(true);
     e.preventDefault(); 
     try {
@@ -54,14 +56,12 @@ export default function Login() {
     } catch (error) {
       console.error("Login error:", error);
       setOpenCircularProgress(false);
-      setFailure(true);
-      setTimeout(() => setFailure(false), 3000);
+      setErrorLogin(true)
     }
   };
   
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    console.log('Token:', token);
       if (token) {
         navigate('/');
         return;
@@ -85,10 +85,10 @@ export default function Login() {
             <LeftBar value={'profile'}/>
             <div className='login-container'>
               <div className='login-content'>
-                <h2 style={{color:'#5e2404'}}>Login</h2>
+                <h2 style={{color:'#424242'}}>Login</h2>
                 <form onSubmit={loginUser}>
                   <div className="input-container">
-                    <label htmlFor="username" style={{color:'#5e2404'}}>Email:</label>
+                    <label htmlFor="username" style={{color:'#424242'}}>Email:</label>
                     <input 
                       type="text" 
                       id="username" 
@@ -99,7 +99,7 @@ export default function Login() {
                     />
                   </div>
                   <div className="input-container">
-                    <label htmlFor="password" style={{color:'#5e2404'}}>Password:</label>
+                    <label htmlFor="password" style={{color:'#424242'}}>Password:</label>
                     <input 
                     color='#283618'
                       type="password" 
@@ -109,6 +109,7 @@ export default function Login() {
                       onChange={(e) => setPassword(e.target.value)} 
                     />
                   </div>
+                  {errorLogin && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Credentials or server error.</p>)}
                   <button type="submit" className='button_login'>
                     Login
                   </button>
@@ -124,7 +125,7 @@ export default function Login() {
               sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
               open={openCircularProgress}
             >
-              <CircularProgress color="inherit" />
+              <Loader></Loader>
             </Backdrop>
           ) : null}
           { success ? (

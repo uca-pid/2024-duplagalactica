@@ -11,7 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function ChangePassword() {
     const [password, setPassword] = useState('');
     const [passwordAgain, setPasswordAgain] = useState('');
@@ -25,6 +25,9 @@ export default function ChangePassword() {
     const [success, setSuccess] = useState(false);
     const [failure, setFailure] = useState(false);
     const [failureErrors, setFailureErrors] = useState(false);
+    const [errorPassword, setErrorPassword] = useState(false);
+    const [errorPasswordRepeated, setErrorPasswordRepeated] = useState(false);
+
 
     useEffect(() => {
       if (!oobCode) {
@@ -41,32 +44,38 @@ export default function ChangePassword() {
       const isValidLength = password.length > 7;
       const samePasswords = password == passwordAgain;
 
-      if (!isValidLength) {
-        errors.push('The password must be more than 8 characters.');
-      } 
-      if (!hasNumber) {
-          errors.push('The password must contain at least 1 number.');
-      } 
-      if (!hasLowerCase) {
-          errors.push('The password must contain at least 1 lowercase letter.');
-      } 
-      if (!hasUpperCase) {
-          errors.push('The password must contain at least 1 uppercase letter.');
-      } 
-      if (!hasSpecialChar) {
-          errors.push('The password must contain at least 1 special character.');
+      if(!(hasNumber && hasLowerCase && hasUpperCase && hasSpecialChar && isValidLength)){
+        setErrorPassword(true);
+      } else {
+        setErrorPassword(false);
       }
+      // if (!isValidLength) {
+      //   errors.push('The password must be more than 8 characters.');
+      // } 
+      // if (!hasNumber) {
+      //     errors.push('The password must contain at least 1 number.');
+      // } 
+      // if (!hasLowerCase) {
+      //     errors.push('The password must contain at least 1 lowercase letter.');
+      // } 
+      // if (!hasUpperCase) {
+      //     errors.push('The password must contain at least 1 uppercase letter.');
+      // } 
+      // if (!hasSpecialChar) {
+      //     errors.push('The password must contain at least 1 special character.');
+      // }
       if (!samePasswords) {
         errors.push('Passwords must be the same.');
+        setErrorPasswordRepeated(true);
+      } else {
+        setErrorPasswordRepeated(false);
       }
 
       setErrors(errors);
       return errors.length === 0;
   }
-    const handleSubmit = async (e) => {
+    const handleResetPassword = async () => {
       setOpenCircularProgress(true);
-      e.preventDefault();
-      if(validateForm()){
         try {
           await confirmPasswordReset(auth, oobCode, password);
           setOpenCircularProgress(false);
@@ -83,30 +92,46 @@ export default function ChangePassword() {
               setFailure(false);
               }, 3000);
         }
-      } else {
-          setOpenCircularProgress(false);
-          setFailureErrors(true);
-          setTimeout(() => {
-              setFailureErrors(false);
-              }, 3000);
-      }
     };
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      if(validateForm()){
+        handleResetPassword();
+      }
+    }
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [openPasswordRequirements, setOpenPasswordRequirements] = useState(false);
     const handleOpenPasswordRequirements = (event) => {
-      setAnchorEl(anchorEl ? null : event.currentTarget);
-      setOpenPasswordRequirements(!openPasswordRequirements)
-    };    
+      if (openPasswordRequirements) {
+          setAnchorEl(null); // Close popper
+      } else {
+          setAnchorEl(event.currentTarget); // Open popper with the clicked element as anchor
+      }
+      setOpenPasswordRequirements(!openPasswordRequirements);
+  };  
     const id = openPasswordRequirements ? 'simple-popper' : undefined;
 
     const [anchorEl2, setAnchorEl2] = useState(null);
     const [openPasswordRequirements2, setOpenPasswordRequirements2] = useState(false);
     const handleOpenPasswordRequirements2 = (event) => {
-      setAnchorEl2(anchorEl2 ? null : event.currentTarget);
-      setOpenPasswordRequirements2(!openPasswordRequirements2)
-    };    
+      if (openPasswordRequirements2) {
+          setAnchorEl2(null); // Close popper
+      } else {
+          setAnchorEl2(event.currentTarget); // Open popper with the clicked element as anchor
+      }
+      setOpenPasswordRequirements2(!openPasswordRequirements2);
+  };
     const id2 = openPasswordRequirements2 ? 'simple-popper' : undefined;
+
+    const handleClosePasswordRequirements = () => {
+      setOpenPasswordRequirements(false);
+  };
+
+  const handleClosePasswordRequirements2 = () => {
+    setOpenPasswordRequirements2(false);
+};
 
     return (
     <div className='App'>
@@ -124,7 +149,7 @@ export default function ChangePassword() {
           <div className='new-password-content'>
             <h2>Reset password</h2>
             <form onSubmit={handleSubmit}>
-              <div className="input-container">
+              <div className="input-container" onClick={handleClosePasswordRequirements2}>
                   <label htmlFor="password">Password:</label>
                   <input
                       onClick={handleOpenPasswordRequirements}
@@ -143,24 +168,26 @@ export default function ChangePassword() {
                         <p>The password must contain at least 1 special character.</p>
                     </Box>
                 </Popper>
+                {errorPassword && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Enter a valid password</p>)}
               </div>
-              <div className="input-container">
-                  <label htmlFor="password">Confirm password:</label>
+              <div className="input-container" onClick={handleClosePasswordRequirements}>
+                  <label htmlFor="passwordAgain">Confirm password:</label>
                   <input
                       onClick={handleOpenPasswordRequirements2}
                       type="password" 
-                      id="password" 
-                      name="password" 
+                      id="passwordAgain" 
+                      name="passwordAgain" 
                       value={passwordAgain} 
                       onChange={(e) => setPasswordAgain(e.target.value)} 
                   />
-              </div>
-              <Popper id={id2} open={openPasswordRequirements2} anchorEl={anchorEl2}>
-                    <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements2}>
-                        <p>Passwords must be the same</p>
-                    </Box>
-                </Popper>
-              <button type="submit" className='button_create_account'>
+                  <Popper id={id2} open={openPasswordRequirements2} anchorEl={anchorEl2}>
+                        <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }} onClick={handleOpenPasswordRequirements2}>
+                            <p>Passwords must be the same</p>
+                        </Box>
+                    </Popper>
+                    {errorPasswordRepeated && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Passwords are not equal</p>)}
+                </div>
+              <button type="submit" className='button_create_account' style={{width: '80%'}}>
                   Confirm new password
               </button>
             </form>
@@ -171,7 +198,7 @@ export default function ChangePassword() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={openCircularProgress}
                 >
-                <CircularProgress color="inherit" />
+                <Loader></Loader>
                 </Backdrop>
             ) : null}
             { success ? (
@@ -189,7 +216,7 @@ export default function ChangePassword() {
             ) : (
                 null
             )}
-            { failureErrors ? (
+            {/* { failureErrors ? (
                 <div className='alert-container'>
                     <div className='alert-content'>
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
@@ -211,7 +238,7 @@ export default function ChangePassword() {
               
             ) : (
                 null
-            )}
+            )} */}
             { failure ? (
                 <div className='alert-container'>
                     <div className='alert-content'>

@@ -17,6 +17,9 @@ import UserRoutines from './Components/UserRoutines.jsx';
 import Logout from './Components/Logout.jsx';
 import CoachRoutines from './Components/CoachRoutines.jsx';
 import CoachExercises from './Components/CoachExercises.jsx';
+import AllRoutines from './Components/AllRoutines.jsx';
+import TopRoutines from './Components/TopRoutines.jsx';
+import CoachGraphics from './Components/CoachGraphics.jsx';
 
 function App() {
   return (
@@ -38,6 +41,9 @@ function App() {
         <Route path="/coach-routines" element={<CoachRoutines/>}/>
         <Route path="/coach-exercises" element={<CoachExercises/>}/>
         <Route path="/logout" element={<Logout/>}/>
+        <Route path="/all-routines" element={<AllRoutines/>}/>
+        <Route path="/top-routines" element={<TopRoutines/>}/>
+        <Route path="/coach-graphics" element={<CoachGraphics/>}/>
       </Routes>
     </Router>
   );

@@ -8,27 +8,65 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
 import Box from '@mui/material/Box';
+import Loader from '../real_components/loader.jsx'
+import TextField from '@mui/material/TextField';
+import { useMediaQuery } from '@mui/material';
+import {
+  MDBCol,
+  MDBContainer,
+  MDBRow,
+  MDBCard,
+  MDBCardText,
+  MDBCardBody,
+  MDBCardImage,
+  MDBBtn,
+  MDBBreadcrumb,
+  MDBBreadcrumbItem,
+  MDBProgress,
+  MDBProgressBar,
+  MDBIcon,
+  MDBInput,
+  MDBListGroup,
+  MDBListGroupItem
+} from 'mdb-react-ui-kit';
+
+
+
+
 
 export default function CreateAccount() {
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [date, setDate] = useState('');
     const [email, setEmail] = useState('');
-
+    const [assigned_days,setAssignedDays] = useState(0)
     const [nameFetch, setNameFetch] = useState('');
     const [lastNameFetch, setLastNameFetch] = useState('');
     const [dateFetch, setDateFetch] = useState('');
     const [emailFetch, setEmailFetch] = useState('');
-
+    const [amountOfExercs,setAmountOfExercs] = useState(0)
+    const [createdExercises,setCreatedExercises] = useState([])
     const navigate = useNavigate();
     const [isDisabled, setIsDisabled] = useState(true);
     const [user, setUser] = useState({});
+    const [classes, setClasses] = useState([]);
     const [userMail, setUserMail] = useState('');
     const [errorToken,setErrorToken] = useState(false);
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [warningFetchingUserInformation, setWarningFetchingUserInformation] = useState(false);
     const [warningModifyingData, setWarningModifyingData] = useState(false);
-
+    const [errorForm, setErrorForm] = useState(false);
+    const [assigned_routines,setAssignedRoutines] = useState([])
+    const [matchedRoutines,setMatchedRoutines] = useState([])
+    const [created_classes,setCreatedClasses]=useState([])
+    const [amountOfOwners,setOwners] = useState(0)
+    const [amountOfDays,setAmountOfDays] = useState(0)
+    const [assignerRoutineAmount,setAssignerRoutineAmount] = useState([])
+    const [permanentClasses, setPermanentClasses] = useState(0)
+    const [permanentClassesCreated, setPermanentClassesCreated] = useState(0)
+    const [type,setType] = useState('')
+    const [createdClassesDays,setCreatedClassesDays] = useState(0);
+    const isSmallScreen = useMediaQuery('(max-width:700px)');
     const fetchUserInformation = async () => {
         setOpenCircularProgress(true);
         try {
@@ -49,12 +87,115 @@ export default function CreateAccount() {
             }
             const data = await response.json();
             const filteredRows = data.filter((row) => row.Mail === userMail);
-            console.log(filteredRows[0]);
+            setType(filteredRows[0].type)
             setNameFetch(filteredRows[0].Name);
             setLastNameFetch(filteredRows[0].Lastname);
             setEmailFetch(filteredRows[0].Mail);
             setDateFetch(filteredRows[0].Birthday);
             setUser(filteredRows[0]);
+            const response2 = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_assigned_routines`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            
+            if (!response2.ok) {
+                throw new Error('Error al obtener los datos del usuario: ' + response2.statusText);
+            }
+            const response5 = await fetch(`https://two024-duplagalactica-li8t.onrender.com/get_excersices`, {
+                method: 'GET', 
+                headers: {
+                  'Authorization': `Bearer ${authToken}`
+                }
+            });
+            if (!response5.ok) {
+                throw new Error('Error al obtener los ejercicios: ' + response.statusText);
+            }
+            const exercisesData = await response5.json();
+            const filteredExercisesCreated = exercisesData.filter((row) => row.owner === userMail);
+            setCreatedExercises(filteredExercisesCreated)
+            const data2 = await response2.json();
+            const filteredRows2 = data2.filter((row) =>
+                row.users.some((u) => u === userMail)
+            );
+            const fileredAssignerRoutine = data2.filter((row)=>
+                row.assigner == userMail
+            )
+            const uniqueAssignedDays = new Set();
+            fileredAssignerRoutine.filter((assigned)=> {
+                if (assigned.day) {
+                    uniqueAssignedDays.add(assigned.day);
+                }
+                }
+            )
+            setAssignedDays(uniqueAssignedDays.size)
+            setAssignerRoutineAmount(fileredAssignerRoutine)
+            setAssignedRoutines(filteredRows2);
+            const response3 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            
+            if (!response3.ok) {
+                throw new Error('Error al obtener las rutinas: ' + response3.statusText);
+            }
+            const uniqueExerciseIds = new Set();
+            const uniqueOwners = new Set();
+            const uniqueClassDay = new Set();
+            const uniqueCreatedClassesDay = new Set();
+            const routines3 = await response3.json();
+            const matchedRoutines = filteredRows2.map((assignedRoutine) => {
+                const matchedRoutine = routines3.find((routine) => routine.id === assignedRoutine.id);
+                return { matchedRoutine }; 
+            });
+            matchedRoutines.forEach(routine => {
+                if (routine.matchedRoutine.excercises && Array.isArray(routine.matchedRoutine.excercises)) {
+                    routine.matchedRoutine.excercises.forEach(exercise => {
+                        uniqueExerciseIds.add(exercise.id);
+                    });
+                }
+            });
+            matchedRoutines.forEach(routine => {
+                if (routine.matchedRoutine.owner) {
+                    uniqueOwners.add(routine.matchedRoutine.owner);
+                }
+            });
+            const response4 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_classes', {
+                method: 'GET', 
+                headers: {
+                  'Authorization': `Bearer ${authToken}`
+                }
+            });
+            if (!response4.ok) {
+            throw new Error('Error al obtener las clases: ' + response.statusText);
+            }
+            const data4 = await response4.json();
+            const createdClasses = data4.filter(event=> event.owner ==userMail)
+            const filteredClasses4 = data4.filter(event => event.BookedUsers.includes(userMail));
+            filteredClasses4.forEach(classess => {
+                if (classess.day) {
+                    uniqueClassDay.add(classess.day);
+                }
+            });
+            createdClasses.forEach(classess => {
+                if (classess.day) {
+                    uniqueCreatedClassesDay.add(classess.day);
+                }
+            });
+            const recurrenClasses = filteredClasses4.filter(clase => clase.permanent==='Si');
+            const recurrenClassesCreated = createdClasses.filter(clase => clase.permanent==='Si');
+            setPermanentClassesCreated(recurrenClassesCreated)
+            setCreatedClassesDays(uniqueCreatedClassesDay.size)
+            setCreatedClasses(createdClasses)
+            setPermanentClasses(recurrenClasses)
+            setAmountOfDays(uniqueClassDay.size)
+            setClasses(filteredClasses4);
+            setOwners(uniqueOwners.size)
+            setMatchedRoutines(matchedRoutines);
+            setAmountOfExercs(uniqueExerciseIds.size)
             setOpenCircularProgress(false);
         } catch (error) {
             console.error("Error fetching user:", error);
@@ -64,7 +205,7 @@ export default function CreateAccount() {
                 setWarningFetchingUserInformation(false);
             }, 3000);
         }
-    };
+    };      
 
     const fetchModifyUserInformation = async () => {
         setOpenCircularProgress(true);
@@ -95,8 +236,8 @@ export default function CreateAccount() {
                 throw new Error('Error al actualizar los datos del usuario: ' + response.statusText);
             }
             const data = await response.json();
+            fetchUserInformation();
             setOpenCircularProgress(false);
-            console.log(data);
         } catch (error) {
             console.error("Error updating user:", error);
             setOpenCircularProgress(false);
@@ -111,24 +252,36 @@ export default function CreateAccount() {
         setIsDisabled(!isDisabled);
         setName('');
         setLastName('');
-        setDate('')
+        setDate('');
+        setErrorForm(false);
     };
 
     const goToChangePassword = () => {
         navigate('/reset-password');
     };
 
+    const validateForm = () => {
+        let res = true;
+        if (name === '' && lastName === '' && date === '') {
+            setErrorForm(true);
+            res = false;
+        } else {
+            setErrorForm(false);
+        }
+        return res;
+    }
+
     const handleSave = (event) => {
-        event.preventDefault(); 
-        fetchModifyUserInformation();
-        setIsDisabled(!isDisabled);
-        fetchUserInformation();
+        if(validateForm()){
+            event.preventDefault(); 
+            fetchModifyUserInformation();
+            setIsDisabled(!isDisabled);
+        }
     };
     const verifyToken = async (token) => {
         setOpenCircularProgress(true);
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken);
             setUserMail(decodedToken.email);
             setOpenCircularProgress(false);
         } catch (error) {
@@ -144,7 +297,6 @@ export default function CreateAccount() {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {
@@ -166,7 +318,7 @@ export default function CreateAccount() {
                 sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={true}
                 >
-                    <CircularProgress color="inherit" />
+                    <Loader></Loader>
                 </Backdrop>
             ) : (
             <>
@@ -175,8 +327,7 @@ export default function CreateAccount() {
                     <Backdrop
                     sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                     open={openCircularProgress}
-                    >
-                    <CircularProgress color="inherit" />
+                    ><Loader></Loader>
                     </Backdrop>
                 ) : null}
                 { errorToken ? (
@@ -225,12 +376,18 @@ export default function CreateAccount() {
                     null
                 )}
                 <div className='user-profile-container'>
-                    <div className='create-account-content'>
-                        <h2 style={{ color: '#14213D' }}>Profile</h2>
-                        <form autoComplete='off' onSubmit={handleSave}>
-                            <div className="input-container">
+                <section style={{ backgroundColor: '#eee' }}>
+            <MDBContainer className="py-5">
+              <MDBRow>
+                <MDBCol>
+                  <MDBCard className="mb-4">
+                  <MDBCardBody>
+                    <MDBRow>
+                        <MDBCol>
+                            <div className="input-container-profile">
                                 <label htmlFor="name" style={{ color: '#14213D' }}>Name:</label>
                                 <input
+                                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}
                                     type="text"
                                     id="name"
                                     name="name"
@@ -240,9 +397,15 @@ export default function CreateAccount() {
                                     placeholder={nameFetch}
                                 />
                             </div>
-                            <div className="input-container">
+                        </MDBCol>
+                    </MDBRow>
+                    <hr style={{color:'#14213D'}}/>
+                    <MDBRow>
+                        <MDBCol>
+                            <div className="input-container-profile">
                                 <label htmlFor="lastName" style={{ color: '#14213D' }}>Last name:</label>
                                 <input
+                                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}
                                     type="text"
                                     id="lastname"
                                     name="lastname"
@@ -252,23 +415,32 @@ export default function CreateAccount() {
                                     placeholder={lastNameFetch}
                                 />
                             </div>
-                            <div className="input-container">
+                        </MDBCol>
+                    </MDBRow>
+                    <hr style={{color:'#14213D'}}/>
+                    <MDBRow>
+                        <MDBCol>
+                            <div className="input-container-profile">
                                 <label htmlFor="date" style={{ color: '#14213D' }}>Birthdate:</label>
                                 <input
-                                    type={isDisabled ? 'text' : (date ? 'date' : 'text')}
+                                    type='date'
                                     id='date'
                                     name='date'
-                                    value={date}
+                                    value={date || dateFetch}
                                     onChange={(e) => setDate(e.target.value)}
-                                    placeholder={dateFetch}
-                                    onFocus={(e) => !isDisabled && (e.target.type = 'date')}
-                                    onBlur={(e) => !date && (e.target.type = 'text')}
                                     disabled={isDisabled}
                                 />
+                                {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
                             </div>
-                            <div className="input-container">
+                        </MDBCol>
+                    </MDBRow>
+                    <hr style={{color:'#14213D'}}/>
+                    <MDBRow>
+                        <MDBCol>
+                            <div className="input-container-profile">
                                 <label htmlFor="email" style={{ color: '#14213D' }}>Email:</label>
                                 <input
+                                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}
                                     id="email"
                                     name="email"
                                     value={email}
@@ -277,27 +449,126 @@ export default function CreateAccount() {
                                     disabled={true}
                                 />
                             </div>
-                            {isDisabled ? (
+                        </MDBCol>
+                    </MDBRow>
+                    <hr style={{color:'#14213D'}}/>
+                    {isDisabled ? (
                                 <>
-                                    <button className='button_create_account' type="button" onClick={handleChangeModify}>
+                                    <button className='button_create_account' style={{width:'70%'}} type="button" onClick={handleChangeModify}>
                                         Modify data
                                     </button>
                                 </>
                             ) : (
                                 <>
-                                    <button className='button_create_account' type="button" onClick={goToChangePassword}>
+                                    <button className='button_create_account2' style={{width: isSmallScreen ? '37%' : ''}} type="button" onClick={goToChangePassword}>
                                         Change password
                                     </button>
-                                    <button type="submit" className='button_create_account'>
+                                    <button onClick={handleSave} className='button_create_account2' style={{width: isSmallScreen ? '18%' : ''}}>
                                         Save
                                     </button>
-                                    <button className='button_create_account' type="button" onClick={handleChangeModify}>
+                                    <button className='button_create_account2' style={{width: isSmallScreen ? '25%' : ''}} type="button" onClick={handleChangeModify}>
                                         Cancel
                                     </button>
                                 </>
-                            )}
-                        </form>
-                    </div>
+                    )}
+                    </MDBCardBody>
+                  </MDBCard>      
+                  <MDBRow>
+                    {type=='client'? (
+                        <>
+                        <MDBCol md="6">
+                            <MDBCard className="mb-4 mb-md-0">
+                                <MDBCardBody>
+                                <MDBCardText className="mb-4"><span style={{color:'#424242',fontWeight:'bold'}}>Routines</span></MDBCardText>
+                                <MDBCardText className="mb-1" style={{ fontSize: '.77rem' }}>Assigned routines</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={assigned_routines.length} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}} />
+                                </MDBProgress>
+                                <MDBCardText className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Different exercises</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={amountOfExercs} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+            
+                                <MDBCardText className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Coaches</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={amountOfOwners} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+                                </MDBCardBody>
+                            </MDBCard>
+                            </MDBCol>
+                            <MDBCol md="6">
+                            <MDBCard className="mb-4 mb-md-0">
+                                <MDBCardBody>
+                                <MDBCardText className="mb-4"><span style={{color:'#424242',fontWeight:'bold'}}>Classes</span></MDBCardText>
+                                <MDBCardText className="mb-1" style={{ fontSize: '.77rem' }}>Amount of classes</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={classes.length} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+            
+                                <MDBCardText className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Booked days</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={amountOfDays} valuemin={0} valuemax={7} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+            
+                                <MDBCardText className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Recurrent classes</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={permanentClasses.length} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+                                </MDBCardBody>
+                            </MDBCard>
+                        </MDBCol>
+                        </>
+                    ) : (
+                        <>
+                        <MDBCol md="6">
+                            <MDBCard className="mb-4 mb-md-0">
+                                <MDBCardBody>
+                                <MDBCardText className="mb-4"><span style={{color:'#424242',fontWeight:'bold'}}>Routines</span></MDBCardText>
+                                <MDBCardText className="mb-1" style={{ fontSize: '.77rem' }}>Assigned routines</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={assignerRoutineAmount.length} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}} />
+                                </MDBProgress>
+                                <MDBCardText className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Created exercises</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={createdExercises.length} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+            
+                                <MDBCardText className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Different assigned routines days</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={assigned_days} valuemin={0} valuemax={7} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+                                </MDBCardBody>
+                            </MDBCard>
+                            </MDBCol>
+                            <MDBCol md="6">
+                            <MDBCard className="mb-4 mb-md-0">
+                                <MDBCardBody>
+                                <MDBCardText className="mb-4"><span style={{color:'#424242',fontWeight:'bold'}}>Classes</span></MDBCardText>
+                                <MDBCardText className="mb-1" style={{ fontSize: '.77rem' }}>Created classes</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={created_classes.length} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+            
+                                <MDBCardText className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Differen created classes days</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={createdClassesDays} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+            
+                                <MDBCardText className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Recurrent classes created</MDBCardText>
+                                <MDBProgress className="rounded">
+                                    <MDBProgressBar width={permanentClassesCreated.length} valuemin={0} valuemax={100} style={{backgroundColor:'#48CFCB'}}/>
+                                </MDBProgress>
+                                </MDBCardBody>
+                            </MDBCard>
+                        </MDBCol>
+                        </>
+                    )
+                    }
+                  </MDBRow>
+                </MDBCol>
+              </MDBRow>
+            </MDBContainer>
+          </section>
                 </div>
             </>
             )}

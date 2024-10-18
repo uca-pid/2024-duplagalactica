@@ -20,7 +20,7 @@ import DaySelection from '../real_components/DaySelection.jsx';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import Slide from '@mui/material/Slide';
-
+import Loader from '../real_components/loader.jsx'
 export default function StickyHeadTable() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -91,11 +91,9 @@ export default function StickyHeadTable() {
             }
             const data = await response.json();
             const filteredRows = data.filter((row) =>
-                row.user.some((u) => u.Mail === userMail)
+                row.users.some((u) => u === userMail)
             );
             setRows(filteredRows);
-            console.log(data);
-            console.log(filteredRows);
             setOpenCircularProgress(false);
         } catch (error) {
             setOpenCircularProgress(false);
@@ -112,21 +110,63 @@ export default function StickyHeadTable() {
         try {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) {
-              console.error('Token no disponible en localStorage');
-              return;
+                console.error('Token no disponible en localStorage');
+                return;
             }
             const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_routines', {
-                method: 'GET', 
+                method: 'GET',
                 headers: {
-                  'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`
                 }
             });
             if (!response.ok) {
                 throw new Error('Error al obtener las rutinas: ' + response.statusText);
             }
-            const data = await response.json();
-            const filteredRows = data.filter((row) => row.name === routineName);
-            setRoutine(filteredRows[0]);
+            const routines = await response.json();
+            const filteredRows = routines.filter((row) => row.name === routineName);
+            const response2 = await fetch('https://two024-duplagalactica-li8t.onrender.com/get_excersices', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+            if (!response2.ok) {
+                throw new Error('Error al obtener los ejercicios locales: ' + response2.statusText);
+            }
+            const exercisesData = await response2.json();
+            const response3 = await fetch('https://train-mate-api.onrender.com/api/exercise/get-all-exercises', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${authToken}` 
+                }
+            });
+            if (!response3.ok) {
+                throw new Error('Error al obtener los ejercicios de Train Mate: ' + response3.statusText);
+            }
+            const exercisesDataFromTrainMate = await response3.json();
+            console.log("Ejercicios de Train Mate:", exercisesDataFromTrainMate);
+            const updatedExercises = filteredRows[0].excercises.map((exercise) => {
+                let matchedExercise = exercisesData.find((ex) => ex.id === exercise.id);
+                if (!matchedExercise && Array.isArray(exercisesDataFromTrainMate.exercises)) {
+                    matchedExercise = exercisesDataFromTrainMate.exercises.find((ex) => ex.id === exercise.id);
+                }
+                if (matchedExercise) {
+                    return {
+                        ...exercise,
+                        name: matchedExercise.name,
+                        description: matchedExercise.description,
+                    };
+                }
+    
+                return exercise; 
+            });
+    
+            const routineWithUpdatedExercises = {
+                ...filteredRows[0],
+                excercises: updatedExercises
+            };
+    
+            setRoutine(routineWithUpdatedExercises);
             setOpenCircularProgress(false);
         } catch (error) {
             setOpenCircularProgress(false);
@@ -137,6 +177,7 @@ export default function StickyHeadTable() {
             }, 3000);
         }
     };
+    
 
     const verifyToken = async (token) => {
         try {
@@ -154,7 +195,6 @@ export default function StickyHeadTable() {
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
         if (token) {
             verifyToken(token);
         } else {
@@ -259,11 +299,11 @@ export default function StickyHeadTable() {
                 ) : (
                     <DaySelection selectedDay={selectedDay} setSelectedDay={setSelectedDay}/>
                 )}
-                <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#ffe0b5', border: '2px solid #BC6C25', borderRadius: '10px' }}>
+                <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
                     <Paper
                         sx={{
                         width: '100%',
-                        backgroundColor: '#ffe0b5',
+                        backgroundColor: '#F5F5F5',
                         borderRadius: '10px'
                         }}
                     >
@@ -278,7 +318,7 @@ export default function StickyHeadTable() {
                             >
                                 <TableHead>
                                     <TableRow sx={{ height: '5vh', width: '5vh' }}>
-                                        <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                        <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                             <TableSortLabel
                                                 active={orderBy === 'name'}
                                                 direction={orderBy === 'name' ? order : 'asc'}
@@ -292,14 +332,14 @@ export default function StickyHeadTable() {
                                                 ) : null}
                                             </TableSortLabel>
                                         </TableCell>
-                                        <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                        <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                             <TableSortLabel
-                                                active={orderBy === 'exercises.length'}
-                                                direction={orderBy === 'exercises.length' ? order : 'asc'}
-                                                onClick={(event) => handleRequestSort(event, 'exercises.length')}
+                                                active={orderBy === 'day'}
+                                                direction={orderBy === 'day' ? order : 'asc'}
+                                                onClick={(event) => handleRequestSort(event, 'day')}
                                             >
-                                                Exercises
-                                                {orderBy === 'exercises.length' ? (
+                                                Day
+                                                {orderBy === 'day' ? (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                                     </Box>
@@ -307,7 +347,7 @@ export default function StickyHeadTable() {
                                             </TableSortLabel>
                                         </TableCell>
                                         {!isSmallScreen && (
-                                            <TableCell sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', fontWeight: 'bold' }}>
+                                            <TableCell sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', fontWeight: 'bold' }}>
                                             <TableSortLabel
                                                 active={orderBy === 'owner'}
                                                 direction={orderBy === 'owner' ? order : 'asc'}
@@ -327,21 +367,21 @@ export default function StickyHeadTable() {
                                 <TableBody>
                                     {visibleRows.length===0 ? (
                                         <TableRow>
-                                        <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#54311a', borderBottom: '1px solid #BC6C25' }}>
+                                        <TableCell colSpan={isSmallScreen ? 2 : 3} align="center" sx={{ color: '#424242', borderBottom: '1px solid #424242' }}>
                                             There are no assigned routines
                                         </TableCell>
                                         </TableRow>
                                     ) : (
                                         visibleRows.map((row) => (
                                         <TableRow onClick={() => handleSelectEvent(row)} hover tabIndex={-1} key={row.id} sx={{ cursor: 'pointer', borderBottom: '1px solid #ccc' }}>
-                                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                            <TableCell component="th" scope="row" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto' }}>
                                             {row.routine}
                                             </TableCell>
-                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', borderRight: '1px solid #BC6C25', color: '#54311a' }}>
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242', borderRight: '1px solid #424242', color: '#424242' }}>
                                             {row.day}
                                             </TableCell>
                                             {!isSmallScreen && (
-                                            <TableCell align="right" sx={{ borderBottom: '1px solid #BC6C25', color: '#54311a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
+                                            <TableCell align="right" sx={{ borderBottom: '1px solid #424242', color: '#424242', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>
                                                 {row.owner}
                                             </TableCell>
                                             )}
@@ -384,13 +424,13 @@ export default function StickyHeadTable() {
                 <div className="Modal" onClick={handleCloseModal}>
                     <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
                         <h2>Routine details</h2>
-                        <p><strong>Name:</strong> {routine.name}</p>
-                        <p><strong>Description:</strong> {routine.description}</p>
+                        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {routine.name}</p>
+                        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {routine.description}</p>
                         <p><strong>Day:</strong> {routine.day}</p>
                         <p><strong>Exercises:</strong> {routine.excercises ? routine.excercises.length : 0}</p>
-                        <p><strong>Teacher:</strong> {routine.owner}</p>
+                        <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Owner:</strong> {routine.owner}</p>
                         <button onClick={handleViewExercises}>View exercises</button>
-                        <button onClick={handleCloseModal}>Close</button>
+                        <button onClick={handleCloseModal} style={{marginLeft:'10px'}}>Close</button>
                     </div>
                 </div>
             )}
@@ -422,13 +462,13 @@ export default function StickyHeadTable() {
                                 </Table>
                             </TableContainer>
                         </Paper>
-                        <button onClick={handleViewExercises}>Close</button>
+                        <button onClick={handleViewExercises} style={{marginTop:'10px'}}>Close</button>
                     </div>
                 </div>
             )}
             {openCircularProgress && (
                 <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
-                    <CircularProgress color="inherit" />
+                    <Loader></Loader>
                 </Backdrop>
             )}
             { warningFetchingUserRoutines ? (
