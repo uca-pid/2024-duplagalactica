@@ -51,6 +51,18 @@ function UsserClasses() {
   const isMobileScreen = useMediaQuery('(min-height:750px)');
   const [maxHeight, setMaxHeight] = useState('600px');
   const [warningConnection, setWarningConnection] = useState(false);
+  const [califyModal, setCalifyModal] = useState(false);
+  const [stars, setStars] = useState(0);
+  const [comment, setComment] = useState('');
+
+  const handleChangeCalifyModal = () => {
+    setCalifyModal(!califyModal);
+  }
+
+  const handleStarsChange = (e) => {
+    const newStars = parseInt(e.target.value);
+    setStars(newStars);
+  }
 
   function formatDate(date) {
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
@@ -288,7 +300,7 @@ useEffect(() => {
                         <div>
                           <MDBBtn outline color="dark" rounded size="sm" className="mx-1"  style={{color: '#424242' }}>Capacity {event.capacity}</MDBBtn>
                           <MDBBtn outline color="dark" rounded size="sm" className="mx-1" style={{color: '#424242' }}>{event.permanent==='Si' ? 'Every week' : 'Just this day'}</MDBBtn>
-                          <MDBBtn outline color="dark" floating size="sm" style={{color: '#424242' }}><MDBIcon fas icon="comment" /></MDBBtn>
+                          <MDBBtn outline color="dark" rounded size="sm" className="mx-1" style={{color: '#424242' }} onClick={handleChangeCalifyModal}>Calify</MDBBtn>
                         </div>
                       </div>
                     </div>
@@ -541,22 +553,55 @@ useEffect(() => {
       )}
       </>
       )}
-            {selectedEvent && (
-        // <div className="Modal" onClick={handleCloseModal}>
-        //   <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
-        //     <h2>Class details:</h2>
-        //     <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Name:</strong> {selectedEvent.name}</p>
-        //     <p><strong>Date:</strong> {formatDate(new Date(selectedEvent.dateInicio))}</p>
-        //     <p><strong>Start time:</strong> {selectedEvent.hour}</p>
-        //     <p><strong>End time:</strong> {selectedEvent.dateFin.split('T')[1].split(':').slice(0, 2).join(':')}</p>
-        //     <p><strong>Recurrent:</strong> {selectedEvent.permanent === 'Si' ? 'Yes' : 'No'}</p>
-        //     <p><strong>Participants:</strong> {selectedEvent.BookedUsers.length}/{selectedEvent.capacity}</p>
-        //     <p><strong>Coach:</strong> {selectedEvent.owner}</p>
-        //     <button onClick={() => handleUnbookClass(selectedEvent.id)}>Unbook</button>
-        //     <button onClick={handleCloseModal} style={{marginLeft:'10px'}}>Close</button>
-        //   </div>
-        // </div>
+      {selectedEvent && (
         <ECommerce event={selectedEvent}/>
+      )}
+      {califyModal && (
+        <div className="Modal" onClick={handleChangeCalifyModal}>
+          <div className="Modal-Content" onClick={(e) => e.stopPropagation()}>
+            <h2 style={{marginBottom: '0px'}}>Class</h2>
+            <p style={{
+                marginTop: '5px',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '100%',
+                textAlign: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                {selectedEvent.name}
+            </p>
+            <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+                <div className="input-small-container">
+                    <label htmlFor="stars" style={{color:'#14213D'}}>Stars:</label>
+                    <input 
+                    type="number" 
+                    id="stars" 
+                    name="stars" 
+                    value={stars}
+                    min="1"
+                    step='1'
+                    max="5"
+                    onChange={handleStarsChange}
+                    />
+                </div>
+                <div className="input-small-container">
+                    <label htmlFor="comment" style={{color:'#14213D'}}>Comment:</label>
+                    <input 
+                    type="text" 
+                    id="comment" 
+                    name="comment" 
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder='Optionally add a comment'
+                    />
+                </div>
+            </div>
+            <button onClick={handleChangeCalifyModal}>Cancel</button>
+            <button onClick={handleChangeCalifyModal} style={{marginLeft:'10px'}}>Send</button>
+          </div>
+        </div>
       )}
     </div>
   );

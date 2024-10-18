@@ -45,6 +45,7 @@ export default function TemporaryDrawer() {
   const goToAllRoutines = () => navigate('/all-routines');
   const goToTopRoutines = () => navigate('/top-routines');
   const goToCoachGraphics = () => navigate('/coach-graphics');
+  const goToCoachMemberships = () => navigate('/coach-memberships');
 
   const navigateTo = (index) => {
     const routes = [
@@ -58,6 +59,7 @@ export default function TemporaryDrawer() {
       goToAllRoutines,
       goToTopRoutines,
       goToCoachGraphics,
+      goToCoachMemberships,
       goToLogout,
     ];
     routes[index]();
@@ -103,7 +105,7 @@ export default function TemporaryDrawer() {
   const DrawerListCoach = (
     <Box sx={{ width: 250, background: '#424242' }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Home', 'Profile', 'Create class', 'My classes', 'Managing', 'Exercises', 'My routines', 'All routines', 'Top routines', 'Graphics', 'Logout'].map((text, index) => (
+        {['Home', 'Profile', 'Create class', 'My classes', 'Managing', 'Exercises', 'My routines', 'All routines', 'Top routines', 'Graphics', 'Memberships', 'Logout'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateTo(index)}>
               <ListItemIcon>
@@ -117,7 +119,8 @@ export default function TemporaryDrawer() {
                 {index === 7 && <DirectionsRunIcon sx={{ color: '#48CFCB' }} />}
                 {index === 8 && <TimelineIcon sx={{ color: '#48CFCB' }} />}
                 {index === 9 && <SignalCellularAltIcon sx={{ color: '#48CFCB' }} />}
-                {index === 10 && <ExitToApp sx={{ color: '#48CFCB' }} />}
+                {index === 10 && <SignalCellularAltIcon sx={{ color: '#48CFCB' }} />}
+                {index === 11 && <ExitToApp sx={{ color: '#48CFCB' }} />}
               </ListItemIcon>
               <ListItemText primary={text} primaryTypographyProps={{ sx: { color: '#48CFCB', fontWeight: 'bold' } }} />
             </ListItemButton>

@@ -20,6 +20,7 @@ import CoachExercises from './Components/CoachExercises.jsx';
 import AllRoutines from './Components/AllRoutines.jsx';
 import TopRoutines from './Components/TopRoutines.jsx';
 import CoachGraphics from './Components/CoachGraphics.jsx';
+import CoachMemberships from './Components/CoachMemberships.jsx';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route path="/all-routines" element={<AllRoutines/>}/>
         <Route path="/top-routines" element={<TopRoutines/>}/>
         <Route path="/coach-graphics" element={<CoachGraphics/>}/>
+        <Route path="/coach-memberships" element={<CoachMemberships/>}/>
       </Routes>
     </Router>
   );
