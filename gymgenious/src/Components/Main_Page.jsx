@@ -20,11 +20,8 @@ import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import CloseIcon from '@mui/icons-material/Close';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
 import Loader from '../real_components/loader.jsx'
-
-    
-
-
-
+import Button from '@mui/material/Button';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
@@ -44,6 +41,9 @@ export default function Main_Page() {
   const [califyModal, setCalifyModal] = useState(false);
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState('');
+  const [openSearch, setOpenSearch] = useState(false);
+  const [filterClasses, setFilterClasses] = useState('');
+  const [totalClasses, setTotalClasses] = useState([]);
 
   const handleChangeCalifyModal = () => {
     setCalifyModal(!califyModal);
@@ -53,6 +53,10 @@ export default function Main_Page() {
     const newStars = parseInt(e.target.value);
     setStars(newStars);
   }
+
+  const handleOpenSearch = () => {
+    setOpenSearch(true);
+  };
 
   
   function formatDate(date) {
@@ -266,7 +270,8 @@ export default function Main_Page() {
       });
       setOpenCircularProgress(false);
       setEvents(calendarEvents);
-      setClasses(dataWithSala)
+      setClasses(dataWithSala);
+      setTotalClasses(dataWithSala);
     } catch (error) {
       console.error("Error fetching classes:", error);
       setOpenCircularProgress(false);
@@ -384,6 +389,18 @@ export default function Main_Page() {
     }
   }, [userMail, showCalendar]);
 
+  useEffect(() => {
+    if(filterClasses!=''){
+      const filteredClassesSearcher = classes.filter(item => 
+        item.name.toLowerCase().startsWith(filterClasses.toLowerCase())
+      );
+      setClasses(filteredClassesSearcher);
+    } else {
+      setClasses(totalClasses);
+    }
+
+  }, [filterClasses]);
+
   const fetchUser = async () => {
     setOpenCircularProgress(true);
     try {
@@ -445,15 +462,101 @@ export default function Main_Page() {
           <Calendar events={events} onSelectEvent={handleSelectEvent} />
         </div>
         ) : (
-        <div className="Table-Container">
-          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>
-        </div>
+          <>
+            <div className='leftBar' style={{zIndex:'1000'}}>
+              {openSearch ? (
+                  <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search..."
+                  style={{
+                    position: 'absolute',
+                    top: '0.5vh',
+                    left: '7vh',
+                    width: '60vh',
+                    height: '5vh',
+                    borderRadius: '10px',
+                    padding: '0 10px',
+                    transition: 'all 0.3s ease',
+                  }}
+                  id={filterClasses}
+                  onChange={(e) => setFilterClasses(e.target.value)} 
+                />
+              ) : (
+                <Button onClick={handleOpenSearch}
+                style={{
+                  backgroundColor: '#48CFCB',
+                  position: 'absolute',
+                  borderRadius: '50%',
+                  top: '0.5vh',
+                  left: '7vh ',
+                  width: '5vh',
+                  height: '5vh',
+                  minWidth: '0',
+                  minHeight: '0',
+                  padding: '0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <SearchIcon sx={{ color: '#424242' }} />
+              </Button>
+              )}
+          </div>
+          <div className="Table-Container">
+            <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>
+          </div>
+        </>
       )}
       </>
   ) : (
-    <div className="Table-Container">
-          <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>
-    </div>
+    <>
+    <div className='leftBar' style={{zIndex:'1000'}}>
+      {openSearch ? (
+          <input
+          type="text"
+          className="search-input"
+          placeholder="Search..."
+          style={{
+            position: 'absolute',
+            top: '0.5vh',
+            left: '7vh',
+            width: '60vh',
+            height: '5vh',
+            borderRadius: '10px',
+            padding: '0 10px',
+            transition: 'all 0.3s ease',
+          }}
+          id={filterClasses}
+          onChange={(e) => setFilterClasses(e.target.value)} 
+        />
+      ) : (
+        <Button onClick={handleOpenSearch}
+        style={{
+          backgroundColor: '#48CFCB',
+          position: 'absolute',
+          borderRadius: '50%',
+          top: '0.5vh',
+          left: '7vh ',
+          width: '5vh',
+          height: '5vh',
+          minWidth: '0',
+          minHeight: '0',
+          padding: '0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <SearchIcon sx={{ color: '#424242' }} />
+      </Button>
+      )}
+  </div>
+  <div className="Table-Container">
+    <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>
+  </div>
+</>
   )}
   {selectedEvent && (
     <ECommerce event={selectedEvent}/>
