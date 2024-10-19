@@ -53,8 +53,8 @@ export default function CoachExercises() {
     const[fetchExer,setExercise] = useState({});
 
     const [openSearch, setOpenSearch] = useState(false);
-    const [filterClasses, setFilterClasses] = useState('');
-    const [totalClasses, setTotalClasses] = useState([]);
+    const [filterExercises, setFilterExercises] = useState('');
+    const [totalExercises, setTotalExercises] = useState([]);
   
     const handleOpenSearch = () => {
       setOpenSearch(true);
@@ -62,7 +62,7 @@ export default function CoachExercises() {
   
     const handleCloseSearch = () => {
       setOpenSearch(false);
-      setExercises(totalClasses);
+      setExercises(totalExercises);
     };
 
 
@@ -150,7 +150,7 @@ export default function CoachExercises() {
             const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
             const totalExercisesCorrected = await correctExercisesData(totalExercises);
             setExercises(totalExercisesCorrected);
-            setTotalClasses(totalExercisesCorrected);
+            setTotalExercises(totalExercisesCorrected);
             setOpenCircularProgress(false);
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -163,16 +163,16 @@ export default function CoachExercises() {
     };
 
     useEffect(() => {
-        if(filterClasses!=''){
-          const filteredClassesSearcher = totalClasses.filter(item => 
-            item.name.toLowerCase().startsWith(filterClasses.toLowerCase())
+        if(filterExercises!=''){
+          const filteredExercisesSearcher = totalExercises.filter(item => 
+            item.name.toLowerCase().startsWith(filterExercises.toLowerCase())
           );
-          setExercises(filteredClassesSearcher);
+          setExercises(filteredExercisesSearcher);
         } else {
-            setExercises(totalClasses);
+            setExercises(totalExercises);
         }
     
-      }, [filterClasses]);
+      }, [filterExercises]);
 
     const verifyToken = async (token) => {
         try {
@@ -335,8 +335,8 @@ export default function CoachExercises() {
                                 padding: '0 10px',
                                 transition: 'all 0.3s ease',
                                 }}
-                                id={filterClasses}
-                                onChange={(e) => setFilterClasses(e.target.value)} 
+                                id={filterExercises}
+                                onChange={(e) => setFilterExercises(e.target.value)} 
                             />
                             ) : (
                             <Button onClick={handleOpenSearch}

@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 import Loader from '../real_components/loader.jsx';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
+import SearchIcon from '@mui/icons-material/Search';
 
 function intersection(a, b) {
   return a.filter((value) => b.includes(value));
@@ -30,6 +31,19 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [warningFetchingUsers, setWarningFetchingUsers] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:950px)');
+
+  const [openSearch, setOpenSearch] = useState(false);
+  const [filterExercises, setFilterExercises] = useState('');
+  const [totalExercises, setTotalExercises] = useState([]);
+
+  const handleOpenSearch = () => {
+    setOpenSearch(true);
+  };
+
+  const handleCloseSearchExercises = () => {
+    setOpenSearch(false);
+    setUsers(totalExercises);
+  };
   
   useEffect(() => {
     onUsersChange(selectedUsers); 
@@ -71,6 +85,7 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
       const filteredRowsRight = allUsers.filter(user => assignedUsers.includes(user.Mail));
       setUsers(filteredRows);
       setSelectedUsers(filteredRowsRight);
+      setTotalExercises(filteredRows.concat(filteredRowsRight));
       setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -83,6 +98,19 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
   };
 
   useEffect(() => {
+    console.log(totalExercises)
+    if(filterExercises!=''){
+      const filteredExercisesSearcher = totalExercises.filter(item => 
+        item.Mail.toLowerCase().startsWith(filterExercises.toLowerCase())
+      );
+      setUsers(filteredExercisesSearcher);
+    } else {
+        setUsers(totalExercises);
+    }
+  
+  }, [filterExercises]);
+
+  useEffect(() => {
     if (routine && routineDay) {
       fetchUsers();
     } else {
@@ -92,10 +120,12 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
   }, [routine,routineDay]);
 
   const handleAddUser = (user) => {
+      handleCloseSearchExercises();
       setSelectedUsers([...selectedUsers, user]);
   };
 
   const handleDeleteUser = (user) => {
+    handleCloseSearchExercises();
     const updatedSelectedUsers = selectedUsers.filter(stateUser => stateUser.Mail !== user.Mail);
     setSelectedUsers(updatedSelectedUsers);
   }
@@ -143,19 +173,50 @@ export default function UserAssignment({ onUsersChange, routine,routineDay }) {
             </Typography>
           </Grid>
         ) : (
-          <>
-            {users.length===0 ? (
-              <Grid item>
-              <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
-                There are no users
-              </Typography>
-            </Grid>
-            ) : (
               <div className="input-small-container">
-              <Grid className='grid-transfer-content-users' item>{customList(users)}</Grid>
+                {openSearch ? (
+                      <input
+                      type="text"
+                      className="search-input"
+                      placeholder="Search..."
+                      style={{
+                      borderRadius: '10px',
+                      transition: 'all 0.3s ease',
+                      width: isSmallScreen ? '100%' : '50%',
+                      marginBottom:'1%'
+                      }}
+                      id={filterExercises}
+                      onChange={(e) => setFilterExercises(e.target.value)} 
+                  />
+                  ) : (
+                  <Button onClick={handleOpenSearch}
+                  style={{
+                      backgroundColor: '#48CFCB',  
+                      marginBottom:'1%',
+                      borderRadius: '50%',
+                      width: '5vh',
+                      height: '5vh',
+                      minWidth: '0',
+                      minHeight: '0',
+                      padding: '0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                  }}
+                  >
+                  <SearchIcon sx={{ color: '#424242' }} />
+                  </Button>
+                  )}
+                  {users.length===0 ? (
+                    <Grid item>
+                    <Typography sx={{ color: '#424242', fontWeight: 'bold', textAlign: 'center', backgroundColor: 'white' }}>
+                      There are no users
+                    </Typography>
+                  </Grid>
+                  ) : (
+                <Grid className='grid-transfer-content-users' item>{customList(users)}</Grid>
+                  )}
               </div>
-            )}
-          </>
         )}
       {openCircularProgress ? (
         <Backdrop

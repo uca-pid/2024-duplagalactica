@@ -24,7 +24,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
-import Loader from '../real_components/loader.jsx'
+import Loader from '../real_components/loader.jsx';
+import Button from '@mui/material/Button';
+import SearchIcon from '@mui/icons-material/Search';
 
 const day = (dateString) => {
   const date = new Date(dateString);
@@ -71,6 +73,32 @@ function CoachRoutines() {
   const [timing, setTiming] = useState(0);
   const [errorAddExercise, setErrorAddExercise] = useState(false);
   const [errorEditRoutine, setErrorEditRoutine] = useState(false);
+
+  const [openSearch, setOpenSearch] = useState(false);
+  const [filterRoutines, setFilterRoutines] = useState('');
+  const [totalRoutines, setTotalRoutines] = useState([]);
+
+  const handleOpenSearch = () => {
+    setOpenSearch(true);
+  };
+
+  const handleCloseSearch = () => {
+    setOpenSearch(false);
+    setRoutines(totalRoutines);
+  };
+
+  const [openSearchExercises, setOpenSearchExercises] = useState(false);
+  const [filterExercises, setFilterExercises] = useState('');
+  const [totalExercises, setTotalExercises] = useState([]);
+
+  const handleOpenSearchExercises = () => {
+    setOpenSearchExercises(true);
+  };
+
+  const handleCloseSearchExercises = () => {
+    setOpenSearchExercises(false);
+    setExercises(totalExercises);
+  };
 
   const handleSeriesChange = (e) => {
     const newSeries = parseInt(e.target.value);
@@ -125,6 +153,7 @@ function CoachRoutines() {
   };
 
   const handleSelectExercise = (exercise) => {
+    handleCloseSearchExercises();
     setSelectedExercise(exercise);
     if(routineExercises?.some(stateExercise => stateExercise.id === exercise.id)){
       setOpenAdvise(true);
@@ -142,6 +171,7 @@ function CoachRoutines() {
     };
 
     const handleCloseEditRoutine = () => {
+      handleCloseSearchExercises();
       setErrorEditRoutine(false);
       setEditClass(false);
       setName('');
@@ -209,6 +239,7 @@ function CoachRoutines() {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+    handleCloseSearch();
   };
 
 
@@ -407,8 +438,8 @@ function CoachRoutines() {
                 cant_asignados: totalAssignedUsers,
             };
         });
-
         setRoutines(routinesWithAssignedCount);
+        setTotalRoutines(routinesWithAssignedCount);
         setOpenCircularProgress(false);
     } catch (error) {
         console.error("Error fetching rutinas:", error);
@@ -420,7 +451,16 @@ function CoachRoutines() {
     }
 };
 
-
+useEffect(() => {
+  if(filterRoutines!=''){
+    const filteredRoutinesSearcher = totalRoutines.filter(item => 
+      item.name.toLowerCase().startsWith(filterRoutines.toLowerCase())
+    );
+    setRoutines(filteredRoutinesSearcher);
+  } else {
+    setRoutines(totalRoutines);
+  }
+}, [filterRoutines]);
 
 const fetchExercises = async () => {
   setOpenCircularProgress(true);
@@ -451,6 +491,7 @@ const fetchExercises = async () => {
     const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises);
     console.log(totalExercises)
     setExercises(totalExercises);
+    setTotalExercises(totalExercises);
     setOpenCircularProgress(false);
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -461,6 +502,18 @@ const fetchExercises = async () => {
     }, 3000);
   }
 };
+
+useEffect(() => {
+  if(filterExercises!=''){
+    const filteredExercisesSearcher = totalExercises.filter(item => 
+      item.name.toLowerCase().startsWith(filterExercises.toLowerCase())
+    );
+    setExercises(filteredExercisesSearcher);
+  } else {
+      setExercises(totalExercises);
+  }
+
+}, [filterExercises]);
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
@@ -567,6 +620,43 @@ const fetchExercises = async () => {
         ) : (
           <>
             <NewLeftBar/>
+            <div className='input-container' style={{marginLeft: '50px', width: '30%', position: 'absolute', top: '0.5%'}}>
+                        <div className='input-small-container'>
+                            {openSearch ? (
+                                <input
+                                type="text"
+                                className="search-input"
+                                placeholder="Search..."
+                                style={{
+                                position: 'absolute',
+                                borderRadius: '10px',
+                                padding: '0 10px',
+                                transition: 'all 0.3s ease',
+                                }}
+                                id={filterRoutines}
+                                onChange={(e) => setFilterRoutines(e.target.value)} 
+                            />
+                            ) : (
+                            <Button onClick={handleOpenSearch}
+                            style={{
+                                backgroundColor: '#48CFCB',
+                                position: 'absolute',
+                                borderRadius: '50%',
+                                width: '5vh',
+                                height: '5vh',
+                                minWidth: '0',
+                                minHeight: '0',
+                                padding: '0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            >
+                            <SearchIcon sx={{ color: '#424242' }} />
+                            </Button>
+                            )}
+                            </div>
+                    </div>
             <div className="Table-Container">
             <Box sx={{ width: '100%', flexWrap: 'wrap', background: '#F5F5F5', border: '2px solid #424242', borderRadius: '10px' }}>
               <Paper
@@ -746,7 +836,43 @@ const fetchExercises = async () => {
                     </div>
                     <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
                       <div className="input-small-container">
+                          
+                          <div style={{flexDirection: 'column', display: 'flex'}}>
                           <label htmlFor="users" style={{ color: '#14213D' }}>Exercises:</label>
+                          {openSearchExercises ? (
+                                <input
+                                type="text"
+                                className="search-input"
+                                placeholder="Search..."
+                                style={{
+                                borderRadius: '10px',
+                                transition: 'all 0.3s ease',
+                                width: isSmallScreen ? '100%' : '50%',
+                                marginBottom:'1%'
+                                }}
+                                id={filterExercises}
+                                onChange={(e) => setFilterExercises(e.target.value)} 
+                            />
+                            ) : (
+                            <Button onClick={handleOpenSearchExercises}
+                            style={{
+                                backgroundColor: '#48CFCB',  
+                                marginBottom:'1%',
+                                borderRadius: '50%',
+                                width: '5vh',
+                                height: '5vh',
+                                minWidth: '0',
+                                minHeight: '0',
+                                padding: '0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            >
+                            <SearchIcon sx={{ color: '#424242' }} />
+                            </Button>
+                            )}
+                </div>
                           {exercises.length!=0 ? (
                             <Grid className='grid-transfer-content' item>{customList(exercises)}</Grid>
                           ) : (
@@ -757,8 +883,8 @@ const fetchExercises = async () => {
                           {errorEditRoutine && (<p style={{color: 'red', margin: '0px'}}>No changes were done</p>)}
                       </div>
                     </div>
-                    <button onClick={handleCloseEditRoutine} className='button_login'>Cancel</button>
-                    <button onClick={saveRoutine} className='button_login'>Save changes</button>
+                    <button onClick={handleCloseEditRoutine} className='button-create-account2'>Cancel</button>
+                    <button onClick={saveRoutine} style={{ marginLeft: '10px'}} className='button-create-account2'>Save changes</button>
                 </div>
               </div>
             )}

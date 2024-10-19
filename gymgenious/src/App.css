@@ -1100,8 +1100,8 @@ iframe {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
   left: 10%;
-  top: 10%;
-  height: 80%;
+  top: 5%;
+  height: 90%;
   text-align: center;
   position:absolute;
 }
@@ -1226,11 +1226,10 @@ iframe {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
   left: 10%;
-  top: 10%;
-  height: 80%;
+  top: 8%;
+  height: auto;
   text-align: center;
   position: absolute;
-  overflow-y: auto;
 }
 
 .assign-routine-content {
@@ -1807,3 +1806,8 @@ iframe {
   height: 100%;
   transition-delay: 300ms;
 }
+
+.css-132pz3d-MuiChartsAxis-root-MuiChartsXAxis-root .MuiChartsAxis-tickLabel{
+  font-size: 0px !important;
+}
+
