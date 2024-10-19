@@ -19,7 +19,10 @@ import Slide from '@mui/material/Slide';
 import { jwtDecode } from "jwt-decode";
 import CheckIcon from '@mui/icons-material/Check';
 import { useNavigate } from 'react-router-dom';
-import Loader from '../real_components/loader.jsx'
+import Loader from '../real_components/loader.jsx';
+import Button from '@mui/material/Button';
+import SearchIcon from '@mui/icons-material/Search';
+
 export default function CoachExercises() {
     const [order, setOrder] = useState('asc');
     const [id,setId] = useState()
@@ -47,7 +50,20 @@ export default function CoachExercises() {
     const[fetchName,setNameFetch] = useState('')
     const[fetchDes,setDescFetch] = useState('')
     const[fetchOwner,setOwnerFetch] = useState('')
-    const[fetchExer,setExercise] = useState({})
+    const[fetchExer,setExercise] = useState({});
+
+    const [openSearch, setOpenSearch] = useState(false);
+    const [filterClasses, setFilterClasses] = useState('');
+    const [totalClasses, setTotalClasses] = useState([]);
+  
+    const handleOpenSearch = () => {
+      setOpenSearch(true);
+    };
+  
+    const handleCloseSearch = () => {
+      setOpenSearch(false);
+      setExercises(totalClasses);
+    };
 
 
     const handleRequestSort = (event, property) => {
@@ -67,6 +83,7 @@ export default function CoachExercises() {
 
     const handleSelectEvent = (event) => {
         setSelectedEvent(event);
+        handleCloseSearch();
     };
 
     const handleCloseModalEvent = () => {
@@ -133,6 +150,7 @@ export default function CoachExercises() {
             const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
             const totalExercisesCorrected = await correctExercisesData(totalExercises);
             setExercises(totalExercisesCorrected);
+            setTotalClasses(totalExercisesCorrected);
             setOpenCircularProgress(false);
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -143,6 +161,18 @@ export default function CoachExercises() {
             }, 3000);
         }
     };
+
+    useEffect(() => {
+        if(filterClasses!=''){
+          const filteredClassesSearcher = totalClasses.filter(item => 
+            item.name.toLowerCase().startsWith(filterClasses.toLowerCase())
+          );
+          setExercises(filteredClassesSearcher);
+        } else {
+            setExercises(totalClasses);
+        }
+    
+      }, [filterClasses]);
 
     const verifyToken = async (token) => {
         try {
@@ -292,6 +322,43 @@ export default function CoachExercises() {
             ) : (
                 <>
                     <NewLeftBar />
+                    <div className='input-container' style={{marginLeft: '50px', width: '30%', position: 'absolute', top: '0.5%'}}>
+                        <div className='input-small-container'>
+                            {openSearch ? (
+                                <input
+                                type="text"
+                                className="search-input"
+                                placeholder="Search..."
+                                style={{
+                                position: 'absolute',
+                                borderRadius: '10px',
+                                padding: '0 10px',
+                                transition: 'all 0.3s ease',
+                                }}
+                                id={filterClasses}
+                                onChange={(e) => setFilterClasses(e.target.value)} 
+                            />
+                            ) : (
+                            <Button onClick={handleOpenSearch}
+                            style={{
+                                backgroundColor: '#48CFCB',
+                                position: 'absolute',
+                                borderRadius: '50%',
+                                width: '5vh',
+                                height: '5vh',
+                                minWidth: '0',
+                                minHeight: '0',
+                                padding: '0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            >
+                            <SearchIcon sx={{ color: '#424242' }} />
+                            </Button>
+                            )}
+                            </div>
+                    </div>
                     {openCircularProgress && (
                         <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })} open={openCircularProgress}>
                             <Loader></Loader>

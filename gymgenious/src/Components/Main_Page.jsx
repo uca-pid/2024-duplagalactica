@@ -58,6 +58,10 @@ export default function Main_Page() {
     setOpenSearch(true);
   };
 
+  const handleCloseSearch = () => {
+    setOpenSearch(false);
+    setClasses(totalClasses);
+  };
   
   function formatDate(date) {
     const month = String(date.getMonth() + 1).padStart(2, '0'); 
@@ -194,6 +198,7 @@ export default function Main_Page() {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+    handleCloseSearch();
   };
 
   const handleCloseModal = () => {
@@ -391,7 +396,7 @@ export default function Main_Page() {
 
   useEffect(() => {
     if(filterClasses!=''){
-      const filteredClassesSearcher = classes.filter(item => 
+      const filteredClassesSearcher = totalClasses.filter(item => 
         item.name.toLowerCase().startsWith(filterClasses.toLowerCase())
       );
       setClasses(filteredClassesSearcher);
@@ -463,46 +468,42 @@ export default function Main_Page() {
         </div>
         ) : (
           <>
-            <div className='leftBar' style={{zIndex:'1000'}}>
-              {openSearch ? (
-                  <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Search..."
+            <div className='input-container' style={{marginLeft: '50px', width: '30%', position: 'absolute', top: '0.5%'}}>
+              <div className='input-small-container'>
+                {openSearch ? (
+                    <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Search..."
+                    style={{
+                      position: 'absolute',
+                      borderRadius: '10px',
+                      padding: '0 10px',
+                      transition: 'all 0.3s ease',
+                    }}
+                    id={filterClasses}
+                    onChange={(e) => setFilterClasses(e.target.value)} 
+                  />
+                ) : (
+                  <Button onClick={handleOpenSearch}
                   style={{
+                    backgroundColor: '#48CFCB',
                     position: 'absolute',
-                    top: '0.5vh',
-                    left: '7vh',
-                    width: '60vh',
+                    borderRadius: '50%',
+                    width: '5vh',
                     height: '5vh',
-                    borderRadius: '10px',
-                    padding: '0 10px',
-                    transition: 'all 0.3s ease',
+                    minWidth: '0',
+                    minHeight: '0',
+                    padding: '0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                  id={filterClasses}
-                  onChange={(e) => setFilterClasses(e.target.value)} 
-                />
-              ) : (
-                <Button onClick={handleOpenSearch}
-                style={{
-                  backgroundColor: '#48CFCB',
-                  position: 'absolute',
-                  borderRadius: '50%',
-                  top: '0.5vh',
-                  left: '7vh ',
-                  width: '5vh',
-                  height: '5vh',
-                  minWidth: '0',
-                  minHeight: '0',
-                  padding: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <SearchIcon sx={{ color: '#424242' }} />
-              </Button>
-              )}
+                >
+                  <SearchIcon sx={{ color: '#424242' }} />
+                </Button>
+                )}
+                </div>
           </div>
           <div className="Table-Container">
             <EnhancedTable rows={classes} user={userMail} userType={type} handleBookClass={handleBookClass} handleUnbookClass={handleUnbookClass} handleSelectEvent={handleSelectEvent}/>

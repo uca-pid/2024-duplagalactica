@@ -26,6 +26,8 @@ import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import CloseIcon from '@mui/icons-material/Close';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+import Button from '@mui/material/Button';
+import SearchIcon from '@mui/icons-material/Search';
 
 function CouchClasses() {
   const [order, setOrder] = useState('asc');
@@ -73,6 +75,19 @@ function CouchClasses() {
   const [fetchCapacity, setFetchCapacity] = useState('')
   const [failureErrors, setFailureErrors] = useState(false);
   const [errorForm, setErrorForm] = useState(false);
+
+  const [openSearch, setOpenSearch] = useState(false);
+  const [filterClasses, setFilterClasses] = useState('');
+  const [totalClasses, setTotalClasses] = useState([]);
+
+  const handleOpenSearch = () => {
+    setOpenSearch(true);
+  };
+
+  const handleCloseSearch = () => {
+    setOpenSearch(false);
+    setClasses(totalClasses);
+  };
 
   const day = (dateString) => {
     const date = new Date(dateString);
@@ -155,6 +170,8 @@ function CouchClasses() {
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
+    handleCloseSearch();
+
   };
   const handleCloseModal = () => {
     setSelectedEvent(null);
@@ -410,6 +427,7 @@ function CouchClasses() {
         };
       });
       setClasses(dataWithSala);
+      setTotalClasses(dataWithSala);
       setOpenCircularProgress(false);
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -421,6 +439,17 @@ function CouchClasses() {
     }
   };
 
+  useEffect(() => {
+    if(filterClasses!=''){
+      const filteredClassesSearcher = totalClasses.filter(item => 
+        item.name.toLowerCase().startsWith(filterClasses.toLowerCase())
+      );
+      setClasses(filteredClassesSearcher);
+    } else {
+      setClasses(totalClasses);
+    }
+
+  }, [filterClasses]);
 
   const verifyToken = async (token) => {
     setOpenCircularProgress(true);
@@ -610,6 +639,43 @@ function CouchClasses() {
         ) : (
           <>
         <NewLeftBar/>
+        <div className='input-container' style={{marginLeft: '50px', width: '30%', position: 'absolute', top: '0.5%'}}>
+              <div className='input-small-container'>
+                {openSearch ? (
+                    <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Search..."
+                    style={{
+                      position: 'absolute',
+                      borderRadius: '10px',
+                      padding: '0 10px',
+                      transition: 'all 0.3s ease',
+                    }}
+                    id={filterClasses}
+                    onChange={(e) => setFilterClasses(e.target.value)} 
+                  />
+                ) : (
+                  <Button onClick={handleOpenSearch}
+                  style={{
+                    backgroundColor: '#48CFCB',
+                    position: 'absolute',
+                    borderRadius: '50%',
+                    width: '5vh',
+                    height: '5vh',
+                    minWidth: '0',
+                    minHeight: '0',
+                    padding: '0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <SearchIcon sx={{ color: '#424242' }} />
+                </Button>
+                )}
+                </div>
+          </div>
         {openCircularProgress ? (
             <Backdrop open={openCircularProgress} sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}>
                 <Loader></Loader>
