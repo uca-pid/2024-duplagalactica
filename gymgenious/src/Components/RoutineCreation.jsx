@@ -16,7 +16,9 @@ import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import Loader from '../real_components/loader.jsx'
+import Loader from '../real_components/loader.jsx';
+import Button from '@mui/material/Button';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function RoutineCreation() {
     const [name, setName] = useState('');
@@ -40,6 +42,19 @@ export default function RoutineCreation() {
     const [reps, setReps] = useState(Array(series).fill(''));
     const [timing, setTiming] = useState(0);
     const [errorAddExercise, setErrorAddExercise] = useState(false);
+
+    const [openSearch, setOpenSearch] = useState(false);
+    const [filterExercises, setFilterExercises] = useState('');
+    const [totalExercises, setTotalExercises] = useState([]);
+  
+    const handleOpenSearch = () => {
+      setOpenSearch(true);
+    };
+  
+    const handleCloseSearch = () => {
+      setOpenSearch(false);
+      setExercises(totalExercises);
+    };
 
     const handleSeriesChange = (e) => {
       const newSeries = parseInt(e.target.value);
@@ -94,6 +109,7 @@ export default function RoutineCreation() {
     };
 
     const handleSelectExercise = (exercise) => {
+      handleCloseSearch();
       setSelectedExercise(exercise);
       if(routineExercises?.some(stateExercise => stateExercise.id === exercise.id)){
         setOpenAdvise(true);
@@ -177,6 +193,7 @@ export default function RoutineCreation() {
         const exercisesDataFromTrainMate = await response2.json();
         const totalExercises = exercisesData.concat(exercisesDataFromTrainMate.exercises)
         setExercises(totalExercises);
+        setTotalExercises(totalExercises);
         setOpenCircularProgress(false);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -187,6 +204,18 @@ export default function RoutineCreation() {
         }, 3000);
       }
     };
+
+    useEffect(() => {
+      if(filterExercises!=''){
+        const filteredExercisesSearcher = totalExercises.filter(item => 
+          item.name.toLowerCase().startsWith(filterExercises.toLowerCase())
+        );
+        setExercises(filteredExercisesSearcher);
+      } else {
+          setExercises(totalExercises);
+      }
+  
+    }, [filterExercises]);
 
     const validateForm = () => {
       let errors = [];
@@ -325,7 +354,42 @@ export default function RoutineCreation() {
           </div>
           <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
             <div className="input-small-container">
+                <div style={{flexDirection: 'column', display: 'flex'}}>
                 <label htmlFor="users" style={{ color: '#424242' }}>Exercises:</label>
+                {openSearch ? (
+                                <input
+                                type="text"
+                                className="search-input"
+                                placeholder="Search..."
+                                style={{
+                                borderRadius: '10px',
+                                transition: 'all 0.3s ease',
+                                width: isSmallScreen ? '100%' : '50%',
+                                marginBottom:'1%'
+                                }}
+                                id={filterExercises}
+                                onChange={(e) => setFilterExercises(e.target.value)} 
+                            />
+                            ) : (
+                            <Button onClick={handleOpenSearch}
+                            style={{
+                                backgroundColor: '#48CFCB',  
+                                marginBottom:'1%',
+                                borderRadius: '50%',
+                                width: '5vh',
+                                height: '5vh',
+                                minWidth: '0',
+                                minHeight: '0',
+                                padding: '0',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            >
+                            <SearchIcon sx={{ color: '#424242' }} />
+                            </Button>
+                            )}
+                </div>
                 {exercises.length!=0 ? (
                   <Grid className='grid-transfer-content' item>{customList(exercises)}</Grid>
                 ) : (
