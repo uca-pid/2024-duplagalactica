@@ -45,13 +45,10 @@ function BarAnimation({ routines, isSmallScreen }) {
       value: routine.cant_asignados, 
     }));
 
-    const colores = ['#02B2AF', '#2E96FF', '#B800D8', '#60009B', '#2731C8'];
-  
     return (
         <Box sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', width: '100%',backgroundColor:'#F5F5F5',marginTop:'10px',borderRadius:'10px',marginLeft:'2px' }}>
-          <BarChart 
+          <BarChart
             height={250}
-            colors={colores}
             series={[{
               data: routineData.slice(0, itemNb),
               valueFormatter: (item) => `${item} users`,
