@@ -31,7 +31,6 @@ export default function RoutineCreation() {
     const [openCircularProgress, setOpenCircularProgress] = useState(false);
     const [success, setSuccess] = useState(false);
     const [failure, setFailure] = useState(false);
-    const [errors, setErrors] = useState([]);
     const [failureErrors, setFailureErrors] = useState(false);
     const [warningFetchingExercises, setWarningFetchingExercises] = useState(false);
     const [openAdvise, setOpenAdvise] = useState(false);
@@ -40,12 +39,16 @@ export default function RoutineCreation() {
 
     const [series, setSeries] = useState(4);
     const [reps, setReps] = useState(Array(series).fill(''));
-    const [timing, setTiming] = useState(0);
+    const [timing, setTiming] = useState(1);
     const [errorAddExercise, setErrorAddExercise] = useState(false);
 
     const [openSearch, setOpenSearch] = useState(false);
     const [filterExercises, setFilterExercises] = useState('');
     const [totalExercises, setTotalExercises] = useState([]);
+
+    const [errorName, setErrorName] = useState(false);
+    const [errorDesc, setErrorDesc] = useState(false);
+    const [errorExercises, setErrorExercises] = useState(false);
   
     const handleOpenSearch = () => {
       setOpenSearch(true);
@@ -119,7 +122,7 @@ export default function RoutineCreation() {
         setOpenAddExercise(true);
         setSeries(4);
         setReps(Array(4).fill(''));
-        setTiming(0);
+        setTiming(1);
         setErrorAddExercise(false);
       }
     };
@@ -220,21 +223,26 @@ export default function RoutineCreation() {
     }, [filterExercises]);
 
     const validateForm = () => {
+      setErrorName(false);
+      setErrorDesc(false);
+      setErrorExercises(false);
       let errors = [];
       
       if (name === '') {
           errors.push('Please assign a name to the routine.');
+          setErrorName(true);
       }
 
       if (desc === '') {
         errors.push('Please assign a description to the routine.');
+        setErrorDesc(true);
       }
       
-      if (exercises === '') {
+      if (routineExercises?.length===0) {
         errors.push('Please select at least one exercise to assign the routine.');
+        setErrorExercises(true);
       }
 
-      setErrors(errors);
       return errors.length===0;
   }
 
@@ -332,7 +340,7 @@ export default function RoutineCreation() {
         <h2 style={{color:'#424242'}}>Create routine</h2>
         <form onSubmit={handleSubmit}>
           <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between'}}>
-            <div className="input-small-container">
+            <div className="input-small-container" style={{marginBottom: '0px'}}>
               <label htmlFor="name" style={{color:'#424242'}}>Name:</label>
               <input 
                 type="text" 
@@ -341,10 +349,11 @@ export default function RoutineCreation() {
                 value={name} 
                 onChange={(e) => setName(e.target.value)} 
               />
+              {errorName && (<p style={{color: 'red', margin: '0px'}}>Enter a name</p>)}
             </div>
           </div>
-          <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between'}}>
-          <div className="input-small-container">
+          <div className="input-create-routine-container" style={{display:'flex', justifyContent: 'space-between', marginBottom: '0px'}}>
+          <div className="input-small-container" style={{marginBottom: '0px'}}>
                   <label htmlFor="desc" style={{color:'#424242'}}>Desc:</label>
                   {/* <input 
                   type="text" 
@@ -361,10 +370,11 @@ export default function RoutineCreation() {
                   value={desc}
                   maxLength={300}
                   style={{maxHeight: '100px', width: '100%', borderRadius: '8px'}} />
+                  {errorDesc && (<p style={{color: 'red', margin: '0px'}}>Enter a description</p>)}
               </div>
           </div>
           <div className="'grid-transfer-container" style={{display:'flex', justifyContent: 'space-between'}}>
-            <div className="input-small-container">
+            <div className="input-small-container" style={{marginBottom: '0px'}}>
                 <div style={{flexDirection: 'column', display: 'flex'}}>
                 <label htmlFor="users" style={{ color: '#424242' }}>Exercises:</label>
                 {openSearch ? (
@@ -408,7 +418,7 @@ export default function RoutineCreation() {
                     There are not exercises
                   </div>
                 )}
-                
+                {errorExercises && (<p style={{color: 'red', margin: '0px'}}>Select at least one exercise</p>)}
             </div>
           </div>
           <button type="submit" className='button_login'>
@@ -550,29 +560,6 @@ export default function RoutineCreation() {
                   </Box>
               </div>
             </div>
-        ) : (
-            null
-        )}
-        { failureErrors ? (
-            <div className='alert-container'>
-                <div className='alert-content'>
-                <Box sx={{ position: 'relative', zIndex: 1 }}>
-                    <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
-                    <div>
-                        <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                        Error creating routine.
-                        </Alert>
-                        {errors.length > 0 && errors.map((error, index) => (
-                        <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                            <li>{error}</li>
-                        </Alert>
-                        ))}
-                    </div>
-                    </Slide>
-                </Box>
-                </div>
-            </div>
-          
         ) : (
             null
         )}

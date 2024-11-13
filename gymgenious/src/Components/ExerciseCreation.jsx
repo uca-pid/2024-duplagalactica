@@ -32,7 +32,7 @@ export default function ExerciseCreation() {
   const validateForm = () => {
     setErrorName(false);
     setErrorDesc(false);
-    setErrorImage(true);
+    setErrorImage(false);
     let errors = [];
     
     if (name === '') {
@@ -45,7 +45,7 @@ export default function ExerciseCreation() {
       setErrorDesc(true);
     }
 
-    if (image === null) {
+    if (image === null || image===undefined) {
       errors.push('Please enter an image');
       setErrorImage(true);
     }
