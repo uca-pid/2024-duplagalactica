@@ -28,8 +28,8 @@ const day = (dateString) => {
 };
 
 function AllRoutines() {
-  const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('name');
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('cant_asignados');
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -170,6 +170,7 @@ const handleSelectEvent = (event) => {
                 cant_asignados: totalAssignedUsers,
             };
         });
+        console.log(routinesWithAssignedCount)
         setRoutines(routinesWithAssignedCount);
         setTotalRoutines(routinesWithAssignedCount);
         setOpenCircularProgress(false);
@@ -370,23 +371,9 @@ useEffect(() => {
                           </TableCell>
                           {!isSmallScreen && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
-                              <TableSortLabel active={orderBy === 'day'} direction={orderBy === 'day' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'day')}>
+                              <TableSortLabel active={orderBy === 'owner'} direction={orderBy === 'owner' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'owner')}>
                                 Owner
-                                {orderBy === 'day' ? (
-                                    <Box component="span" sx={visuallyHidden}>
-                                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                    </Box>
-                                ) : (
-                                  null
-                                )}
-                              </TableSortLabel>
-                            </TableCell>
-                          )}
-                          {!isSmallScreen250 && (
-                            <TableCell align="right" sx={{borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
-                              <TableSortLabel active={orderBy === 'excercises.length'} direction={orderBy === 'excercises.length' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises.length')}>
-                                Exercises
-                                {orderBy === 'excercises.length' ? (
+                                {orderBy === 'owner' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -397,10 +384,24 @@ useEffect(() => {
                             </TableCell>
                           )}
                           {!isSmallScreen && (
+                            <TableCell align="right" sx={{borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
+                            <TableSortLabel active={orderBy === 'excercises'} direction={orderBy === 'excercises' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'excercises')}>
+                              Exercises
+                              {orderBy === 'excercises' ? (
+                                  <Box component="span" sx={visuallyHidden}>
+                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                  </Box>
+                              ) : (
+                                null
+                              )}
+                            </TableSortLabel>
+                          </TableCell>
+                          )}
+                          {!isSmallScreen250 && (
                             <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242', fontWeight: 'bold',color:'#424242' }}>
-                              <TableSortLabel active={orderBy === 'likes'} direction={orderBy === 'likes' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'likes')}>
-                                Likes
-                                {orderBy === 'likes' ? (
+                              <TableSortLabel active={orderBy === 'BookedUsers'} direction={orderBy === 'cant_asignados' ? order : 'asc'} onClick={(event) => handleRequestSort(event, 'cant_asignados')}>
+                                Users
+                                {orderBy === 'cant_asignados' ? (
                                     <Box component="span" sx={visuallyHidden}>
                                       {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                     </Box>
@@ -431,14 +432,14 @@ useEffect(() => {
                                     {row.owner}
                                   </TableCell>
                                 )}
-                                {!isSmallScreen250 && (
+                                {!isSmallScreen && (
                                   <TableCell align="right" sx={{ borderBottom: '1px solid #424242',borderRight: '1px solid #424242',color:'#424242' }}>
                                     {row.excercises.length}
                                   </TableCell>
                                 )}
-                                {!isSmallScreen && (
+                                {!isSmallScreen250 && (
                                   <TableCell align="right" sx={{ borderBottom: '1px solid #424242',color:'#424242' }}>
-                                    {5} 
+                                    {row.cant_asignados} 
                                   </TableCell>
                                 )}
                               </TableRow>
@@ -485,7 +486,6 @@ useEffect(() => {
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Description:</strong> {selectedEvent.description}</p>
                   <p><strong>Exercises:</strong> {selectedEvent.excercises.length}</p>
                   <p><strong>Users:</strong> {selectedEvent.cant_asignados}</p>
-                  <p><strong>Likes:</strong> {5}</p>
                   <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 'auto'}}><strong>Owner:</strong> {selectedEvent.owner}</p>
                   <button onClick={handleViewExercises} style={{width: isSmallScreen ? '70%' : '40%'}}>View exercises</button>
                   <button onClick={handleCloseModal} style={{marginTop: isSmallScreen ? '10px' : '', marginLeft: isSmallScreen ? '' : '10px', width: isSmallScreen ? '70%' : '40%'}}>Close</button>

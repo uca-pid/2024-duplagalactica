@@ -70,7 +70,7 @@ function CoachRoutines() {
 
   const [series, setSeries] = useState(4);
   const [reps, setReps] = useState(Array(series).fill(''));
-  const [timing, setTiming] = useState(0);
+  const [timing, setTiming] = useState(1);
   const [errorAddExercise, setErrorAddExercise] = useState(false);
   const [errorEditRoutine, setErrorEditRoutine] = useState(false);
 
@@ -161,7 +161,7 @@ function CoachRoutines() {
       setOpenAddExercise(true);
       setSeries(4);
       setReps(Array(4).fill(''));
-      setTiming(0);
+      setTiming(1);
       setErrorAddExercise(false);
     }
   };
