@@ -1121,7 +1121,7 @@ export default function Main_Page() {
             onClick={(e) => e.stopPropagation()}
           >
             <Box sx={{ display: 'grid', gridTemplateColumns: isSmallScreen700 ? '1fr' : 'repeat(3, 1fr)', gap: 2 }}>
-              {progress.slice(0, 3).map((item, index) => (
+              {progress?.slice(0, 3).map((item, index) => (
                 <Box
                   key={index}
                   sx={{
