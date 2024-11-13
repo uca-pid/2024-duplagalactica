@@ -635,9 +635,6 @@ function CouchClasses() {
           fecha: comment ? comment.date : null,
         };
       });
-      
-      console.log("asi se ven las clases",new Date(calendarEvents[6].start).toISOString().split('T'))
-      console.log("esta es la asistencia",calendarEvents[6])
       setClasses(dataMatches);
       setTotalClasses(dataMatches);
       setOpenCircularProgress(false);

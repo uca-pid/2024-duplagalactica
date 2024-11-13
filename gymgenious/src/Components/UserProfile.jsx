@@ -427,7 +427,7 @@ export default function CreateAccount() {
                                     onChange={(e) => setDate(e.target.value)}
                                     disabled={isDisabled}
                                 />
-                                {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
+                                
                             </div>
                         </MDBCol>
                     </MDBRow>
@@ -448,6 +448,7 @@ export default function CreateAccount() {
                             </div>
                         </MDBCol>
                     </MDBRow>
+                    {errorForm && (<p style={{color: 'red', margin: '0px'}}>There are no changes</p>)}
                     <hr style={{color:'#14213D'}}/>
                     {isDisabled ? (
                                 <>
