@@ -23,22 +23,33 @@ export default function ExerciseCreation() {
   const [openCircularProgress, setOpenCircularProgress] = useState(false);
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
-  const [errors, setErrors] = useState([]);
   const [failureErrors, setFailureErrors] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width:700px)');
+  const [errorName, setErrorName] = useState(false);
+  const [errorDesc, setErrorDesc] = useState(false);
+  const [errorImage, setErrorImage] = useState(false);
 
   const validateForm = () => {
+    setErrorName(false);
+    setErrorDesc(false);
+    setErrorImage(false);
     let errors = [];
     
     if (name === '') {
         errors.push('Please assign a name to the exercise.');
+        setErrorName(true);
     }
 
     if (desc === '') {
       errors.push('Please assign a description to the exercise.');
+      setErrorDesc(true);
     }
 
-    setErrors(errors);
+    if (image === null || image===undefined) {
+      errors.push('Please enter an image');
+      setErrorImage(true);
+    }
+
     return errors.length===0;
 }
 
@@ -127,7 +138,7 @@ export default function ExerciseCreation() {
       <div className='exercise-creation-content'>
         <h2 style={{color:'#14213D'}}>Create exercise</h2>
         <form onSubmit={handleSubmit}>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between', marginBottom: '0px'}}>
             <div className="input-small-container">
               <label htmlFor="name" style={{color:'#14213D'}}>Name:</label>
               <input 
@@ -137,9 +148,10 @@ export default function ExerciseCreation() {
                 value={name} 
                 onChange={(e) => setName(e.target.value)} 
               />
+              {errorName && (<p style={{color: 'red', margin: '0px'}}>Enter a name</p>)}
             </div>
           </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between', marginBottom: '0px'}}>
               <div className="input-small-container">
                   <label htmlFor="desc" style={{color:'#14213D'}}>Desc:</label>
                   {/* <input 
@@ -157,9 +169,10 @@ export default function ExerciseCreation() {
                   value={desc}
                   maxLength={300}
                   style={{maxHeight: '150px', width: '100%', borderRadius: '8px'}} />
+                  {errorDesc && (<p style={{color: 'red', margin: '0px'}}>Enter a description</p>)}
               </div>
           </div>
-          <div className="input-container" style={{display:'flex', justifyContent: 'space-between'}}>
+          <div className="input-container" style={{display:'flex', justifyContent: 'space-between', marginBottom: '0px'}}>
             <div className="input-small-container">
               <label htmlFor="image" style={{ color: '#14213D' }}>Image:</label>
               <input
@@ -171,6 +184,7 @@ export default function ExerciseCreation() {
                 onChange={(e) => setImage(e.target.files[0])                  
                 }  
               />
+              {errorImage && (<p style={{color: 'red', margin: '0px'}}>Enter an image</p>)}
             </div>
           </div>
           <button type="submit" className='button_login'>
@@ -198,29 +212,6 @@ export default function ExerciseCreation() {
               </Box>
           </div>
           </div>
-      ) : (
-          null
-      )}
-      { failureErrors ? (
-          <div className='alert-container'>
-              <div className='alert-content'>
-              <Box sx={{ position: 'relative', zIndex: 1 }}>
-                  <Slide direction="up" in={failureErrors} mountOnEnter unmountOnExit>
-                  <div>
-                      <Alert severity="error" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                      Error creating exercise!
-                      </Alert>
-                      {errors.length > 0 && errors.map((error, index) => (
-                      <Alert key={index} severity="info" style={{ fontSize: '100%', fontWeight: 'bold' }}>
-                          <li>{error}</li>
-                      </Alert>
-                      ))}
-                  </div>
-                  </Slide>
-              </Box>
-              </div>
-          </div>
-        
       ) : (
           null
       )}

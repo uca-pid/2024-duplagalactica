@@ -24,6 +24,7 @@ export default function ResetPassword() {
 
     const auth = getAuth();
     const handleSubmit = async (e) => {
+        setFailure(false)
         setOpenCircularProgress(true);
         e.preventDefault();
         try {
@@ -44,9 +45,6 @@ export default function ResetPassword() {
             setOpenCircularProgress(false);
             if (error.code === 'auth/invalid-email') {
                 setFailure(true);
-                setTimeout(() => {
-                    setFailure(false);
-                }, 3000);
             } else {
                 setWarningResettingPassword(true);
                 setTimeout(() => {
@@ -81,6 +79,7 @@ export default function ResetPassword() {
                                 onChange={(e) => setEmail(e.target.value)} 
                                 required
                             />
+                            {failure && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}> This account does not exist</p>)}
                         </div>
                         <button type="submit" className='button_create_account' style={{width: isSmallScreen ? '70%' : '40%'}}>
                             Send email
@@ -95,21 +94,6 @@ export default function ResetPassword() {
                                             </Alert>
                                         </Slide>
                                     </Box>
-                                </div>
-                            </div>
-                        ) : (
-                            null
-                        )}
-                        { failure ? (
-                            <div className='alert-container'>
-                                <div className='alert-content'>
-                                <Box sx={{ position: 'relative', zIndex: 1 }}>
-                                    <Slide direction="up" in={failure} mountOnEnter unmountOnExit >
-                                        <Alert severity="error" style={{fontSize:'100%', fontWeight:'bold'}}>
-                                            This account does not exist!
-                                        </Alert>
-                                    </Slide>
-                                </Box>
                                 </div>
                             </div>
                         ) : (

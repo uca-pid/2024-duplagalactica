@@ -620,7 +620,7 @@ iframe {
 .create-account-content {
   padding-left:20px;
   padding-right: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
 }
 
 .button_create_account {
@@ -1361,7 +1361,7 @@ iframe {
 
 .Modal-Content-edit-routine {
   background-color: #F5F5F5;
-  padding: 5px;
+  padding: 10px;
   padding-left: 20px;
   padding-right: 20px;
   border-radius: 8px;

@@ -30,6 +30,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
+import { useNavigate } from 'react-router-dom';
 
 export default function Main_Page() {
   const [classes, setClasses] = useState([]);
@@ -59,7 +60,7 @@ export default function Main_Page() {
   const [errorStars, setErrorStars] = useState(false);
   const [errorComment, setErrorComment] = useState(false);
 
-
+  const navigate = useNavigate();
   const handleViewAchievements = () => {
     setOpenAchievements(true);
     setVisibleDrawerAchievements(true);
@@ -293,6 +294,7 @@ export default function Main_Page() {
                                     rounded
                                     block
                                     size="lg"
+                                    onClick={() => navigate('user-memberships')}
                                   >
                                     Upgrade your plan
                                   </MDBBtn>
@@ -1120,7 +1122,7 @@ export default function Main_Page() {
             onClick={(e) => e.stopPropagation()}
           >
             <Box sx={{ display: 'grid', gridTemplateColumns: isSmallScreen700 ? '1fr' : 'repeat(3, 1fr)', gap: 2 }}>
-              {progress.slice(0, 3).map((item, index) => (
+              {progress?.slice(0, 3).map((item, index) => (
                 <Box
                   key={index}
                   sx={{

@@ -26,9 +26,9 @@ export default function RoutineCreation() {
     const [failureErrors, setFailureErrors] = useState(false);
     const [fetchAttempt, setFetchAttempt] = useState(0);
     const [day, setDay] = useState('');
-    const [usersChanged, setUsersChanged] = useState(false);
     const [errorDaySelected, setErrorDaySelected] = useState(false);
     const [errorRoutineSelected, setErrorRoutineSelected] = useState(false);
+    const [errorUsersChanged, setErrorUsersChanged] = useState(false);
 
 
     const fetchRoutines = async () => {
@@ -93,6 +93,7 @@ export default function RoutineCreation() {
         let errors = [];
         setErrorRoutineSelected(false)
         setErrorDaySelected(false)
+        setErrorUsersChanged(false)
         
         if (routineAssigned === '') {
             errors.push('Please select a routine to assign');
@@ -102,6 +103,11 @@ export default function RoutineCreation() {
         if (day === '') {
             errors.push('Please select one day to assign the routine.');
             setErrorDaySelected(true)
+        }
+
+        if (users?.length===0) {
+            errors.push('Assign users');
+            setErrorUsersChanged(true)
         }
         return errors.length===0;
     }
@@ -168,7 +174,6 @@ export default function RoutineCreation() {
     };
 
     const handleUsersChange = (newUsers) => {
-        setUsersChanged(true);
         setUsers(newUsers);
     };
 
@@ -226,18 +231,12 @@ export default function RoutineCreation() {
                         <div className="input-small-container">
                             <label htmlFor="users" style={{ color: '#424242' }}>Users:</label>
                             <UsserAssignment onUsersChange={handleUsersChange} routine={routineAssigned} routineDay={day}/>
+                            {errorUsersChanged && (<p style={{color: 'red', margin: '0px'}}>Select users to assign</p>)}
                         </div>
                     </div>
-                    {usersChanged ? (
-                        <button type="submit" className='button_login' style={{marginTop: '0px'}}>
+                    <button type="submit" className='button_login' style={{marginTop: '0px'}}>
                             Assign users
-                        </button>
-                    ) : (
-                        <div className='button_login' style={{marginTop: '0px'}}>
-                            Assign users
-                        </div>
-                    )}
-                    
+                    </button>
                 </form>
             </div>
             {openCircularProgress ? (

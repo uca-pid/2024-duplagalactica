@@ -45,12 +45,13 @@ export default function CoachExercises() {
     const [editExercise, setEditExercise] = useState(false);
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
-    const [image, setImage] = useState();
+    const [image, setImage] = useState(null);
     const[fetchImg, setImageFetch] = useState('')
     const[fetchName,setNameFetch] = useState('')
     const[fetchDes,setDescFetch] = useState('')
     const[fetchOwner,setOwnerFetch] = useState('')
     const[fetchExer,setExercise] = useState({});
+    const [errorEditExercise, setErrorEditExercise] = useState(false);
 
     const [openSearch, setOpenSearch] = useState(false);
     const [filterExercises, setFilterExercises] = useState('');
@@ -188,53 +189,63 @@ export default function CoachExercises() {
         }
     };
 
-    const handleSaveEditExer = async () => {
-        try {
-            const formData = new FormData();
-            formData.append('name', name || fetchName);
-            formData.append('description', desc || fetchDes);
-            formData.append('image_url', fetchImg);
-            formData.append('id',id);
-            formData.append('image', image);
-            const authToken = localStorage.getItem('authToken');
-            if (!authToken) {
-              console.error('Token no disponible en localStorage');
-              return;
-            }
-            const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_exer_info', {
-                method: 'PUT', 
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                },
-                body: formData,
-            });
-            if (!response.ok) {
-                throw new Error('Error al actualizar la rutina: ' + response.statusText);
-            }
-            setTimeout(() => {
-                setOpenCircularProgress(false);
-              }, 2000);
-            window.location.reload();
-          } catch (error) {
-            console.error("Error actualizarndo la rutina:", error);
-            setOpenCircularProgress(false);
-            setWarningConnection(true);
-            setTimeout(() => {
-              setWarningConnection(false);
-            }, 3000);
-            setEditExercise(!editExercise);
+    const validateEditExercise = () => {
+        let res=true;
+        setErrorEditExercise(false);
+        if(name==='' && desc==='' && (image===null || image===undefined)){
+            res=false;
+            setErrorEditExercise(true);
+          } else {
+            setErrorEditExercise(false);
           }
+        return res
+      }
+
+    const handleSaveEditExer = async () => {
+        if(validateEditExercise()){
+            setOpenCircularProgress(true)
+            try {
+                const formData = new FormData();
+                formData.append('name', name || fetchName);
+                formData.append('description', desc || fetchDes);
+                formData.append('image_url', fetchImg);
+                formData.append('id',id);
+                formData.append('image', image);
+                const authToken = localStorage.getItem('authToken');
+                if (!authToken) {
+                console.error('Token no disponible en localStorage');
+                return;
+                }
+                const response = await fetch('https://two024-duplagalactica-li8t.onrender.com/update_exer_info', {
+                    method: 'PUT', 
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData,
+                });
+                if (!response.ok) {
+                    throw new Error('Error al actualizar la rutina: ' + response.statusText);
+                }
+                setTimeout(() => {
+                    setOpenCircularProgress(false);
+                }, 2000);
+                window.location.reload();
+            } catch (error) {
+                console.error("Error actualizarndo la rutina:", error);
+                setOpenCircularProgress(false);
+                setWarningConnection(true);
+                setTimeout(() => {
+                setWarningConnection(false);
+                }, 3000);
+                setEditExercise(!editExercise);
+            }
+        }
     }
 
 
     const saveExercise = async (event) => {
         event.preventDefault(); 
         handleSaveEditExer();
-        setEditExercise(!editExercise);
-        setTimeout(() => {
-          setOpenCircularProgress(false);
-        }, 7000);
-        await fetchExercises();
     }
 
     useEffect(() => {
@@ -597,6 +608,7 @@ export default function CoachExercises() {
                                             onChange={(e) => setImage(e.target.files[0])                  
                                             }  
                                         />
+                                        {errorEditExercise && (<p style={{color: 'red', margin: '0px'}}>No changes were done</p>)}
                                         </div>
                                     </div>
                                     <button type="submit" className='button_login' style={{width: isSmallScreen650 ? '70%' : '30%'}}>Save</button>                            
