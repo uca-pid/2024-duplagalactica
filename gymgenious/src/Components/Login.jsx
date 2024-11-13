@@ -90,7 +90,7 @@ export default function Login() {
               <div className='login-content'>
                 <h2 style={{color:'#424242'}}>Login</h2>
                 <form onSubmit={loginUser}>
-                  <div className="input-container">
+                  <div className="input-container" style={{marginBottom: '5px'}}>
                     <label htmlFor="username" style={{color:'#424242'}}>Email:</label>
                     <input 
                       type="text" 
@@ -101,7 +101,7 @@ export default function Login() {
                       style={{color:'#283618'}}
                     />
                   </div>
-                  <div className="input-container">
+                  <div className="input-container" style={{marginBottom: '5px'}}>
                     <label htmlFor="password" style={{color:'#424242'}}>Password:</label>
                     <input 
                     color='#283618'
@@ -111,10 +111,10 @@ export default function Login() {
                       value={password} 
                       onChange={(e) => setPassword(e.target.value)} 
                     />
+                    {errorLogin && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Credentials or server error</p>)}
+                    {verifyEmail && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Please verify your mail</p>)}
                   </div>
-                  {errorLogin && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Credentials or server error</p>)}
-                  {verifyEmail && (<p style={{color: 'red', margin: '0px', textAlign: 'left'}}>Please verify your mail</p>)}
-                  <button type="submit" className='button_login' style={{width: isSmallScreen ? '70%' : '40%'}}>
+                  <button type="submit" className='button_login' style={{width: isSmallScreen ? '70%' : '40%' }}>
                     Login
                   </button>
                 </form>
